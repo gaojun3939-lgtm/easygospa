@@ -450,10 +450,7 @@ const servicesData = [
 const categories = [
   { key: "all", name: "All Services" },
   { key: "massage", name: "Massage Therapy" },
-  { key: "beauty", name: "Beauty & Cosmetics" },
-  { key: "laser", name: "Laser Hair Removal" },
-  { key: "nails", name: "Nail Care" },
-  { key: "hair", name: "Hair Services" }
+  
 ];
 
 export default function ServicesSection() {
