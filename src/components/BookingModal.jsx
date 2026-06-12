@@ -15,49 +15,8 @@ const services = [
   { name: "Head and Shoulder Massage", price: 1200, duration: "30 min", category: "Massage" },
   { name: "Deep Tissue Massage", price: 3500, duration: "60 min", category: "Massage" },
   
-  // Beauty & Cosmetic Services
-  { name: "Lash Extension", price: 2000, duration: "120 min", category: "Beauty" },
-  { name: "Lash Lift", price: 1500, duration: "60 min", category: "Beauty" },
-  { name: "Microblading", price: 6500, duration: "180 min", category: "Beauty" },
-  { name: "Microshading", price: 6500, duration: "180 min", category: "Beauty" },
-  { name: "Combine Brows", price: 7500, duration: "200 min", category: "Beauty" },
-  { name: "Touch Up", price: 3000, duration: "60 min", category: "Beauty" },
-  { name: "Lip Neutralisation / Lip Blush", price: 5000, duration: "120 min", category: "Beauty" },
   
-  // Laser Hair Removal
-  { name: "Underarm Laser", price: 1000, duration: "30 min", category: "Laser" },
-  { name: "Bikini Laser", price: 2000, duration: "45 min", category: "Laser" },
-  { name: "Full Leg Laser", price: 2000, duration: "90 min", category: "Laser" },
-  { name: "Half Leg Laser", price: 1500, duration: "60 min", category: "Laser" },
-  { name: "Full Arm Laser", price: 1500, duration: "60 min", category: "Laser" },
-  { name: "Full Face Laser", price: 1500, duration: "45 min", category: "Laser" },
-  { name: "Full Back Laser", price: 2000, duration: "75 min", category: "Laser" },
-  { name: "Stomach Laser", price: 2000, duration: "45 min", category: "Laser" },
-  { name: "Upper Lip Laser", price: 900, duration: "15 min", category: "Laser" },
-  { name: "Full Body Laser", price: 12999, duration: "240 min", category: "Laser" },
   
-  // Nail Services
-  { name: "Soft Gel Extension", price: 1200, duration: "90 min", category: "Nails" },
-  { name: "Acrylic Extension", price: 1500, duration: "120 min", category: "Nails" },
-  { name: "Gel Polish", price: 500, duration: "45 min", category: "Nails" },
-  { name: "Nail Remove", price: 150, duration: "30 min", category: "Nails" },
-  { name: "Manicure", price: 800, duration: "60 min", category: "Nails" },
-  { name: "Manicure with Whitening Pack", price: 1000, duration: "75 min", category: "Nails" },
-  { name: "Pedicure", price: 1200, duration: "75 min", category: "Nails" },
-  { name: "Pedicure with Whitening Pack", price: 1500, duration: "90 min", category: "Nails" },
-  
-  // Hair Services
-  { name: "Women Hair Cut", price: 800, duration: "60 min", category: "Hair" },
-  { name: "Men Hair Cut", price: 500, duration: "45 min", category: "Hair" },
-  { name: "Hair Wash", price: 300, duration: "30 min", category: "Hair" },
-  { name: "Hair Wash & Style", price: 700, duration: "60 min", category: "Hair" },
-  { name: "Hair Perming", price: 2500, duration: "180 min", category: "Hair", priceNote: "Starting" },
-  { name: "Hair Straightening", price: 3000, duration: "240 min", category: "Hair", priceNote: "Starting" },
-  { name: "Hair Colouring", price: 3500, duration: "180 min", category: "Hair", priceNote: "Starting" },
-  { name: "Hair Highlight", price: 4000, duration: "240 min", category: "Hair", priceNote: "Starting" },
-  { name: "Hair Extension", price: 1499, duration: "120 min", category: "Hair", priceNote: "Starting" },
-  { name: "Hair Spa", price: 1500, duration: "90 min", category: "Hair", priceNote: "Starting" },
-  { name: "Keratin Treatment", price: 3000, duration: "240 min", category: "Hair", priceNote: "Starting" }
 ];
 
 const timeSlots = [
@@ -278,7 +237,7 @@ Phone:         ${formData.phone}
 APPOINTMENT DETAILS:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Service:       ${createdAppointment?.service}
-Investment:    ${new Intl.NumberFormat('en-US', {style: 'currency',currency: 'USD'}).format(selectedService?.price)}
+Investment:    ₱{selectedService?.price?.toLocaleString()}
 Duration:      ${selectedService?.duration}
 Date:          ${formatDate(createdAppointment?.preferred_date)}
 Time:          ${createdAppointment?.preferred_time}
@@ -324,7 +283,7 @@ providing you with an exceptional wellness experience.
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `SERENITY_Appointment_Confirmation_${createdAppointment?.id}.txt`;
+    a.download = `EASYGO_Appointment_Confirmation_${createdAppointment?.id}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -410,10 +369,7 @@ providing you with an exceptional wellness experience.
                           </div>
                           <div className="text-right">
                             <p className="font-sans text-xl font-bold text-[#2db83d]">
-                              {new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD'
-}).format(service.price)}
+                              ₱{service.price.toLocaleString()}
                               {service.priceNote && <span className="text-xs text-gray-600 ml-1">{service.priceNote}</span>}
                             </p>
                           </div>
@@ -434,10 +390,7 @@ providing you with an exceptional wellness experience.
                     <p className="text-gray-600">Step 2 of 2: Your Details</p>
                     <div className="mt-4 p-4 bg-[#2db83d]/5 rounded-xl">
                       <p className="font-sans text-lg text-[#0F0F0F]">
-                        {formData.service} - {new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD'
-}).format(selectedService?.price)}
+                        {formData.service} - ₱${selectedService?.price?.toLocaleString()}
                         {selectedService?.priceNote && <span className="text-sm text-gray-600 ml-1">{selectedService.priceNote}</span>}
                       </p>
                       <p className="text-sm text-gray-600">{selectedService?.duration}</p>
@@ -611,10 +564,7 @@ providing you with an exceptional wellness experience.
                         
                         <div className="flex justify-between items-center mb-2">
                           <strong className="text-gray-700">Investment:</strong>
-                          <span className="text-[#2db83d] font-bold text-lg">{new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD'
-}).format(selectedService?.price)}</span>
+                          <span className="text-[#2db83d] font-bold text-lg">₱{selectedService?.price?.toLocaleString()}</span>
                         </div>
                         
                         <div className="flex justify-between items-center mb-2">
