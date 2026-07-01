@@ -59,9 +59,10 @@ test('maps therapist-first website booking fields to AI Office public booking pa
   assert.equal(payload.metadata.website, 'www.easygospa.com');
   assert.equal(payload.metadata.form, 'BookingModal');
   assert.equal(payload.metadata.submittedFrom, 'public_website');
-  assert.equal(payload.metadata.bookingFlow, 'therapist_service_cash');
+  assert.equal(payload.metadata.bookingFlow, 'therapist_wall_detail_service_cash');
   assert.equal(payload.metadata.customerEmail, 'guest@example.com');
   assert.equal(payload.metadata.paymentMethod, 'cash_after_service');
+  assert.equal(payload.selectedServices[0].currency, 'PHP');
   assert.match(payload.notes, /Payment: Cash after service/);
 });
 

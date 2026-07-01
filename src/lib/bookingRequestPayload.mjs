@@ -54,13 +54,15 @@ function normalizeSelectedServices(input = {}) {
     return selected.map(service => ({
       serviceName: requiredText(service.serviceName || service.name || input.service, 'service'),
       durationMinutes: Math.max(30, Math.round(Number(service.durationMinutes || input.durationMinutes || 60))),
-      price: Math.max(0, Number(service.price || service.totalAmount || input.totalAmount || 0))
+      price: Math.max(0, Number(service.price || service.totalAmount || input.totalAmount || 0)),
+      currency: cleanText(service.currency || input.currency || 'PHP', 8).toUpperCase()
     }));
   }
   return [{
     serviceName: requiredText(input.service || input.serviceName, 'service'),
     durationMinutes: Math.max(30, Math.round(Number(input.durationMinutes || input.serviceDurationMinutes || 60))),
-    price: Math.max(0, Number(input.totalAmount || input.quotedPrice || input.servicePrice || input.price || 0))
+    price: Math.max(0, Number(input.totalAmount || input.quotedPrice || input.servicePrice || input.price || 0)),
+    currency: cleanText(input.currency || 'PHP', 8).toUpperCase()
   }];
 }
 
@@ -94,7 +96,7 @@ export function normalizeWebsiteBookingRequest(input = {}) {
     website: 'www.easygospa.com',
     form: 'BookingModal',
     submittedFrom: 'public_website',
-    bookingFlow: 'therapist_service_cash',
+    bookingFlow: 'therapist_wall_detail_service_cash',
     customerEmail,
     requestedTechnicianId,
     requestedTechnicianName,

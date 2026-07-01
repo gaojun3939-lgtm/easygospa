@@ -50,26 +50,11 @@ const allServiceNames = websiteBookingServices.map(service => service.name);
 
 export const websiteTherapists = [
   {
-    id: 'any_available',
-    name: 'Any available therapist',
-    avatarInitials: 'EA',
-    distanceLabel: 'Nearby after you enter your area',
-    serviceArea: 'Metro Manila coverage depends on schedule',
-    specialties: ['Swedish Massage', 'Deep Tissue Massage', 'Thai Dry Massage', 'Foot Massage'],
-    specialtyDescription: 'Let our team match your request with an available therapist.',
-    rating: null,
-    reviewCount: 0,
-    reviewsLabel: 'No verified reviews yet',
-    verifiedReviews: [],
-    availableServices: allServiceNames,
-    therapistPreference: 'any_available',
-    internalConfig: true
-  },
-  {
     id: 'therapist-bgc-deep-tissue',
     name: 'BGC Deep Tissue Therapist',
     avatarInitials: 'BD',
     distanceLabel: 'Serving BGC / Taguig area',
+    availabilityLabel: 'Available today',
     serviceArea: 'BGC, Taguig, nearby Makati hotels and condos',
     specialties: ['Deep Tissue Massage', 'Swedish Massage'],
     specialtyDescription: 'Best suited for deeper pressure and post-work tension relief.',
@@ -86,6 +71,7 @@ export const websiteTherapists = [
     name: 'Makati Relaxation Therapist',
     avatarInitials: 'MR',
     distanceLabel: 'Serving Makati / BGC area',
+    availabilityLabel: 'Earliest after schedule confirmation',
     serviceArea: 'Makati, BGC, Taguig, Pasay by schedule',
     specialties: ['Swedish Massage', 'Thai Dry Massage', 'Foot Massage'],
     specialtyDescription: 'Focused on relaxation, stretching, and hotel or condo service.',
@@ -94,6 +80,23 @@ export const websiteTherapists = [
     reviewsLabel: 'No verified reviews yet',
     verifiedReviews: [],
     availableServices: ['Swedish Massage', 'Thai Dry Massage', 'Foot Massage'],
+    therapistPreference: 'any_available',
+    internalConfig: true
+  },
+  {
+    id: 'any_available',
+    name: 'Any available therapist',
+    avatarInitials: 'EA',
+    distanceLabel: 'Nearby after you enter your area',
+    availabilityLabel: 'Matched after request review',
+    serviceArea: 'Metro Manila coverage depends on schedule',
+    specialties: ['Swedish Massage', 'Deep Tissue Massage', 'Thai Dry Massage', 'Foot Massage'],
+    specialtyDescription: 'Let our team match your request with an available therapist.',
+    rating: null,
+    reviewCount: 0,
+    reviewsLabel: 'No verified reviews yet',
+    verifiedReviews: [],
+    availableServices: allServiceNames,
     therapistPreference: 'any_available',
     internalConfig: true
   }
@@ -117,7 +120,18 @@ export function findBookingServiceByName(name = '') {
 }
 
 export function findWebsiteTherapist(id = '') {
-  return websiteTherapists.find(therapist => therapist.id === id) || websiteTherapists[0];
+  return websiteTherapists.find(therapist => therapist.id === id) || websiteTherapists.find(therapist => therapist.id === 'any_available') || websiteTherapists[0];
+}
+
+export function concreteTherapistsForWall(preferredService = '') {
+  const preferred = String(preferredService || '').trim();
+  const concrete = websiteTherapists.filter(therapist => therapist.id !== 'any_available');
+  if (!preferred) return concrete;
+  return [...concrete].sort((a, b) => {
+    const aMatch = Array.isArray(a.availableServices) && a.availableServices.includes(preferred) ? 0 : 1;
+    const bMatch = Array.isArray(b.availableServices) && b.availableServices.includes(preferred) ? 0 : 1;
+    return aMatch - bMatch;
+  });
 }
 
 export function servicesForTherapist(therapistId = '') {

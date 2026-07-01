@@ -87,12 +87,13 @@ test('payload contains therapist-first cash booking fields', () => {
   assert.equal(payload.paymentMethod, 'cash_after_service');
   assert.equal(payload.paymentStatus, 'pending_collection');
   assert.equal(payload.paymentTiming, 'after_service');
-  assert.equal(payload.metadata.bookingFlow, 'therapist_service_cash');
+  assert.equal(payload.metadata.bookingFlow, 'therapist_wall_detail_service_cash');
   assert.equal(payload.metadata.customerEmail, 'guest@example.com');
   assert.equal(payload.metadata.requestedTechnicianId, 'therapist-bgc-deep-tissue');
   assert.equal(payload.metadata.totalAmount, 4200);
   assert.equal(payload.metadata.paymentStatus, 'pending_collection');
   assert.equal(payload.metadata.paymentTiming, 'after_service');
+  assert.equal(payload.selectedServices[0].currency, 'PHP');
 });
 
 test('payment UI and payload are cash-only and avoid external sends', () => {
