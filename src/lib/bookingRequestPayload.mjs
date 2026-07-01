@@ -1,13 +1,4 @@
-﻿const PAYMENT_METHODS = new Set([
-  'cash_after_service',
-  'gcash',
-  'maya',
-  'qrph',
-  'bank_transfer',
-  'card',
-  'payment_link'
-]);
-
+﻿const PAYMENT_METHOD = 'cash_after_service';
 const THERAPIST_PREFERENCES = new Set(['any_available', 'female_preferred', 'male_preferred']);
 
 export class BookingRequestValidationError extends Error {
@@ -29,7 +20,7 @@ function requiredText(value, field) {
 }
 
 function normalizePeopleCount(value) {
-  const parsed = Number(value);
+  const parsed = Number(value ?? 1);
   if (!Number.isFinite(parsed)) return 1;
   return Math.max(1, Math.round(parsed));
 }
@@ -39,11 +30,6 @@ function normalizeTherapistGenderPreference(value) {
   if (preference === 'female_preferred') return 'female';
   if (preference === 'male_preferred') return 'male';
   return '';
-}
-
-function normalizePaymentMethod(value) {
-  const method = cleanText(value, 40);
-  return PAYMENT_METHODS.has(method) ? method : 'cash_after_service';
 }
 
 function toScheduledTime(value) {
@@ -62,27 +48,63 @@ function toScheduledTime(value) {
   return '20:00';
 }
 
+function normalizeSelectedServices(input = {}) {
+  const selected = Array.isArray(input.selectedServices) ? input.selectedServices : [];
+  if (selected.length) {
+    return selected.map(service => ({
+      serviceName: requiredText(service.serviceName || service.name || input.service, 'service'),
+      durationMinutes: Math.max(30, Math.round(Number(service.durationMinutes || input.durationMinutes || 60))),
+      price: Math.max(0, Number(service.price || service.totalAmount || input.totalAmount || 0))
+    }));
+  }
+  return [{
+    serviceName: requiredText(input.service || input.serviceName, 'service'),
+    durationMinutes: Math.max(30, Math.round(Number(input.durationMinutes || input.serviceDurationMinutes || 60))),
+    price: Math.max(0, Number(input.totalAmount || input.quotedPrice || input.servicePrice || input.price || 0))
+  }];
+}
+
 export function normalizeWebsiteBookingRequest(input = {}) {
   const customerName = requiredText(input.customerName || input.client_name || input.name, 'customerName');
+  const customerEmail = requiredText(input.customerEmail || input.email, 'customerEmail').toLowerCase();
   const phone = requiredText(input.phone || input.whatsapp, 'phone');
-  const service = requiredText(input.service || input.serviceName, 'service');
+  const selectedServices = normalizeSelectedServices(input);
+  const primaryService = selectedServices[0];
+  const service = requiredText(input.service || primaryService.serviceName, 'service');
   const preferredDate = requiredText(input.preferredDate || input.preferred_date || input.scheduledDate, 'preferredDate');
   const preferredTime = requiredText(input.preferredTime || input.preferred_time || input.scheduledTime, 'preferredTime');
   const area = requiredText(input.area, 'area');
-  const addressNote = requiredText(input.addressNote || input.building || input.condo || input.hotel, 'addressNote');
-  const peopleCount = normalizePeopleCount(input.peopleCount);
+  const addressNote = requiredText(input.addressNote || input.addressText || input.building || input.condo || input.hotel, 'addressNote');
+  const peopleCount = normalizePeopleCount(input.peopleCount || 1);
+  const requestedTechnicianId = cleanText(input.requestedTechnicianId || 'any_available', 120);
+  const requestedTechnicianName = cleanText(input.requestedTechnicianName || 'Any available therapist', 120);
   const therapistPreference = THERAPIST_PREFERENCES.has(input.therapistPreference) ? input.therapistPreference : 'any_available';
   const therapistGenderPreference = normalizeTherapistGenderPreference(therapistPreference);
-  const paymentMethod = normalizePaymentMethod(input.paymentMethod);
+  const selectedTherapistSpecialties = Array.isArray(input.selectedTherapistSpecialties)
+    ? input.selectedTherapistSpecialties.map(item => cleanText(item, 80)).filter(Boolean)
+    : [];
+  const durationMinutes = Math.max(30, Math.round(Number(input.durationMinutes || primaryService.durationMinutes || 60)));
+  const totalAmount = Math.max(0, Number(input.totalAmount || selectedServices.reduce((sum, item) => sum + Number(item.price || 0), 0)));
   const notes = cleanText(input.notes || input.message || input.customerNote, 500);
-  const serviceDurationMinutes = Math.max(30, Math.round(Number(input.serviceDurationMinutes || input.durationMinutes || 90)));
-  const quotedPrice = Math.max(0, Number(input.quotedPrice || input.servicePrice || input.price || 0));
+  const paymentMethod = PAYMENT_METHOD;
+  const paymentStatus = 'pending_collection';
+  const paymentTiming = 'after_service';
 
   const metadata = {
     website: 'www.easygospa.com',
     form: 'BookingModal',
     submittedFrom: 'public_website',
+    bookingFlow: 'therapist_service_cash',
+    customerEmail,
+    requestedTechnicianId,
+    requestedTechnicianName,
+    selectedTherapistSpecialties,
+    selectedServices,
+    durationMinutes,
+    totalAmount,
     paymentMethod,
+    paymentStatus,
+    paymentTiming,
     therapistPreference,
     preferredDate,
     source: 'website',
@@ -94,19 +116,27 @@ export function normalizeWebsiteBookingRequest(input = {}) {
 
   const noteParts = [];
   if (notes) noteParts.push(notes);
-  noteParts.push(`Payment method: ${paymentMethod}`);
-  noteParts.push(`Therapist preference: ${therapistPreference}`);
+  noteParts.push(`Selected therapist: ${requestedTechnicianName}`);
+  noteParts.push(`Payment: Cash after service`);
   noteParts.push(`Preferred date: ${preferredDate}`);
 
   return {
     tenantId: cleanText(input.tenantId || 'brand-a', 80),
-    source: 'web',
+    source: 'website',
     customerName,
+    customerEmail,
     phone,
-    email: cleanText(input.email, 120),
+    email: customerEmail,
+    requestedTechnicianId,
+    requestedTechnicianName,
+    therapistPreference,
+    therapistGenderPreference,
+    selectedTherapistSpecialties,
+    selectedServices,
     service,
     serviceName: service,
-    serviceDurationMinutes,
+    durationMinutes,
+    serviceDurationMinutes: durationMinutes,
     preferredDate,
     preferredTime,
     scheduledDate: preferredDate,
@@ -114,11 +144,12 @@ export function normalizeWebsiteBookingRequest(input = {}) {
     area,
     addressNote,
     peopleCount,
-    therapistPreference,
-    therapistGenderPreference,
     paymentMethod,
+    paymentStatus,
+    paymentTiming,
     notes: noteParts.join(' | '),
-    quotedPrice,
+    totalAmount,
+    quotedPrice: totalAmount,
     currency: 'PHP',
     metadata
   };

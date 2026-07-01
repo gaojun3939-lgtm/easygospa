@@ -1,68 +1,41 @@
 ﻿'use client';
 
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, Calendar, Clock, User, Mail, Phone, MessageSquare, Sparkles, Check, MapPin, Users, CreditCard } from 'lucide-react';
-
-const services = [
-  { name: 'Swedish Massage', price: 2500, duration: '60 min', category: 'Massage' },
-  { name: 'Japanese Head Spa', price: 3500, duration: '90 min', category: 'Massage' },
-  { name: 'Thai Dry Massage', price: 3000, duration: '75 min', category: 'Massage' },
-  { name: 'Foot Massage', price: 1500, duration: '45 min', category: 'Massage' },
-  { name: 'Head and Shoulder Massage', price: 1200, duration: '30 min', category: 'Massage' },
-  { name: 'Deep Tissue Massage', price: 3500, duration: '60 min', category: 'Massage' }
-];
+import React, { useEffect, useMemo, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Calendar, Check, CheckCircle2, Clock, Mail, MapPin, MessageSquare, Phone, Sparkles, User, Users, X } from 'lucide-react';
+import {
+  BOOKING_FLOW_STORAGE_KEY,
+  findBookingServiceByName,
+  findDurationOption,
+  findWebsiteTherapist,
+  getDefaultBookingSession,
+  getDefaultDurationOption,
+  isValidEmail,
+  servicesForTherapist,
+  websiteTherapists
+} from '../lib/therapistServiceBookingFlow.mjs';
 
 const timeSlots = [
-  '9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM',
-  '12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM', '2:00 PM', '2:30 PM',
-  '3:00 PM', '3:30 PM', '4:00 PM', '4:30 PM', '5:00 PM', '5:30 PM',
-  '6:00 PM', '6:30 PM', '7:00 PM', '7:30 PM', '8:00 PM', '8:30 PM',
-  '9:00 PM', '9:30 PM', '10:00 PM', '10:30 PM', '11:00 PM'
-];
-
-const therapistOptions = [
-  { value: 'any_available', label: 'Any available therapist' },
-  { value: 'female_preferred', label: 'Female therapist preferred' },
-  { value: 'male_preferred', label: 'Male therapist preferred' }
-];
-
-const paymentOptions = [
-  { value: 'cash_after_service', label: 'Cash after service' },
-  { value: 'gcash', label: 'GCash' },
-  { value: 'maya', label: 'Maya' },
-  { value: 'qrph', label: 'QR PH' },
-  { value: 'bank_transfer', label: 'Bank transfer' },
-  { value: 'card', label: 'Card' },
-  { value: 'payment_link', label: 'Payment link' }
+  '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
+  '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
+  '15:00', '15:30', '16:00', '16:30', '17:00', '17:30',
+  '18:00', '18:30', '19:00', '19:30', '20:00', '20:30',
+  '21:00', '21:30', '22:00', '22:30', '23:00'
 ];
 
 const areaOptions = ['BGC', 'Makati', 'Taguig', 'Pasay', 'Ortigas', 'Metro Manila'];
-
-function createInitialForm(service = '') {
-  return {
-    customerName: '',
-    email: '',
-    phone: '',
-    service,
-    preferredDate: '',
-    preferredTime: '',
-    area: '',
-    addressNote: '',
-    peopleCount: 1,
-    therapistPreference: 'any_available',
-    paymentMethod: 'cash_after_service',
-    notes: ''
-  };
-}
 
 function getTodayDate() {
   return new Date().toISOString().split('T')[0];
 }
 
+function money(value = 0) {
+  return `PHP ${Number(value || 0).toLocaleString('en-US')}`;
+}
+
 function formatDate(dateString) {
   if (!dateString) return '';
-  return new Date(dateString).toLocaleDateString('en-US', {
+  return new Date(`${dateString}T00:00:00`).toLocaleDateString('en-US', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
@@ -70,83 +43,252 @@ function formatDate(dateString) {
   });
 }
 
-function formatPaymentMethod(value) {
-  return paymentOptions.find(option => option.value === value)?.label || value;
+function serviceToCatalogName(service = {}) {
+  return service?.name || '';
+}
+
+function createInitialForm(serviceName = '') {
+  const matchedService = findBookingServiceByName(serviceName);
+  const service = matchedService || null;
+  const durationOption = service ? getDefaultDurationOption(service) : null;
+  return {
+    customerName: '',
+    customerEmail: '',
+    phone: '',
+    requestedTechnicianId: 'any_available',
+    service: service?.name || '',
+    durationMinutes: durationOption?.durationMinutes || '',
+    totalAmount: durationOption?.price || 0,
+    preferredDate: '',
+    preferredTime: '',
+    area: '',
+    addressNote: '',
+    notes: ''
+  };
+}
+
+function readStoredSession() {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = window.sessionStorage.getItem(BOOKING_FLOW_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return isValidEmail(parsed.customerEmail) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+function saveStoredSession(session) {
+  if (typeof window === 'undefined') return;
+  window.sessionStorage.setItem(BOOKING_FLOW_STORAGE_KEY, JSON.stringify(session));
+}
+
+function StepPill({ active, done, children }) {
+  return (
+    <div className={`flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium ${active ? 'bg-[#2db83d] text-white' : done ? 'bg-[#2db83d]/10 text-[#168823]' : 'bg-gray-100 text-gray-500'}`}>
+      {done ? <Check className="h-3.5 w-3.5" /> : null}
+      {children}
+    </div>
+  );
+}
+
+function TherapistCard({ therapist, selected, onSelect }) {
+  return (
+    <button
+      type="button"
+      onClick={() => onSelect(therapist.id)}
+      className={`w-full rounded-2xl border-2 p-4 text-left transition-all ${selected ? 'border-[#2db83d] bg-[#2db83d]/5 shadow-md' : 'border-gray-200 hover:border-[#2db83d]/60 hover:shadow-sm'}`}
+    >
+      <div className="flex gap-4">
+        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#0F0F0F] text-sm font-bold text-white">
+          {therapist.avatarInitials}
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <h3 className="font-serif text-lg font-semibold text-[#0F0F0F]">{therapist.name}</h3>
+              <p className="mt-1 text-sm text-gray-600">{therapist.distanceLabel}</p>
+            </div>
+            {selected ? <CheckCircle2 className="h-5 w-5 shrink-0 text-[#2db83d]" /> : null}
+          </div>
+          <p className="mt-3 text-sm text-gray-700">{therapist.specialtyDescription}</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {therapist.specialties.map(item => (
+              <span key={item} className="rounded-full bg-gray-100 px-2.5 py-1 text-xs text-gray-700">{item}</span>
+            ))}
+          </div>
+          <div className="mt-3 grid gap-2 text-xs text-gray-600 sm:grid-cols-2">
+            <span>{therapist.serviceArea}</span>
+            <span>{therapist.reviewsLabel}</span>
+          </div>
+        </div>
+      </div>
+    </button>
+  );
+}
+
+function ServiceCard({ service, selectedDuration, onSelect }) {
+  return (
+    <div className="rounded-2xl border border-gray-200 p-4">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h3 className="font-serif text-lg font-semibold text-[#0F0F0F]">{service.name}</h3>
+          <p className="mt-1 text-sm text-gray-600">{service.description}</p>
+        </div>
+      </div>
+      <div className="mt-4 grid gap-2 sm:grid-cols-3">
+        {service.durationOptions.map(option => {
+          const selected = selectedDuration === option.durationMinutes;
+          return (
+            <button
+              key={`${service.id}-${option.durationMinutes}`}
+              type="button"
+              onClick={() => onSelect(service, option)}
+              className={`rounded-xl border px-3 py-3 text-left transition-all ${selected ? 'border-[#2db83d] bg-[#2db83d]/5 text-[#0F0F0F]' : 'border-gray-200 hover:border-[#2db83d]/60'}`}
+            >
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-sm font-semibold">{option.durationMinutes} mins</span>
+                {selected ? <Check className="h-4 w-4 text-[#2db83d]" /> : null}
+              </div>
+              <div className="mt-1 text-sm text-[#2db83d] font-bold">{money(option.price)}</div>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
 
 export default function BookingModal() {
   const [isOpen, setIsOpen] = useState(false);
+  const [step, setStep] = useState('email');
   const [formData, setFormData] = useState(createInitialForm());
+  const [emailDraft, setEmailDraft] = useState({ email: '', name: '', phone: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [step, setStep] = useState(1);
   const [createdAppointment, setCreatedAppointment] = useState(null);
   const [error, setError] = useState('');
 
+  const selectedTherapist = useMemo(() => findWebsiteTherapist(formData.requestedTechnicianId), [formData.requestedTechnicianId]);
+  const availableServices = useMemo(() => servicesForTherapist(formData.requestedTechnicianId), [formData.requestedTechnicianId]);
+  const selectedService = useMemo(() => findBookingServiceByName(formData.service), [formData.service]);
+  const selectedDuration = useMemo(() => selectedService ? findDurationOption(selectedService, formData.durationMinutes) : null, [selectedService, formData.durationMinutes]);
+
   useEffect(() => {
-    const handleOpen = () => {
-      setFormData(createInitialForm());
+    const applySession = (nextForm, preferredStep = 'therapist') => {
+      const stored = readStoredSession();
+      if (!stored) {
+        setEmailDraft({ email: '', name: '', phone: '' });
+        setStep('email');
+        return nextForm;
+      }
+      setEmailDraft({ email: stored.customerEmail, name: stored.customerName || '', phone: stored.phone || '' });
+      setStep(preferredStep);
+      return {
+        ...nextForm,
+        customerEmail: stored.customerEmail,
+        customerName: stored.customerName || nextForm.customerName,
+        phone: stored.phone || nextForm.phone
+      };
+    };
+
+    const openModal = event => {
+      const serviceName = serviceToCatalogName(event?.detail?.service);
       setCreatedAppointment(null);
       setError('');
-      setStep(1);
+      setIsSubmitting(false);
+      setFormData(applySession(createInitialForm(serviceName), 'therapist'));
       setIsOpen(true);
     };
 
-    const openBookingModalWithService = event => {
-      const serviceName = event?.detail?.service?.name || '';
-      setFormData(createInitialForm(serviceName));
-      setCreatedAppointment(null);
-      setError('');
-      setStep(serviceName ? 2 : 1);
-      setIsOpen(true);
-    };
-
-    window.addEventListener('open-booking-modal', handleOpen);
-    window.addEventListener('open-booking-modal-with-service', openBookingModalWithService);
-
+    window.addEventListener('open-booking-modal', openModal);
+    window.addEventListener('open-booking-modal-with-service', openModal);
     return () => {
-      window.removeEventListener('open-booking-modal', handleOpen);
-      window.removeEventListener('open-booking-modal-with-service', openBookingModalWithService);
+      window.removeEventListener('open-booking-modal', openModal);
+      window.removeEventListener('open-booking-modal-with-service', openModal);
     };
   }, []);
 
-  const selectedService = services.find(service => service.name === formData.service);
-
-  const handleInputChange = (field, value) => {
+  const updateField = (field, value) => {
     setFormData(current => ({ ...current, [field]: value }));
     if (error) setError('');
   };
 
-  const validateForm = () => {
+  const handleEmailContinue = event => {
+    event.preventDefault();
+    const session = getDefaultBookingSession(emailDraft);
+    if (!isValidEmail(session.customerEmail)) {
+      setError('Please enter a valid email address to continue.');
+      return;
+    }
+    saveStoredSession(session);
+    setFormData(current => ({
+      ...current,
+      customerEmail: session.customerEmail,
+      customerName: session.customerName || current.customerName,
+      phone: session.phone || current.phone
+    }));
+    setError('');
+    setStep('therapist');
+  };
+
+  const handleSelectTherapist = therapistId => {
+    const therapist = findWebsiteTherapist(therapistId);
+    const nextServices = servicesForTherapist(therapistId);
+    const currentServiceAllowed = nextServices.some(service => service.name === formData.service);
+    const nextService = currentServiceAllowed ? selectedService : nextServices[0];
+    const option = nextService ? getDefaultDurationOption(nextService) : null;
+    setFormData(current => ({
+      ...current,
+      requestedTechnicianId: therapist.id,
+      service: nextService?.name || '',
+      durationMinutes: option?.durationMinutes || '',
+      totalAmount: option?.price || 0
+    }));
+    if (error) setError('');
+  };
+
+  const handleSelectService = (service, option) => {
+    setFormData(current => ({
+      ...current,
+      service: service.name,
+      durationMinutes: option.durationMinutes,
+      totalAmount: option.price
+    }));
+    if (error) setError('');
+  };
+
+  const goToServiceStep = () => {
+    if (!formData.service && availableServices[0]) {
+      const nextService = availableServices[0];
+      const option = getDefaultDurationOption(nextService);
+      setFormData(current => ({
+        ...current,
+        service: nextService.name,
+        durationMinutes: option.durationMinutes,
+        totalAmount: option.price
+      }));
+    }
+    setStep('service');
+  };
+
+  const validateDetails = () => {
+    if (!isValidEmail(formData.customerEmail)) return 'Please continue with a valid email first.';
+    if (!formData.requestedTechnicianId) return 'Please select a therapist.';
+    if (!formData.service || !selectedDuration) return 'Please select a service and duration.';
     if (!formData.customerName.trim()) return 'Please enter your full name.';
     if (!formData.phone.trim()) return 'Please enter your WhatsApp or phone number.';
-    if (formData.email && !formData.email.includes('@')) return 'Please enter a valid email address or leave it blank.';
-    if (!formData.service) return 'Please select a service.';
     if (!formData.preferredDate) return 'Please select your preferred date.';
     if (formData.preferredDate < getTodayDate()) return 'Please select today or a future date.';
     if (!formData.preferredTime) return 'Please select your preferred time.';
     if (!formData.area.trim()) return 'Please enter your area.';
-    if (!formData.addressNote.trim()) return 'Please enter your building, condo, hotel, or address note.';
-    if (!Number(formData.peopleCount) || Number(formData.peopleCount) < 1) return 'Please enter at least 1 person.';
-    if (!formData.paymentMethod) return 'Please select a payment method.';
+    if (!formData.addressNote.trim()) return 'Please enter your unit, building, condo, hotel, or address note.';
     return null;
-  };
-
-  const resetForm = () => {
-    setFormData(createInitialForm());
-    setStep(1);
-    setCreatedAppointment(null);
-    setError('');
-  };
-
-  const handleClose = () => {
-    if (step === 3) resetForm();
-    setIsOpen(false);
   };
 
   const handleSubmit = async event => {
     event.preventDefault();
-
-    const validationError = validateForm();
+    const validationError = validateDetails();
     if (validationError) {
       setError(validationError);
       return;
@@ -155,37 +297,66 @@ export default function BookingModal() {
     setIsSubmitting(true);
     setError('');
 
+    const selectedServices = [{
+      serviceName: formData.service,
+      durationMinutes: Number(formData.durationMinutes),
+      price: Number(formData.totalAmount)
+    }];
+
+    const requestPayload = {
+      source: 'website',
+      customerName: formData.customerName,
+      customerEmail: formData.customerEmail,
+      phone: formData.phone,
+      requestedTechnicianId: selectedTherapist.id,
+      requestedTechnicianName: selectedTherapist.name,
+      therapistPreference: selectedTherapist.therapistPreference || 'any_available',
+      selectedTherapistSpecialties: selectedTherapist.specialties,
+      selectedServices,
+      service: formData.service,
+      durationMinutes: Number(formData.durationMinutes),
+      totalAmount: Number(formData.totalAmount),
+      currency: 'PHP',
+      preferredDate: formData.preferredDate,
+      preferredTime: formData.preferredTime,
+      area: formData.area,
+      addressNote: formData.addressNote,
+      peopleCount: 1,
+      paymentMethod: 'cash_after_service',
+      paymentStatus: 'pending_collection',
+      paymentTiming: 'after_service',
+      notes: formData.notes,
+      metadata: {
+        website: 'www.easygospa.com',
+        form: 'BookingModal',
+        submittedFrom: 'public_website',
+        bookingFlow: 'therapist_service_cash'
+      }
+    };
+
     try {
       const response = await fetch('/api/booking-request', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          peopleCount: Number(formData.peopleCount),
-          servicePrice: selectedService?.price || 0,
-          serviceDurationMinutes: Number.parseInt(selectedService?.duration || '90', 10) || 90,
-          metadata: {
-            website: 'www.easygospa.com',
-            form: 'BookingModal',
-            submittedFrom: 'public_website'
-          }
-        })
+        body: JSON.stringify(requestPayload)
       });
       const payload = await response.json().catch(() => null);
-
       if (!response.ok || payload?.ok !== true) {
         throw new Error(payload?.error || 'Booking request could not be submitted.');
       }
 
       setCreatedAppointment({
         id: payload.reference || payload.bookingRequest?.id || '',
-        service: payload.summary?.service || formData.service,
-        preferredDate: payload.summary?.preferredDate || formData.preferredDate,
-        preferredTime: payload.summary?.preferredTime || formData.preferredTime,
-        area: payload.summary?.area || formData.area,
-        paymentMethod: payload.summary?.paymentMethod || formData.paymentMethod
+        therapist: selectedTherapist.name,
+        service: formData.service,
+        durationMinutes: Number(formData.durationMinutes),
+        preferredDate: formData.preferredDate,
+        preferredTime: formData.preferredTime,
+        address: `${formData.area} - ${formData.addressNote}`,
+        totalAmount: Number(formData.totalAmount),
+        paymentMethod: 'Cash after service'
       });
-      setStep(3);
+      setStep('success');
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : 'Booking request could not be submitted.');
     } finally {
@@ -193,205 +364,196 @@ export default function BookingModal() {
     }
   };
 
+  const handleClose = () => {
+    setIsOpen(false);
+    setError('');
+    if (step === 'success') {
+      setCreatedAppointment(null);
+      setFormData(createInitialForm());
+      setStep('email');
+    }
+  };
+
   return (
     <AnimatePresence>
-      {isOpen && (
+      {isOpen ? (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
           onClick={handleClose}
         >
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 40 }}
+            initial={{ opacity: 0, scale: 0.96, y: 32 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 40 }}
+            exit={{ opacity: 0, scale: 0.96, y: 32 }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            className="max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-3xl bg-white shadow-2xl"
             onClick={event => event.stopPropagation()}
           >
-            <div className="sticky top-0 bg-white rounded-t-3xl border-b border-gray-100 p-5 sm:p-6 flex items-center justify-between z-10">
+            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-100 bg-white p-5 sm:p-6">
               <div className="flex items-center gap-3">
-                <Sparkles className="w-6 h-6 text-[#2db83d]" />
-                <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#0F0F0F]">Book Your Massage</h2>
+                <Sparkles className="h-6 w-6 text-[#2db83d]" />
+                <div>
+                  <h2 className="font-serif text-xl font-bold text-[#0F0F0F] sm:text-2xl">Book EasyGoSpa</h2>
+                  <p className="text-sm text-gray-500">Therapist first, cash after service</p>
+                </div>
               </div>
-              <button
-                onClick={handleClose}
-                className="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-200 flex items-center justify-center"
-                type="button"
-                aria-label="Close booking modal"
-              >
-                <X className="w-5 h-5 text-gray-600" />
+              <button type="button" onClick={handleClose} className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200" aria-label="Close booking modal">
+                <X className="h-5 w-5 text-gray-600" />
               </button>
             </div>
 
             <div className="p-5 sm:p-6">
-              {error ? (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm"
-                >
-                  {error}
-                </motion.div>
-              ) : null}
+              <div className="mb-6 flex flex-wrap gap-2">
+                <StepPill active={step === 'email'} done={['therapist', 'service', 'details', 'success'].includes(step)}>Email</StepPill>
+                <StepPill active={step === 'therapist'} done={['service', 'details', 'success'].includes(step)}>Therapist</StepPill>
+                <StepPill active={step === 'service'} done={['details', 'success'].includes(step)}>Service</StepPill>
+                <StepPill active={step === 'details'} done={step === 'success'}>Details</StepPill>
+              </div>
 
-              {step === 1 ? (
-                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
-                  <div className="text-center mb-6">
-                    <p className="text-gray-600">Step 1 of 2: Select your service</p>
-                  </div>
+              {error ? <div className="mb-5 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</div> : null}
 
-                  <div className="grid gap-4 max-h-96 overflow-y-auto pr-1">
-                    {services.map(service => (
-                      <button
-                        key={service.name}
-                        onClick={() => {
-                          handleInputChange('service', service.name);
-                          setStep(2);
-                        }}
-                        className={`p-4 rounded-xl border-2 text-left transition-all duration-300 hover:shadow-md ${
-                          formData.service === service.name
-                            ? 'border-[#2db83d] bg-[#2db83d]/5'
-                            : 'border-gray-200 hover:border-[#2db83d]/50'
-                        }`}
-                        type="button"
-                      >
-                        <div className="flex justify-between gap-4 items-center">
-                          <div>
-                            <h3 className="font-serif text-lg font-semibold text-[#0F0F0F]">{service.name}</h3>
-                            <p className="text-sm text-gray-500">{service.duration}</p>
-                          </div>
-                          <div className="text-right text-[#2db83d] font-bold">PHP {service.price.toLocaleString()}</div>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </motion.div>
-              ) : null}
-
-              {step === 2 ? (
-                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
-                  <div className="text-center mb-6">
-                    <p className="text-gray-600">Step 2 of 2: Booking details</p>
-                    <div className="mt-4 p-4 bg-[#2db83d]/5 rounded-xl">
-                      <p className="font-sans text-lg text-[#0F0F0F]">
-                        {formData.service || 'Selected service'} {selectedService ? `- PHP ${selectedService.price.toLocaleString()}` : ''}
-                      </p>
-                      {selectedService ? <p className="text-sm text-gray-600">{selectedService.duration}</p> : null}
-                    </div>
-                  </div>
-
-                  <form onSubmit={handleSubmit} className="space-y-5">
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2"><User className="w-4 h-4 inline mr-2" />Full Name *</label>
-                        <input className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#2db83d]" onChange={event => handleInputChange('customerName', event.target.value)} placeholder="Your full name" required type="text" value={formData.customerName} />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2"><Phone className="w-4 h-4 inline mr-2" />WhatsApp / Phone *</label>
-                        <input className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#2db83d]" onChange={event => handleInputChange('phone', event.target.value)} placeholder="+63 917 109 8079" required type="tel" value={formData.phone} />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2"><Mail className="w-4 h-4 inline mr-2" />Email Address (Optional)</label>
-                      <input className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#2db83d]" onChange={event => handleInputChange('email', event.target.value)} placeholder="your@email.com" type="email" value={formData.email} />
-                    </div>
-
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2"><Calendar className="w-4 h-4 inline mr-2" />Preferred Date *</label>
-                        <input className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#2db83d]" min={getTodayDate()} onChange={event => handleInputChange('preferredDate', event.target.value)} required type="date" value={formData.preferredDate} />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2"><Clock className="w-4 h-4 inline mr-2" />Preferred Time *</label>
-                        <select className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#2db83d]" onChange={event => handleInputChange('preferredTime', event.target.value)} required value={formData.preferredTime}>
-                          <option value="">Select time</option>
-                          {timeSlots.map(time => <option key={time} value={time}>{time}</option>)}
-                        </select>
-                      </div>
-                    </div>
-
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2"><MapPin className="w-4 h-4 inline mr-2" />Area *</label>
-                        <input className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#2db83d]" list="easygospa-area-options" onChange={event => handleInputChange('area', event.target.value)} placeholder="BGC, Makati, Taguig..." required value={formData.area} />
-                        <datalist id="easygospa-area-options">
-                          {areaOptions.map(area => <option key={area} value={area} />)}
-                        </datalist>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2"><Users className="w-4 h-4 inline mr-2" />People Count *</label>
-                        <input className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#2db83d]" min="1" onChange={event => handleInputChange('peopleCount', event.target.value)} required type="number" value={formData.peopleCount} />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2"><MapPin className="w-4 h-4 inline mr-2" />Building / Condo / Hotel *</label>
-                      <input className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#2db83d]" onChange={event => handleInputChange('addressNote', event.target.value)} placeholder="Exact building, condo, hotel, or location note" required value={formData.addressNote} />
-                    </div>
-
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Therapist Preference</label>
-                        <select className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#2db83d]" onChange={event => handleInputChange('therapistPreference', event.target.value)} value={formData.therapistPreference}>
-                          {therapistOptions.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2"><CreditCard className="w-4 h-4 inline mr-2" />Payment Method *</label>
-                        <select className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#2db83d]" onChange={event => handleInputChange('paymentMethod', event.target.value)} required value={formData.paymentMethod}>
-                          {paymentOptions.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
-                        </select>
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2"><MessageSquare className="w-4 h-4 inline mr-2" />Notes (Optional)</label>
-                      <textarea className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#2db83d] resize-none" onChange={event => handleInputChange('notes', event.target.value)} placeholder="Any special requests or preferences..." rows={3} value={formData.notes} />
-                    </div>
-
-                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                      <button className="flex-1 py-3 px-6 border border-gray-300 rounded-xl font-sans font-medium text-gray-700 hover:bg-gray-50" onClick={() => setStep(1)} type="button">Back</button>
-                      <button className="flex-1 py-3 px-6 bg-[#2db83d] text-white rounded-xl font-sans font-medium hover:bg-[#45f248] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2" disabled={isSubmitting} type="submit">
-                        {isSubmitting ? <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />Submitting...</> : 'Submit Booking Request'}
-                      </button>
-                    </div>
-                  </form>
-                </motion.div>
-              ) : null}
-
-              {step === 3 ? (
-                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center space-y-5 py-6 px-2">
-                  <div className="w-16 h-16 md:w-20 md:h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-                    <Check className="w-8 h-8 md:w-10 md:h-10 text-green-600" />
-                  </div>
-
+              {step === 'email' ? (
+                <form onSubmit={handleEmailContinue} className="space-y-5">
                   <div>
-                    <h3 className="font-serif text-2xl md:text-3xl font-bold text-[#0F0F0F] mb-2">Booking Request Received</h3>
-                    <p className="text-gray-600">Our team will contact you on WhatsApp to confirm therapist availability.</p>
+                    <h3 className="font-serif text-2xl font-bold text-[#0F0F0F]">Continue with email</h3>
+                    <p className="mt-2 text-sm text-gray-600">Use your email for this booking. Final email verification or OTP will be connected when the auth provider is added.</p>
                   </div>
-
-                  <div className="bg-gradient-to-br from-[#2db83d]/10 to-[#45f248]/10 rounded-2xl p-4 md:p-6 text-left border-2 border-[#2db83d]/30 mx-auto max-w-lg shadow-lg">
-                    <div className="space-y-3 text-sm">
-                      <div className="flex justify-between gap-4"><strong>Reference:</strong><span className="font-mono text-[#2db83d]">{createdAppointment?.id ? `#${createdAppointment.id}` : 'Pending'}</span></div>
-                      <div className="flex justify-between gap-4"><strong>Service:</strong><span className="text-right">{createdAppointment?.service}</span></div>
-                      <div className="flex justify-between gap-4"><strong>Date:</strong><span className="text-right">{formatDate(createdAppointment?.preferredDate)}</span></div>
-                      <div className="flex justify-between gap-4"><strong>Time:</strong><span>{createdAppointment?.preferredTime}</span></div>
-                      <div className="flex justify-between gap-4"><strong>Area:</strong><span>{createdAppointment?.area}</span></div>
-                      <div className="flex justify-between gap-4"><strong>Payment:</strong><span className="text-right">{formatPaymentMethod(createdAppointment?.paymentMethod)}</span></div>
+                  <label className="block text-sm font-medium text-gray-700"><Mail className="mr-2 inline h-4 w-4" />Email *</label>
+                  <input className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-[#2db83d] focus:outline-none" type="email" value={emailDraft.email} onChange={event => setEmailDraft(current => ({ ...current, email: event.target.value }))} placeholder="you@example.com" required />
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div>
+                      <label className="mb-2 block text-sm font-medium text-gray-700">Name optional</label>
+                      <input className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-[#2db83d] focus:outline-none" value={emailDraft.name} onChange={event => setEmailDraft(current => ({ ...current, name: event.target.value }))} placeholder="Your name" />
+                    </div>
+                    <div>
+                      <label className="mb-2 block text-sm font-medium text-gray-700">Phone optional</label>
+                      <input className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-[#2db83d] focus:outline-none" value={emailDraft.phone} onChange={event => setEmailDraft(current => ({ ...current, phone: event.target.value }))} placeholder="WhatsApp number" />
                     </div>
                   </div>
+                  <button type="submit" className="w-full rounded-xl bg-[#2db83d] px-6 py-3 font-semibold text-white hover:bg-[#168823]">Continue with email</button>
+                </form>
+              ) : null}
 
-                  <button className="w-full max-w-lg py-3 px-6 bg-gray-100 text-gray-700 rounded-xl font-sans font-medium hover:bg-gray-200" onClick={handleClose} type="button">Close</button>
-                </motion.div>
+              {step === 'therapist' ? (
+                <div className="space-y-5">
+                  <div>
+                    <h3 className="font-serif text-2xl font-bold text-[#0F0F0F]">Choose your therapist</h3>
+                    <p className="mt-2 text-sm text-gray-600">Service area labels are approximate. We do not show fake GPS distance.</p>
+                  </div>
+                  <div className="grid gap-4">
+                    {websiteTherapists.map(therapist => <TherapistCard key={therapist.id} therapist={therapist} selected={formData.requestedTechnicianId === therapist.id} onSelect={handleSelectTherapist} />)}
+                  </div>
+                  <button type="button" onClick={goToServiceStep} className="w-full rounded-xl bg-[#2db83d] px-6 py-3 font-semibold text-white hover:bg-[#168823]">Select service</button>
+                </div>
+              ) : null}
+
+              {step === 'service' ? (
+                <div className="space-y-5">
+                  <div>
+                    <h3 className="font-serif text-2xl font-bold text-[#0F0F0F]">Choose service and duration</h3>
+                    <p className="mt-2 text-sm text-gray-600">Showing services available for {selectedTherapist.name}.</p>
+                  </div>
+                  <div className="grid gap-4">
+                    {availableServices.map(service => <ServiceCard key={service.id} service={service} selectedDuration={formData.service === service.name ? Number(formData.durationMinutes) : 0} onSelect={handleSelectService} />)}
+                  </div>
+                  <div className="rounded-2xl bg-gray-50 p-4">
+                    <div className="flex items-center justify-between gap-4">
+                      <span className="font-semibold text-gray-700">Total amount</span>
+                      <span className="text-xl font-bold text-[#2db83d]">{money(formData.totalAmount)}</span>
+                    </div>
+                  </div>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <button type="button" onClick={() => setStep('therapist')} className="rounded-xl border border-gray-300 px-6 py-3 font-medium text-gray-700 hover:bg-gray-50">Back</button>
+                    <button type="button" onClick={() => setStep('details')} disabled={!formData.service || !selectedDuration} className="rounded-xl bg-[#2db83d] px-6 py-3 font-semibold text-white hover:bg-[#168823] disabled:cursor-not-allowed disabled:opacity-60">Book now</button>
+                  </div>
+                </div>
+              ) : null}
+
+              {step === 'details' ? (
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <div>
+                    <h3 className="font-serif text-2xl font-bold text-[#0F0F0F]">Service details</h3>
+                    <p className="mt-2 text-sm text-gray-600">Payment will be collected after the massage service.</p>
+                  </div>
+                  <div className="rounded-2xl bg-[#2db83d]/5 p-4 text-sm text-gray-700">
+                    <div className="flex justify-between gap-4"><span>Therapist</span><strong className="text-right">{selectedTherapist.name}</strong></div>
+                    <div className="mt-2 flex justify-between gap-4"><span>Service</span><strong className="text-right">{formData.service} / {formData.durationMinutes} mins</strong></div>
+                    <div className="mt-2 flex justify-between gap-4"><span>Total</span><strong>{money(formData.totalAmount)}</strong></div>
+                    <div className="mt-2 flex justify-between gap-4"><span>Payment</span><strong>Cash after service</strong></div>
+                  </div>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div>
+                      <label className="mb-2 block text-sm font-medium text-gray-700"><User className="mr-2 inline h-4 w-4" />Full name *</label>
+                      <input className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-[#2db83d] focus:outline-none" value={formData.customerName} onChange={event => updateField('customerName', event.target.value)} placeholder="Your full name" required />
+                    </div>
+                    <div>
+                      <label className="mb-2 block text-sm font-medium text-gray-700"><Phone className="mr-2 inline h-4 w-4" />WhatsApp / Phone *</label>
+                      <input className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-[#2db83d] focus:outline-none" value={formData.phone} onChange={event => updateField('phone', event.target.value)} placeholder="+63 900 000 0000" required />
+                    </div>
+                  </div>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div>
+                      <label className="mb-2 block text-sm font-medium text-gray-700"><Calendar className="mr-2 inline h-4 w-4" />Preferred date *</label>
+                      <input className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-[#2db83d] focus:outline-none" type="date" min={getTodayDate()} value={formData.preferredDate} onChange={event => updateField('preferredDate', event.target.value)} required />
+                    </div>
+                    <div>
+                      <label className="mb-2 block text-sm font-medium text-gray-700"><Clock className="mr-2 inline h-4 w-4" />Preferred time *</label>
+                      <select className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-[#2db83d] focus:outline-none" value={formData.preferredTime} onChange={event => updateField('preferredTime', event.target.value)} required>
+                        <option value="">Select time</option>
+                        {timeSlots.map(time => <option key={time} value={time}>{time}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="mb-2 block text-sm font-medium text-gray-700"><MapPin className="mr-2 inline h-4 w-4" />Area *</label>
+                    <input className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-[#2db83d] focus:outline-none" list="easygospa-area-options" value={formData.area} onChange={event => updateField('area', event.target.value)} placeholder="BGC, Makati, Taguig" required />
+                    <datalist id="easygospa-area-options">{areaOptions.map(area => <option key={area} value={area} />)}</datalist>
+                  </div>
+                  <div>
+                    <label className="mb-2 block text-sm font-medium text-gray-700"><MapPin className="mr-2 inline h-4 w-4" />Address note *</label>
+                    <input className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-[#2db83d] focus:outline-none" value={formData.addressNote} onChange={event => updateField('addressNote', event.target.value)} placeholder="Unit, floor, building, gate instructions, therapist request" required />
+                  </div>
+                  <div>
+                    <label className="mb-2 block text-sm font-medium text-gray-700"><MessageSquare className="mr-2 inline h-4 w-4" />Notes optional</label>
+                    <textarea className="w-full resize-none rounded-xl border border-gray-200 px-4 py-3 focus:border-[#2db83d] focus:outline-none" rows={3} value={formData.notes} onChange={event => updateField('notes', event.target.value)} placeholder="Any special request" />
+                  </div>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <button type="button" onClick={() => setStep('service')} className="rounded-xl border border-gray-300 px-6 py-3 font-medium text-gray-700 hover:bg-gray-50">Back</button>
+                    <button type="submit" disabled={isSubmitting} className="flex items-center justify-center gap-2 rounded-xl bg-[#2db83d] px-6 py-3 font-semibold text-white hover:bg-[#168823] disabled:cursor-not-allowed disabled:opacity-60">
+                      {isSubmitting ? <><span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />Submitting...</> : 'Submit booking request'}
+                    </button>
+                  </div>
+                </form>
+              ) : null}
+
+              {step === 'success' ? (
+                <div className="space-y-5 py-6 text-center">
+                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100"><Check className="h-8 w-8 text-green-600" /></div>
+                  <div>
+                    <h3 className="font-serif text-3xl font-bold text-[#0F0F0F]">Booking request submitted</h3>
+                    <p className="mt-2 text-gray-600">Our team will contact you on WhatsApp to confirm therapist availability.</p>
+                  </div>
+                  <div className="mx-auto max-w-xl rounded-2xl border border-[#2db83d]/30 bg-[#2db83d]/5 p-5 text-left text-sm">
+                    <div className="grid gap-3">
+                      <div className="flex justify-between gap-4"><strong>Reference</strong><span className="text-right font-mono text-[#168823]">{createdAppointment?.id || 'Pending'}</span></div>
+                      <div className="flex justify-between gap-4"><strong>Selected therapist</strong><span className="text-right">{createdAppointment?.therapist}</span></div>
+                      <div className="flex justify-between gap-4"><strong>Selected service</strong><span className="text-right">{createdAppointment?.service} / {createdAppointment?.durationMinutes} mins</span></div>
+                      <div className="flex justify-between gap-4"><strong>Date/time</strong><span className="text-right">{formatDate(createdAppointment?.preferredDate)} {createdAppointment?.preferredTime}</span></div>
+                      <div className="flex justify-between gap-4"><strong>Address</strong><span className="text-right">{createdAppointment?.address}</span></div>
+                      <div className="flex justify-between gap-4"><strong>Total amount</strong><span className="text-right">{money(createdAppointment?.totalAmount)}</span></div>
+                      <div className="flex justify-between gap-4"><strong>Payment</strong><span className="text-right">{createdAppointment?.paymentMethod}</span></div>
+                    </div>
+                  </div>
+                  <button type="button" onClick={handleClose} className="w-full max-w-xl rounded-xl bg-gray-100 px-6 py-3 font-medium text-gray-700 hover:bg-gray-200">Close</button>
+                </div>
               ) : null}
             </div>
           </motion.div>
         </motion.div>
-      )}
+      ) : null}
     </AnimatePresence>
   );
 }

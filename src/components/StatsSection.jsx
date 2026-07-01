@@ -5,7 +5,7 @@ import { Users, Star, Award, Clock } from "lucide-react";
 
 const stats = [
   { icon: Users, label: "Happy Customers", value: 5000, suffix: "+" },
-  { icon: Star, label: "Customer Rating", value: 4.9, prefix: "" },
+  { icon: Star, label: "Verified Reviews", value: 0, suffix: "" },
   { icon: Award, label: "Verified Therapists", value: 50, suffix: "+" },
   { icon: Clock, label: "Service Hours", value: 24, suffix: "/7" },
 ];

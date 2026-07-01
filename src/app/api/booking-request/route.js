@@ -58,11 +58,20 @@ export async function POST(request) {
       customer: payload?.customer || null,
       thread: payload?.thread || null,
       summary: {
+        customerEmail: aiOfficePayload.customerEmail,
+        requestedTechnicianId: aiOfficePayload.requestedTechnicianId,
+        requestedTechnicianName: aiOfficePayload.requestedTechnicianName,
         service: aiOfficePayload.service,
+        selectedServices: aiOfficePayload.selectedServices,
+        durationMinutes: aiOfficePayload.durationMinutes,
+        totalAmount: aiOfficePayload.totalAmount,
+        currency: aiOfficePayload.currency,
         preferredDate: aiOfficePayload.preferredDate,
         preferredTime: aiOfficePayload.preferredTime,
         area: aiOfficePayload.area,
-        paymentMethod: aiOfficePayload.paymentMethod
+        paymentMethod: aiOfficePayload.paymentMethod,
+        paymentStatus: aiOfficePayload.paymentStatus,
+        paymentTiming: aiOfficePayload.paymentTiming
       },
       externalSend: false,
       customerMessageSent: false,

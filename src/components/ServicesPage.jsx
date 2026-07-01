@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Clock, Star, ArrowRight, Sparkles } from "lucide-react";
+import { Clock, ArrowRight, Sparkles } from "lucide-react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Head from "next/head";
 
@@ -233,13 +233,8 @@ export default function ServicesPage() {
                   <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-3">
                     {service.description}
                   </p>
-
-                  {/* Rating */}
-                  <div className="flex items-center gap-1 mb-4">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 text-[#2db83d] fill-current" />
-                    ))}
-                    <span className="text-sm text-gray-500 ml-2">(4.9)</span>
+                  <div className="mb-4 rounded-full bg-gray-100 px-3 py-2 text-sm text-gray-600">
+                    No verified reviews yet
                   </div>
                   
                   <button 
