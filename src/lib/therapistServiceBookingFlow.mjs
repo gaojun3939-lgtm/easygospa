@@ -149,3 +149,9 @@ export function findDurationOption(service, durationMinutes) {
   const parsed = Number(durationMinutes);
   return service?.durationOptions?.find(option => option.durationMinutes === parsed) || getDefaultDurationOption(service);
 }
+
+export function findExactDurationOption(service, durationMinutes) {
+  const parsed = Number(durationMinutes);
+  if (!Number.isFinite(parsed)) return null;
+  return service?.durationOptions?.find(option => option.durationMinutes === parsed) || null;
+}

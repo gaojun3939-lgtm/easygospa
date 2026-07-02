@@ -7,7 +7,7 @@ import {
   BOOKING_FLOW_STORAGE_KEY,
   concreteTherapistsForWall,
   findBookingServiceByName,
-  findDurationOption,
+  findExactDurationOption,
   findWebsiteTherapist,
   getDefaultBookingSession,
   getDefaultDurationOption,
@@ -58,6 +58,19 @@ function createInitialForm(serviceName = '') {
     area: '',
     addressNote: '',
     notes: ''
+  };
+}
+
+function resolveSelectedServiceOption(formData) {
+  const service = findBookingServiceByName(formData.service);
+  if (!service) return null;
+  const option = findExactDurationOption(service, formData.durationMinutes);
+  if (!option) return null;
+  return {
+    service,
+    durationMinutes: option.durationMinutes,
+    price: option.price,
+    currency: 'PHP'
   };
 }
 
@@ -264,7 +277,9 @@ export default function BookingModal() {
   }, [formData.preferredService, wallSearch]);
   const availableServices = useMemo(() => servicesForTherapist(formData.requestedTechnicianId || 'any_available'), [formData.requestedTechnicianId]);
   const selectedService = useMemo(() => findBookingServiceByName(formData.service), [formData.service]);
-  const selectedDuration = useMemo(() => selectedService ? findDurationOption(selectedService, formData.durationMinutes) : null, [selectedService, formData.durationMinutes]);
+  const selectedDuration = useMemo(() => selectedService ? findExactDurationOption(selectedService, formData.durationMinutes) : null, [selectedService, formData.durationMinutes]);
+  const selectedServiceOption = useMemo(() => resolveSelectedServiceOption(formData), [formData]);
+  const selectedTotalAmount = selectedServiceOption?.price ?? 0;
 
   useEffect(() => {
     const openModal = event => {
@@ -333,7 +348,7 @@ export default function BookingModal() {
   };
 
   const validateDetails = () => {
-    if (!formData.service || !selectedDuration) return 'Please select a service and duration.';
+    if (!formData.service || !selectedServiceOption) return 'Please select a valid service duration and price before continuing.';
     if (!isValidEmail(formData.customerEmail)) return 'Please continue with a valid email first.';
     if (!formData.customerName.trim()) return 'Please enter your full name.';
     if (!formData.phone.trim()) return 'Please enter your WhatsApp or phone number.';
@@ -375,10 +390,17 @@ export default function BookingModal() {
     setIsSubmitting(true);
     setError('');
 
+    const selectedOption = selectedServiceOption;
+    if (!selectedOption) {
+      setIsSubmitting(false);
+      setError('Please select a valid service duration and price before submitting.');
+      return;
+    }
+
     const selectedServices = [{
-      serviceName: formData.service,
-      durationMinutes: Number(formData.durationMinutes),
-      price: Number(formData.totalAmount),
+      serviceName: selectedOption.service.name,
+      durationMinutes: selectedOption.durationMinutes,
+      price: selectedOption.price,
       currency: 'PHP'
     }];
 
@@ -393,9 +415,9 @@ export default function BookingModal() {
       therapistGenderPreference: selectedTherapist.therapistPreference === 'female_preferred' ? 'female' : selectedTherapist.therapistPreference === 'male_preferred' ? 'male' : '',
       selectedTherapistSpecialties: selectedTherapist.specialties,
       selectedServices,
-      service: formData.service,
-      durationMinutes: Number(formData.durationMinutes),
-      totalAmount: Number(formData.totalAmount),
+      service: selectedOption.service.name,
+      durationMinutes: selectedOption.durationMinutes,
+      totalAmount: selectedOption.price,
       currency: 'PHP',
       preferredDate: formData.preferredDate,
       preferredTime: formData.preferredTime,
@@ -430,12 +452,12 @@ export default function BookingModal() {
       setCreatedAppointment({
         id: reference,
         therapist: selectedTherapist.name,
-        service: formData.service,
-        durationMinutes: Number(formData.durationMinutes),
+        service: selectedOption.service.name,
+        durationMinutes: selectedOption.durationMinutes,
         preferredDate: formData.preferredDate,
         preferredTime: formData.preferredTime,
         address: `${formData.area} - ${formData.addressNote}`,
-        totalAmount: Number(formData.totalAmount),
+        totalAmount: selectedOption.price,
         paymentMethod: 'Cash after service'
       });
       setStep('success');
@@ -511,7 +533,7 @@ export default function BookingModal() {
                 </div>
               ) : null}
 
-              {step === 'detail' ? <TherapistDetail therapist={selectedTherapist} availableServices={availableServices} selectedServiceName={formData.service} selectedDuration={Number(formData.durationMinutes)} totalAmount={formData.totalAmount} onSelectService={handleSelectService} onBack={() => setStep('wall')} onContinue={() => setStep('email')} /> : null}
+              {step === 'detail' ? <TherapistDetail therapist={selectedTherapist} availableServices={availableServices} selectedServiceName={formData.service} selectedDuration={Number(formData.durationMinutes)} totalAmount={selectedTotalAmount} onSelectService={handleSelectService} onBack={() => setStep('wall')} onContinue={() => setStep('email')} /> : null}
 
               {step === 'email' ? (
                 <form onSubmit={handleEmailContinue} className="space-y-5">
@@ -522,7 +544,7 @@ export default function BookingModal() {
                   <div className="rounded-2xl bg-[#2db83d]/5 p-4 text-sm text-gray-700">
                     <div className="flex justify-between gap-4"><span>Therapist</span><strong className="text-right">{selectedTherapist.name}</strong></div>
                     <div className="mt-2 flex justify-between gap-4"><span>Service</span><strong className="text-right">{formData.service} / {formData.durationMinutes} mins</strong></div>
-                    <div className="mt-2 flex justify-between gap-4"><span>Total</span><strong>{money(formData.totalAmount)}</strong></div>
+                    <div className="mt-2 flex justify-between gap-4"><span>Total</span><strong>{money(selectedTotalAmount)}</strong></div>
                   </div>
                   <label className="block text-sm font-medium text-gray-700"><Mail className="mr-2 inline h-4 w-4" />Email *</label>
                   <input className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-[#2db83d] focus:outline-none" type="email" value={emailDraft.email} onChange={event => setEmailDraft(current => ({ ...current, email: event.target.value }))} placeholder="you@example.com" data-testid="booking-email" required />
@@ -598,7 +620,7 @@ export default function BookingModal() {
                       <div className="flex justify-between gap-4"><strong>Service</strong><span className="text-right">{formData.service} / {formData.durationMinutes} mins</span></div>
                       <div className="flex justify-between gap-4"><strong>Date/time</strong><span className="text-right">{formatDate(formData.preferredDate)} {formData.preferredTime}</span></div>
                       <div className="flex justify-between gap-4"><strong>Address</strong><span className="text-right">{formData.area} - {formData.addressNote}</span></div>
-                      <div className="flex justify-between gap-4"><strong>Total</strong><span className="text-right font-bold text-[#168823]">{money(formData.totalAmount)}</span></div>
+                      <div className="flex justify-between gap-4"><strong>Total</strong><span className="text-right font-bold text-[#168823]">{money(selectedTotalAmount)}</span></div>
                       <div className="flex justify-between gap-4"><strong>Payment</strong><span className="text-right">Cash after service</span></div>
                     </div>
                   </div>

@@ -74,7 +74,7 @@ export function normalizeWebsiteBookingRequest(input = {}) {
   const phone = requiredText(input.phone || input.whatsapp, 'phone');
   const selectedServices = normalizeSelectedServices(input);
   const primaryService = selectedServices[0];
-  const service = requiredText(input.service || primaryService.serviceName, 'service');
+  const service = requiredText(primaryService.serviceName || input.service, 'service');
   const preferredDate = requiredText(input.preferredDate || input.preferred_date || input.scheduledDate, 'preferredDate');
   const preferredTime = requiredText(input.preferredTime || input.preferred_time || input.scheduledTime, 'preferredTime');
   const area = requiredText(input.area, 'area');
@@ -87,8 +87,8 @@ export function normalizeWebsiteBookingRequest(input = {}) {
   const selectedTherapistSpecialties = Array.isArray(input.selectedTherapistSpecialties)
     ? input.selectedTherapistSpecialties.map(item => cleanText(item, 80)).filter(Boolean)
     : [];
-  const durationMinutes = Math.max(30, Math.round(Number(input.durationMinutes || primaryService.durationMinutes || 60)));
-  const totalAmount = Math.max(0, Number(input.totalAmount || selectedServices.reduce((sum, item) => sum + Number(item.price || 0), 0)));
+  const durationMinutes = Math.max(30, Math.round(Number(primaryService.durationMinutes || input.durationMinutes || 60)));
+  const totalAmount = Math.max(0, Number(selectedServices.reduce((sum, item) => sum + Number(item.price || 0), 0) || input.totalAmount || 0));
   const notes = cleanText(input.notes || input.message || input.customerNote, 500);
   const paymentMethod = PAYMENT_METHOD;
   const paymentStatus = 'pending_collection';
