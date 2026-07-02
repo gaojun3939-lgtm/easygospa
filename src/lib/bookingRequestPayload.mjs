@@ -1,5 +1,5 @@
 ﻿const PAYMENT_METHOD = 'cash_after_service';
-const THERAPIST_PREFERENCES = new Set(['any_available', 'female_preferred', 'male_preferred']);
+const THERAPIST_PREFERENCES = new Set(['any_available', 'female_preferred', 'male_preferred', 'specific_therapist']);
 
 export class BookingRequestValidationError extends Error {
   constructor(message, code = 'INVALID_BOOKING_REQUEST') {
@@ -26,6 +26,8 @@ function normalizePeopleCount(value) {
 }
 
 function normalizeTherapistGenderPreference(value) {
+  const direct = cleanText(value, 40).toLowerCase();
+  if (direct === 'female' || direct === 'male') return direct;
   const preference = THERAPIST_PREFERENCES.has(value) ? value : 'any_available';
   if (preference === 'female_preferred') return 'female';
   if (preference === 'male_preferred') return 'male';
@@ -81,7 +83,7 @@ export function normalizeWebsiteBookingRequest(input = {}) {
   const requestedTechnicianId = cleanText(input.requestedTechnicianId || 'any_available', 120);
   const requestedTechnicianName = cleanText(input.requestedTechnicianName || 'Any available therapist', 120);
   const therapistPreference = THERAPIST_PREFERENCES.has(input.therapistPreference) ? input.therapistPreference : 'any_available';
-  const therapistGenderPreference = normalizeTherapistGenderPreference(therapistPreference);
+  const therapistGenderPreference = normalizeTherapistGenderPreference(input.therapistGenderPreference || therapistPreference);
   const selectedTherapistSpecialties = Array.isArray(input.selectedTherapistSpecialties)
     ? input.selectedTherapistSpecialties.map(item => cleanText(item, 80)).filter(Boolean)
     : [];

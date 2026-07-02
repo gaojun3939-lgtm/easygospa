@@ -389,7 +389,8 @@ export default function BookingModal() {
       phone: formData.phone,
       requestedTechnicianId: selectedTherapist.id,
       requestedTechnicianName: selectedTherapist.name,
-      therapistPreference: selectedTherapist.therapistPreference || 'any_available',
+      therapistPreference: selectedTherapist.id === 'any_available' ? 'any_available' : 'specific_therapist',
+      therapistGenderPreference: selectedTherapist.therapistPreference === 'female_preferred' ? 'female' : selectedTherapist.therapistPreference === 'male_preferred' ? 'male' : '',
       selectedTherapistSpecialties: selectedTherapist.specialties,
       selectedServices,
       service: formData.service,
@@ -421,9 +422,13 @@ export default function BookingModal() {
       });
       const payload = await response.json().catch(() => null);
       if (!response.ok || payload?.ok !== true) throw new Error(payload?.error || 'Booking request could not be submitted.');
+      const reference = String(payload.reference || payload.bookingRequest?.id || '').trim();
+      if (!/^mbr-brand-a-[a-z0-9]+$/i.test(reference)) {
+        throw new Error('Booking request was not confirmed by the intake service. Please try again or contact us on WhatsApp.');
+      }
 
       setCreatedAppointment({
-        id: payload.reference || payload.bookingRequest?.id || '',
+        id: reference,
         therapist: selectedTherapist.name,
         service: formData.service,
         durationMinutes: Number(formData.durationMinutes),
@@ -612,7 +617,7 @@ export default function BookingModal() {
                   </div>
                   <div className="mx-auto max-w-xl rounded-2xl border border-[#2db83d]/30 bg-[#2db83d]/5 p-5 text-left text-sm">
                     <div className="grid gap-3">
-                      <div className="flex justify-between gap-4"><strong>Reference</strong><span className="text-right font-mono text-[#168823]">{createdAppointment?.id || 'Pending'}</span></div>
+                      <div className="flex justify-between gap-4"><strong>Reference</strong><span className="text-right font-mono text-[#168823]">{createdAppointment?.id}</span></div>
                       <div className="flex justify-between gap-4"><strong>Selected therapist</strong><span className="text-right">{createdAppointment?.therapist}</span></div>
                       <div className="flex justify-between gap-4"><strong>Selected service</strong><span className="text-right">{createdAppointment?.service} / {createdAppointment?.durationMinutes} mins</span></div>
                       <div className="flex justify-between gap-4"><strong>Date/time</strong><span className="text-right">{formatDate(createdAppointment?.preferredDate)} {createdAppointment?.preferredTime}</span></div>

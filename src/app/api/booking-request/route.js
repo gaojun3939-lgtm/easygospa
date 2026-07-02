@@ -16,6 +16,22 @@ function parseJson(text) {
   }
 }
 
+function extractBookingReference(payload = {}) {
+  const bookingRequest = payload?.bookingRequest || {};
+  return String(
+    bookingRequest.id
+      || bookingRequest.reference
+      || bookingRequest.bookingRequestId
+      || payload?.reference
+      || payload?.bookingRequestId
+      || ''
+  ).trim();
+}
+
+function isValidBookingReference(value = '') {
+  return /^mbr-brand-a-[a-z0-9]+$/i.test(String(value || '').trim());
+}
+
 export async function POST(request) {
   let aiOfficePayload;
   try {
@@ -49,11 +65,20 @@ export async function POST(request) {
     }
 
     const bookingRequest = payload?.bookingRequest || null;
+    const reference = extractBookingReference(payload);
+    if (!isValidBookingReference(reference)) {
+      return json({
+        ok: false,
+        code: 'AIOFFICE_BOOKING_REFERENCE_MISSING',
+        error: 'Booking request was not confirmed by the intake service. Please try again or contact us on WhatsApp.'
+      }, 502);
+    }
+
     return json({
       ok: true,
       mode: 'website_booking_request_proxy',
       providerMode: 'ai_office_public_booking_request',
-      reference: bookingRequest?.id || bookingRequest?.bookingRequestId || payload?.bookingRequestId || '',
+      reference,
       bookingRequest,
       customer: payload?.customer || null,
       thread: payload?.thread || null,
