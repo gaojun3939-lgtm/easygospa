@@ -93,6 +93,8 @@ export function normalizeWebsiteBookingRequest(input = {}) {
   const paymentMethod = PAYMENT_METHOD;
   const paymentStatus = 'pending_collection';
   const paymentTiming = 'after_service';
+  const inputMetadata = input.metadata && typeof input.metadata === 'object' ? input.metadata : {};
+  const catalogSource = cleanText(inputMetadata.catalogSource || input.catalogSource, 80);
 
   const metadata = {
     website: 'www.easygospa.com',
@@ -111,6 +113,7 @@ export function normalizeWebsiteBookingRequest(input = {}) {
     paymentTiming,
     therapistPreference,
     preferredDate,
+    ...(catalogSource ? { catalogSource } : {}),
     source: 'website',
     autoPaid: false,
     financeWrite: false,

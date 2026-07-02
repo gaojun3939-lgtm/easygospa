@@ -14,6 +14,7 @@ import {
   isValidEmail,
   servicesForTherapist
 } from '../lib/therapistServiceBookingFlow.mjs';
+import { getFallbackWebsiteBookingCatalog } from '../lib/bookingCatalogNormalizer.mjs';
 
 const timeSlots = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00', '22:30', '23:00'];
 const areaOptions = ['BGC', 'Makati', 'Taguig', 'Pasay', 'Ortigas', 'Metro Manila'];
@@ -41,8 +42,8 @@ function serviceToCatalogName(service = {}) {
   return service?.name || '';
 }
 
-function createInitialForm(serviceName = '') {
-  const matchedService = findBookingServiceByName(serviceName);
+function createInitialForm(serviceName = '', services = undefined) {
+  const matchedService = findBookingServiceByName(serviceName, services);
   const durationOption = matchedService ? getDefaultDurationOption(matchedService) : null;
   return {
     customerName: '',
@@ -61,8 +62,8 @@ function createInitialForm(serviceName = '') {
   };
 }
 
-function resolveSelectedServiceOption(formData) {
-  const service = findBookingServiceByName(formData.service);
+function resolveSelectedServiceOption(formData, services = undefined) {
+  const service = findBookingServiceByName(formData.service, services);
   if (!service) return null;
   const option = findExactDurationOption(service, formData.durationMinutes);
   if (!option) return null;
@@ -256,6 +257,8 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
 }
 
 export default function BookingModal() {
+  const [bookingCatalog, setBookingCatalog] = useState(() => getFallbackWebsiteBookingCatalog());
+  const [catalogNotice, setCatalogNotice] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [step, setStep] = useState('wall');
   const [formData, setFormData] = useState(createInitialForm());
@@ -266,20 +269,46 @@ export default function BookingModal() {
   const [createdAppointment, setCreatedAppointment] = useState(null);
   const [error, setError] = useState('');
 
-  const selectedTherapist = useMemo(() => findWebsiteTherapist(formData.requestedTechnicianId), [formData.requestedTechnicianId]);
-  const anyAvailableTherapist = useMemo(() => findWebsiteTherapist('any_available'), []);
+  const catalogServices = Array.isArray(bookingCatalog.services) ? bookingCatalog.services : [];
+  const catalogTherapists = Array.isArray(bookingCatalog.therapists) ? bookingCatalog.therapists : [];
+  const catalogUnavailable = Boolean(bookingCatalog.catalogUnavailable || !catalogServices.length || !catalogTherapists.length);
+  const selectedTherapist = useMemo(() => findWebsiteTherapist(formData.requestedTechnicianId, catalogTherapists), [catalogTherapists, formData.requestedTechnicianId]);
+  const anyAvailableTherapist = useMemo(() => findWebsiteTherapist('any_available', catalogTherapists), [catalogTherapists]);
   const wallTherapists = useMemo(() => {
     const query = wallSearch.trim().toLowerCase();
-    return concreteTherapistsForWall(formData.preferredService).filter(therapist => {
+    return concreteTherapistsForWall(formData.preferredService, catalogTherapists).filter(therapist => {
       if (!query) return true;
       return [therapist.name, therapist.serviceArea, therapist.distanceLabel, ...therapist.specialties].join(' ').toLowerCase().includes(query);
     });
-  }, [formData.preferredService, wallSearch]);
-  const availableServices = useMemo(() => servicesForTherapist(formData.requestedTechnicianId || 'any_available'), [formData.requestedTechnicianId]);
-  const selectedService = useMemo(() => findBookingServiceByName(formData.service), [formData.service]);
+  }, [catalogTherapists, formData.preferredService, wallSearch]);
+  const availableServices = useMemo(() => servicesForTherapist(formData.requestedTechnicianId || 'any_available', catalogTherapists, catalogServices), [catalogServices, catalogTherapists, formData.requestedTechnicianId]);
+  const selectedService = useMemo(() => findBookingServiceByName(formData.service, catalogServices), [catalogServices, formData.service]);
   const selectedDuration = useMemo(() => selectedService ? findExactDurationOption(selectedService, formData.durationMinutes) : null, [selectedService, formData.durationMinutes]);
-  const selectedServiceOption = useMemo(() => resolveSelectedServiceOption(formData), [formData]);
+  const selectedServiceOption = useMemo(() => resolveSelectedServiceOption(formData, catalogServices), [catalogServices, formData]);
   const selectedTotalAmount = selectedServiceOption?.price ?? 0;
+
+  useEffect(() => {
+    let active = true;
+    async function loadBookingCatalog() {
+      try {
+        const response = await fetch('/api/booking-catalog', { cache: 'no-store' });
+        const payload = await response.json().catch(() => null);
+        if (!active || !response.ok || payload?.ok !== true) throw new Error('BOOKING_CATALOG_LOAD_FAILED');
+        setBookingCatalog(payload);
+        if (payload.catalogUnavailable) setCatalogNotice('Current service catalog is temporarily unavailable. Please try again later.');
+        else if (payload.fallback) setCatalogNotice('Using our backup service menu while the live catalog reloads.');
+        else setCatalogNotice('');
+      } catch {
+        if (!active) return;
+        setBookingCatalog(getFallbackWebsiteBookingCatalog('website_catalog_proxy_unavailable'));
+        setCatalogNotice('Using our backup service menu while the live catalog reloads.');
+      }
+    }
+    loadBookingCatalog();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     const openModal = event => {
@@ -292,7 +321,7 @@ export default function BookingModal() {
       setIsSubmitting(false);
       setEmailDraft(stored ? { email: stored.customerEmail, name: stored.customerName || '', phone: stored.phone || '' } : { email: '', name: '', phone: '' });
       setFormData(current => {
-        const nextForm = createInitialForm(serviceName);
+        const nextForm = createInitialForm(serviceName, catalogServices);
         return stored ? { ...nextForm, customerEmail: stored.customerEmail, customerName: stored.customerName || current.customerName, phone: stored.phone || current.phone } : nextForm;
       });
       setStep('wall');
@@ -305,7 +334,7 @@ export default function BookingModal() {
       window.removeEventListener('open-booking-modal', openModal);
       window.removeEventListener('open-booking-modal-with-service', openModal);
     };
-  }, []);
+  }, [catalogServices]);
 
   const updateField = (field, value) => {
     setFormData(current => ({ ...current, [field]: value }));
@@ -313,8 +342,8 @@ export default function BookingModal() {
   };
 
   const chooseDefaultServiceForTherapist = (therapistId, preferredServiceName = formData.preferredService || formData.service) => {
-    const nextServices = servicesForTherapist(therapistId);
-    const preferred = findBookingServiceByName(preferredServiceName);
+    const nextServices = servicesForTherapist(therapistId, catalogTherapists, catalogServices);
+    const preferred = findBookingServiceByName(preferredServiceName, catalogServices);
     const preferredAllowed = preferred && nextServices.some(service => service.name === preferred.name);
     const nextService = preferredAllowed ? preferred : nextServices[0];
     const option = nextService ? getDefaultDurationOption(nextService) : null;
@@ -322,7 +351,11 @@ export default function BookingModal() {
   };
 
   const openTherapistDetail = therapistId => {
-    const therapist = findWebsiteTherapist(therapistId);
+    const therapist = findWebsiteTherapist(therapistId, catalogTherapists);
+    if (!therapist) {
+      setError('Current service profiles are temporarily unavailable. Please try again later.');
+      return;
+    }
     const { nextService, option } = chooseDefaultServiceForTherapist(therapist.id);
     setFormData(current => ({ ...current, requestedTechnicianId: therapist.id, service: nextService?.name || '', durationMinutes: option?.durationMinutes || '', totalAmount: option?.price || 0 }));
     setError('');
@@ -348,6 +381,7 @@ export default function BookingModal() {
   };
 
   const validateDetails = () => {
+    if (!selectedTherapist) return 'Current service profiles are temporarily unavailable. Please try again later.';
     if (!formData.service || !selectedServiceOption) return 'Please select a valid service duration and price before continuing.';
     if (!isValidEmail(formData.customerEmail)) return 'Please continue with a valid email first.';
     if (!formData.customerName.trim()) return 'Please enter your full name.';
@@ -401,7 +435,7 @@ export default function BookingModal() {
       serviceName: selectedOption.service.name,
       durationMinutes: selectedOption.durationMinutes,
       price: selectedOption.price,
-      currency: 'PHP'
+      currency: selectedOption.currency || bookingCatalog.currency || 'PHP'
     }];
 
     const requestPayload = {
@@ -418,7 +452,7 @@ export default function BookingModal() {
       service: selectedOption.service.name,
       durationMinutes: selectedOption.durationMinutes,
       totalAmount: selectedOption.price,
-      currency: 'PHP',
+      currency: selectedOption.currency || bookingCatalog.currency || 'PHP',
       preferredDate: formData.preferredDate,
       preferredTime: formData.preferredTime,
       area: formData.area,
@@ -432,7 +466,8 @@ export default function BookingModal() {
         website: 'www.easygospa.com',
         form: 'BookingModal',
         submittedFrom: 'public_website',
-        bookingFlow: 'therapist_wall_detail_service_cash'
+        bookingFlow: 'therapist_wall_detail_service_cash',
+        catalogSource: bookingCatalog.catalogSource || 'local_seed_fallback'
       }
     };
 
@@ -513,6 +548,7 @@ export default function BookingModal() {
                     <h3 className="font-serif text-2xl font-bold text-[#0F0F0F]">Choose your therapist</h3>
                     <p className="mt-2 text-sm text-gray-600">Pick a real service profile first. Availability is confirmed by our team after you submit.</p>
                   </div>
+                  {catalogNotice ? <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">{catalogNotice}</div> : null}
                   <div className="rounded-2xl border border-gray-200 bg-gray-50 p-3">
                     <div className="flex items-center gap-2 rounded-xl bg-white px-3 py-2">
                       <Search className="h-4 w-4 text-gray-400" />
@@ -523,17 +559,18 @@ export default function BookingModal() {
                     </div>
                   </div>
                   <div className="grid gap-4">
-                    {wallTherapists.map(therapist => <TherapistWallCard key={therapist.id} therapist={therapist} selected={formData.requestedTechnicianId === therapist.id} onSelect={openTherapistDetail} />)}
-                    {wallTherapists.length === 0 ? <div className="rounded-2xl border border-gray-200 p-5 text-sm text-gray-600">No therapist matches this search. Try service type or choose any available therapist below.</div> : null}
+                    {!catalogUnavailable ? wallTherapists.map(therapist => <TherapistWallCard key={therapist.id} therapist={therapist} selected={formData.requestedTechnicianId === therapist.id} onSelect={openTherapistDetail} />) : null}
+                    {catalogUnavailable ? <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm text-amber-800">Current service profiles are temporarily unavailable. Please try again later.</div> : null}
+                    {!catalogUnavailable && wallTherapists.length === 0 ? <div className="rounded-2xl border border-gray-200 p-5 text-sm text-gray-600">No therapist matches this search. Try service type or choose any available therapist below.</div> : null}
                   </div>
-                  <div className="space-y-2">
+                  {!catalogUnavailable && anyAvailableTherapist ? <div className="space-y-2">
                     <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Need help matching?</p>
                     <CompactAnyAvailableCard therapist={anyAvailableTherapist} onSelect={openTherapistDetail} />
-                  </div>
+                  </div> : null}
                 </div>
               ) : null}
 
-              {step === 'detail' ? <TherapistDetail therapist={selectedTherapist} availableServices={availableServices} selectedServiceName={formData.service} selectedDuration={Number(formData.durationMinutes)} totalAmount={selectedTotalAmount} onSelectService={handleSelectService} onBack={() => setStep('wall')} onContinue={() => setStep('email')} /> : null}
+              {step === 'detail' && selectedTherapist ? <TherapistDetail therapist={selectedTherapist} availableServices={availableServices} selectedServiceName={formData.service} selectedDuration={Number(formData.durationMinutes)} totalAmount={selectedTotalAmount} onSelectService={handleSelectService} onBack={() => setStep('wall')} onContinue={() => setStep('email')} /> : null}
 
               {step === 'email' ? (
                 <form onSubmit={handleEmailContinue} className="space-y-5">

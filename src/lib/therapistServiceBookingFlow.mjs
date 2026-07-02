@@ -114,18 +114,18 @@ export function getDefaultBookingSession(input = {}) {
   };
 }
 
-export function findBookingServiceByName(name = '') {
+export function findBookingServiceByName(name = '', services = websiteBookingServices) {
   const normalized = String(name || '').trim().toLowerCase();
-  return websiteBookingServices.find(service => service.name.toLowerCase() === normalized) || null;
+  return services.find(service => service.name.toLowerCase() === normalized) || null;
 }
 
-export function findWebsiteTherapist(id = '') {
-  return websiteTherapists.find(therapist => therapist.id === id) || websiteTherapists.find(therapist => therapist.id === 'any_available') || websiteTherapists[0];
+export function findWebsiteTherapist(id = '', therapists = websiteTherapists) {
+  return therapists.find(therapist => therapist.id === id) || therapists.find(therapist => therapist.id === 'any_available') || therapists[0] || null;
 }
 
-export function concreteTherapistsForWall(preferredService = '') {
+export function concreteTherapistsForWall(preferredService = '', therapists = websiteTherapists) {
   const preferred = String(preferredService || '').trim();
-  const concrete = websiteTherapists.filter(therapist => therapist.id !== 'any_available');
+  const concrete = therapists.filter(therapist => therapist.id !== 'any_available');
   if (!preferred) return concrete;
   return [...concrete].sort((a, b) => {
     const aMatch = Array.isArray(a.availableServices) && a.availableServices.includes(preferred) ? 0 : 1;
@@ -134,11 +134,12 @@ export function concreteTherapistsForWall(preferredService = '') {
   });
 }
 
-export function servicesForTherapist(therapistId = '') {
-  const therapist = findWebsiteTherapist(therapistId);
+export function servicesForTherapist(therapistId = '', therapists = websiteTherapists, services = websiteBookingServices) {
+  const therapist = findWebsiteTherapist(therapistId, therapists);
+  if (!therapist) return [];
   const allowed = new Set(therapist.availableServices || []);
-  if (!allowed.size || therapist.id === 'any_available') return websiteBookingServices;
-  return websiteBookingServices.filter(service => allowed.has(service.name));
+  if (!allowed.size || therapist.id === 'any_available') return services;
+  return services.filter(service => allowed.has(service.name));
 }
 
 export function getDefaultDurationOption(service) {
