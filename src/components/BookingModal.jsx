@@ -20,6 +20,13 @@ import { getFallbackWebsiteBookingCatalog } from '../lib/bookingCatalogNormalize
 const timeSlots = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00', '22:30', '23:00'];
 const areaOptions = ['BGC', 'Makati', 'Taguig', 'Pasay', 'Ortigas', 'Metro Manila'];
 const wallFilters = ['Nearby / Serving my area', 'Most booked', 'Service type'];
+const bookingInputClass = 'w-full rounded-xl border border-gray-300 bg-white px-4 py-3 font-medium text-[#0F0F0F] caret-[#0F0F0F] placeholder:text-gray-500 focus:border-[#2db83d] focus:outline-none';
+const bookingTextareaClass = `${bookingInputClass} resize-none`;
+const bookingLabelClass = 'mb-2 block text-sm font-semibold text-slate-800';
+const summaryCardClass = 'rounded-2xl border border-[#2db83d]/30 bg-[#F1FBF3] p-5 text-sm';
+const summaryLabelClass = 'font-semibold text-slate-700';
+const summaryValueClass = 'text-right font-semibold text-[#0F0F0F]';
+const summaryMoneyClass = 'text-right font-bold text-[#0E6F1A]';
 
 function getTodayDate() {
   return new Date().toISOString().split('T')[0];
@@ -617,21 +624,21 @@ export default function BookingModal() {
                     <h3 className="font-serif text-2xl font-bold text-[#0F0F0F]">Use this email for your booking</h3>
                     <p className="mt-2 text-sm text-gray-600">We use email to keep the booking request connected to you. Confirmation still happens on WhatsApp.</p>
                   </div>
-                  <div className="rounded-2xl bg-[#2db83d]/5 p-4 text-sm text-gray-700">
-                    <div className="flex justify-between gap-4"><span>Therapist</span><strong className="text-right">{selectedTherapist.name}</strong></div>
-                    <div className="mt-2 flex justify-between gap-4"><span>Service</span><strong className="text-right">{formData.service} / {formData.durationMinutes} mins</strong></div>
-                    <div className="mt-2 flex justify-between gap-4"><span>Total</span><strong>{money(selectedTotalAmount)}</strong></div>
+                  <div className={summaryCardClass}>
+                    <div className="flex justify-between gap-4"><span className={summaryLabelClass}>Therapist</span><strong className={summaryValueClass}>{selectedTherapist.name}</strong></div>
+                    <div className="mt-2 flex justify-between gap-4"><span className={summaryLabelClass}>Service</span><strong className={summaryValueClass}>{formData.service} / {formData.durationMinutes} mins</strong></div>
+                    <div className="mt-2 flex justify-between gap-4"><span className={summaryLabelClass}>Total</span><strong className={summaryMoneyClass}>{money(selectedTotalAmount)}</strong></div>
                   </div>
-                  <label className="block text-sm font-medium text-gray-700"><Mail className="mr-2 inline h-4 w-4" />Email *</label>
-                  <input className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-[#2db83d] focus:outline-none" type="email" value={emailDraft.email} onChange={event => setEmailDraft(current => ({ ...current, email: event.target.value }))} placeholder="you@example.com" data-testid="booking-email" required />
+                  <label className={bookingLabelClass}><Mail className="mr-2 inline h-4 w-4" />Email *</label>
+                  <input className={bookingInputClass} type="email" value={emailDraft.email} onChange={event => setEmailDraft(current => ({ ...current, email: event.target.value }))} placeholder="you@example.com" data-testid="booking-email" data-readability-field="booking-email" required />
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
-                      <label className="mb-2 block text-sm font-medium text-gray-700">Name optional</label>
-                      <input className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-[#2db83d] focus:outline-none" value={emailDraft.name} onChange={event => setEmailDraft(current => ({ ...current, name: event.target.value }))} placeholder="Your name" />
+                      <label className={bookingLabelClass}>Name optional</label>
+                      <input className={bookingInputClass} value={emailDraft.name} onChange={event => setEmailDraft(current => ({ ...current, name: event.target.value }))} placeholder="Your name" data-readability-field="customerName" />
                     </div>
                     <div>
-                      <label className="mb-2 block text-sm font-medium text-gray-700">Phone optional</label>
-                      <input className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-[#2db83d] focus:outline-none" value={emailDraft.phone} onChange={event => setEmailDraft(current => ({ ...current, phone: event.target.value }))} placeholder="WhatsApp number" />
+                      <label className={bookingLabelClass}>Phone optional</label>
+                      <input className={bookingInputClass} value={emailDraft.phone} onChange={event => setEmailDraft(current => ({ ...current, phone: event.target.value }))} placeholder="WhatsApp number" data-readability-field="phone" />
                     </div>
                   </div>
                   <button type="submit" className="w-full rounded-xl bg-[#2db83d] px-6 py-3 font-semibold text-white hover:bg-[#168823]">Continue with email</button>
@@ -646,39 +653,39 @@ export default function BookingModal() {
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
-                      <label className="mb-2 block text-sm font-medium text-gray-700"><User className="mr-2 inline h-4 w-4" />Full name *</label>
-                      <input className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-[#2db83d] focus:outline-none" value={formData.customerName} onChange={event => updateField('customerName', event.target.value)} placeholder="Your full name" required />
+                      <label className={bookingLabelClass}><User className="mr-2 inline h-4 w-4" />Full name *</label>
+                      <input className={bookingInputClass} value={formData.customerName} onChange={event => updateField('customerName', event.target.value)} placeholder="Your full name" data-readability-field="customerName" required />
                     </div>
                     <div>
-                      <label className="mb-2 block text-sm font-medium text-gray-700"><Phone className="mr-2 inline h-4 w-4" />WhatsApp / Phone *</label>
-                      <input className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-[#2db83d] focus:outline-none" value={formData.phone} onChange={event => updateField('phone', event.target.value)} placeholder="+63 900 000 0000" required />
+                      <label className={bookingLabelClass}><Phone className="mr-2 inline h-4 w-4" />WhatsApp / Phone *</label>
+                      <input className={bookingInputClass} value={formData.phone} onChange={event => updateField('phone', event.target.value)} placeholder="+63 900 000 0000" data-readability-field="phone" required />
                     </div>
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
-                      <label className="mb-2 block text-sm font-medium text-gray-700"><Calendar className="mr-2 inline h-4 w-4" />Preferred date *</label>
-                      <input className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-[#2db83d] focus:outline-none" type="date" min={getTodayDate()} value={formData.preferredDate} onChange={event => updateField('preferredDate', event.target.value)} required />
+                      <label className={bookingLabelClass}><Calendar className="mr-2 inline h-4 w-4" />Preferred date *</label>
+                      <input className={bookingInputClass} type="date" min={getTodayDate()} value={formData.preferredDate} onChange={event => updateField('preferredDate', event.target.value)} data-readability-field="preferredDate" required />
                     </div>
                     <div>
-                      <label className="mb-2 block text-sm font-medium text-gray-700"><Clock className="mr-2 inline h-4 w-4" />Preferred time *</label>
-                      <select className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-[#2db83d] focus:outline-none" value={formData.preferredTime} onChange={event => updateField('preferredTime', event.target.value)} required>
+                      <label className={bookingLabelClass}><Clock className="mr-2 inline h-4 w-4" />Preferred time *</label>
+                      <select className={bookingInputClass} value={formData.preferredTime} onChange={event => updateField('preferredTime', event.target.value)} data-readability-field="preferredTime" required>
                         <option value="">Select time</option>
                         {timeSlots.map(time => <option key={time} value={time}>{time}</option>)}
                       </select>
                     </div>
                   </div>
                   <div>
-                    <label className="mb-2 block text-sm font-medium text-gray-700"><MapPin className="mr-2 inline h-4 w-4" />Area *</label>
-                    <input className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-[#2db83d] focus:outline-none" list="easygospa-area-options" value={formData.area} onChange={event => updateField('area', event.target.value)} placeholder="BGC, Makati, Taguig" required />
+                    <label className={bookingLabelClass}><MapPin className="mr-2 inline h-4 w-4" />Area *</label>
+                    <input className={bookingInputClass} list="easygospa-area-options" value={formData.area} onChange={event => updateField('area', event.target.value)} placeholder="BGC, Makati, Taguig" data-readability-field="area" required />
                     <datalist id="easygospa-area-options">{areaOptions.map(area => <option key={area} value={area} />)}</datalist>
                   </div>
                   <div>
-                    <label className="mb-2 block text-sm font-medium text-gray-700"><MapPin className="mr-2 inline h-4 w-4" />Building, condo, hotel, or exact address *</label>
-                    <input className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-[#2db83d] focus:outline-none" value={formData.addressNote} onChange={event => updateField('addressNote', event.target.value)} placeholder="Unit, floor, building, gate instructions" required />
+                    <label className={bookingLabelClass}><MapPin className="mr-2 inline h-4 w-4" />Building, condo, hotel, or exact address *</label>
+                    <input className={bookingInputClass} value={formData.addressNote} onChange={event => updateField('addressNote', event.target.value)} placeholder="Unit, floor, building, gate instructions" data-readability-field="addressNote" required />
                   </div>
                   <div>
-                    <label className="mb-2 block text-sm font-medium text-gray-700"><MessageSquare className="mr-2 inline h-4 w-4" />Notes optional</label>
-                    <textarea className="w-full resize-none rounded-xl border border-gray-200 px-4 py-3 focus:border-[#2db83d] focus:outline-none" rows={3} value={formData.notes} onChange={event => updateField('notes', event.target.value)} placeholder="Any special request" />
+                    <label className={bookingLabelClass}><MessageSquare className="mr-2 inline h-4 w-4" />Notes optional</label>
+                    <textarea className={bookingTextareaClass} rows={3} value={formData.notes} onChange={event => updateField('notes', event.target.value)} placeholder="Any special request" data-readability-field="notes" />
                   </div>
                   <button type="submit" data-testid="review-cash-booking" className="w-full rounded-xl bg-[#2db83d] px-6 py-3 font-semibold text-white hover:bg-[#168823]">Review cash booking</button>
                 </form>
@@ -690,14 +697,14 @@ export default function BookingModal() {
                     <h3 className="font-serif text-2xl font-bold text-[#0F0F0F]">Confirm cash after service</h3>
                     <p className="mt-2 text-sm text-gray-600">Payment will be collected after the massage service. No online payment is collected on this website.</p>
                   </div>
-                  <div className="rounded-2xl border border-[#2db83d]/30 bg-[#2db83d]/5 p-5 text-sm">
+                  <div className={summaryCardClass}>
                     <div className="grid gap-3">
-                      <div className="flex justify-between gap-4"><strong>Therapist</strong><span className="text-right">{selectedTherapist.name}</span></div>
-                      <div className="flex justify-between gap-4"><strong>Service</strong><span className="text-right">{formData.service} / {formData.durationMinutes} mins</span></div>
-                      <div className="flex justify-between gap-4"><strong>Date/time</strong><span className="text-right">{formatDate(formData.preferredDate)} {formData.preferredTime}</span></div>
-                      <div className="flex justify-between gap-4"><strong>Address</strong><span className="text-right">{formData.area} - {formData.addressNote}</span></div>
-                      <div className="flex justify-between gap-4"><strong>Total</strong><span className="text-right font-bold text-[#168823]">{money(selectedTotalAmount)}</span></div>
-                      <div className="flex justify-between gap-4"><strong>Payment</strong><span className="text-right">Cash after service</span></div>
+                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Therapist</strong><span className={summaryValueClass}>{selectedTherapist.name}</span></div>
+                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Service</strong><span className={summaryValueClass}>{formData.service} / {formData.durationMinutes} mins</span></div>
+                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Date/time</strong><span className={summaryValueClass}>{formatDate(formData.preferredDate)} {formData.preferredTime}</span></div>
+                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Address</strong><span className={summaryValueClass}>{formData.area} - {formData.addressNote}</span></div>
+                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Total</strong><span className={summaryMoneyClass}>{money(selectedTotalAmount)}</span></div>
+                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Payment</strong><span className={summaryValueClass}>Cash after service</span></div>
                     </div>
                   </div>
                   <button type="submit" disabled={isSubmitting} className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#2db83d] px-6 py-3 font-semibold text-white hover:bg-[#168823] disabled:cursor-not-allowed disabled:opacity-60">
@@ -713,15 +720,15 @@ export default function BookingModal() {
                     <h3 className="font-serif text-3xl font-bold text-[#0F0F0F]">Booking request submitted</h3>
                     <p className="mt-2 text-gray-600">Our team will contact you on WhatsApp to confirm therapist availability.</p>
                   </div>
-                  <div className="mx-auto max-w-xl rounded-2xl border border-[#2db83d]/30 bg-[#2db83d]/5 p-5 text-left text-sm">
+                  <div className={`${summaryCardClass} mx-auto max-w-xl text-left`}>
                     <div className="grid gap-3">
-                      <div className="flex justify-between gap-4"><strong>Booking reference</strong><span className="text-right font-mono text-[#0F0F0F]">{createdAppointment?.id}</span></div>
-                      <div className="flex justify-between gap-4"><strong>Selected therapist</strong><span className="text-right">{createdAppointment?.therapist}</span></div>
-                      <div className="flex justify-between gap-4"><strong>Selected service</strong><span className="text-right">{createdAppointment?.service} / {createdAppointment?.durationMinutes} mins</span></div>
-                      <div className="flex justify-between gap-4"><strong>Date/time</strong><span className="text-right">{formatDate(createdAppointment?.preferredDate)} {createdAppointment?.preferredTime}</span></div>
-                      <div className="flex justify-between gap-4"><strong>Address</strong><span className="text-right">{createdAppointment?.address}</span></div>
-                      <div className="flex justify-between gap-4"><strong>Total amount</strong><span className="text-right">{money(createdAppointment?.totalAmount)}</span></div>
-                      <div className="flex justify-between gap-4"><strong>Payment</strong><span className="text-right">{createdAppointment?.paymentMethod}</span></div>
+                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Booking reference</strong><span className="text-right font-mono text-[#0F0F0F] font-bold">{createdAppointment?.id}</span></div>
+                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Selected therapist</strong><span className={summaryValueClass}>{createdAppointment?.therapist}</span></div>
+                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Selected service</strong><span className={summaryValueClass}>{createdAppointment?.service} / {createdAppointment?.durationMinutes} mins</span></div>
+                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Date/time</strong><span className={summaryValueClass}>{formatDate(createdAppointment?.preferredDate)} {createdAppointment?.preferredTime}</span></div>
+                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Address</strong><span className={summaryValueClass}>{createdAppointment?.address}</span></div>
+                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Total amount</strong><span className={summaryMoneyClass}>{money(createdAppointment?.totalAmount)}</span></div>
+                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Payment</strong><span className={summaryValueClass}>{createdAppointment?.paymentMethod}</span></div>
                     </div>
                   </div>
                   <button type="button" onClick={handleClose} className="w-full max-w-xl rounded-xl bg-gray-100 px-6 py-3 font-medium text-gray-700 hover:bg-gray-200">Close</button>
