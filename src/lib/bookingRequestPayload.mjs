@@ -82,6 +82,10 @@ export function normalizeWebsiteBookingRequest(input = {}) {
   const peopleCount = normalizePeopleCount(input.peopleCount || 1);
   const requestedTechnicianId = cleanText(input.requestedTechnicianId || 'any_available', 120);
   const requestedTechnicianName = cleanText(input.requestedTechnicianName || 'Any available therapist', 120);
+  const requestedTechnicianProfileId = cleanText(input.requestedTechnicianProfileId || requestedTechnicianId, 120);
+  const requestedTechnicianProfileName = cleanText(input.requestedTechnicianProfileName || requestedTechnicianName, 120);
+  const requestedTechnicianAccountId = requestedTechnicianProfileId === 'any_available' ? '' : cleanText(input.requestedTechnicianAccountId, 120);
+  const requestedTechnicianAccountName = requestedTechnicianProfileId === 'any_available' ? '' : cleanText(input.requestedTechnicianAccountName, 120);
   const therapistPreference = THERAPIST_PREFERENCES.has(input.therapistPreference) ? input.therapistPreference : 'any_available';
   const therapistGenderPreference = normalizeTherapistGenderPreference(input.therapistGenderPreference || therapistPreference);
   const selectedTherapistSpecialties = Array.isArray(input.selectedTherapistSpecialties)
@@ -104,6 +108,10 @@ export function normalizeWebsiteBookingRequest(input = {}) {
     customerEmail,
     requestedTechnicianId,
     requestedTechnicianName,
+    requestedTechnicianProfileId,
+    requestedTechnicianProfileName,
+    ...(requestedTechnicianAccountId ? { requestedTechnicianAccountId } : {}),
+    ...(requestedTechnicianAccountName ? { requestedTechnicianAccountName } : {}),
     selectedTherapistSpecialties,
     selectedServices,
     durationMinutes,
@@ -136,6 +144,10 @@ export function normalizeWebsiteBookingRequest(input = {}) {
     email: customerEmail,
     requestedTechnicianId,
     requestedTechnicianName,
+    requestedTechnicianProfileId,
+    requestedTechnicianProfileName,
+    requestedTechnicianAccountId,
+    requestedTechnicianAccountName,
     therapistPreference,
     therapistGenderPreference,
     selectedTherapistSpecialties,

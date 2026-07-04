@@ -91,9 +91,18 @@ export function normalizePublicBookingCatalog(payload = {}) {
       const specialties = listText(therapist.specialties);
       const serviceAreas = listText(therapist.serviceAreas);
       const availableServices = serviceNamesByTherapistId.get(therapist.therapistId) || [];
+      const metadata = therapist.metadata && typeof therapist.metadata === 'object' ? therapist.metadata : {};
+      const profileId = cleanText(therapist.therapistId);
+      const profileName = cleanText(therapist.displayName);
+      const technicianAccountId = profileId === 'any_available' ? '' : cleanText(therapist.technicianAccountId || therapist.technician_account_id || metadata.technicianAccountId || metadata.technician_account_id);
+      const technicianAccountName = profileId === 'any_available' ? '' : cleanText(therapist.technicianAccountName || therapist.technician_account_name || metadata.technicianAccountName || metadata.technician_account_name);
       return {
-        id: cleanText(therapist.therapistId),
-        name: cleanText(therapist.displayName),
+        id: profileId,
+        profileId,
+        name: profileName,
+        profileName,
+        technicianAccountId,
+        technicianAccountName,
         avatarInitials: cleanText(therapist.initialsAvatar, cleanText(therapist.displayName).slice(0, 2).toUpperCase() || 'EG'),
         photoUrl: cleanText(therapist.photoUrl),
         distanceLabel: serviceAreaLabel(serviceAreas),

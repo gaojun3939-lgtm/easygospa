@@ -51,7 +51,11 @@ const allServiceNames = websiteBookingServices.map(service => service.name);
 export const websiteTherapists = [
   {
     id: 'therapist-bgc-deep-tissue',
+    profileId: 'therapist-bgc-deep-tissue',
     name: 'BGC Deep Tissue Therapist',
+    profileName: 'BGC Deep Tissue Therapist',
+    technicianAccountId: 'th-a-001',
+    technicianAccountName: 'Grace',
     avatarInitials: 'BD',
     distanceLabel: 'Serving BGC / Taguig area',
     availabilityLabel: 'Available today',
@@ -68,7 +72,11 @@ export const websiteTherapists = [
   },
   {
     id: 'therapist-makati-relaxation',
+    profileId: 'therapist-makati-relaxation',
     name: 'Makati Relaxation Therapist',
+    profileName: 'Makati Relaxation Therapist',
+    technicianAccountId: 'th-a-002',
+    technicianAccountName: 'Luna',
     avatarInitials: 'MR',
     distanceLabel: 'Serving Makati / BGC area',
     availabilityLabel: 'Earliest after schedule confirmation',
@@ -85,7 +93,9 @@ export const websiteTherapists = [
   },
   {
     id: 'any_available',
+    profileId: 'any_available',
     name: 'Any available therapist',
+    profileName: 'Any available therapist',
     avatarInitials: 'EA',
     distanceLabel: 'Nearby after you enter your area',
     availabilityLabel: 'Matched after request review',

@@ -445,6 +445,10 @@ export default function BookingModal() {
       phone: formData.phone,
       requestedTechnicianId: selectedTherapist.id,
       requestedTechnicianName: selectedTherapist.name,
+      requestedTechnicianProfileId: selectedTherapist.profileId || selectedTherapist.id,
+      requestedTechnicianProfileName: selectedTherapist.profileName || selectedTherapist.name,
+      requestedTechnicianAccountId: selectedTherapist.id === 'any_available' ? '' : (selectedTherapist.technicianAccountId || ''),
+      requestedTechnicianAccountName: selectedTherapist.id === 'any_available' ? '' : (selectedTherapist.technicianAccountName || ''),
       therapistPreference: selectedTherapist.id === 'any_available' ? 'any_available' : 'specific_therapist',
       therapistGenderPreference: selectedTherapist.therapistPreference === 'female_preferred' ? 'female' : selectedTherapist.therapistPreference === 'male_preferred' ? 'male' : '',
       selectedTherapistSpecialties: selectedTherapist.specialties,
@@ -467,7 +471,11 @@ export default function BookingModal() {
         form: 'BookingModal',
         submittedFrom: 'public_website',
         bookingFlow: 'therapist_wall_detail_service_cash',
-        catalogSource: bookingCatalog.catalogSource || 'local_seed_fallback'
+        catalogSource: bookingCatalog.catalogSource || 'local_seed_fallback',
+        requestedTechnicianProfileId: selectedTherapist.profileId || selectedTherapist.id,
+        requestedTechnicianProfileName: selectedTherapist.profileName || selectedTherapist.name,
+        ...(selectedTherapist.id !== 'any_available' && selectedTherapist.technicianAccountId ? { requestedTechnicianAccountId: selectedTherapist.technicianAccountId } : {}),
+        ...(selectedTherapist.id !== 'any_available' && selectedTherapist.technicianAccountName ? { requestedTechnicianAccountName: selectedTherapist.technicianAccountName } : {})
       }
     };
 
