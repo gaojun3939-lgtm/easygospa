@@ -19,6 +19,18 @@ function requiredText(value, field) {
   return text;
 }
 
+function normalizePhone(value) {
+  const phone = requiredText(value, 'phone');
+  if (/[a-z]/i.test(phone) || !/^[+()\d\s.-]+$/.test(phone)) {
+    throw new BookingRequestValidationError('phone must be a valid WhatsApp or phone number', 'PHONE_INVALID');
+  }
+  const digits = phone.replace(/\D/g, '');
+  if (digits.length < 7 || digits.length > 15) {
+    throw new BookingRequestValidationError('phone must be a valid WhatsApp or phone number', 'PHONE_INVALID');
+  }
+  return phone;
+}
+
 function normalizePeopleCount(value) {
   const parsed = Number(value ?? 1);
   if (!Number.isFinite(parsed)) return 1;
@@ -54,6 +66,7 @@ function normalizeSelectedServices(input = {}) {
   const selected = Array.isArray(input.selectedServices) ? input.selectedServices : [];
   if (selected.length) {
     return selected.map(service => ({
+      serviceId: cleanText(service.serviceId || service.id || input.serviceId, 120),
       serviceName: requiredText(service.serviceName || service.name || input.service, 'service'),
       durationMinutes: Math.max(30, Math.round(Number(service.durationMinutes || input.durationMinutes || 60))),
       price: Math.max(0, Number(service.price || service.totalAmount || input.totalAmount || 0)),
@@ -61,6 +74,7 @@ function normalizeSelectedServices(input = {}) {
     }));
   }
   return [{
+    serviceId: cleanText(input.serviceId || input.service_id, 120),
     serviceName: requiredText(input.service || input.serviceName, 'service'),
     durationMinutes: Math.max(30, Math.round(Number(input.durationMinutes || input.serviceDurationMinutes || 60))),
     price: Math.max(0, Number(input.totalAmount || input.quotedPrice || input.servicePrice || input.price || 0)),
@@ -71,9 +85,10 @@ function normalizeSelectedServices(input = {}) {
 export function normalizeWebsiteBookingRequest(input = {}) {
   const customerName = requiredText(input.customerName || input.client_name || input.name, 'customerName');
   const customerEmail = requiredText(input.customerEmail || input.email, 'customerEmail').toLowerCase();
-  const phone = requiredText(input.phone || input.whatsapp, 'phone');
+  const phone = normalizePhone(input.phone || input.whatsapp);
   const selectedServices = normalizeSelectedServices(input);
   const primaryService = selectedServices[0];
+  const serviceId = cleanText(primaryService.serviceId || input.serviceId || input.service_id, 120);
   const service = requiredText(primaryService.serviceName || input.service, 'service');
   const preferredDate = requiredText(input.preferredDate || input.preferred_date || input.scheduledDate, 'preferredDate');
   const preferredTime = requiredText(input.preferredTime || input.preferred_time || input.scheduledTime, 'preferredTime');
@@ -114,6 +129,7 @@ export function normalizeWebsiteBookingRequest(input = {}) {
     ...(requestedTechnicianAccountName ? { requestedTechnicianAccountName } : {}),
     selectedTherapistSpecialties,
     selectedServices,
+    serviceId,
     durationMinutes,
     totalAmount,
     paymentMethod,
@@ -152,6 +168,7 @@ export function normalizeWebsiteBookingRequest(input = {}) {
     therapistGenderPreference,
     selectedTherapistSpecialties,
     selectedServices,
+    serviceId,
     service,
     serviceName: service,
     durationMinutes,

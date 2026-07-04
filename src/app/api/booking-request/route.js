@@ -90,6 +90,7 @@ export async function POST(request) {
         requestedTechnicianProfileName: aiOfficePayload.requestedTechnicianProfileName,
         requestedTechnicianAccountId: aiOfficePayload.requestedTechnicianAccountId,
         requestedTechnicianAccountName: aiOfficePayload.requestedTechnicianAccountName,
+        serviceId: aiOfficePayload.serviceId,
         service: aiOfficePayload.service,
         selectedServices: aiOfficePayload.selectedServices,
         durationMinutes: aiOfficePayload.durationMinutes,

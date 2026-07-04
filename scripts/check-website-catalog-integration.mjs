@@ -36,13 +36,15 @@ test('AI Office public catalog normalizes for website booking flow', () => {
   assert.equal(normalized.catalogSource, 'ai_office_public_catalog');
   assert.equal(normalized.fallback, false);
   assert.equal(normalized.catalogUnavailable, false);
-  assert.ok(normalized.therapists.some(therapist => therapist.name === 'Makati Relaxation Therapist'));
+  assert.ok(normalized.therapists.some(therapist => therapist.name === 'Luna' && therapist.profileName === 'Makati Relaxation Therapist'));
   assert.ok(normalized.services.some(service => service.name === 'Thai Dry Massage'));
 });
 
 test('Makati therapist exposes Thai Dry Massage from catalog relation', () => {
   const therapist = findWebsiteTherapist('therapist-makati-relaxation', normalized.therapists);
-  assert.equal(therapist.name, 'Makati Relaxation Therapist');
+  assert.equal(therapist.name, 'Luna');
+  assert.equal(therapist.profileName, 'Makati Relaxation Therapist');
+  assert.equal(therapist.technicianAccountId, 'th-a-002');
   const services = servicesForTherapist(therapist.id, normalized.therapists, normalized.services);
   assert.ok(services.some(service => service.name === 'Thai Dry Massage'));
 });
@@ -101,8 +103,13 @@ test('catalog-backed booking payload preserves selected duration, price, and sou
     phone: '+639000008900',
     requestedTechnicianId: therapist.id,
     requestedTechnicianName: therapist.name,
+    requestedTechnicianProfileId: therapist.profileId,
+    requestedTechnicianProfileName: therapist.profileName,
+    requestedTechnicianAccountId: therapist.technicianAccountId,
+    requestedTechnicianAccountName: therapist.technicianAccountName,
     therapistPreference: 'specific_therapist',
-    selectedServices: [{ serviceName: service.name, durationMinutes: option.durationMinutes, price: option.price, currency: option.currency }],
+    selectedServices: [{ serviceId: service.id, serviceName: service.name, durationMinutes: option.durationMinutes, price: option.price, currency: option.currency }],
+    serviceId: service.id,
     service: service.name,
     durationMinutes: option.durationMinutes,
     totalAmount: option.price,
@@ -119,7 +126,10 @@ test('catalog-backed booking payload preserves selected duration, price, and sou
       bookingFlow: 'therapist_wall_detail_service_cash'
     }
   });
-  assert.equal(payload.requestedTechnicianName, 'Makati Relaxation Therapist');
+  assert.equal(payload.requestedTechnicianName, 'Luna');
+  assert.equal(payload.requestedTechnicianProfileName, 'Makati Relaxation Therapist');
+  assert.equal(payload.requestedTechnicianAccountId, 'th-a-002');
+  assert.equal(payload.serviceId, 'thai-dry-massage');
   assert.equal(payload.service, 'Thai Dry Massage');
   assert.equal(payload.durationMinutes, 120);
   assert.equal(payload.totalAmount, 4900);

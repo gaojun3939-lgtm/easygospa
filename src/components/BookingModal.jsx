@@ -12,6 +12,7 @@ import {
   getDefaultBookingSession,
   getDefaultDurationOption,
   isValidEmail,
+  isValidPhone,
   servicesForTherapist
 } from '../lib/therapistServiceBookingFlow.mjs';
 import { getFallbackWebsiteBookingCatalog } from '../lib/bookingCatalogNormalizer.mjs';
@@ -30,7 +31,9 @@ function money(value = 0) {
 
 function formatDate(dateString) {
   if (!dateString) return '';
-  return new Date(`${dateString}T00:00:00`).toLocaleDateString('en-US', {
+  const date = new Date(`${dateString}T00:00:00`);
+  if (Number.isNaN(date.getTime())) return '';
+  return date.toLocaleDateString('en-US', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
@@ -51,6 +54,7 @@ function createInitialForm(serviceName = '', services = undefined) {
     phone: '',
     requestedTechnicianId: '',
     preferredService: matchedService?.name || serviceName || '',
+    serviceId: matchedService?.id || '',
     service: matchedService?.name || '',
     durationMinutes: durationOption?.durationMinutes || '',
     totalAmount: durationOption?.price || 0,
@@ -69,6 +73,7 @@ function resolveSelectedServiceOption(formData, services = undefined) {
   if (!option) return null;
   return {
     service,
+    serviceId: service.id,
     durationMinutes: option.durationMinutes,
     price: option.price,
     currency: 'PHP'
@@ -102,9 +107,21 @@ function StepPill({ active, done, children }) {
 }
 
 function TherapistAvatar({ therapist, large = false }) {
+  const photoUrl = therapist.photoUrl || therapist.avatarUrl || therapist.imageUrl || '';
+  const sizeClass = large ? 'h-24 w-24' : 'h-14 w-14';
+  if (photoUrl) {
+    return (
+      <div
+        role="img"
+        aria-label={`${therapist.name} therapist avatar`}
+        className={`${sizeClass} shrink-0 rounded-full bg-cover bg-center ring-1 ring-gray-200`}
+        style={{ backgroundImage: `url("${photoUrl}")` }}
+      />
+    );
+  }
   return (
-    <div className={`flex shrink-0 items-center justify-center rounded-full bg-[#0F0F0F] font-bold text-white ${large ? 'h-24 w-24 text-2xl' : 'h-14 w-14 text-sm'}`}>
-      {therapist.avatarInitials}
+    <div className={`flex ${sizeClass} shrink-0 items-center justify-center rounded-full bg-[#EAF8ED] text-[#168823] ring-1 ring-[#2db83d]/20`}>
+      <User className={large ? 'h-11 w-11' : 'h-7 w-7'} aria-hidden="true" />
     </div>
   );
 }
@@ -123,6 +140,7 @@ function TherapistWallCard({ therapist, selected, onSelect }) {
           <div className="flex items-start justify-between gap-3">
             <div>
               <h3 className="font-serif text-lg font-semibold text-[#0F0F0F]">{therapist.name}</h3>
+              <p className="mt-1 text-sm font-medium text-gray-700">{therapist.role || 'Massage Therapist'}</p>
               <p className="mt-1 text-sm text-gray-600">{therapist.distanceLabel}</p>
             </div>
             {selected ? <CheckCircle2 className="h-5 w-5 shrink-0 text-[#2db83d]" /> : null}
@@ -149,6 +167,7 @@ function CompactAnyAvailableCard({ therapist, onSelect }) {
         <TherapistAvatar therapist={therapist} />
         <div>
           <h4 className="font-semibold text-[#0F0F0F]">{therapist.name}</h4>
+          <p className="mt-0.5 text-xs font-medium text-gray-700">{therapist.role || 'Massage Therapist'}</p>
           <p className="mt-1 text-sm text-gray-600">{therapist.specialtyDescription}</p>
           <p className="mt-1 text-xs text-gray-500">{therapist.availabilityLabel}</p>
         </div>
@@ -193,6 +212,7 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
             <div className="flex items-start justify-between gap-3">
               <div>
                 <h3 className="font-serif text-2xl font-bold text-[#0F0F0F]">{therapist.name}</h3>
+                <p className="mt-1 text-sm font-semibold text-gray-800">Massage Therapist</p>
                 <p className="mt-1 text-sm text-gray-600">{therapist.distanceLabel}</p>
               </div>
               <div className="flex gap-2">
@@ -204,7 +224,6 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
               <span className="rounded-full bg-[#2db83d]/10 px-2.5 py-1 font-medium text-[#168823]">{therapist.availabilityLabel}</span>
               <span className="rounded-full bg-gray-100 px-2.5 py-1 text-gray-700">{therapist.reviewsLabel}</span>
             </div>
-            <p className="mt-4 text-sm text-gray-700">{therapist.specialtyDescription}</p>
             <div className="mt-4 flex flex-wrap gap-2">
               {therapist.specialties.map(item => <span key={item} className="rounded-full bg-gray-100 px-2.5 py-1 text-xs text-gray-700">{item}</span>)}
             </div>
@@ -212,6 +231,10 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
           </div>
         </div>
       </div>
+      <section className="rounded-2xl border border-gray-200 bg-white p-4">
+        <h3 className="font-serif text-xl font-bold text-[#0F0F0F]">About {therapist.name}</h3>
+        <p className="mt-2 text-sm leading-6 text-gray-700">{therapist.specialtyDescription}</p>
+      </section>
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="rounded-2xl border border-[#2db83d]/20 bg-[#2db83d]/5 p-4">
           <div className="flex items-start gap-3">
@@ -233,7 +256,7 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
         </div>
       </div>
       <div>
-        <h3 className="font-serif text-2xl font-bold text-[#0F0F0F]">Available services</h3>
+        <h3 className="font-serif text-2xl font-bold text-[#0F0F0F]">My Services</h3>
         <p className="mt-2 text-sm text-gray-600">Select one service and duration for this booking.</p>
         <div className="mt-4 grid gap-4">
           {availableServices.map(service => <ServiceCard key={service.id} service={service} selectedDuration={selectedServiceName === service.name ? Number(selectedDuration) : 0} onSelect={onSelectService} />)}
@@ -357,13 +380,13 @@ export default function BookingModal() {
       return;
     }
     const { nextService, option } = chooseDefaultServiceForTherapist(therapist.id);
-    setFormData(current => ({ ...current, requestedTechnicianId: therapist.id, service: nextService?.name || '', durationMinutes: option?.durationMinutes || '', totalAmount: option?.price || 0 }));
+    setFormData(current => ({ ...current, requestedTechnicianId: therapist.id, serviceId: nextService?.id || '', service: nextService?.name || '', durationMinutes: option?.durationMinutes || '', totalAmount: option?.price || 0 }));
     setError('');
     setStep('detail');
   };
 
   const handleSelectService = (service, option) => {
-    setFormData(current => ({ ...current, service: service.name, durationMinutes: option.durationMinutes, totalAmount: option.price }));
+    setFormData(current => ({ ...current, serviceId: service.id, service: service.name, durationMinutes: option.durationMinutes, totalAmount: option.price }));
     if (error) setError('');
   };
 
@@ -372,6 +395,10 @@ export default function BookingModal() {
     const session = getDefaultBookingSession(emailDraft);
     if (!isValidEmail(session.customerEmail)) {
       setError('Please enter a valid email address to continue.');
+      return;
+    }
+    if (session.phone && !isValidPhone(session.phone)) {
+      setError('Please enter a valid WhatsApp or phone number.');
       return;
     }
     saveStoredSession(session);
@@ -386,6 +413,7 @@ export default function BookingModal() {
     if (!isValidEmail(formData.customerEmail)) return 'Please continue with a valid email first.';
     if (!formData.customerName.trim()) return 'Please enter your full name.';
     if (!formData.phone.trim()) return 'Please enter your WhatsApp or phone number.';
+    if (!isValidPhone(formData.phone)) return 'Please enter a valid WhatsApp or phone number.';
     if (!formData.preferredDate) return 'Please select your preferred date.';
     if (formData.preferredDate < getTodayDate()) return 'Please select today or a future date.';
     if (!formData.preferredTime) return 'Please select your preferred time.';
@@ -432,6 +460,7 @@ export default function BookingModal() {
     }
 
     const selectedServices = [{
+      serviceId: selectedOption.service.id,
       serviceName: selectedOption.service.name,
       durationMinutes: selectedOption.durationMinutes,
       price: selectedOption.price,
@@ -453,6 +482,7 @@ export default function BookingModal() {
       therapistGenderPreference: selectedTherapist.therapistPreference === 'female_preferred' ? 'female' : selectedTherapist.therapistPreference === 'male_preferred' ? 'male' : '',
       selectedTherapistSpecialties: selectedTherapist.specialties,
       selectedServices,
+      serviceId: selectedOption.service.id,
       service: selectedOption.service.name,
       durationMinutes: selectedOption.durationMinutes,
       totalAmount: selectedOption.price,
@@ -474,6 +504,7 @@ export default function BookingModal() {
         catalogSource: bookingCatalog.catalogSource || 'local_seed_fallback',
         requestedTechnicianProfileId: selectedTherapist.profileId || selectedTherapist.id,
         requestedTechnicianProfileName: selectedTherapist.profileName || selectedTherapist.name,
+        serviceId: selectedOption.service.id,
         ...(selectedTherapist.id !== 'any_available' && selectedTherapist.technicianAccountId ? { requestedTechnicianAccountId: selectedTherapist.technicianAccountId } : {}),
         ...(selectedTherapist.id !== 'any_available' && selectedTherapist.technicianAccountName ? { requestedTechnicianAccountName: selectedTherapist.technicianAccountName } : {})
       }
@@ -684,7 +715,7 @@ export default function BookingModal() {
                   </div>
                   <div className="mx-auto max-w-xl rounded-2xl border border-[#2db83d]/30 bg-[#2db83d]/5 p-5 text-left text-sm">
                     <div className="grid gap-3">
-                      <div className="flex justify-between gap-4"><strong>Reference</strong><span className="text-right font-mono text-[#168823]">{createdAppointment?.id}</span></div>
+                      <div className="flex justify-between gap-4"><strong>Booking reference</strong><span className="text-right font-mono text-[#0F0F0F]">{createdAppointment?.id}</span></div>
                       <div className="flex justify-between gap-4"><strong>Selected therapist</strong><span className="text-right">{createdAppointment?.therapist}</span></div>
                       <div className="flex justify-between gap-4"><strong>Selected service</strong><span className="text-right">{createdAppointment?.service} / {createdAppointment?.durationMinutes} mins</span></div>
                       <div className="flex justify-between gap-4"><strong>Date/time</strong><span className="text-right">{formatDate(createdAppointment?.preferredDate)} {createdAppointment?.preferredTime}</span></div>

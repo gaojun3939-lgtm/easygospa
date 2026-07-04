@@ -96,17 +96,19 @@ export function normalizePublicBookingCatalog(payload = {}) {
       const profileName = cleanText(therapist.displayName);
       const technicianAccountId = profileId === 'any_available' ? '' : cleanText(therapist.technicianAccountId || therapist.technician_account_id || metadata.technicianAccountId || metadata.technician_account_id);
       const technicianAccountName = profileId === 'any_available' ? '' : cleanText(therapist.technicianAccountName || therapist.technician_account_name || metadata.technicianAccountName || metadata.technician_account_name);
+      const displayName = profileId === 'any_available' ? profileName : cleanText(technicianAccountName, profileName);
       return {
         id: profileId,
         profileId,
-        name: profileName,
+        name: displayName,
         profileName,
         technicianAccountId,
         technicianAccountName,
-        avatarInitials: cleanText(therapist.initialsAvatar, cleanText(therapist.displayName).slice(0, 2).toUpperCase() || 'EG'),
+        role: 'Massage Therapist',
+        avatarInitials: '',
         photoUrl: cleanText(therapist.photoUrl),
         distanceLabel: serviceAreaLabel(serviceAreas),
-        availabilityLabel: therapist.therapistId === 'any_available' ? 'Matched after request review' : 'Earliest after schedule confirmation',
+        availabilityLabel: therapist.therapistId === 'any_available' ? 'Matched after request review' : 'Available after schedule confirmation',
         serviceArea: serviceAreas.join(', ') || 'Metro Manila coverage depends on schedule',
         specialties,
         specialtyDescription: cleanText(therapist.description, 'Let our team confirm the right therapist for your request.'),

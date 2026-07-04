@@ -52,13 +52,14 @@ export const websiteTherapists = [
   {
     id: 'therapist-bgc-deep-tissue',
     profileId: 'therapist-bgc-deep-tissue',
-    name: 'BGC Deep Tissue Therapist',
+    name: 'Grace',
     profileName: 'BGC Deep Tissue Therapist',
     technicianAccountId: 'th-a-001',
     technicianAccountName: 'Grace',
-    avatarInitials: 'BD',
+    role: 'Massage Therapist',
+    avatarInitials: '',
     distanceLabel: 'Serving BGC / Taguig area',
-    availabilityLabel: 'Available today',
+    availabilityLabel: 'Available after schedule confirmation',
     serviceArea: 'BGC, Taguig, nearby Makati hotels and condos',
     specialties: ['Deep Tissue Massage', 'Swedish Massage'],
     specialtyDescription: 'Best suited for deeper pressure and post-work tension relief.',
@@ -67,19 +68,20 @@ export const websiteTherapists = [
     reviewsLabel: 'No verified reviews yet',
     verifiedReviews: [],
     availableServices: ['Deep Tissue Massage', 'Swedish Massage'],
-    therapistPreference: 'female_preferred',
+    therapistPreference: 'specific_therapist',
     internalConfig: true
   },
   {
     id: 'therapist-makati-relaxation',
     profileId: 'therapist-makati-relaxation',
-    name: 'Makati Relaxation Therapist',
+    name: 'Luna',
     profileName: 'Makati Relaxation Therapist',
     technicianAccountId: 'th-a-002',
     technicianAccountName: 'Luna',
-    avatarInitials: 'MR',
+    role: 'Massage Therapist',
+    avatarInitials: '',
     distanceLabel: 'Serving Makati / BGC area',
-    availabilityLabel: 'Earliest after schedule confirmation',
+    availabilityLabel: 'Available after schedule confirmation',
     serviceArea: 'Makati, BGC, Taguig, Pasay by schedule',
     specialties: ['Swedish Massage', 'Thai Dry Massage', 'Foot Massage'],
     specialtyDescription: 'Focused on relaxation, stretching, and hotel or condo service.',
@@ -88,7 +90,7 @@ export const websiteTherapists = [
     reviewsLabel: 'No verified reviews yet',
     verifiedReviews: [],
     availableServices: ['Swedish Massage', 'Thai Dry Massage', 'Foot Massage'],
-    therapistPreference: 'any_available',
+    therapistPreference: 'specific_therapist',
     internalConfig: true
   },
   {
@@ -96,7 +98,8 @@ export const websiteTherapists = [
     profileId: 'any_available',
     name: 'Any available therapist',
     profileName: 'Any available therapist',
-    avatarInitials: 'EA',
+    role: 'Massage Therapist',
+    avatarInitials: '',
     distanceLabel: 'Nearby after you enter your area',
     availabilityLabel: 'Matched after request review',
     serviceArea: 'Metro Manila coverage depends on schedule',
@@ -114,6 +117,15 @@ export const websiteTherapists = [
 
 export function isValidEmail(value = '') {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || '').trim());
+}
+
+export function isValidPhone(value = '') {
+  const text = String(value || '').trim();
+  if (!text) return false;
+  if (/[a-z]/i.test(text)) return false;
+  if (!/^[+()\d\s.-]+$/.test(text)) return false;
+  const digits = text.replace(/\D/g, '');
+  return digits.length >= 7 && digits.length <= 15;
 }
 
 export function getDefaultBookingSession(input = {}) {

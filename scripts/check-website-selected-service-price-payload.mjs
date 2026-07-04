@@ -17,20 +17,40 @@ function test(name, fn) {
   }
 }
 
-function buildPayload({ serviceName, durationMinutes, price, technicianId = 'therapist-makati-relaxation', technicianName = 'Makati Relaxation Therapist' }) {
+function serviceIdForName(serviceName) {
+  return findBookingServiceByName(serviceName)?.id || '';
+}
+
+function buildPayload({
+  serviceName,
+  durationMinutes,
+  price,
+  technicianId = 'therapist-makati-relaxation',
+  technicianName = 'Luna',
+  technicianProfileName = 'Makati Relaxation Therapist',
+  technicianAccountId = 'th-a-002',
+  technicianAccountName = 'Luna'
+}) {
+  const serviceId = serviceIdForName(serviceName);
   return normalizeWebsiteBookingRequest({
     customerName: 'Selected Price Fix Smoke',
     customerEmail: 'selected-price-fix-smoke@example.com',
     phone: '+639000008898',
     requestedTechnicianId: technicianId,
     requestedTechnicianName: technicianName,
+    requestedTechnicianProfileId: technicianId,
+    requestedTechnicianProfileName: technicianProfileName,
+    requestedTechnicianAccountId: technicianAccountId,
+    requestedTechnicianAccountName: technicianAccountName,
     therapistPreference: 'specific_therapist',
     selectedServices: [{
+      serviceId,
       serviceName,
       durationMinutes,
       price,
       currency: 'PHP'
     }],
+    serviceId,
     service: serviceName,
     durationMinutes,
     totalAmount: price,
@@ -56,6 +76,8 @@ function buildPayload({ serviceName, durationMinutes, price, technicianId = 'the
 }
 
 function assertSelectedPrice(payload, { serviceName, durationMinutes, price }) {
+  const serviceId = serviceIdForName(serviceName);
+  assert.equal(payload.serviceId, serviceId);
   assert.equal(payload.service, serviceName);
   assert.equal(payload.serviceName, serviceName);
   assert.equal(payload.durationMinutes, durationMinutes);
@@ -64,9 +86,12 @@ function assertSelectedPrice(payload, { serviceName, durationMinutes, price }) {
   assert.equal(payload.quotedPrice, price);
   assert.equal(payload.currency, 'PHP');
   assert.equal(payload.selectedServices[0].serviceName, serviceName);
+  assert.equal(payload.selectedServices[0].serviceId, serviceId);
   assert.equal(payload.selectedServices[0].durationMinutes, durationMinutes);
   assert.equal(payload.selectedServices[0].price, price);
   assert.equal(payload.selectedServices[0].currency, 'PHP');
+  assert.equal(payload.metadata.serviceId, serviceId);
+  assert.equal(payload.metadata.selectedServices[0].serviceId, serviceId);
   assert.equal(payload.metadata.selectedServices[0].durationMinutes, durationMinutes);
   assert.equal(payload.metadata.selectedServices[0].price, price);
   assert.equal(payload.metadata.durationMinutes, durationMinutes);
@@ -98,7 +123,10 @@ test('BGC Deep Tissue Massage 90 mins stays PHP 4200 in payload', () => {
     durationMinutes: 90,
     price: 4200,
     technicianId: 'therapist-bgc-deep-tissue',
-    technicianName: 'BGC Deep Tissue Therapist'
+    technicianName: 'Grace',
+    technicianProfileName: 'BGC Deep Tissue Therapist',
+    technicianAccountId: 'th-a-001',
+    technicianAccountName: 'Grace'
   });
   assertSelectedPrice(payload, { serviceName: 'Deep Tissue Massage', durationMinutes: 90, price: 4200 });
 });
@@ -109,9 +137,14 @@ test('selectedServices wins over stale top-level duration and total', () => {
     customerEmail: 'selected-price-fix-smoke@example.com',
     phone: '+639000008898',
     requestedTechnicianId: 'therapist-makati-relaxation',
-    requestedTechnicianName: 'Makati Relaxation Therapist',
+    requestedTechnicianName: 'Luna',
+    requestedTechnicianProfileId: 'therapist-makati-relaxation',
+    requestedTechnicianProfileName: 'Makati Relaxation Therapist',
+    requestedTechnicianAccountId: 'th-a-002',
+    requestedTechnicianAccountName: 'Luna',
     therapistPreference: 'specific_therapist',
-    selectedServices: [{ serviceName: 'Thai Dry Massage', durationMinutes: 120, price: 4900, currency: 'PHP' }],
+    selectedServices: [{ serviceId: 'thai-dry-massage', serviceName: 'Thai Dry Massage', durationMinutes: 120, price: 4900, currency: 'PHP' }],
+    serviceId: 'thai-dry-massage',
     service: 'Thai Dry Massage',
     durationMinutes: 60,
     totalAmount: 3000,
@@ -139,6 +172,7 @@ test('BookingModal uses exact selected option for submit and success summary', (
   assert.ok(modalSource.includes('findExactDurationOption'));
   assert.ok(modalSource.includes('const selectedOption = selectedServiceOption'));
   assert.ok(modalSource.includes('price: selectedOption.price'));
+  assert.ok(modalSource.includes('serviceId: selectedOption.service.id'));
   assert.ok(modalSource.includes('totalAmount: selectedOption.price'));
   assert.ok(modalSource.includes('durationMinutes: selectedOption.durationMinutes'));
   assert.ok(!modalSource.includes('price: Number(formData.totalAmount)'));
