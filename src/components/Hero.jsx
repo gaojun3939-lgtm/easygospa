@@ -6,33 +6,36 @@ import { Sparkles, Star, ArrowRight, MapPin, Users, Award } from "lucide-react";
 const slides = [
   {
     id: 1,
-    image_url: "/images/brand/home-hero-01-desktop.webp",
-    mobile_image_url: "/images/brand/home-hero-01-mobile.webp",
+    image_url: "/images/brand/home-hero-01-original.png",
+    mobile_image_url: "/images/brand/home-hero-01-original.png",
     headline: "24/7 Home Massage in Metro Manila",
     subheading: "Professional Massage Service Available 24/7",
     description: "Professional massage therapists available for hotel, condo and home service across Metro Manila. Fast arrival, professional service and available 24 hours a day.",
     cta_text: "BOOK NOW",
     isH1: true,
+    mobile_object_position: "72% center",
   },
   {
     id: 2,
-    image_url: "/images/brand/home-hero-02-desktop.webp",
-    mobile_image_url: "/images/brand/home-hero-02-mobile.webp",
+    image_url: "/images/brand/home-hero-02-original.png",
+    mobile_image_url: "/images/brand/home-hero-02-original.png",
     headline: "24/7 Hotel Massage Service",
     subheading: "Fast Arrival Across Metro Manila",
     description: "Enjoy professional hotel massage service with experienced therapists. Available day and night throughout Metro Manila.",
     cta_text: "VIEW SERVICES",
     isH1: false,
+    mobile_object_position: "74% center",
   },
   {
     id: 3,
-    image_url: "/images/brand/home-hero-03-desktop.webp",
-    mobile_image_url: "/images/brand/home-hero-03-mobile.webp",
+    image_url: "/images/brand/home-hero-03-original.png",
+    mobile_image_url: "/images/brand/home-hero-03-original.png",
     headline: "Professional Female Therapists",
     subheading: "Comfort, Privacy and Professional Care",
     description: "Choose from Swedish Massage, Deep Tissue Massage, Relaxation Massage and other wellness treatments delivered to your location.",
     cta_text: "BOOK MASSAGE TODAY",
     isH1: false,
+    mobile_object_position: "68% center",
   }
 ];
 
@@ -81,9 +84,10 @@ export default function Hero() {
             <img
               src={currentSlide.image_url}
               alt={`EasyGo Spa Home Massage Manila - ${currentSlide.headline}`}
-              className="w-full h-full object-cover object-center"
+              className="hero-background-image w-full h-full object-cover"
               style={{
-                objectPosition: 'center center',
+                '--hero-object-position': 'center center',
+                '--hero-mobile-object-position': currentSlide.mobile_object_position || 'center center',
                 objectFit: 'cover',
                 width: '100%',
                 height: '100%',
@@ -213,8 +217,16 @@ export default function Hero() {
       0 0 15px rgba(34, 139, 34, 0.4);    /* ForestGreen */
     filter: drop-shadow(0 0 4px rgba(0, 100, 0, 0.3)); /* DarkGreen */
   }
+
+  .hero-background-image {
+    object-position: var(--hero-object-position);
+  }
   
   @media (max-width: 640px) {
+    .hero-background-image {
+      object-position: var(--hero-mobile-object-position);
+    }
+
     .enhanced-glow-text {
       text-shadow: 
         0 0 3px rgba(152, 251, 152, 0.7),  /* PaleGreen */
