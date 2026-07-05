@@ -47,7 +47,7 @@ export default function WhyChooseUs() {
             viewport={{ once: true }}
             className="space-y-8 text-center flex justify-center items-center"
           >
-            <img src="/images/cta.jpg" className="object-contain rounded-2xl h-100 sm:h-full"/>
+            <img src="/images/brand/why-choose-home-massage-therapist.png" className="object-contain rounded-2xl h-100 sm:h-full"/>
             </motion.div>
         </div>
         <div className="grid grid-cols-1 items-center">
