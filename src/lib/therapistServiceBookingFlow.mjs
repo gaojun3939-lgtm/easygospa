@@ -161,7 +161,8 @@ export function servicesForTherapist(therapistId = '', therapists = websiteThera
   if (!therapist) return [];
   const allowed = new Set(therapist.availableServices || []);
   if (!allowed.size || therapist.id === 'any_available') return services;
-  return services.filter(service => allowed.has(service.name));
+  const serviceByName = new Map(services.map(service => [service.name, service]));
+  return therapist.availableServices.map(serviceName => serviceByName.get(serviceName)).filter(Boolean);
 }
 
 export function getDefaultDurationOption(service) {

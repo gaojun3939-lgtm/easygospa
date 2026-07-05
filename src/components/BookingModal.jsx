@@ -19,7 +19,7 @@ import { getFallbackWebsiteBookingCatalog } from '../lib/bookingCatalogNormalize
 
 const timeSlots = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00', '22:30', '23:00'];
 const areaOptions = ['BGC', 'Makati', 'Taguig', 'Pasay', 'Ortigas', 'Metro Manila'];
-const wallFilters = ['Nearby / Serving my area', 'Most booked', 'Service type'];
+const wallFilters = ['Nearby', 'Most booked', 'Service type'];
 const bookingInputClass = 'w-full rounded-xl border border-gray-300 bg-white px-4 py-3 font-medium text-[#0F0F0F] caret-[#0F0F0F] placeholder:text-gray-500 focus:border-[#2db83d] focus:outline-none';
 const bookingTextareaClass = `${bookingInputClass} resize-none`;
 const bookingLabelClass = 'mb-2 block text-sm font-semibold text-slate-800';
@@ -134,36 +134,59 @@ function TherapistAvatar({ therapist, large = false }) {
 }
 
 function TherapistWallCard({ therapist, selected, onSelect }) {
+  const openDetail = () => onSelect(therapist.id);
+  const handleKeyDown = event => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      openDetail();
+    }
+  };
+
   return (
-    <button
-      type="button"
-      onClick={() => onSelect(therapist.id)}
+    <article
+      role="button"
+      tabIndex={0}
+      onClick={openDetail}
+      onKeyDown={handleKeyDown}
       data-testid={`therapist-card-${therapist.id}`}
-      className={`w-full rounded-2xl border-2 bg-white p-4 text-left transition-all ${selected ? 'border-[#2db83d] shadow-md' : 'border-gray-200 hover:border-[#2db83d]/60 hover:shadow-sm'}`}
+      className={`w-full cursor-pointer rounded-2xl border bg-white p-3 text-left shadow-sm transition-all ${selected ? 'border-[#2db83d] shadow-md' : 'border-gray-100 hover:border-[#2db83d]/60 hover:shadow-md'}`}
     >
-      <div className="flex gap-4">
+      <div className="flex gap-3 sm:gap-4">
         <TherapistAvatar therapist={therapist} />
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <h3 className="font-serif text-lg font-semibold text-[#0F0F0F]">{therapist.name}</h3>
-              <p className="mt-1 text-sm font-medium text-gray-700">{therapist.role || 'Massage Therapist'}</p>
-              <p className="mt-1 text-sm text-gray-600">{therapist.distanceLabel}</p>
+              <h3 className="text-lg font-bold text-[#0F0F0F]">{therapist.name}</h3>
+              <p className="mt-1 text-sm text-gray-600">{therapist.serviceArea}</p>
             </div>
-            {selected ? <CheckCircle2 className="h-5 w-5 shrink-0 text-[#2db83d]" /> : null}
+            <div className="flex shrink-0 flex-col items-end gap-2">
+              <span className="text-right text-xs font-semibold text-[#168823]">{therapist.availabilityLabel}</span>
+              {selected ? <CheckCircle2 className="h-5 w-5 text-[#2db83d]" /> : null}
+            </div>
           </div>
-          <div className="mt-3 flex flex-wrap gap-2 text-xs">
-            <span className="rounded-full bg-[#2db83d]/10 px-2.5 py-1 font-medium text-[#168823]">{therapist.availabilityLabel}</span>
-            <span className="rounded-full bg-gray-100 px-2.5 py-1 text-gray-700">{therapist.reviewsLabel}</span>
+          <div className="mt-3 grid gap-2 text-sm text-gray-700 sm:grid-cols-[1fr_auto] sm:items-end">
+            <div className="space-y-2">
+              <p className="font-medium text-gray-800">{therapist.reviewsLabel}</p>
+              <p className="text-gray-600">{therapist.distanceLabel}</p>
+            </div>
+            <button
+              type="button"
+              onClick={event => {
+                event.stopPropagation();
+                openDetail();
+              }}
+              data-testid={`therapist-card-book-${therapist.id}`}
+              className="inline-flex h-11 items-center justify-center rounded-full bg-[#4E8D43] px-6 text-sm font-bold text-white transition hover:bg-[#168823]"
+            >
+              Book
+            </button>
           </div>
-          <p className="mt-3 text-sm text-gray-700">{therapist.specialtyDescription}</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {therapist.specialties.map(item => <span key={item} className="rounded-full bg-gray-100 px-2.5 py-1 text-xs text-gray-700">{item}</span>)}
           </div>
-          <p className="mt-3 text-xs text-gray-500">{therapist.serviceArea}</p>
         </div>
       </div>
-    </button>
+    </article>
   );
 }
 
@@ -183,22 +206,32 @@ function CompactAnyAvailableCard({ therapist, onSelect }) {
   );
 }
 
-function ServiceCard({ service, selectedDuration, onSelect }) {
+function ServiceCard({ service, selectedDuration, onSelect, onBook }) {
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-4">
       <h3 className="font-serif text-lg font-semibold text-[#0F0F0F]">{service.name}</h3>
       <p className="mt-1 text-sm text-gray-600">{service.description}</p>
-      <div className="mt-4 grid gap-2 sm:grid-cols-3">
+      <div className="mt-4 grid gap-2">
         {service.durationOptions.map(option => {
           const selected = selectedDuration === option.durationMinutes;
           return (
-            <button key={`${service.id}-${option.durationMinutes}`} type="button" onClick={() => onSelect(service, option)} className={`rounded-xl border px-3 py-3 text-left transition-all ${selected ? 'border-[#2db83d] bg-[#2db83d]/5 text-[#0F0F0F]' : 'border-gray-200 hover:border-[#2db83d]/60'}`}>
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-sm font-semibold">{option.durationMinutes} mins</span>
-                {selected ? <Check className="h-4 w-4 text-[#2db83d]" /> : null}
+            <div key={`${service.id}-${option.durationMinutes}`} className={`flex items-center justify-between gap-3 rounded-xl border px-3 py-3 transition-all ${selected ? 'border-[#2db83d] bg-[#2db83d]/5 text-[#0F0F0F]' : 'border-gray-200'}`}>
+              <button type="button" onClick={() => onSelect(service, option)} className="min-w-0 flex-1 text-left">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold">{option.durationMinutes} mins</span>
+                  {selected ? <Check className="h-4 w-4 text-[#2db83d]" /> : null}
+                </div>
+                <div className="mt-1 text-sm font-bold text-[#2db83d]">{money(option.price)}</div>
+              </button>
+              <button
+                type="button"
+                onClick={() => onBook(service, option)}
+                data-testid="service-duration-book"
+                className="shrink-0 rounded-full bg-[#4E8D43] px-5 py-2 text-sm font-bold text-white transition hover:bg-[#168823]"
+              >
+                Book
+              </button>
               </div>
-              <div className="mt-1 text-sm font-bold text-[#2db83d]">{money(option.price)}</div>
-            </button>
           );
         })}
       </div>
@@ -206,7 +239,7 @@ function ServiceCard({ service, selectedDuration, onSelect }) {
   );
 }
 
-function TherapistDetail({ therapist, availableServices, selectedServiceName, selectedDuration, totalAmount, onSelectService, onBack, onContinue }) {
+function TherapistDetail({ therapist, availableServices, selectedServiceName, selectedDuration, totalAmount, onSelectService, onBookService, onBack, onContinue }) {
   return (
     <div className="space-y-5 pb-28">
       <button type="button" onClick={onBack} className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-[#168823]">
@@ -266,7 +299,7 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
         <h3 className="font-serif text-2xl font-bold text-[#0F0F0F]">My Services</h3>
         <p className="mt-2 text-sm text-gray-600">Select one service and duration for this booking.</p>
         <div className="mt-4 grid gap-4">
-          {availableServices.map(service => <ServiceCard key={service.id} service={service} selectedDuration={selectedServiceName === service.name ? Number(selectedDuration) : 0} onSelect={onSelectService} />)}
+          {availableServices.map(service => <ServiceCard key={service.id} service={service} selectedDuration={selectedServiceName === service.name ? Number(selectedDuration) : 0} onSelect={onSelectService} onBook={onBookService} />)}
         </div>
       </div>
       <div className="sticky bottom-0 z-20 -mx-4 border-t border-gray-200 bg-white/95 p-4 backdrop-blur sm:-mx-6 sm:rounded-t-2xl">
@@ -395,6 +428,12 @@ export default function BookingModal() {
   const handleSelectService = (service, option) => {
     setFormData(current => ({ ...current, serviceId: service.id, service: service.name, durationMinutes: option.durationMinutes, totalAmount: option.price }));
     if (error) setError('');
+  };
+
+  const handleBookService = (service, option) => {
+    setFormData(current => ({ ...current, serviceId: service.id, service: service.name, durationMinutes: option.durationMinutes, totalAmount: option.price }));
+    setError('');
+    setStep('email');
   };
 
   const handleEmailContinue = event => {
@@ -598,7 +637,7 @@ export default function BookingModal() {
                   <div className="rounded-2xl border border-gray-200 bg-gray-50 p-3">
                     <div className="flex items-center gap-2 rounded-xl bg-white px-3 py-2">
                       <Search className="h-4 w-4 text-gray-400" />
-                      <input value={wallSearch} onChange={event => setWallSearch(event.target.value)} className="w-full bg-transparent text-sm outline-none" placeholder="Search therapist, area, or service" />
+                      <input value={wallSearch} onChange={event => setWallSearch(event.target.value)} className="w-full bg-transparent text-sm outline-none" placeholder="Search therapist..." />
                     </div>
                     <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
                       {wallFilters.map(filter => <button key={filter} type="button" onClick={() => setActiveFilter(filter)} className={`whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-medium ${activeFilter === filter ? 'bg-[#0F0F0F] text-white' : 'bg-white text-gray-600'}`}>{filter}</button>)}
@@ -616,7 +655,7 @@ export default function BookingModal() {
                 </div>
               ) : null}
 
-              {step === 'detail' && selectedTherapist ? <TherapistDetail therapist={selectedTherapist} availableServices={availableServices} selectedServiceName={formData.service} selectedDuration={Number(formData.durationMinutes)} totalAmount={selectedTotalAmount} onSelectService={handleSelectService} onBack={() => setStep('wall')} onContinue={() => setStep('email')} /> : null}
+              {step === 'detail' && selectedTherapist ? <TherapistDetail therapist={selectedTherapist} availableServices={availableServices} selectedServiceName={formData.service} selectedDuration={Number(formData.durationMinutes)} totalAmount={selectedTotalAmount} onSelectService={handleSelectService} onBookService={handleBookService} onBack={() => setStep('wall')} onContinue={() => setStep('email')} /> : null}
 
               {step === 'email' ? (
                 <form onSubmit={handleEmailContinue} className="space-y-5">

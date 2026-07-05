@@ -23,7 +23,7 @@ const payloadSource = fs.readFileSync('src/lib/bookingRequestPayload.mjs', 'utf8
 test('Book Now opens therapist wall before email or form details', () => {
   assert.ok(modalSource.includes("useState('wall')"), 'initial step must be therapist wall');
   assert.ok(modalSource.includes("setStep('wall')"), 'open modal must set wall step');
-  assert.ok(modalSource.includes('Search therapist, area, or service'), 'wall must have search input');
+  assert.ok(modalSource.includes('Search therapist...'), 'wall must have search input');
   assert.ok(modalSource.includes('Choose your therapist'), 'wall title missing');
   assert.ok(!modalSource.includes("setStep('email');\n        return nextForm"), 'opening modal must not force email first');
 });
@@ -65,7 +65,7 @@ test('clicking therapist enters detail page with services and safe review copy',
 test('service selection on detail precedes email gate and computes total amount', () => {
   const therapist = findWebsiteTherapist('therapist-bgc-deep-tissue');
   const services = servicesForTherapist(therapist.id);
-  assert.deepEqual(services.map(service => service.name), ['Swedish Massage', 'Deep Tissue Massage']);
+  assert.deepEqual(services.map(service => service.name), ['Deep Tissue Massage', 'Swedish Massage']);
   const service = services.find(item => item.name === 'Deep Tissue Massage');
   assert.ok(service);
   const option = service.durationOptions.find(item => item.durationMinutes === 90);
