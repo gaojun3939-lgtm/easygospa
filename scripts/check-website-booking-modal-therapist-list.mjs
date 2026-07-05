@@ -16,6 +16,10 @@ function check(condition, message) {
 }
 
 const modalSource = fs.readFileSync('src/components/BookingModal.jsx', 'utf8');
+const wallCardSource = modalSource.slice(
+  modalSource.indexOf('function TherapistWallCard'),
+  modalSource.indexOf('function ServiceCard')
+);
 
 check(modalSource.includes("useState('wall')"), 'BookingModal opens on therapist list state');
 check(modalSource.includes("setStep('wall')"), 'open booking event resets to therapist list');
@@ -23,9 +27,17 @@ check(modalSource.includes('Search therapist...'), 'therapist list search placeh
 check(modalSource.includes("'Nearby'") && modalSource.includes("'Most booked'") && modalSource.includes("'Service type'"), 'therapist list exposes the requested filter labels');
 check(modalSource.includes('data-testid={`therapist-card-book-${therapist.id}`}'), 'Book button is directly addressable on each therapist card');
 check(modalSource.includes('data-testid="booking-therapist-list"'), 'therapist list has a dedicated compact list container');
+check(modalSource.includes('data-testid="booking-wall-toolbar"'), 'wall uses compact app-style toolbar');
+check(modalSource.includes('data-testid="booking-wall-filters"'), 'wall uses compact filter row');
+check(modalSource.includes('Step 1 of 5'), 'wall progress is compressed to a small line');
+check(modalSource.includes('sm:grid-cols-2'), 'desktop therapist list supports compact two-column layout');
+check(modalSource.includes('overflow-y-auto'), 'therapist list area scrolls internally');
 check(!modalSource.includes('Pick a real service profile first'), 'therapist wall removes explanatory copy');
 check(!modalSource.includes('Need help matching?'), 'therapist wall does not spend space on matching helper copy');
 check(!modalSource.includes('CompactAnyAvailableCard'), 'Any available is not rendered as a therapist-list card');
+check(!wallCardSource.includes('therapist.specialties.map'), 'therapist list cards do not render service tags');
+check(!wallCardSource.includes('therapist.serviceArea'), 'therapist list cards do not render long service-area copy');
+check(!wallCardSource.includes('therapist.specialtyDescription'), 'therapist list cards do not render therapist descriptions');
 check(modalSource.includes("setStep('detail')"), 'clicking therapist enters detail state');
 check(modalSource.includes('data-testid="service-duration-book"'), 'service duration has a Book action inside detail');
 check(modalSource.includes("setStep('email')"), 'booking a service duration advances to email/info flow');
