@@ -6,7 +6,8 @@ import { Sparkles, Star, ArrowRight, MapPin, Users, Award } from "lucide-react";
 const slides = [
   {
     id: 1,
-    image_url: "/images/ideal-hero.jpg",
+    image_url: "/images/brand/home-hero-01-desktop.webp",
+    mobile_image_url: "/images/brand/home-hero-01-mobile.webp",
     headline: "24/7 Home Massage in Metro Manila",
     subheading: "Professional Massage Service Available 24/7",
     description: "Professional massage therapists available for hotel, condo and home service across Metro Manila. Fast arrival, professional service and available 24 hours a day.",
@@ -68,19 +69,27 @@ export default function Hero() {
           exit={{ opacity: 0 }}
           transition={{ duration: 1.5, ease: "easeInOut" }}
         >
-          <img
-            src={currentSlide.image_url}
-            alt={`EasyGo Spa Home Massage Manila - ${currentSlide.headline}`}
-            className="w-full h-full object-cover object-center"
-            style={{
-              objectPosition: 'center center',
-              objectFit: 'cover',
-              width: '100%',
-              height: '100%',
-              minHeight: '100vh',
-              maxWidth: '100vw'
-            }}
-          />
+          <picture className="block w-full h-full">
+            {currentSlide.mobile_image_url && (
+              <source
+                media="(max-width: 767px)"
+                srcSet={currentSlide.mobile_image_url}
+              />
+            )}
+            <img
+              src={currentSlide.image_url}
+              alt={`EasyGo Spa Home Massage Manila - ${currentSlide.headline}`}
+              className="w-full h-full object-cover object-center"
+              style={{
+                objectPosition: 'center center',
+                objectFit: 'cover',
+                width: '100%',
+                height: '100%',
+                minHeight: '100vh',
+                maxWidth: '100vw'
+              }}
+            />
+          </picture>
         </motion.div>
       </AnimatePresence>
       
