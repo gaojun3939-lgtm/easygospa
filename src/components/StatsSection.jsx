@@ -56,7 +56,17 @@ const StatsSection = () => {
   }, []);
 
   return (
-    <section id="stats-section" style={{backgroundImage:'url(/images/young-woman-hero2.jpg)'}} className="py-16 md:py-20 bg-center bg-cover bg-no-repeat bg-gradient-to-b from-white to-[#FDFCF9] relative overflow-hidden">
+    <section id="stats-section" className="py-16 md:py-20 bg-gradient-to-b from-white to-[#FDFCF9] relative overflow-hidden">
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-cover bg-center md:hidden"
+        style={{ backgroundImage: "url(/images/brand/home-why-choose-mobile.webp)" }}
+      />
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 hidden bg-cover bg-center md:block"
+        style={{ backgroundImage: "url(/images/brand/home-why-choose-desktop.webp)" }}
+      />
       {/* Background Decoration */}
       <div className="z[1] inset-0 absolute w-full h-full bg-gradient-to-b from-[rgba(0,0,0,0.4)] to-[rgba(0,0,0,0.6)]">
 
