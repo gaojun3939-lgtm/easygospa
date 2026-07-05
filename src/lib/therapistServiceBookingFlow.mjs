@@ -1,5 +1,7 @@
 ﻿export const BOOKING_FLOW_STORAGE_KEY = 'easygospa_booking_email_session';
 
+export const DEFAULT_THERAPIST_IMAGE_URL = '/images/placeholders/default-therapist.svg';
+
 export const websiteBookingServices = [
   {
     id: 'swedish-massage',
@@ -68,6 +70,10 @@ export const websiteTherapists = [
     reviewsLabel: 'No verified reviews yet',
     verifiedReviews: [],
     availableServices: ['Deep Tissue Massage', 'Swedish Massage'],
+    listImageUrl: '',
+    detailImageUrl: '',
+    avatarUrl: '',
+    fallbackImageUrl: DEFAULT_THERAPIST_IMAGE_URL,
     therapistPreference: 'specific_therapist',
     internalConfig: true
   },
@@ -90,6 +96,10 @@ export const websiteTherapists = [
     reviewsLabel: 'No verified reviews yet',
     verifiedReviews: [],
     availableServices: ['Swedish Massage', 'Thai Dry Massage', 'Foot Massage'],
+    listImageUrl: '',
+    detailImageUrl: '',
+    avatarUrl: '',
+    fallbackImageUrl: DEFAULT_THERAPIST_IMAGE_URL,
     therapistPreference: 'specific_therapist',
     internalConfig: true
   },
@@ -110,6 +120,10 @@ export const websiteTherapists = [
     reviewsLabel: 'No verified reviews yet',
     verifiedReviews: [],
     availableServices: allServiceNames,
+    listImageUrl: '',
+    detailImageUrl: '',
+    avatarUrl: '',
+    fallbackImageUrl: DEFAULT_THERAPIST_IMAGE_URL,
     therapistPreference: 'any_available',
     internalConfig: true
   }

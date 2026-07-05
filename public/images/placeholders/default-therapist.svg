@@ -1,0 +1,11 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">EasyGoSpa therapist placeholder</title>
+  <desc id="desc">A clean local placeholder illustration for a massage therapist profile.</desc>
+  <rect width="512" height="512" rx="96" fill="#EAF8ED"/>
+  <circle cx="256" cy="166" r="72" fill="#FFFFFF"/>
+  <path d="M142 405c7-76 53-128 114-128s107 52 114 128" fill="#FFFFFF"/>
+  <path d="M256 254c-49 0-88-39-88-88s39-88 88-88 88 39 88 88-39 88-88 88Zm0-144c-31 0-56 25-56 56s25 56 56 56 56-25 56-56-25-56-56-56Z" fill="#4E8D43"/>
+  <path d="M120 420c4-49 23-92 55-123 22-21 50-32 81-32s59 11 81 32c32 31 51 74 55 123 1 9-6 17-16 17H136c-10 0-17-8-16-17Zm36-15h200c-8-31-22-56-41-75-16-15-36-23-59-23s-43 8-59 23c-19 19-33 44-41 75Z" fill="#4E8D43"/>
+  <path d="M181 338c18 18 43 28 75 28s57-10 75-28" stroke="#2DB83D" stroke-width="24" stroke-linecap="round"/>
+  <path d="M104 138c25-49 75-82 132-86M408 138c-25-49-75-82-132-86" stroke="#BFEBC7" stroke-width="18" stroke-linecap="round"/>
+</svg>

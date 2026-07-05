@@ -16,6 +16,10 @@ function check(condition, message) {
 }
 
 const modalSource = fs.readFileSync('src/components/BookingModal.jsx', 'utf8');
+const therapistFlowSource = fs.readFileSync('src/lib/therapistServiceBookingFlow.mjs', 'utf8');
+const normalizerSource = fs.readFileSync('src/lib/bookingCatalogNormalizer.mjs', 'utf8');
+const defaultTherapistImageUrl = '/images/placeholders/default-therapist.svg';
+const defaultTherapistImagePath = 'public/images/placeholders/default-therapist.svg';
 const wallCardSource = modalSource.slice(
   modalSource.indexOf('function TherapistWallCard'),
   modalSource.indexOf('function ServiceCard')
@@ -43,6 +47,18 @@ check(wallCardSource.includes('h-8') && wallCardSource.includes('px-3'), 'therap
 check(!wallCardSource.includes('w-full rounded') && !wallCardSource.includes('w-full items-center'), 'therapist list Book button is not full-width');
 check(!wallCardSource.includes('min-h-[118px]'), 'therapist list cards are not tall marketing cards');
 check(!wallCardSource.includes('h-10 min-w-20'), 'therapist list Book button is not a large pill');
+check(fs.existsSync(defaultTherapistImagePath), 'default therapist placeholder svg exists locally');
+const placeholderSource = fs.existsSync(defaultTherapistImagePath) ? fs.readFileSync(defaultTherapistImagePath, 'utf8') : '';
+check(!/(?:href|src)=["']https?:\/\//i.test(placeholderSource), 'default therapist placeholder has no external image references');
+check(!/\bBD\b|\bMR\b/.test(placeholderSource), 'default therapist placeholder is not a BD/MR letter avatar');
+check(therapistFlowSource.includes(`DEFAULT_THERAPIST_IMAGE_URL = '${defaultTherapistImageUrl}'`), 'therapist flow defines local default therapist image URL');
+check(therapistFlowSource.includes('fallbackImageUrl'), 'therapist flow exposes fallback image metadata');
+check(normalizerSource.includes('listImageUrl') && normalizerSource.includes('detailImageUrl') && normalizerSource.includes('fallbackImageUrl'), 'catalog normalizer preserves therapist image metadata fields');
+check(avatarSource.includes('resolveTherapistImageUrl'), 'BookingModal resolves therapist image through local-approved helper');
+check(avatarSource.includes('loading="lazy"'), 'BookingModal therapist image uses lazy loading');
+check(avatarSource.includes('object-cover'), 'BookingModal therapist image uses object-cover');
+check(avatarSource.includes('src={imageUrl}'), 'BookingModal therapist avatar renders an image element');
+check(!avatarSource.includes('backgroundImage'), 'BookingModal therapist avatar does not use CSS background-image');
 check(!modalSource.includes('Pick a real service profile first'), 'therapist wall removes explanatory copy');
 check(!modalSource.includes('Need help matching?'), 'therapist wall does not spend space on matching helper copy');
 check(!modalSource.includes('CompactAnyAvailableCard'), 'Any available is not rendered as a therapist-list card');
@@ -60,6 +76,8 @@ check(wallTherapists.some(therapist => therapist.name === 'Grace'), 'Grace appea
 check(wallTherapists.some(therapist => therapist.name === 'Luna'), 'Luna appears as a real therapist');
 check(!wallTherapists.some(therapist => ['BGC Deep Tissue Therapist', 'Makati Relaxation Therapist'].includes(therapist.name)), 'catalog profile names are not displayed as people');
 check(!wallTherapists.some(therapist => ['BD', 'MR'].includes(therapist.avatarInitials)), 'BD/MR initials are not used for fallback avatars');
+check(wallTherapists.every(therapist => therapist.fallbackImageUrl === defaultTherapistImageUrl), 'missing therapist photos use local default therapist placeholder metadata');
+check(wallTherapists.every(therapist => !/^https?:\/\//i.test(therapist.fallbackImageUrl || '')), 'therapist fallback image metadata does not use external URLs');
 check(wallTherapists.every(therapist => therapist.reviewsLabel === 'No verified reviews yet'), 'missing real reviews show safe review copy');
 check(wallTherapists.every(therapist => !/\b\d+(\.\d+)?\s*km\b/i.test(therapist.distanceLabel)), 'therapist cards do not fake GPS distance');
 check(wallTherapists.every(therapist => therapist.availabilityLabel === 'Available after schedule confirmation'), 'therapist cards do not fake earliest appointment time');

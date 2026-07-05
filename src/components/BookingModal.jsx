@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowLeft, Calendar, Check, CheckCircle2, Clock, Heart, Mail, MapPin, MessageSquare, Phone, Search, Share2, ShieldCheck, SlidersHorizontal, Star, User, X } from 'lucide-react';
 import {
   BOOKING_FLOW_STORAGE_KEY,
+  DEFAULT_THERAPIST_IMAGE_URL,
   concreteTherapistsForWall,
   findBookingServiceByName,
   findExactDurationOption,
@@ -104,25 +105,32 @@ function saveStoredSession(session) {
   window.sessionStorage.setItem(BOOKING_FLOW_STORAGE_KEY, JSON.stringify(session));
 }
 
+function isApprovedLocalTherapistImage(url = '') {
+  const value = String(url || '').trim();
+  return value.startsWith('/images/') && !value.startsWith('//');
+}
+
+function resolveTherapistImageUrl(therapist = {}, mode = 'wall') {
+  const candidates = mode === 'detail'
+    ? [therapist.detailImageUrl, therapist.avatarUrl, therapist.photoUrl, therapist.imageUrl, therapist.listImageUrl]
+    : [therapist.listImageUrl, therapist.avatarUrl, therapist.photoUrl, therapist.imageUrl];
+  return candidates.find(isApprovedLocalTherapistImage)
+    || (isApprovedLocalTherapistImage(therapist.fallbackImageUrl) ? therapist.fallbackImageUrl : DEFAULT_THERAPIST_IMAGE_URL);
+}
+
 function TherapistAvatar({ therapist, mode = 'wall' }) {
-  const photoUrl = therapist.photoUrl || therapist.avatarUrl || therapist.imageUrl || '';
+  const imageUrl = resolveTherapistImageUrl(therapist, mode);
   const isWall = mode === 'wall';
   const sizeClass = isWall ? 'h-[84px] w-[84px]' : 'h-24 w-24';
-  const iconClass = isWall ? 'h-7 w-7' : 'h-11 w-11';
-  if (photoUrl) {
-    return (
-      <div
-        role="img"
-        aria-label={`${therapist.name} therapist avatar`}
-        className={`${sizeClass} shrink-0 rounded-xl bg-cover bg-center ring-1 ring-gray-200`}
-        style={{ backgroundImage: `url("${photoUrl}")` }}
-      />
-    );
-  }
+
   return (
-    <div className={`flex ${sizeClass} shrink-0 items-center justify-center rounded-xl bg-[#EAF8ED] text-[#168823] ring-1 ring-[#2db83d]/20`}>
-      <User className={iconClass} aria-hidden="true" />
-    </div>
+    <img
+      src={imageUrl}
+      alt={`${therapist.name} therapist`}
+      loading="lazy"
+      decoding="async"
+      className={`${sizeClass} shrink-0 rounded-xl bg-[#EAF8ED] object-cover object-center ring-1 ring-gray-200`}
+    />
   );
 }
 
@@ -220,7 +228,7 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
       </button>
       <div className="rounded-3xl border border-gray-200 bg-white p-5">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
-          <TherapistAvatar therapist={therapist} large />
+          <TherapistAvatar therapist={therapist} mode="detail" />
           <div className="min-w-0 flex-1">
             <div className="flex items-start justify-between gap-3">
               <div>

@@ -1,4 +1,4 @@
-import { websiteBookingServices, websiteTherapists } from './therapistServiceBookingFlow.mjs';
+import { DEFAULT_THERAPIST_IMAGE_URL, websiteBookingServices, websiteTherapists } from './therapistServiceBookingFlow.mjs';
 
 function asArray(value) {
   return Array.isArray(value) ? value : [];
@@ -106,7 +106,12 @@ export function normalizePublicBookingCatalog(payload = {}) {
         technicianAccountName,
         role: 'Massage Therapist',
         avatarInitials: '',
+        listImageUrl: cleanText(therapist.listImageUrl || therapist.list_image_url || metadata.listImageUrl || metadata.list_image_url),
+        detailImageUrl: cleanText(therapist.detailImageUrl || therapist.detail_image_url || metadata.detailImageUrl || metadata.detail_image_url),
+        avatarUrl: cleanText(therapist.avatarUrl || therapist.avatar_url || metadata.avatarUrl || metadata.avatar_url),
         photoUrl: cleanText(therapist.photoUrl),
+        imageUrl: cleanText(therapist.imageUrl || therapist.image_url || metadata.imageUrl || metadata.image_url),
+        fallbackImageUrl: DEFAULT_THERAPIST_IMAGE_URL,
         distanceLabel: serviceAreaLabel(serviceAreas),
         availabilityLabel: therapist.therapistId === 'any_available' ? 'Matched after request review' : 'Available after schedule confirmation',
         serviceArea: serviceAreas.join(', ') || 'Metro Manila coverage depends on schedule',
