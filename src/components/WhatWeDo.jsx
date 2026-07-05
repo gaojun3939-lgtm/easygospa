@@ -140,7 +140,7 @@ Fast booking, verified therapists, and reliable service make EasyGo Spa one of t
               className="w-48 h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 rounded-full overflow-hidden shadow-lg"
             >
               <img
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/c85593c6e_3.jpg?w=800&q=90"
+                src="/images/brand/home-trust-therapist.webp"
                 alt="A serene, luxurious organic spa treatment room at EasyGo Spa Wellness Center in Metro Manila, designed for ultimate relaxation."
                 className="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
               />
@@ -244,7 +244,7 @@ Fast booking, verified therapists, and reliable service make EasyGo Spa one of t
               className="w-48 h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 rounded-full overflow-hidden shadow-lg"
             >
               <img
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/81c836a67_4.jpg?w=800&q=90"
+                src="/images/brand/home-trust-setup.webp"
                 alt="A tranquil premium organic spa massage room, showcasing natural elements at EasyGo Spa, Metro Manila's leading luxury wellness destination."
                 className="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
               />
