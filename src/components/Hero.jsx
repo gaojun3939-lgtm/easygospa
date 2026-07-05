@@ -16,7 +16,8 @@ const slides = [
   },
   {
     id: 2,
-    image_url: "/images/young-woman-hero1.jpg",
+    image_url: "/images/brand/home-hero-02-desktop.webp",
+    mobile_image_url: "/images/brand/home-hero-02-mobile.webp",
     headline: "24/7 Hotel Massage Service",
     subheading: "Fast Arrival Across Metro Manila",
     description: "Enjoy professional hotel massage service with experienced therapists. Available day and night throughout Metro Manila.",
@@ -25,7 +26,8 @@ const slides = [
   },
   {
     id: 3,
-    image_url: "/images/young-woman-hero.jpg",
+    image_url: "/images/brand/home-hero-03-desktop.webp",
+    mobile_image_url: "/images/brand/home-hero-03-mobile.webp",
     headline: "Professional Female Therapists",
     subheading: "Comfort, Privacy and Professional Care",
     description: "Choose from Swedish Massage, Deep Tissue Massage, Relaxation Massage and other wellness treatments delivered to your location.",
