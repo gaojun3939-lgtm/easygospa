@@ -115,7 +115,7 @@ function StepPill({ active, done, children }) {
 
 function TherapistAvatar({ therapist, large = false }) {
   const photoUrl = therapist.photoUrl || therapist.avatarUrl || therapist.imageUrl || '';
-  const sizeClass = large ? 'h-24 w-24' : 'h-14 w-14';
+  const sizeClass = large ? 'h-24 w-24' : 'h-16 w-16 sm:h-20 sm:w-20';
   if (photoUrl) {
     return (
       <div
@@ -128,7 +128,7 @@ function TherapistAvatar({ therapist, large = false }) {
   }
   return (
     <div className={`flex ${sizeClass} shrink-0 items-center justify-center rounded-full bg-[#EAF8ED] text-[#168823] ring-1 ring-[#2db83d]/20`}>
-      <User className={large ? 'h-11 w-11' : 'h-7 w-7'} aria-hidden="true" />
+      <User className={large ? 'h-11 w-11' : 'h-8 w-8'} aria-hidden="true" />
     </div>
   );
 }
@@ -149,25 +149,25 @@ function TherapistWallCard({ therapist, selected, onSelect }) {
       onClick={openDetail}
       onKeyDown={handleKeyDown}
       data-testid={`therapist-card-${therapist.id}`}
-      className={`w-full cursor-pointer rounded-2xl border bg-white p-3 text-left shadow-sm transition-all ${selected ? 'border-[#2db83d] shadow-md' : 'border-gray-100 hover:border-[#2db83d]/60 hover:shadow-md'}`}
+      className={`w-full cursor-pointer rounded-2xl border bg-white p-4 text-left shadow-sm transition-all ${selected ? 'border-[#2db83d] shadow-md' : 'border-gray-100 hover:border-[#2db83d]/60 hover:shadow-md'}`}
     >
-      <div className="flex gap-3 sm:gap-4">
+      <div className="flex gap-4">
         <TherapistAvatar therapist={therapist} />
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-3">
-            <div>
-              <h3 className="text-lg font-bold text-[#0F0F0F]">{therapist.name}</h3>
-              <p className="mt-1 text-sm text-gray-600">{therapist.serviceArea}</p>
+            <div className="min-w-0">
+              <h3 className="truncate text-lg font-bold text-[#0F0F0F]">{therapist.name}</h3>
+              <p className="mt-1 line-clamp-1 text-sm text-gray-600">{therapist.serviceArea}</p>
             </div>
-            <div className="flex shrink-0 flex-col items-end gap-2">
-              <span className="text-right text-xs font-semibold text-[#168823]">{therapist.availabilityLabel}</span>
+            <div className="flex max-w-[9rem] shrink-0 flex-col items-end gap-2">
+              <span className="text-right text-xs font-bold leading-snug text-[#168823]">{therapist.availabilityLabel}</span>
               {selected ? <CheckCircle2 className="h-5 w-5 text-[#2db83d]" /> : null}
             </div>
           </div>
-          <div className="mt-3 grid gap-2 text-sm text-gray-700 sm:grid-cols-[1fr_auto] sm:items-end">
-            <div className="space-y-2">
-              <p className="font-medium text-gray-800">{therapist.reviewsLabel}</p>
-              <p className="text-gray-600">{therapist.distanceLabel}</p>
+          <div className="mt-3 grid gap-3 text-sm text-gray-700 sm:grid-cols-[1fr_auto] sm:items-end">
+            <div className="space-y-1.5">
+              <p className="font-semibold text-gray-800">{therapist.reviewsLabel}</p>
+              <p className="line-clamp-1 text-gray-600">{therapist.distanceLabel}</p>
             </div>
             <button
               type="button"
@@ -176,33 +176,17 @@ function TherapistWallCard({ therapist, selected, onSelect }) {
                 openDetail();
               }}
               data-testid={`therapist-card-book-${therapist.id}`}
-              className="inline-flex h-11 items-center justify-center rounded-full bg-[#4E8D43] px-6 text-sm font-bold text-white transition hover:bg-[#168823]"
+              className="inline-flex h-12 min-w-24 items-center justify-center rounded-full bg-[#4E8D43] px-6 text-sm font-bold text-white transition hover:bg-[#168823]"
             >
               Book
             </button>
           </div>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {therapist.specialties.map(item => <span key={item} className="rounded-full bg-gray-100 px-2.5 py-1 text-xs text-gray-700">{item}</span>)}
+          <div className="mt-3 flex flex-wrap gap-2 overflow-hidden">
+            {therapist.specialties.map(item => <span key={item} className="rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-700">{item}</span>)}
           </div>
         </div>
       </div>
     </article>
-  );
-}
-
-function CompactAnyAvailableCard({ therapist, onSelect }) {
-  return (
-    <button type="button" onClick={() => onSelect(therapist.id)} data-testid="therapist-card-any_available" className="w-full rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-4 text-left transition hover:border-[#2db83d]/60">
-      <div className="flex items-center gap-3">
-        <TherapistAvatar therapist={therapist} />
-        <div>
-          <h4 className="font-semibold text-[#0F0F0F]">{therapist.name}</h4>
-          <p className="mt-0.5 text-xs font-medium text-gray-700">{therapist.role || 'Massage Therapist'}</p>
-          <p className="mt-1 text-sm text-gray-600">{therapist.specialtyDescription}</p>
-          <p className="mt-1 text-xs text-gray-500">{therapist.availabilityLabel}</p>
-        </div>
-      </div>
-    </button>
   );
 }
 
@@ -336,7 +320,6 @@ export default function BookingModal() {
   const catalogTherapists = Array.isArray(bookingCatalog.therapists) ? bookingCatalog.therapists : [];
   const catalogUnavailable = Boolean(bookingCatalog.catalogUnavailable || !catalogServices.length || !catalogTherapists.length);
   const selectedTherapist = useMemo(() => findWebsiteTherapist(formData.requestedTechnicianId, catalogTherapists), [catalogTherapists, formData.requestedTechnicianId]);
-  const anyAvailableTherapist = useMemo(() => findWebsiteTherapist('any_available', catalogTherapists), [catalogTherapists]);
   const wallTherapists = useMemo(() => {
     const query = wallSearch.trim().toLowerCase();
     return concreteTherapistsForWall(formData.preferredService, catalogTherapists).filter(therapist => {
@@ -628,11 +611,7 @@ export default function BookingModal() {
               {error ? <div className="mb-5 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</div> : null}
 
               {step === 'wall' ? (
-                <div className="space-y-5">
-                  <div>
-                    <h3 className="font-serif text-2xl font-bold text-[#0F0F0F]">Choose your therapist</h3>
-                    <p className="mt-2 text-sm text-gray-600">Pick a real service profile first. Availability is confirmed by our team after you submit.</p>
-                  </div>
+                <div className="space-y-4">
                   {catalogNotice ? <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">{catalogNotice}</div> : null}
                   <div className="rounded-2xl border border-gray-200 bg-gray-50 p-3">
                     <div className="flex items-center gap-2 rounded-xl bg-white px-3 py-2">
@@ -643,15 +622,11 @@ export default function BookingModal() {
                       {wallFilters.map(filter => <button key={filter} type="button" onClick={() => setActiveFilter(filter)} className={`whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-medium ${activeFilter === filter ? 'bg-[#0F0F0F] text-white' : 'bg-white text-gray-600'}`}>{filter}</button>)}
                     </div>
                   </div>
-                  <div className="grid gap-4">
+                  <div className="grid gap-4" data-testid="booking-therapist-list">
                     {!catalogUnavailable ? wallTherapists.map(therapist => <TherapistWallCard key={therapist.id} therapist={therapist} selected={formData.requestedTechnicianId === therapist.id} onSelect={openTherapistDetail} />) : null}
                     {catalogUnavailable ? <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm text-amber-800">Current service profiles are temporarily unavailable. Please try again later.</div> : null}
-                    {!catalogUnavailable && wallTherapists.length === 0 ? <div className="rounded-2xl border border-gray-200 p-5 text-sm text-gray-600">No therapist matches this search. Try service type or choose any available therapist below.</div> : null}
+                    {!catalogUnavailable && wallTherapists.length === 0 ? <div className="rounded-2xl border border-gray-200 p-5 text-sm text-gray-600">No therapist matches this search.</div> : null}
                   </div>
-                  {!catalogUnavailable && anyAvailableTherapist ? <div className="space-y-2">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Need help matching?</p>
-                    <CompactAnyAvailableCard therapist={anyAvailableTherapist} onSelect={openTherapistDetail} />
-                  </div> : null}
                 </div>
               ) : null}
 

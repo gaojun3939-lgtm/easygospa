@@ -24,7 +24,8 @@ test('Book Now opens therapist wall before email or form details', () => {
   assert.ok(modalSource.includes("useState('wall')"), 'initial step must be therapist wall');
   assert.ok(modalSource.includes("setStep('wall')"), 'open modal must set wall step');
   assert.ok(modalSource.includes('Search therapist...'), 'wall must have search input');
-  assert.ok(modalSource.includes('Choose your therapist'), 'wall title missing');
+  assert.ok(modalSource.includes('data-testid="booking-therapist-list"'), 'wall must render compact therapist list');
+  assert.ok(!modalSource.includes('Pick a real service profile first'), 'wall must not show explanatory copy above the list');
   assert.ok(!modalSource.includes("setStep('email');\n        return nextForm"), 'opening modal must not force email first');
 });
 
@@ -58,7 +59,7 @@ test('clicking therapist enters detail page with services and safe review copy',
   assert.ok(modalSource.includes('No hidden travel fee unless confirmed'), 'safe care info missing');
   assert.ok(modalSource.includes('We do not show sensitive customer information to therapists'), 'safe customer info copy missing');
   assert.ok(modalSource.includes('My Services'), 'detail services section missing');
-  assert.ok(modalSource.includes('Need help matching?'), 'Any available must be in matching help section');
+  assert.ok(!modalSource.includes('Need help matching?'), 'therapist wall must not show matching helper section');
   assert.ok(!modalSource.includes('{therapist.avatarInitials}'), 'modal must not render initials as avatar fallback');
 });
 

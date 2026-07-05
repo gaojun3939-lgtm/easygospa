@@ -22,6 +22,10 @@ check(modalSource.includes("setStep('wall')"), 'open booking event resets to the
 check(modalSource.includes('Search therapist...'), 'therapist list search placeholder is concise');
 check(modalSource.includes("'Nearby'") && modalSource.includes("'Most booked'") && modalSource.includes("'Service type'"), 'therapist list exposes the requested filter labels');
 check(modalSource.includes('data-testid={`therapist-card-book-${therapist.id}`}'), 'Book button is directly addressable on each therapist card');
+check(modalSource.includes('data-testid="booking-therapist-list"'), 'therapist list has a dedicated compact list container');
+check(!modalSource.includes('Pick a real service profile first'), 'therapist wall removes explanatory copy');
+check(!modalSource.includes('Need help matching?'), 'therapist wall does not spend space on matching helper copy');
+check(!modalSource.includes('CompactAnyAvailableCard'), 'Any available is not rendered as a therapist-list card');
 check(modalSource.includes("setStep('detail')"), 'clicking therapist enters detail state');
 check(modalSource.includes('data-testid="service-duration-book"'), 'service duration has a Book action inside detail');
 check(modalSource.includes("setStep('email')"), 'booking a service duration advances to email/info flow');
