@@ -140,12 +140,12 @@ export default function Contact() {
             </div>
             
             <h1 className="font-serif font-medium text-[clamp(2.5rem,5vw,4rem)] text-[#0F0F0F] mb-6 leading-tight">
-              Contact EasyGo Spa - The Best Luxury Spa in Metro Manila
+              Contact EasyGoSpa - Professional Home Massage in Metro Manila
             </h1>
             
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-[1.618]">
-              Experience luxury wellness at EasyGo Spa, where premium equipment meets 
-              highly skilled professionals for the best organic spa treatments in Metro Manila.
+              Book a trained massage therapist to your hotel, condo, home, or office.
+              Message us for availability, service details, and booking assistance.
             </p>
           </motion.div>
 
@@ -157,79 +157,84 @@ export default function Contact() {
               transition={{ duration: 0.8 }}
               className="space-y-[1.2em]"
             >
-              {/* Address */}
+              {/* Service Area */}
               <div className="bg-white rounded-3xl p-8 shadow-lg border border-[#2db83d]/20">
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-[#2db83d]/10 rounded-2xl flex items-center justify-center">
                     <MapPin className="w-6 h-6 text-[#2db83d]" />
                   </div>
                   <div>
-                    <h3 className="font-serif text-xl font-bold text-[#0F0F0F] mb-2">Visit Our Luxury Spa</h3>
-                    <address className="leading-[1.618] text-gray-600 not-italic">
-                      P-145, Sector A<br />
-                      Metropolitan Co-Operative Housing Society Limited<br />
-                       Metro Manila, Metro Manila 1229
-                    </address>
+                    <h3 className="font-serif text-xl font-bold text-[#0F0F0F] mb-2">Service Area</h3>
+                    <div className="leading-[1.618] text-gray-600">
+                      <p className="font-medium text-[#2db83d]">Metro Manila</p>
+                      <p className="text-sm">Home, condo, hotel, and office massage service. Enter your address during booking to check availability and travel fees.</p>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Phone */}
+              {/* Booking & WhatsApp */}
               <div className="bg-white rounded-3xl p-8 shadow-lg border border-[#2db83d]/20">
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-[#2db83d]/10 rounded-2xl flex items-center justify-center">
                     <Phone className="w-6 h-6 text-[#2db83d]" />
                   </div>
                   <div>
-                    <h3 className="font-serif text-xl font-bold text-[#0F0F0F] mb-2">Luxury Booking Line</h3>
+                    <h3 className="font-serif text-xl font-bold text-[#0F0F0F] mb-2">Booking & WhatsApp</h3>
                     <div className="leading-[1.618] text-gray-600">
                       <a 
-                        href="tel:+919876543210" 
+                        href="tel:+639171098079"
                         className="text-[#2db83d] hover:text-[#45f248] transition-colors duration-300 font-medium"
                       >
                         +63 917 109 8079
                       </a>
                       <br />
-                      <span className="text-sm">Premium service available daily</span>
+                      <span className="text-sm">Message us anytime to book or ask about therapist availability.</span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Email */}
+              {/* Email Support */}
               <div className="bg-white rounded-3xl p-8 shadow-lg border border-[#2db83d]/20">
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-[#2db83d]/10 rounded-2xl flex items-center justify-center">
                     <Mail className="w-6 h-6 text-[#2db83d]" />
                   </div>
                   <div>
-                    <h3 className="font-serif text-xl font-bold text-[#0F0F0F] mb-2">Concierge Email</h3>
+                    <h3 className="font-serif text-xl font-bold text-[#0F0F0F] mb-2">Email Support</h3>
                     <div className="leading-[1.618] text-gray-600">
                       <a 
                         href="mailto:easygospa@gmail.com"
                         className="text-[#2db83d] hover:text-[#45f248] transition-colors duration-300 font-medium"
                       >
-                        easygospa.com
+                        easygospa@gmail.com
                       </a>
                       <br />
-                      <span className="text-sm">Premium support within 2 hours</span>
+                      <a
+                        href="https://www.easygospa.com/"
+                        className="text-[#2db83d] hover:text-[#45f248] transition-colors duration-300 font-medium"
+                      >
+                        https://www.easygospa.com/
+                      </a>
+                      <br />
+                      <span className="text-sm">For booking questions, service details, and business inquiries.</span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Hours */}
+              {/* Service Hours */}
               <div className="bg-white rounded-3xl p-8 shadow-lg border border-[#2db83d]/20">
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-[#2db83d]/10 rounded-2xl flex items-center justify-center">
                     <Clock className="w-5 h-5 text-[#2db83d]" />
                   </div>
                   <div>
-                    <h3 className="font-serif text-xl font-bold text-[#0F0F0F] mb-2">Luxury Hours</h3>
+                    <h3 className="font-serif text-xl font-bold text-[#0F0F0F] mb-2">Service Hours</h3>
                     <div className="text-gray-600 space-y-1 leading-[1.618]">
-                      <p>Monday - Friday: 10:00 AM - 8:00 PM</p>
-                      <p>Saturday: 9:00 AM - 7:00 PM</p>
-                      <p>Sunday: 10:00 AM - 6:00 PM</p>
+                      <p className="font-medium text-[#2db83d]">24 Hours / 7 Days</p>
+                      <p className="text-sm">Online booking and message support are available 24/7. Therapist availability may vary by area and time.</p>
                     </div>
                   </div>
                 </div>
@@ -276,7 +281,7 @@ export default function Contact() {
                 </motion.div>
               ) : (
                 <>
-                  <h2 className="font-serif text-[clamp(2rem,4vw,3rem)] font-bold text-[#0F0F0F] mb-6">Experience Luxury</h2>
+                  <h2 className="font-serif text-[clamp(2rem,4vw,3rem)] font-bold text-[#0F0F0F] mb-6">Send Us a Message</h2>
                   
                   <form onSubmit={handleSubmit} className="space-y-6" noValidate>
                     <div className="grid md:grid-cols-2 gap-6">
@@ -404,7 +409,7 @@ export default function Contact() {
                             ? 'border-red-300 focus:border-red-500' 
                             : 'border-gray-200 focus:border-[#2db83d]'
                         }`}
-                        placeholder="Tell us about your wellness goals..."
+                        placeholder="Tell us your preferred service, location, date, and time."
                       />
                       {errors.message && (
                         <p className="text-red-500 text-sm mt-1">{errors.message}</p>

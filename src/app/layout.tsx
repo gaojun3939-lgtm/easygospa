@@ -124,8 +124,7 @@ export default function RootLayout({
                 </div>
               </div>
               <p className="text-sm leading-[1.618] text-gray-300 mb-6">
-                EasyGo Spa delivers professional home massage services across Metro Manila.
-  Enjoy relaxing massage treatments in your hotel, condo, or home with trusted therapists.
+                EasyGoSpa provides professional home massage services across Metro Manila. Book relaxing massage treatments at your hotel, condo, home, or office with trained and trusted therapists.
               </p>
               <div className="flex gap-4" role="list" aria-label="Social media links">
                 <a
@@ -167,6 +166,14 @@ export default function RootLayout({
                       href="#"
                       className="text-gray-300 hover:text-[#2db83d] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 focus:ring-offset-[#0F0F0F] rounded"
                     >
+                      Combination Massage
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      className="text-gray-300 hover:text-[#2db83d] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 focus:ring-offset-[#0F0F0F] rounded"
+                    >
                       Deep Tissue Massage
                     </a>
                   </li>
@@ -175,7 +182,7 @@ export default function RootLayout({
                       href="#"
                       className="text-gray-300 hover:text-[#2db83d] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 focus:ring-offset-[#0F0F0F] rounded"
                     >
-                      Aromatherapy Massage
+                      Traditional Hilot
                     </a>
                   </li>
                   <li>
@@ -183,7 +190,7 @@ export default function RootLayout({
                       href="#"
                       className="text-gray-300 hover:text-[#2db83d] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 focus:ring-offset-[#0F0F0F] rounded"
                     >
-                      Hot Stone Massage
+                      Couple Massage
                     </a>
                   </li>
                   <li>
@@ -191,7 +198,7 @@ export default function RootLayout({
                       href="#"
                       className="text-gray-300 hover:text-[#2db83d] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 focus:ring-offset-[#0F0F0F] rounded"
                     >
-                      Hotel Massage Service
+                      Home & Hotel Massage
                     </a>
                   </li>
                 </ul>
@@ -201,17 +208,30 @@ export default function RootLayout({
             {/* Contact */}
             <div className="mb-[1.2em]">
               <h3 className="font-serif text-lg font-semibold mb-6 text-[#2db83d]">
-                Contact EasyGo Spa
+                Contact EasyGoSpa
               </h3>
               <address className="space-y-4 text-sm flex flex-col items-center md:items-start not-italic">
+                <div className="flex items-start gap-3">
+                  <Sparkles
+                    className="w-5 h-5 text-[#2db83d] mt-0.5 flex-shrink-0"
+                    aria-hidden="true"
+                  />
+                  <a
+                    href="https://www.easygospa.com/"
+                    className="text-gray-300 hover:text-[#2db83d] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 focus:ring-offset-[#0F0F0F] rounded"
+                  >
+                    Website: https://www.easygospa.com/
+                  </a>
+                </div>
                 <div className="flex items-start gap-3">
                   <MapPin
                     className="w-5 h-5 text-[#2db83d] mt-0.5 flex-shrink-0"
                     aria-hidden="true"
                   />
                   <span className="text-gray-300 leading-[1.618]">
-                     7th Floor of Medical Towers Makati, 103 V. A. Rufino St., Legaspi Village, Makati City, Metro Manila
-                    
+                    Service Area: Metro Manila<br />
+                    Metro Manila Home Service<br />
+                    Available in selected areas across Metro Manila
                   </span>
                 </div>
                 <div className="flex items-center gap-3">
@@ -220,7 +240,7 @@ export default function RootLayout({
                     href="tel:+639171098079"
                     className="text-gray-300 hover:text-[#2db83d] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 focus:ring-offset-[#0F0F0F] rounded"
                   >
-                    +63 9171098079
+                    Phone / WhatsApp: +63 917 109 8079
                   </a>
                 </div>
                 <div className="flex items-center gap-3">
@@ -229,7 +249,7 @@ export default function RootLayout({
                     href="mailto:easygospa@gmail.com"
                     className="text-gray-300 hover:text-[#2db83d] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 focus:ring-offset-[#0F0F0F] rounded"
                   >
-                    easygospa@gmail.com
+                    Email: easygospa@gmail.com
                   </a>
                 </div>
               </address>
@@ -241,7 +261,7 @@ export default function RootLayout({
                 Special Offers
               </h3>
               <p className="text-sm text-gray-300 mb-4 leading-[1.618]">
-                Get promotions, discounts and the latest massage service updates.
+                Get promotions, discounts, and home massage service updates.
               </p>
               <SubscribeForm/>
             </div>
