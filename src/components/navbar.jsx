@@ -71,8 +71,6 @@ export default function Navbar() {
     () => [
       { name: "Home", url: "/" },
       { name: "Services", url:"/services" },
-      { name: "Pricing", url:"/pricing" },
-      { name: "Coverage", url:"/coverage" },
       { name: "Contact", url: "/contact" },
     ],
     []
