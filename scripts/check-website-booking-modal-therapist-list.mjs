@@ -20,6 +20,10 @@ const wallCardSource = modalSource.slice(
   modalSource.indexOf('function TherapistWallCard'),
   modalSource.indexOf('function ServiceCard')
 );
+const avatarSource = modalSource.slice(
+  modalSource.indexOf('function TherapistAvatar'),
+  modalSource.indexOf('function TherapistWallCard')
+);
 
 check(modalSource.includes("useState('wall')"), 'BookingModal opens on therapist list state');
 check(modalSource.includes("setStep('wall')"), 'open booking event resets to therapist list');
@@ -29,9 +33,16 @@ check(modalSource.includes('data-testid={`therapist-card-book-${therapist.id}`}'
 check(modalSource.includes('data-testid="booking-therapist-list"'), 'therapist list has a dedicated compact list container');
 check(modalSource.includes('data-testid="booking-wall-toolbar"'), 'wall uses compact app-style toolbar');
 check(modalSource.includes('data-testid="booking-wall-filters"'), 'wall uses compact filter row');
-check(modalSource.includes('Step 1 of 5'), 'wall progress is compressed to a small line');
+check(!modalSource.includes('Step 1 of 5'), 'wall hides step copy on the dense therapist-list screen');
 check(modalSource.includes('sm:grid-cols-2'), 'desktop therapist list supports compact two-column layout');
 check(modalSource.includes('overflow-y-auto'), 'therapist list area scrolls internally');
+check(wallCardSource.includes('h-[92px]') || wallCardSource.includes('min-h-[92px]') || wallCardSource.includes('h-[96px]') || wallCardSource.includes('min-h-[96px]'), 'therapist list cards use compact row height');
+check(avatarSource.includes("mode === 'wall'") && avatarSource.includes('h-[84px] w-[84px]'), 'therapist list uses compact image sizing');
+check(!wallCardSource.includes('h-24 w-24'), 'therapist list does not use large detail avatar sizing');
+check(wallCardSource.includes('h-8') && wallCardSource.includes('px-3'), 'therapist list Book button is compact');
+check(!wallCardSource.includes('w-full rounded') && !wallCardSource.includes('w-full items-center'), 'therapist list Book button is not full-width');
+check(!wallCardSource.includes('min-h-[118px]'), 'therapist list cards are not tall marketing cards');
+check(!wallCardSource.includes('h-10 min-w-20'), 'therapist list Book button is not a large pill');
 check(!modalSource.includes('Pick a real service profile first'), 'therapist wall removes explanatory copy');
 check(!modalSource.includes('Need help matching?'), 'therapist wall does not spend space on matching helper copy');
 check(!modalSource.includes('CompactAnyAvailableCard'), 'Any available is not rendered as a therapist-list card');
