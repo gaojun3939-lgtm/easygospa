@@ -6,8 +6,8 @@ import { Sparkles, Star, ArrowRight, MapPin, Users, Award } from "lucide-react";
 const slides = [
   {
     id: 1,
-    image_url: "/images/brand/home-hero-01-original.png",
-    mobile_image_url: "/images/brand/home-hero-01-original.png",
+    image_url: "/images/brand/home-hero-01-filipina.png",
+    mobile_image_url: "/images/brand/home-hero-01-filipina.png",
     headline: "24/7 Home Massage in Metro Manila",
     subheading: "Professional Massage Service Available 24/7",
     description: "Professional massage therapists available for hotel, condo and home service across Metro Manila. Fast arrival, professional service and available 24 hours a day.",
@@ -17,8 +17,8 @@ const slides = [
   },
   {
     id: 2,
-    image_url: "/images/brand/home-hero-02-original.png",
-    mobile_image_url: "/images/brand/home-hero-02-original.png",
+    image_url: "/images/brand/home-hero-02-filipina.png",
+    mobile_image_url: "/images/brand/home-hero-02-filipina.png",
     headline: "24/7 Hotel Massage Service",
     subheading: "Fast Arrival Across Metro Manila",
     description: "Enjoy professional hotel massage service with experienced therapists. Available day and night throughout Metro Manila.",
@@ -28,8 +28,8 @@ const slides = [
   },
   {
     id: 3,
-    image_url: "/images/brand/home-hero-03-original.png",
-    mobile_image_url: "/images/brand/home-hero-03-original.png",
+    image_url: "/images/brand/home-hero-03-filipina.png",
+    mobile_image_url: "/images/brand/home-hero-03-filipina.png",
     headline: "Professional Female Therapists",
     subheading: "Comfort, Privacy and Professional Care",
     description: "Choose from Swedish Massage, Deep Tissue Massage, Relaxation Massage and other wellness treatments delivered to your location.",
