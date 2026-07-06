@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Clock, ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Head from "next/head";
 
@@ -16,18 +16,18 @@ const servicesData = [
     description: "Indulge in a timeless classic at Metro Manila's premier wellness destination. Our Swedish Massage utilizes masterful, flowing strokes and gentle kneading to dissolve muscle tension, enhance circulation, and guide you to a state of profound relaxation. This is the perfect introduction to therapeutic massage, meticulously performed by our certified therapists in Ho to restore your body's natural harmony.",
     price: 2500,
     duration: "60 min",
-    image_url: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/77609c815_image.png?w=600&q=80",
+    image_url: "/images/brand/service-previews/service-swedish-preview.webp",
     alt_text: "Professional Swedish massage therapy session at EasyGo Spa luxury spa in Metro Manila - premium relaxation treatment"
   },
   {
     id: 2,
-    name: "Japanese Head Spa",
+    name: "Hot Stone Massage",
     category: "massage",
-    description: "Embark on a transcendent sensory journey with our state-of-the-art Japanese Head Spa. Submerge your senses in a sanctuary of tranquility as a therapeutic waterfall, enriched with potent organic elixirs, bathes your scalp and hair under the ethereal glow of chromotherapy lighting. This is not merely a treatment—it is a meticulous ritual designed to detoxify the scalp, restore hair vitality, and guide you to a state of profound, meditative calm.",
+    description: "A relaxing massage using warm stones and gentle techniques to ease muscle tension, improve comfort, and support deep relaxation.",
     price: 3500,
     duration: "90 min",
-    image_url: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/ddade6f79_image.png?w=600&q=80",
-    alt_text: "Japanese Head Spa waterfall treatment with chromotherapy lighting at EasyGo Spa Ho salon - luxury scalp therapy"
+    image_url: "/images/brand/service-previews/service-hot-stone-preview.webp",
+    alt_text: "Hot stone massage with warm basalt stones for professional home massage service in Metro Manila"
   },
   {
     id: 3,
@@ -36,7 +36,7 @@ const servicesData = [
     description: "Experience the ancient art of healing with our authentic Thai Dry Massage in Metro Manila. This traditional, oil-free therapy combines rhythmic acupressure, gentle rocking, and assisted yoga stretches to unblock energy pathways, improve flexibility, and relieve deep-seated tension. Let our expert therapists guide your body into a state of blissful release and renewed vitality.",
     price: 3000,
     duration: "75 min",
-    image_url: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/5ea9a35b6_image.png?w=600&q=80",
+    image_url: "/images/brand/service-previews/service-thai-dry-preview.webp",
     alt_text: "Traditional Thai dry massage therapy with acupressure and yoga stretches at EasyGo Spa Metro Manila"
   },
   {
@@ -46,7 +46,7 @@ const servicesData = [
     description: "Revitalize your entire being from the ground up with our specialized Foot Massage. This ancient reflexology-based treatment targets key pressure points in your feet that correspond to different organs and systems in the body. Alleviate fatigue, reduce stress, and promote overall wellness in our luxurious Ho spa.",
     price: 1500,
     duration: "45 min", 
-    image_url: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/0c4d65a6a_image.png?w=600&q=80",
+    image_url: "/images/brand/service-previews/service-foot-preview.webp",
     alt_text: "Relaxing foot reflexology massage therapy at EasyGo Spa luxury wellness center in Metro Manila"
   },
   {
@@ -56,7 +56,7 @@ const servicesData = [
     description: "Melt away the stresses of modern life with our targeted Head and Shoulder Massage. This concentrated therapy focuses on the high-tension areas of your neck, shoulders, and scalp, providing immediate relief from headaches, stiffness, and digital fatigue. It's the ultimate quick escape to tranquility, offered at the best spa in Metro Manila.",
     price: 1200,
     duration: "30 min",
-    image_url: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/30adeac89_image.png?w=600&q=80",
+    image_url: "/images/brand/service-previews/service-head-shoulder-preview.webp",
     alt_text: "Therapeutic head and shoulder massage for stress relief at EasyGo Spa premium spa in Ho Metro Manila"
   },
   {
@@ -66,7 +66,7 @@ const servicesData = [
     description: "For those seeking powerful relief from chronic pain and muscle tightness, our Deep Tissue Massage is the definitive solution. Our highly skilled therapists use slow, deliberate strokes and deep pressure to target the inner layers of your muscles and connective tissues. Ideal for athletes and individuals with persistent knots, this is a truly transformative treatment.",
     price: 3500,
     duration: "60 min",
-    image_url: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/7581a5afb_image.png?w=600&q=80",
+    image_url: "/images/brand/service-previews/service-deep-tissue-preview.webp",
     alt_text: "Deep tissue massage therapy for chronic pain relief at EasyGo Spa luxury spa - professional treatment in Metro Manila"
   },
 
@@ -210,18 +210,7 @@ export default function ServicesPage() {
                     decoding="async"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  
-                  {/* Price Badge */}
-                  <div className="absolute top-4 right-4 bg-[#2db83d] text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">
-                    ₱{service.price.toLocaleString()}
-                    {service.priceNote && <span className="text-xs ml-1">{service.priceNote}</span>}
-                  </div>
 
-                  {/* Duration Badge */}
-                  <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm text-gray-800 px-3 py-1 rounded-full text-sm flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
-                    {service.duration}
-                  </div>
                 </div>
 
                 {/* Service Content */}
@@ -233,10 +222,6 @@ export default function ServicesPage() {
                   <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-3">
                     {service.description}
                   </p>
-                  <div className="mb-4 rounded-full bg-gray-100 px-3 py-2 text-sm text-gray-600">
-                    No verified reviews yet
-                  </div>
-                  
                   <button 
                     onClick={() => handleServiceBooking(service)}
                     className="w-full bg-[#2db83d]/10 text-[#2db83d] py-3 rounded-full font-medium hover:bg-[#2db83d] hover:text-white transition-all duration-300 group-hover:shadow-lg flex items-center justify-center gap-2"
