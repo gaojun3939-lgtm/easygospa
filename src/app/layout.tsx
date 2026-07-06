@@ -10,7 +10,6 @@ import "./globals.css";
 import React from "react";
 import { Suspense } from "react";
 
-import Link from "next/link";
 import {Phone,
   Mail,
   Instagram,
@@ -274,12 +273,6 @@ export default function RootLayout({
             </p>
             <nav aria-label="Legal links">
               <div className="flex gap-6 text-sm">
-                <Link
-                  href={"/sitemap"}
-                  className="text-gray-400 hover:text-[#2db83d] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 focus:ring-offset-[#0F0F0F] rounded"
-                >
-                  Sitemap
-                </Link>
                 <a
                   href="#"
                   className="text-gray-400 hover:text-[#2db83d] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 focus:ring-offset-[#0F0F0F] rounded"
