@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Clock, ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Head from "next/head";
 import Link from "next/link";
@@ -516,21 +516,7 @@ export default function ServicesSection() {
                     decoding="async"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  
-                  {/* Price Badge */}
-                  <div className="absolute top-4 right-4 bg-[#2db83d] text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">
-                  {new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'PHP'
-}).format(service.price)}
-                    {service.priceNote && <span className="text-xs ml-1">{service.priceNote}</span>}
-                  </div>
 
-                  {/* Duration Badge */}
-                  <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm text-gray-800 px-3 py-1 rounded-full text-sm flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
-                    {service.duration}
-                  </div>
                 </div>
 
                 {/* Service Content */}
