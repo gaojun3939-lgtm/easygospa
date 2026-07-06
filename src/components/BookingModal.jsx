@@ -105,17 +105,25 @@ function saveStoredSession(session) {
   window.sessionStorage.setItem(BOOKING_FLOW_STORAGE_KEY, JSON.stringify(session));
 }
 
-function isApprovedLocalTherapistImage(url = '') {
+function isApprovedTherapistImage(url = '') {
   const value = String(url || '').trim();
-  return value.startsWith('/images/') && !value.startsWith('//');
+  if (value.startsWith('/images/') && !value.startsWith('//')) return true;
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === 'https:'
+      && /\.supabase\.co$/i.test(parsed.hostname)
+      && parsed.pathname.startsWith('/storage/v1/object/public/therapist-images/');
+  } catch {
+    return false;
+  }
 }
 
 function resolveTherapistImageUrl(therapist = {}, mode = 'wall') {
   const candidates = mode === 'detail'
     ? [therapist.detailImageUrl, therapist.avatarUrl, therapist.photoUrl, therapist.imageUrl, therapist.listImageUrl]
     : [therapist.listImageUrl, therapist.avatarUrl, therapist.photoUrl, therapist.imageUrl];
-  return candidates.find(isApprovedLocalTherapistImage)
-    || (isApprovedLocalTherapistImage(therapist.fallbackImageUrl) ? therapist.fallbackImageUrl : DEFAULT_THERAPIST_IMAGE_URL);
+  return candidates.find(isApprovedTherapistImage)
+    || (isApprovedTherapistImage(therapist.fallbackImageUrl) ? therapist.fallbackImageUrl : DEFAULT_THERAPIST_IMAGE_URL);
 }
 
 function TherapistAvatar({ therapist, mode = 'wall' }) {

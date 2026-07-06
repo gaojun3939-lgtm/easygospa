@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { normalizeWebsiteBookingRequest } from '../src/lib/bookingRequestPayload.mjs';
+import { normalizePublicBookingCatalog } from '../src/lib/bookingCatalogNormalizer.mjs';
 import {
   concreteTherapistsForWall,
   findBookingServiceByName,
@@ -54,7 +55,8 @@ check(!/\bBD\b|\bMR\b/.test(placeholderSource), 'default therapist placeholder i
 check(therapistFlowSource.includes(`DEFAULT_THERAPIST_IMAGE_URL = '${defaultTherapistImageUrl}'`), 'therapist flow defines local default therapist image URL');
 check(therapistFlowSource.includes('fallbackImageUrl'), 'therapist flow exposes fallback image metadata');
 check(normalizerSource.includes('listImageUrl') && normalizerSource.includes('detailImageUrl') && normalizerSource.includes('fallbackImageUrl'), 'catalog normalizer preserves therapist image metadata fields');
-check(avatarSource.includes('resolveTherapistImageUrl'), 'BookingModal resolves therapist image through local-approved helper');
+check(avatarSource.includes('resolveTherapistImageUrl'), 'BookingModal resolves therapist image through approved helper');
+check(modalSource.includes('supabase') && modalSource.includes('/storage/v1/object/public/therapist-images/'), 'BookingModal allows controlled Supabase therapist upload URLs');
 check(avatarSource.includes('loading="lazy"'), 'BookingModal therapist image uses lazy loading');
 check(avatarSource.includes('object-cover'), 'BookingModal therapist image uses object-cover');
 check(avatarSource.includes('src={imageUrl}'), 'BookingModal therapist avatar renders an image element');
@@ -81,6 +83,21 @@ check(wallTherapists.every(therapist => !/^https?:\/\//i.test(therapist.fallback
 check(wallTherapists.every(therapist => therapist.reviewsLabel === 'No verified reviews yet'), 'missing real reviews show safe review copy');
 check(wallTherapists.every(therapist => !/\b\d+(\.\d+)?\s*km\b/i.test(therapist.distanceLabel)), 'therapist cards do not fake GPS distance');
 check(wallTherapists.every(therapist => therapist.availabilityLabel === 'Available after schedule confirmation'), 'therapist cards do not fake earliest appointment time');
+
+const uploadedAvatarUrl = 'https://demo.supabase.co/storage/v1/object/public/therapist-images/brand-a/therapist-bgc-deep-tissue/avatar-123.webp';
+const uploadedDetailUrl = 'https://demo.supabase.co/storage/v1/object/public/therapist-images/brand-a/therapist-bgc-deep-tissue/detail-123.webp';
+const uploadedCatalog = normalizePublicBookingCatalog({
+  brand: 'EasyGoSpa',
+  business: 'Home Massage',
+  currency: 'PHP',
+  therapists: [{ therapistId: 'therapist-bgc-deep-tissue', displayName: 'BGC Deep Tissue Therapist', technicianAccountId: 'th-a-001', technicianAccountName: 'Grace', avatarUrl: uploadedAvatarUrl, listImageUrl: uploadedAvatarUrl, detailImageUrl: uploadedDetailUrl, serviceAreas: ['BGC'], specialties: ['Deep Tissue Massage'], status: 'active', isVisibleOnWebsite: true }],
+  services: [{ serviceId: 'deep-tissue-massage', serviceName: 'Deep Tissue Massage', description: 'Deep tissue', category: 'Massage', status: 'active', isVisibleOnWebsite: true }],
+  options: [{ optionId: 'deep-tissue-massage-120', serviceId: 'deep-tissue-massage', durationMinutes: 120, price: 5200, currency: 'PHP', status: 'active', isVisibleOnWebsite: true }],
+  relations: [{ therapistId: 'therapist-bgc-deep-tissue', serviceId: 'deep-tissue-massage', isVisibleOnWebsite: true }]
+});
+const uploadedGrace = uploadedCatalog.therapists.find(therapist => therapist.name === 'Grace');
+check(uploadedGrace?.avatarUrl === uploadedAvatarUrl && uploadedGrace?.detailImageUrl === uploadedDetailUrl, 'uploaded therapist image fields survive website normalization');
+check(uploadedGrace?.fallbackImageUrl === defaultTherapistImageUrl, 'uploaded therapist still keeps local fallback image metadata');
 
 const grace = findWebsiteTherapist('therapist-bgc-deep-tissue');
 check(grace.name === 'Grace', 'Grace is selected by profile id');
