@@ -36,15 +36,16 @@ test('AI Office public catalog normalizes for website booking flow', () => {
   assert.equal(normalized.catalogSource, 'ai_office_public_catalog');
   assert.equal(normalized.fallback, false);
   assert.equal(normalized.catalogUnavailable, false);
-  assert.ok(normalized.therapists.some(therapist => therapist.name === 'Luna' && therapist.profileName === 'Makati Relaxation Therapist'));
+  assert.ok(normalized.therapists.some(therapist => therapist.catalogSource === 'ai_office_public_catalog' && therapist.id !== 'any_available'));
   assert.ok(normalized.services.some(service => service.name === 'Thai Dry Massage'));
 });
 
-test('Makati therapist exposes Thai Dry Massage from catalog relation', () => {
-  const therapist = findWebsiteTherapist('therapist-makati-relaxation', normalized.therapists);
-  assert.equal(therapist.name, 'Luna');
-  assert.equal(therapist.profileName, 'Makati Relaxation Therapist');
-  assert.equal(therapist.technicianAccountId, 'th-a-002');
+test('valid public catalog therapist exposes Thai Dry Massage from catalog relation', () => {
+  const therapist = normalized.therapists.find(item => item.id !== 'any_available');
+  assert.ok(therapist);
+  assert.ok(therapist.name);
+  assert.ok(therapist.profileName);
+  assert.ok(therapist.technicianAccountId);
   const services = servicesForTherapist(therapist.id, normalized.therapists, normalized.services);
   assert.ok(services.some(service => service.name === 'Thai Dry Massage'));
 });
@@ -85,10 +86,12 @@ test('hidden or inactive catalog rows are not normalized for website display', (
   assert.ok(hiddenCatalog.therapists.some(therapist => therapist.id === 'visible-therapist'));
 });
 
-test('fallback seed remains usable when public catalog is unavailable', () => {
+test('fallback catalog keeps booking usable without exposing named seed therapists', () => {
   const fallback = getFallbackWebsiteBookingCatalog('unit_test');
-  assert.equal(fallback.catalogSource, 'local_seed_fallback');
-  assert.ok(fallback.therapists.some(therapist => therapist.id === 'therapist-makati-relaxation'));
+  assert.equal(fallback.catalogSource, 'catalog_unavailable_safe_fallback');
+  assert.equal(fallback.catalogUnavailable, true);
+  assert.deepEqual(fallback.therapists.map(therapist => therapist.name), ['Any available therapist']);
+  assert.ok(!fallback.therapists.some(therapist => ['Grace', 'Luna'].includes(therapist.name)));
   const service = findBookingServiceByName('Thai Dry Massage', fallback.services);
   assert.equal(findExactDurationOption(service, 120).price, 4900);
 });
@@ -96,7 +99,8 @@ test('fallback seed remains usable when public catalog is unavailable', () => {
 test('catalog-backed booking payload preserves selected duration, price, and source', () => {
   const service = findBookingServiceByName('Thai Dry Massage', normalized.services);
   const option = findExactDurationOption(service, 120);
-  const therapist = findWebsiteTherapist('therapist-makati-relaxation', normalized.therapists);
+  const therapist = normalized.therapists.find(item => item.id !== 'any_available');
+  assert.ok(therapist);
   const payload = normalizeWebsiteBookingRequest({
     customerName: 'Website Catalog Integration Smoke',
     customerEmail: 'website-catalog-integration-smoke@example.com',
@@ -126,9 +130,9 @@ test('catalog-backed booking payload preserves selected duration, price, and sou
       bookingFlow: 'therapist_wall_detail_service_cash'
     }
   });
-  assert.equal(payload.requestedTechnicianName, 'Luna');
-  assert.equal(payload.requestedTechnicianProfileName, 'Makati Relaxation Therapist');
-  assert.equal(payload.requestedTechnicianAccountId, 'th-a-002');
+  assert.equal(payload.requestedTechnicianName, therapist.name);
+  assert.equal(payload.requestedTechnicianProfileName, therapist.profileName);
+  assert.equal(payload.requestedTechnicianAccountId, therapist.technicianAccountId);
   assert.equal(payload.serviceId, 'thai-dry-massage');
   assert.equal(payload.service, 'Thai Dry Massage');
   assert.equal(payload.durationMinutes, 120);

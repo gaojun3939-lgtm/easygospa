@@ -21,6 +21,7 @@ import { getFallbackWebsiteBookingCatalog } from '../lib/bookingCatalogNormalize
 const timeSlots = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00', '22:30', '23:00'];
 const areaOptions = ['BGC', 'Makati', 'Taguig', 'Pasay', 'Ortigas', 'Metro Manila'];
 const wallFilters = ['Nearby', 'Most booked', 'Service type'];
+const catalogUnavailableNotice = 'Therapist list temporarily unavailable. You can continue without selecting a specific therapist.';
 const bookingInputClass = 'w-full rounded-xl border border-gray-300 bg-white px-4 py-3 font-medium text-[#0F0F0F] caret-[#0F0F0F] placeholder:text-gray-500 focus:border-[#2db83d] focus:outline-none';
 const bookingTextareaClass = `${bookingInputClass} resize-none`;
 const bookingLabelClass = 'mb-2 block text-sm font-semibold text-slate-800';
@@ -324,6 +325,8 @@ export default function BookingModal() {
   const catalogServices = Array.isArray(bookingCatalog.services) ? bookingCatalog.services : [];
   const catalogTherapists = Array.isArray(bookingCatalog.therapists) ? bookingCatalog.therapists : [];
   const catalogUnavailable = Boolean(bookingCatalog.catalogUnavailable || !catalogServices.length || !catalogTherapists.length);
+  const safeFallbackTherapist = useMemo(() => catalogTherapists.find(therapist => therapist.id === 'any_available') || null, [catalogTherapists]);
+  const canContinueWithoutSpecificTherapist = Boolean(catalogUnavailable && safeFallbackTherapist && catalogServices.length);
   const selectedTherapist = useMemo(() => findWebsiteTherapist(formData.requestedTechnicianId, catalogTherapists), [catalogTherapists, formData.requestedTechnicianId]);
   const wallTherapists = useMemo(() => {
     const query = wallSearch.trim().toLowerCase();
@@ -346,13 +349,13 @@ export default function BookingModal() {
         const payload = await response.json().catch(() => null);
         if (!active || !response.ok || payload?.ok !== true) throw new Error('BOOKING_CATALOG_LOAD_FAILED');
         setBookingCatalog(payload);
-        if (payload.catalogUnavailable) setCatalogNotice('Current service catalog is temporarily unavailable. Please try again later.');
+        if (payload.catalogUnavailable) setCatalogNotice(catalogUnavailableNotice);
         else if (payload.fallback) setCatalogNotice('Using our backup service menu while the live catalog reloads.');
         else setCatalogNotice('');
       } catch {
         if (!active) return;
         setBookingCatalog(getFallbackWebsiteBookingCatalog('website_catalog_proxy_unavailable'));
-        setCatalogNotice('Using our backup service menu while the live catalog reloads.');
+        setCatalogNotice(catalogUnavailableNotice);
       }
     }
     loadBookingCatalog();
@@ -535,7 +538,7 @@ export default function BookingModal() {
         form: 'BookingModal',
         submittedFrom: 'public_website',
         bookingFlow: 'therapist_wall_detail_service_cash',
-        catalogSource: bookingCatalog.catalogSource || 'local_seed_fallback',
+        catalogSource: bookingCatalog.catalogSource || 'catalog_unavailable_safe_fallback',
         requestedTechnicianProfileId: selectedTherapist.profileId || selectedTherapist.id,
         requestedTechnicianProfileName: selectedTherapist.profileName || selectedTherapist.name,
         serviceId: selectedOption.service.id,
@@ -634,7 +637,21 @@ export default function BookingModal() {
                   {catalogNotice ? <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">{catalogNotice}</div> : null}
                   <div className="grid max-h-[calc(94vh-86px)] gap-2 overflow-y-auto pr-1 sm:grid-cols-2" data-testid="booking-therapist-list">
                     {!catalogUnavailable ? wallTherapists.map(therapist => <TherapistWallCard key={therapist.id} therapist={therapist} selected={formData.requestedTechnicianId === therapist.id} onSelect={openTherapistDetail} />) : null}
-                    {catalogUnavailable ? <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm text-amber-800">Current service profiles are temporarily unavailable. Please try again later.</div> : null}
+                    {catalogUnavailable ? (
+                      <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm text-amber-800" data-testid="booking-catalog-unavailable">
+                        <p>{catalogUnavailableNotice}</p>
+                        {canContinueWithoutSpecificTherapist ? (
+                          <button
+                            type="button"
+                            onClick={() => openTherapistDetail(safeFallbackTherapist.id)}
+                            data-testid="booking-any-available-fallback"
+                            className="mt-4 inline-flex h-10 items-center justify-center rounded-full bg-[#4E8D43] px-4 text-sm font-bold text-white transition hover:bg-[#168823]"
+                          >
+                            Continue without selecting a specific therapist
+                          </button>
+                        ) : null}
+                      </div>
+                    ) : null}
                     {!catalogUnavailable && wallTherapists.length === 0 ? <div className="rounded-2xl border border-gray-200 p-5 text-sm text-gray-600">No therapist matches this search.</div> : null}
                   </div>
                 </div>

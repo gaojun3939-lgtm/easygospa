@@ -28,18 +28,29 @@ function serviceAreaLabel(serviceAreas = []) {
   return areas.length ? `Serving ${areas.slice(0, 3).join(' / ')} area` : 'Serving Metro Manila by schedule';
 }
 
-export function getFallbackWebsiteBookingCatalog(reason = 'local_seed_fallback') {
+function safeFallbackTherapist() {
+  const anyAvailable = websiteTherapists.find(therapist => therapist.id === 'any_available');
+  if (!anyAvailable) return null;
+  return {
+    ...anyAvailable,
+    specialtyDescription: 'Therapist list temporarily unavailable. You can continue without selecting a specific therapist.',
+    catalogSource: 'catalog_unavailable_safe_fallback'
+  };
+}
+
+export function getFallbackWebsiteBookingCatalog(reason = 'catalog_unavailable_safe_fallback') {
+  const therapist = safeFallbackTherapist();
   return {
     ok: true,
-    catalogSource: 'local_seed_fallback',
+    catalogSource: 'catalog_unavailable_safe_fallback',
     fallback: true,
     fallbackReason: reason,
     brand: 'EasyGoSpa',
     business: 'Home Massage',
     currency: 'PHP',
-    therapists: websiteTherapists,
+    therapists: therapist ? [therapist] : [],
     services: websiteBookingServices,
-    catalogUnavailable: false
+    catalogUnavailable: true
   };
 }
 

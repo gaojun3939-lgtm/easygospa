@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { normalizeWebsiteBookingRequest } from '../src/lib/bookingRequestPayload.mjs';
-import { normalizePublicBookingCatalog } from '../src/lib/bookingCatalogNormalizer.mjs';
+import { getFallbackWebsiteBookingCatalog, normalizePublicBookingCatalog } from '../src/lib/bookingCatalogNormalizer.mjs';
 import {
   concreteTherapistsForWall,
   findBookingServiceByName,
@@ -36,6 +36,9 @@ check(modalSource.includes('Search therapist...'), 'therapist list search placeh
 check(modalSource.includes("'Nearby'") && modalSource.includes("'Most booked'") && modalSource.includes("'Service type'"), 'therapist list exposes the requested filter labels');
 check(modalSource.includes('data-testid={`therapist-card-book-${therapist.id}`}'), 'Book button is directly addressable on each therapist card');
 check(modalSource.includes('data-testid="booking-therapist-list"'), 'therapist list has a dedicated compact list container');
+check(modalSource.includes('data-testid="booking-catalog-unavailable"'), 'catalog unavailable state is rendered inline on therapist wall');
+check(modalSource.includes('data-testid="booking-any-available-fallback"'), 'catalog unavailable state can continue with any available therapist');
+check(modalSource.includes('Therapist list temporarily unavailable. You can continue without selecting a specific therapist.'), 'catalog unavailable state uses safe non-person copy');
 check(modalSource.includes('data-testid="booking-wall-toolbar"'), 'wall uses compact app-style toolbar');
 check(modalSource.includes('data-testid="booking-wall-filters"'), 'wall uses compact filter row');
 check(!modalSource.includes('Step 1 of 5'), 'wall hides step copy on the dense therapist-list screen');
@@ -83,6 +86,13 @@ check(wallTherapists.every(therapist => !/^https?:\/\//i.test(therapist.fallback
 check(wallTherapists.every(therapist => therapist.reviewsLabel === 'No verified reviews yet'), 'missing real reviews show safe review copy');
 check(wallTherapists.every(therapist => !/\b\d+(\.\d+)?\s*km\b/i.test(therapist.distanceLabel)), 'therapist cards do not fake GPS distance');
 check(wallTherapists.every(therapist => therapist.availabilityLabel === 'Available after schedule confirmation'), 'therapist cards do not fake earliest appointment time');
+
+const fallbackCatalog = getFallbackWebsiteBookingCatalog('unit_test_catalog_unavailable');
+const fallbackNames = fallbackCatalog.therapists.map(therapist => therapist.name);
+check(fallbackCatalog.catalogUnavailable === true, 'fallback catalog is marked unavailable');
+check(fallbackCatalog.catalogSource === 'catalog_unavailable_safe_fallback', 'fallback catalog source cannot be mistaken for public catalog');
+check(fallbackNames.length === 1 && fallbackNames[0] === 'Any available therapist', 'fallback catalog only exposes safe any available therapist');
+check(!fallbackNames.includes('Grace') && !fallbackNames.includes('Luna'), 'fallback catalog does not expose named local seed therapists');
 
 const uploadedAvatarUrl = 'https://demo.supabase.co/storage/v1/object/public/therapist-images/brand-a/therapist-bgc-deep-tissue/avatar-123.webp';
 const uploadedDetailUrl = 'https://demo.supabase.co/storage/v1/object/public/therapist-images/brand-a/therapist-bgc-deep-tissue/detail-123.webp';
