@@ -33,21 +33,21 @@ const avatarSource = modalSource.slice(
 check(modalSource.includes("useState('wall')"), 'BookingModal opens on therapist list state');
 check(modalSource.includes("setStep('wall')"), 'open booking event resets to therapist list');
 check(modalSource.includes('Search therapist...'), 'therapist list search placeholder is concise');
-check(modalSource.includes("'Nearby'") && modalSource.includes("'Most booked'") && modalSource.includes("'Service type'"), 'therapist list exposes the requested filter labels');
+check(modalSource.includes('All service areas') && modalSource.includes('data-testid="therapist-area-filter"'), 'therapist list exposes an honest functional area filter');
 check(modalSource.includes('data-testid={`therapist-card-book-${therapist.id}`}'), 'Book button is directly addressable on each therapist card');
 check(modalSource.includes('data-testid="booking-therapist-list"'), 'therapist list has a dedicated compact list container');
 check(modalSource.includes('data-testid="booking-catalog-unavailable"'), 'catalog unavailable state is rendered inline on therapist wall');
 check(modalSource.includes('data-testid="booking-any-available-fallback"'), 'catalog unavailable state can continue with any available therapist');
-check(modalSource.includes('Therapist list temporarily unavailable. You can continue without selecting a specific therapist.'), 'catalog unavailable state uses safe non-person copy');
+check(modalSource.includes('No specific therapist is available right now.') && modalSource.includes('You can continue with Any available therapist.'), 'catalog unavailable state uses owner-approved safe copy');
 check(modalSource.includes('data-testid="booking-wall-toolbar"'), 'wall uses compact app-style toolbar');
 check(modalSource.includes('data-testid="booking-wall-filters"'), 'wall uses compact filter row');
 check(!modalSource.includes('Step 1 of 5'), 'wall hides step copy on the dense therapist-list screen');
 check(modalSource.includes('sm:grid-cols-2'), 'desktop therapist list supports compact two-column layout');
 check(modalSource.includes('overflow-y-auto'), 'therapist list area scrolls internally');
-check(wallCardSource.includes('h-[92px]') || wallCardSource.includes('min-h-[92px]') || wallCardSource.includes('h-[96px]') || wallCardSource.includes('min-h-[96px]'), 'therapist list cards use compact row height');
-check(avatarSource.includes("mode === 'wall'") && avatarSource.includes('h-[84px] w-[84px]'), 'therapist list uses compact image sizing');
+check(wallCardSource.includes('min-h-[112px]'), 'therapist list cards leave room for readable metadata and status');
+check(avatarSource.includes("mode === 'wall'") && avatarSource.includes('h-[88px] w-[88px]'), 'therapist list uses compact image sizing');
 check(!wallCardSource.includes('h-24 w-24'), 'therapist list does not use large detail avatar sizing');
-check(wallCardSource.includes('h-8') && wallCardSource.includes('px-3'), 'therapist list Book button is compact');
+check(wallCardSource.includes('h-11') && wallCardSource.includes('px-4'), 'therapist list Book button has a mobile touch target');
 check(!wallCardSource.includes('w-full rounded') && !wallCardSource.includes('w-full items-center'), 'therapist list Book button is not full-width');
 check(!wallCardSource.includes('min-h-[118px]'), 'therapist list cards are not tall marketing cards');
 check(!wallCardSource.includes('h-10 min-w-20'), 'therapist list Book button is not a large pill');
@@ -71,8 +71,9 @@ check(!wallCardSource.includes('therapist.specialties.map'), 'therapist list car
 check(!wallCardSource.includes('therapist.serviceArea'), 'therapist list cards do not render long service-area copy');
 check(!wallCardSource.includes('therapist.specialtyDescription'), 'therapist list cards do not render therapist descriptions');
 check(modalSource.includes("setStep('detail')"), 'clicking therapist enters detail state');
-check(modalSource.includes('data-testid="service-duration-book"'), 'service duration has a Book action inside detail');
-check(modalSource.includes("setStep('email')"), 'booking a service duration advances to email/info flow');
+check(!modalSource.includes('data-testid="service-duration-book"'), 'service cards do not render conflicting Book actions');
+check(modalSource.includes('data-testid="detail-book"'), 'sticky detail summary owns the single Book action');
+check(modalSource.includes("setStep('email')"), 'the primary Book action advances to the existing email/info flow');
 
 const wallTherapists = concreteTherapistsForWall('', websiteTherapists);
 check(wallTherapists.length >= 2, 'therapist wall has concrete therapist cards');

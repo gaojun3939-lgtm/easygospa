@@ -33,7 +33,8 @@ function safeFallbackTherapist() {
   if (!anyAvailable) return null;
   return {
     ...anyAvailable,
-    specialtyDescription: 'Therapist list temporarily unavailable. You can continue without selecting a specific therapist.',
+    serviceAreas: [],
+    profileIntroduction: '',
     catalogSource: 'catalog_unavailable_safe_fallback'
   };
 }
@@ -125,9 +126,11 @@ export function normalizePublicBookingCatalog(payload = {}) {
         fallbackImageUrl: DEFAULT_THERAPIST_IMAGE_URL,
         distanceLabel: serviceAreaLabel(serviceAreas),
         availabilityLabel: therapist.therapistId === 'any_available' ? 'Matched after request review' : 'Available after schedule confirmation',
+        serviceAreas,
         serviceArea: serviceAreas.join(', ') || 'Metro Manila coverage depends on schedule',
         specialties,
-        specialtyDescription: cleanText(therapist.description, 'Let our team confirm the right therapist for your request.'),
+        profileIntroduction: cleanText(therapist.description),
+        specialtyDescription: cleanText(therapist.description),
         rating: null,
         reviewCount: 0,
         reviewsLabel: 'No verified reviews yet',

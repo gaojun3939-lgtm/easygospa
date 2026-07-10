@@ -88,6 +88,10 @@ body {
   transition: none !important;
 }
 
+body.booking-modal-open * {
+  animation-play-state: paused !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;

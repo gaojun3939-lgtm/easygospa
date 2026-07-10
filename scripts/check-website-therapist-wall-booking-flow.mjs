@@ -56,8 +56,8 @@ test('clicking therapist enters detail page with services and safe review copy',
   assert.ok(modalSource.includes('Massage Therapist'), 'detail must show therapist role');
   assert.ok(modalSource.includes('About Grace') || modalSource.includes('About {therapist.name}'), 'detail must include about section');
   assert.ok(modalSource.includes('No verified reviews yet'), 'detail must show no verified reviews copy');
-  assert.ok(modalSource.includes('No hidden travel fee unless confirmed'), 'safe care info missing');
-  assert.ok(modalSource.includes('We do not show sensitive customer information to therapists'), 'safe customer info copy missing');
+  assert.ok(modalSource.includes('Clear booking details') && modalSource.includes('Confirmation before dispatch'), 'verifiable care info missing');
+  assert.ok(modalSource.includes('Privacy-aware booking'), 'privacy-aware booking copy missing');
   assert.ok(modalSource.includes('My Services'), 'detail services section missing');
   assert.ok(!modalSource.includes('Need help matching?'), 'therapist wall must not show matching helper section');
   assert.ok(!modalSource.includes('{therapist.avatarInitials}'), 'modal must not render initials as avatar fallback');
@@ -73,6 +73,8 @@ test('service selection on detail precedes email gate and computes total amount'
   assert.equal(option.price, 4200);
   assert.ok(modalSource.includes("setStep('email')"), 'service continue should go to email gate');
   assert.ok(modalSource.includes('sticky') || modalSource.includes('bottom-0'), 'detail must include sticky summary');
+  assert.ok(modalSource.includes('data-testid="detail-book"'), 'detail must use one primary Book action');
+  assert.ok(!modalSource.includes('data-testid="service-duration-book"'), 'service cards must not have conflicting Book actions');
 });
 
 test('Luna service selection is limited to her configured services', () => {
