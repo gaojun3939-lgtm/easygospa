@@ -13,17 +13,24 @@ const DEFAULT_CENTER = { lat: 14.5547, lng: 121.0244 };
 // Degrades gracefully: if Maps fails to load, booking continues without a pin.
 export function LocationPicker({ value, onChange }) {
   const mapContainerRef = useRef(null);
-  const autocompleteContainerRef = useRef(null);
   const mapRef = useRef(null);
   const markerRef = useRef(null);
   const onChangeRef = useRef(onChange);
   const [mapState, setMapState] = useState('loading'); // loading | ready | unavailable
   const [locateState, setLocateState] = useState('idle'); // idle | locating | done | denied | unsupported
-  const [placeLabel, setPlaceLabel] = useState('');
 
   useEffect(() => {
     onChangeRef.current = onChange;
   }, [onChange]);
+
+  // When the address field (or GPS) resolves a location elsewhere, move the pin here too.
+  useEffect(() => {
+    if (!value?.latitude || !mapRef.current || !markerRef.current) return;
+    const position = { lat: value.latitude, lng: value.longitude };
+    markerRef.current.setPosition(position);
+    mapRef.current.panTo(position);
+    if (mapRef.current.getZoom() < 15) mapRef.current.setZoom(16);
+  }, [value?.latitude, value?.longitude]);
 
   const applyLocation = useCallback((latitude, longitude, source) => {
     const position = { lat: latitude, lng: longitude };
@@ -66,39 +73,6 @@ export function LocationPicker({ value, onChange }) {
         mapRef.current = map;
         markerRef.current = marker;
         setMapState('ready');
-
-        // Places autocomplete (New Places API web component). Optional:
-        // if the component is unavailable, the field simply stays hidden.
-        try {
-          const placesLibrary = await maps.importLibrary('places');
-          const AutocompleteElement = placesLibrary.PlaceAutocompleteElement;
-          if (AutocompleteElement && autocompleteContainerRef.current) {
-            const autocomplete = new AutocompleteElement({
-              locationBias: { radius: 30000, center: DEFAULT_CENTER }
-            });
-            autocomplete.id = 'easygospa-location-autocomplete';
-            autocompleteContainerRef.current.replaceChildren(autocomplete);
-            const handleSelection = async event => {
-              try {
-                const place = event.placePrediction ? event.placePrediction.toPlace() : event.place;
-                if (!place) return;
-                await place.fetchFields({ fields: ['location', 'formattedAddress', 'displayName'] });
-                const location = place.location;
-                if (!location) return;
-                const latitude = typeof location.lat === 'function' ? location.lat() : location.lat;
-                const longitude = typeof location.lng === 'function' ? location.lng() : location.lng;
-                applyLocation(latitude, longitude, 'places_autocomplete');
-                setPlaceLabel(place.formattedAddress || place.displayName || '');
-              } catch {
-                /* selection failed: customer can still use the pin */
-              }
-            };
-            autocomplete.addEventListener('gmp-select', handleSelection);
-            autocomplete.addEventListener('gmp-placeselect', handleSelection);
-          }
-        } catch {
-          /* places unavailable: GPS + pin still work */
-        }
       })
       .catch(() => {
         if (!cancelled) setMapState('unavailable');
@@ -161,8 +135,6 @@ export function LocationPicker({ value, onChange }) {
       {locateState === 'unsupported' ? (
         <p className="text-xs leading-5 text-amber-700">This browser does not support location. Tap the map or search your building below.</p>
       ) : null}
-      <div ref={autocompleteContainerRef} className="[&>*]:w-full" />
-      {placeLabel ? <p className="text-xs leading-5 text-gray-600">Selected: {placeLabel}</p> : null}
       <div
         ref={mapContainerRef}
         style={{ height: '13rem' }}
