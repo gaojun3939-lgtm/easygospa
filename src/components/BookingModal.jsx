@@ -17,6 +17,7 @@ import {
   servicesForTherapist
 } from '../lib/therapistServiceBookingFlow.mjs';
 import { getFallbackWebsiteBookingCatalog } from '../lib/bookingCatalogNormalizer.mjs';
+import { LocationPicker } from './LocationPicker.jsx';
 
 const timeSlots = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00', '22:30', '23:00'];
 const areaOptions = ['BGC', 'Makati', 'Taguig', 'Pasay', 'Ortigas', 'Metro Manila'];
@@ -89,6 +90,7 @@ function createInitialForm(serviceName = '', services = undefined) {
     preferredTime: '',
     area: '',
     addressNote: '',
+    customerLocation: null,
     notes: ''
   };
 }
@@ -616,6 +618,12 @@ export default function BookingModal() {
       preferredTime: formData.preferredTime,
       area: formData.area,
       addressNote: formData.addressNote,
+      ...(formData.customerLocation?.latitude ? {
+        customerLocation: {
+          latitude: formData.customerLocation.latitude,
+          longitude: formData.customerLocation.longitude
+        }
+      } : {}),
       peopleCount: 1,
       paymentMethod: 'cash_after_service',
       paymentStatus: 'pending_collection',
@@ -844,6 +852,10 @@ export default function BookingModal() {
                   <div>
                     <label className={bookingLabelClass}><MapPin className="mr-2 inline h-4 w-4" />Building, condo, hotel, or exact address *</label>
                     <input className={bookingInputClass} value={formData.addressNote} onChange={event => updateField('addressNote', event.target.value)} placeholder="Unit, floor, building, gate instructions" data-readability-field="addressNote" required />
+                  </div>
+                  <div>
+                    <label className={bookingLabelClass}><MapPin className="mr-2 inline h-4 w-4" />Pin your location on the map <span className="font-normal text-gray-500">(helps us send the nearest therapist)</span></label>
+                    <LocationPicker value={formData.customerLocation} onChange={location => updateField('customerLocation', location)} />
                   </div>
                   <div>
                     <label className={bookingLabelClass}><MessageSquare className="mr-2 inline h-4 w-4" />Notes optional</label>

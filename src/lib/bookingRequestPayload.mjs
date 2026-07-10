@@ -82,6 +82,16 @@ function normalizeSelectedServices(input = {}) {
   }];
 }
 
+function normalizeCustomerLocation(value) {
+  if (!value || typeof value !== 'object') return null;
+  const latitude = Number(value.latitude ?? value.lat);
+  const longitude = Number(value.longitude ?? value.lng ?? value.lon);
+  if (!Number.isFinite(latitude) || latitude < -90 || latitude > 90) return null;
+  if (!Number.isFinite(longitude) || longitude < -180 || longitude > 180) return null;
+  const accuracyMeters = Math.max(0, Number(value.accuracyMeters ?? value.accuracy ?? 0) || 0);
+  return { latitude, longitude, accuracyMeters };
+}
+
 export function normalizeWebsiteBookingRequest(input = {}) {
   const customerName = requiredText(input.customerName || input.client_name || input.name, 'customerName');
   const customerEmail = requiredText(input.customerEmail || input.email, 'customerEmail').toLowerCase();
@@ -114,6 +124,7 @@ export function normalizeWebsiteBookingRequest(input = {}) {
   const paymentTiming = 'after_service';
   const inputMetadata = input.metadata && typeof input.metadata === 'object' ? input.metadata : {};
   const catalogSource = cleanText(inputMetadata.catalogSource || input.catalogSource, 80);
+  const customerLocation = normalizeCustomerLocation(input.customerLocation || inputMetadata.customerLocation);
 
   const metadata = {
     website: 'www.easygospa.com',
@@ -179,6 +190,7 @@ export function normalizeWebsiteBookingRequest(input = {}) {
     scheduledTime: toScheduledTime(preferredTime),
     area,
     addressNote,
+    ...(customerLocation ? { customerLocation } : {}),
     peopleCount,
     paymentMethod,
     paymentStatus,
