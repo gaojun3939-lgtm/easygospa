@@ -47,7 +47,10 @@ export default function WhyChooseUs() {
             viewport={{ once: true }}
             className="space-y-8 text-center flex justify-center items-center"
           >
-            <img src="/images/brand/why-choose-home-massage-therapist.png" className="object-contain rounded-2xl h-100 sm:h-full"/>
+            <picture className="flex justify-center">
+              <source media="(max-width: 767px)" srcSet="/images/brand/home-why-choose-mobile.webp" />
+              <img src="/images/brand/home-why-choose-desktop.webp" alt="Professional home massage therapist preparing a treatment" className="object-contain rounded-2xl h-100 sm:h-full" />
+            </picture>
             </motion.div>
         </div>
         <div className="grid grid-cols-1 items-center">

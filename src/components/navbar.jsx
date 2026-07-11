@@ -1,6 +1,6 @@
 "use client"
+import BrandMark from "./BrandMark";
 import {
-    Sparkles,
     Phone,
     Mail,
     Instagram,
@@ -95,14 +95,7 @@ export default function Navbar() {
               aria-label="EasyGo Spa - Home Massage Service"
             >
               <div className="relative">
-                <Sparkles
-                  className={`w-8 h-8 sparkle-animation ${
-                    isScrolled || isMenuOpen
-                      ? "text-[#2db83d]"
-                      : "text-white text-shadow-dark"
-                  }`}
-                  aria-hidden="true"
-                />
+                <BrandMark size={34} tone={isScrolled || isMenuOpen ? 'brand' : 'light'} />
               </div>
               <div>
                 <h1
