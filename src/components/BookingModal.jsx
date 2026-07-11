@@ -24,7 +24,7 @@ const timeSlots = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00'
 const areaOptions = ['BGC', 'Makati', 'Taguig', 'Pasay', 'Ortigas', 'Metro Manila'];
 const allServiceAreasValue = 'all_service_areas';
 const catalogUnavailableNotice = 'No specific therapist is available right now.';
-const catalogUnavailableFollowUp = 'You can continue with Any available therapist.';
+const catalogUnavailableFollowUp = 'Please try again in a few minutes, or message us on WhatsApp to book.';
 const missingProfileIntroduction = 'No profile introduction has been provided yet.';
 const bookingInputClass = 'h-12 w-full rounded-2xl border border-gray-300 bg-white px-4 font-medium text-[#0F0F0F] caret-[#0F0F0F] placeholder:text-gray-500 focus:border-[#4E8D43] focus:outline-none';
 const bookingTextareaClass = `${bookingInputClass} min-h-28 resize-none py-3`;
@@ -392,7 +392,8 @@ export default function BookingModal() {
       ? [...catalogTherapists, safeFallbackTherapist]
       : catalogTherapists
   ), [catalogTherapists, safeFallbackTherapist]);
-  const canContinueWithoutSpecificTherapist = Boolean((catalogUnavailable || catalogStatus === 'error') && safeFallbackTherapist && catalogServices.length);
+  // 2026-07-11 老板拍板:下单必选具体技师,"任意技师"入口已移除;
+  // safeFallbackTherapist 仅保留给历史链接兜底解析,不再作为可选项展示。
   const selectedTherapist = useMemo(() => findWebsiteTherapist(formData.requestedTechnicianId, bookingTherapists), [bookingTherapists, formData.requestedTechnicianId]);
   const availableAreaFilters = useMemo(() => Array.from(new Set(specificTherapists.flatMap(therapist => Array.isArray(therapist.serviceAreas) ? therapist.serviceAreas : []).filter(Boolean))).sort((a, b) => a.localeCompare(b)), [specificTherapists]);
   const serviceFilterName = formData.preferredService || formData.service;
@@ -802,23 +803,13 @@ export default function BookingModal() {
                       <div className="rounded-[1.5rem] border border-amber-200 bg-amber-50 p-5 text-sm text-amber-900" data-testid="booking-catalog-unavailable">
                         <p className="text-base font-bold">{catalogUnavailableNotice}</p>
                         <p className="mt-2 text-sm">{catalogUnavailableFollowUp}</p>
-                        {canContinueWithoutSpecificTherapist ? (
-                          <button
-                            type="button"
-                            onClick={() => openTherapistDetail(safeFallbackTherapist.id)}
-                            data-testid="booking-any-available-fallback"
-                            className="mt-4 inline-flex h-11 items-center justify-center rounded-full bg-[#4E8D43] px-5 text-sm font-bold text-white transition hover:bg-[#3F7838]"
-                          >
-                            Continue with Any available therapist
-                          </button>
-                        ) : null}
                       </div>
                     ) : null}
                     {catalogStatus === 'error' ? (
                       <div className="rounded-[1.5rem] border border-red-200 bg-red-50 p-5 text-sm text-red-900" data-testid="booking-catalog-error">
                         <p className="text-base font-bold">Therapist catalog could not be loaded.</p>
-                        <p className="mt-2">Live therapist results are unavailable. You can continue with Any available therapist using the available service menu.</p>
-                        {canContinueWithoutSpecificTherapist ? <button type="button" onClick={() => openTherapistDetail(safeFallbackTherapist.id)} data-testid="booking-any-available-error-fallback" className="mt-4 inline-flex h-11 items-center justify-center rounded-full bg-[#4E8D43] px-5 text-sm font-bold text-white hover:bg-[#3F7838]">Continue with Any available therapist</button> : null}
+                        <p className="mt-2">Live therapist results are unavailable. Please try again in a few minutes, or message us on WhatsApp to book.</p>
+                        
                       </div>
                     ) : null}
                     {catalogStatus === 'ready' && hasSpecificTherapists && wallTherapists.length === 0 ? <div className="rounded-[1.5rem] border border-gray-200 bg-white p-5 text-sm text-gray-600" data-testid="booking-search-no-results"><p className="font-bold text-[#0F0F0F]">No therapists match your search.</p><p className="mt-1">Try a different name, area, or service filter.</p></div> : null}
