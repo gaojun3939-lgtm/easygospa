@@ -13,7 +13,7 @@ const servicesData = [
     id: 1,
     name: "Swedish Massage",
     category: "massage",
-    description: "Indulge in a timeless classic at Metro Manila's premier wellness destination. Our Swedish Massage utilizes masterful, flowing strokes and gentle kneading to dissolve muscle tension, enhance circulation, and guide you to a state of profound relaxation. This is the perfect introduction to therapeutic massage, meticulously performed by our certified therapists in Ho to restore your body's natural harmony.",
+    description: "Indulge in a timeless classic at Metro Manila's premier wellness destination. Our Swedish Massage utilizes masterful, flowing strokes and gentle kneading to dissolve muscle tension, enhance circulation, and guide you to a state of profound relaxation. This is the perfect introduction to therapeutic massage, meticulously performed by our certified therapists in Metro Manila to restore your body's natural harmony.",
     price: 2500,
     duration: "60 min",
     image_url: "/images/brand/service-previews/service-swedish-preview.webp",
@@ -43,7 +43,7 @@ const servicesData = [
     id: 4,
     name: "Foot Massage",
     category: "massage",
-    description: "Revitalize your entire being from the ground up with our specialized Foot Massage. This ancient reflexology-based treatment targets key pressure points in your feet that correspond to different organs and systems in the body. Alleviate fatigue, reduce stress, and promote overall wellness in our luxurious Ho spa.",
+    description: "Revitalize your entire being from the ground up with our specialized Foot Massage. This ancient reflexology-based treatment targets key pressure points in your feet that correspond to different organs and systems in the body. Alleviate fatigue, reduce stress, and promote overall wellness in the comfort of your own space.",
     price: 1500,
     duration: "45 min", 
     image_url: "/images/brand/service-previews/service-foot-preview.webp",
@@ -53,11 +53,11 @@ const servicesData = [
     id: 5,
     name: "Head and Shoulder Massage",
     category: "massage",
-    description: "Melt away the stresses of modern life with our targeted Head and Shoulder Massage. This concentrated therapy focuses on the high-tension areas of your neck, shoulders, and scalp, providing immediate relief from headaches, stiffness, and digital fatigue. It's the ultimate quick escape to tranquility, offered at the best spa in Metro Manila.",
+    description: "Melt away the stresses of modern life with our targeted Head and Shoulder Massage. This concentrated therapy focuses on the high-tension areas of your neck, shoulders, and scalp, providing immediate relief from headaches, stiffness, and digital fatigue. It's the ultimate quick escape to tranquility, offered from the best home massage team in Metro Manila.",
     price: 1200,
     duration: "30 min",
     image_url: "/images/brand/service-previews/service-head-shoulder-preview.webp",
-    alt_text: "Therapeutic head and shoulder massage for stress relief at EasyGo Spa premium spa in Ho Metro Manila"
+    alt_text: "Therapeutic head and shoulder massage for stress relief at EasyGo Spa premium spa in Metro Manila"
   },
   {
     id: 6,
@@ -125,9 +125,9 @@ export default function ServicesPage() {
         <title>Premium Home Massage Services in Metro Manila | EasyGo Spa</title>
         <meta 
           name="description" 
-          content="Discover luxury spa treatments, massage therapy, beauty services, laser hair removal, nail care, and hair styling at EasyGo Spa Metro Manila. Book your premium wellness experience today." 
+          content="Discover professional home massage in Metro Manila: Swedish, deep tissue, Thai dry and foot massage delivered to your hotel, condo or home by EasyGo Spa's verified therapists. Book 24/7." 
         />
-        <meta name="keywords" content="spa services Metro Manila, massage therapy, beauty salon, laser hair removal, nail care, hair styling, Ho wellness center" />
+        <meta name="keywords" content="home massage Metro Manila, hotel massage Manila, Swedish massage, deep tissue massage, Thai massage, foot massage, 24/7 massage service" />
         <meta property="og:title" content="Premium Home Massage Services in Metro Manila | EasyGo Spa" />
         <meta property="og:description" content="Experience luxury wellness treatments at Metro Manila's premier spa. From therapeutic massages to beauty services and hair care." />
         <meta property="og:type" content="website" />

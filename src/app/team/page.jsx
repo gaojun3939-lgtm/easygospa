@@ -95,7 +95,7 @@ export default function Team() {
                 <div className="relative h-80 overflow-hidden">
                   <Image
                     src={member.image_url}
-                    alt={`${member.name}, ${member.title} at EasyGo Spa Luxury Spa & Salon Metro Manila`}
+                    alt={`${member.name}, ${member.title} at EasyGo Spa Premium Home Massage Metro Manila`}
                     fill
                     className="object-cover group-hover:scale-110 transition-transform duration-700"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

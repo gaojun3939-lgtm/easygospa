@@ -11,7 +11,7 @@ const services = [
   { name: "Swedish Massage", price: 2500, duration: "60 min", category: "Massage", description: "Indulge in a timeless classic at Metro Manila's premier wellness destination. Our Swedish Massage utilizes masterful, flowing strokes and gentle kneading to dissolve muscle tension, enhance circulation, and guide you to a state of profound relaxation." },
   { name: "Japanese Head Spa", price: 3500, duration: "90 min", category: "Massage", description: "Embark on a transcendent sensory journey with our state-of-the-art Japanese Head Spa. Submerge your senses in a sanctuary of tranquility as a therapeutic waterfall, enriched with potent organic elixirs, bathes your scalp and hair under the ethereal glow of chromotherapy lighting." },
   { name: "Thai Dry Massage", price: 3000, duration: "75 min", category: "Massage", description: "Experience the ancient art of healing with our authentic Thai Dry Massage in Metro Manila. This traditional, oil-free therapy combines rhythmic acupressure, gentle rocking, and assisted yoga stretches to unblock energy pathways and relieve deep-seated tension." },
-  { name: "Foot Massage", price: 1500, duration: "45 min", category: "Massage", description: "Revitalize your entire being with our specialized Foot Massage, based on ancient reflexology techniques to alleviate fatigue and promote overall wellness in our luxurious Ho spa." },
+  { name: "Foot Massage", price: 1500, duration: "45 min", category: "Massage", description: "Revitalize your entire being with our specialized Foot Massage, based on ancient reflexology techniques to alleviate fatigue and promote overall wellness in the comfort of your own space." },
   { name: "Head and Shoulder Massage", price: 1200, duration: "30 min", category: "Massage", description: "Melt away modern life's stresses with our targeted Head and Shoulder Massage. This therapy provides immediate relief from headaches, stiffness, and digital fatigue." },
   { name: "Deep Tissue Massage", price: 3500, duration: "60 min", category: "Massage", description: "For powerful relief from chronic pain, our Deep Tissue Massage uses slow, deliberate strokes to target inner muscle layers. Ideal for athletes and those with persistent knots." },
 
@@ -65,7 +65,7 @@ export default function ChatBot() {
   const [messages, setMessages] = useState([
     {
       id: 1,
-      text: "Hello! I'm EasyGo Spa, your AI assistant at EasyGo Spa & Salon. I can help you with:\n\n🔹 Book appointments for any of our 42+ services\n🔹 Check service prices and details\n🔹 Find your existing bookings\n🔹 Get directions and contact info\n🔹 Learn about our organic treatments\n🔹 Answer wellness questions\n\nHow can I assist you today?",
+      text: "Hello! I'm EasyGo Spa, your AI assistant at EasyGo Spa. I can help you with:\n\n🔹 Book appointments for any of our 42+ services\n🔹 Check service prices and details\n🔹 Find your existing bookings\n🔹 Get directions and contact info\n🔹 Learn about our organic treatments\n🔹 Answer wellness questions\n\nHow can I assist you today?",
       sender: "bot",
       timestamp: new Date()
     }
@@ -86,9 +86,9 @@ export default function ChatBot() {
     // Get current appointments for context
     // const recentAppointments = await Appointment.list("-created_date", 50);
     const recentAppointments = []
-    return `You are EasyGo Spa, an AI assistant for EasyGo Spa & Salon, Metro Manila's premier luxury wellness destination specializing in organic spa treatments. You are friendly, professional, knowledgeable about wellness and beauty, and always helpful.
+    return `You are EasyGo Spa, an AI assistant for EasyGo Spa, Metro Manila's premier luxury wellness destination specializing in organic spa treatments. You are friendly, professional, knowledgeable about wellness and beauty, and always helpful.
 
-EasyGo Spa & Salon Information:
+EasyGo Spa Information:
 - Location: P-145, Sector A, Metropolitan Co-Operative Housing Society Limited,  Metro Manila, Metro Manila 1229
 - Phone: +63 917 109 8079
 - Email: easygospa@gmail.com
@@ -104,7 +104,7 @@ MASSAGE THERAPY:
 - Swedish Massage: $2,500 (60 min) - Indulge in a timeless classic at Metro Manila's premier wellness destination. Our Swedish Massage utilizes masterful, flowing strokes and gentle kneading to dissolve muscle tension, enhance circulation, and guide you to a state of profound relaxation.
 - Japanese Head Spa: $3,500 (90 min) - Embark on a transcendent sensory journey with our state-of-the-art Japanese Head Spa. Submerge your senses in a sanctuary of tranquility as a therapeutic waterfall, enriched with potent organic elixirs, bathes your scalp and hair under the ethereal glow of chromotherapy lighting.
 - Thai Dry Massage: $3,000 (75 min) - Experience the ancient art of healing with our authentic Thai Dry Massage in Metro Manila. This traditional, oil-free therapy combines rhythmic acupressure, gentle rocking, and assisted yoga stretches to unblock energy pathways and relieve deep-seated tension.
-- Foot Massage: $1,500 (45 min) - Revitalize your entire being with our specialized Foot Massage, based on ancient reflexology techniques to alleviate fatigue and promote overall wellness in our luxurious Ho spa.
+- Foot Massage: $1,500 (45 min) - Revitalize your entire being with our specialized Foot Massage, based on ancient reflexology techniques to alleviate fatigue and promote overall wellness in the comfort of your own space.
 - Head and Shoulder Massage: $1,200 (30 min) - Melt away modern life's stresses with our targeted Head and Shoulder Massage. This therapy provides immediate relief from headaches, stiffness, and digital fatigue.
 - Deep Tissue Massage: $3,500 (60 min) - For powerful relief from chronic pain, our Deep Tissue Massage uses slow, deliberate strokes to target inner muscle layers. Ideal for athletes and those with persistent knots.
 
@@ -213,7 +213,7 @@ Remember: You represent a luxury spa brand, so maintain that premium, caring, an
 
 User message: ${inputText}
 
-Please respond as EasyGo Spa, the AI assistant for EasyGo Spa & Salon. Be helpful, friendly, professional, and provide accurate information about services, appointments, and spa-related topics. Format your response nicely with line breaks where appropriate for better readability.`,
+Please respond as EasyGo Spa, the AI assistant for EasyGo Spa. Be helpful, friendly, professional, and provide accurate information about services, appointments, and spa-related topics. Format your response nicely with line breaks where appropriate for better readability.`,
         add_context_from_internet: false
       });
 

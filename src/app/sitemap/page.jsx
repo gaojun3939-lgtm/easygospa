@@ -23,7 +23,7 @@ const sitePages = [
       {
         name: "Home",
         url: "/",
-        description: "Welcome to EasyGo Spa - Metro Manila's premier luxury spa & salon experience"
+        description: "Welcome to EasyGo Spa - Metro Manila's premier Premium Home Massage experience"
       },
       {
         name: "Services",
@@ -200,7 +200,7 @@ export default function Sitemap() {
                 Our Location
               </h3>
               <div className="text-gray-600 space-y-1">
-                <p>EasyGo Spa Luxury Spa & Salon</p>
+                <p>EasyGo Spa Premium Home Massage</p>
                 <p>P-145, Sector A, Metropolitan Co-Operative</p>
                 <p>Housing Society Limited, Ho</p>
                 <p>Metro Manila, Metro Manila 1229</p>
@@ -222,7 +222,7 @@ export default function Sitemap() {
               Ready to Experience EasyGo Spa?
             </h2>
             <p className="text-lg mb-8 text-white/90 max-w-2xl mx-auto">
-              Book your appointment today and discover why we're Metro Manila's premier luxury spa & salon destination.
+              Book your appointment today and discover why we're Metro Manila's premier Premium Home Massage destination.
             </p>
             <button 
               onClick={() => window.dispatchEvent(new CustomEvent('open-booking-modal'))}

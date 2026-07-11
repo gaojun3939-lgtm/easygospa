@@ -1,7 +1,6 @@
 
 import type { Metadata } from "next";
 import Navbar from "@/components/navbar"
-import ChatBot from "@/components/ChatBot"
 import BookingModal from "@/components/BookingModal"
 import ReviewWidget from "@/components/ReviewWidget"
 import LoadingScreen from "@/components/LoadingScreen"
@@ -291,8 +290,7 @@ export default function RootLayout({
         </div>
       </footer>
       {/* Widgets/Modals */}
-      <ChatBot />
-      
+      {/* ChatBot 暂时下架:LLM 接口未接通,且菜单数据为模板假数据;AI 阶段接真模型后再恢复 */}
       <BookingModal/>
       </body>
     </html>

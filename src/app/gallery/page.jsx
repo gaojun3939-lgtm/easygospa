@@ -53,7 +53,7 @@ const galleryImages = [
     src: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/0d0096c79_2.jpg?w=1200&q=90",
     title: "Spa Suite",
     category: "Treatment",
-    alt: "Luxury spa suite at EasyGo Spa Ho - premium treatment room with advanced equipment for beauty and wellness services"
+    alt: "Luxury spa suite at EasyGo Spa - premium treatment room with advanced equipment for beauty and wellness services"
   },
   {
     src: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/664dc3f67_15.jpg?w=1200&q=90",

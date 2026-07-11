@@ -8,10 +8,10 @@ export default function SeoSchema() {
       {
         "@type": "HealthAndBeautyBusiness",
         "@id": "https://www.easygospa.com/#organization",
-        "name": "EasyGo Spa Luxury Spa & Salon",
+        "name": "EasyGo Spa Premium Home Massage",
         "url": "https://www.easygospa.com/",
         "logo": "https://www.easygospa.com/logo.png", // Placeholder URL, should be replaced with actual logo URL
-        "description": "Discover EasyGo Spa, Metro Manila's #1 luxury organic spa and salon in Ho. We offer world-class, state-of-the-art equipment and highly skilled, certified professionals for premium organic spa treatments, therapeutic massages, and advanced beauty services. Your ultimate wellness sanctuary.",
+        "description": "EasyGo Spa is Metro Manila's premium 24/7 home massage service. Verified professional therapists deliver Swedish, deep tissue, Thai dry and foot massage to your hotel, condo or home.",
         "image": "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/831601306_14.jpg",
         "telephone": "+91-98765-43210",
         "priceRange": "$ - $",
@@ -47,7 +47,7 @@ export default function SeoSchema() {
         "@type": "WebSite",
         "@id": "https://www.easygospa.com/#website",
         "url": "https://www.easygospa.com/",
-        "name": "EasyGo Spa Luxury Spa & Salon",
+        "name": "EasyGo Spa Premium Home Massage",
         "publisher": { "@id": "https://www.easygospa.com/#organization" },
         "potentialAction": {
             "@type": "SearchAction",
