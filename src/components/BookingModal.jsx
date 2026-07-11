@@ -196,6 +196,12 @@ function TherapistWallCard({ therapist, selected, onSelect }) {
           </div>
           <p className="text-sm font-medium text-gray-700">Massage Therapist</p>
           <p className="mt-1 line-clamp-2 text-xs leading-5 text-gray-500">{therapistAreaText(therapist)}</p>
+          {Number.isFinite(therapist.distanceKm) ? (
+            <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-[#3F7838]" data-testid="therapist-distance">
+              <MapPin className="h-3.5 w-3.5 shrink-0" />
+              {therapist.distanceKm < 10 ? therapist.distanceKm.toFixed(1) : Math.round(therapist.distanceKm)} km
+            </p>
+          ) : null}
           <p className="mt-1 text-xs font-medium text-gray-600">{realReviewsLabel(therapist)}</p>
           <div className="mt-3 flex items-center justify-between gap-3">
             <p className="flex min-w-0 items-center gap-1.5 text-xs font-semibold leading-5 text-[#3F7838]">
@@ -369,6 +375,7 @@ export default function BookingModal() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [createdAppointment, setCreatedAppointment] = useState(null);
   const [error, setError] = useState('');
+  const [customerCoords, setCustomerCoords] = useState(null);
 
   const catalogServices = Array.isArray(bookingCatalog.services) ? bookingCatalog.services : [];
   const catalogTherapists = Array.isArray(bookingCatalog.therapists) ? bookingCatalog.therapists : [];
@@ -391,13 +398,27 @@ export default function BookingModal() {
   const serviceFilterName = formData.preferredService || formData.service;
   const wallTherapists = useMemo(() => {
     const query = wallSearch.trim().toLowerCase();
-    return concreteTherapistsForWall(matchSelectedService ? serviceFilterName : '', catalogTherapists).filter(therapist => {
+    const filtered = concreteTherapistsForWall(matchSelectedService ? serviceFilterName : '', catalogTherapists).filter(therapist => {
       const therapistAreas = Array.isArray(therapist.serviceAreas) ? therapist.serviceAreas : [];
       const areaMatches = selectedArea === allServiceAreasValue || therapistAreas.some(area => area.toLowerCase() === selectedArea.toLowerCase());
       if (!areaMatches) return false;
       if (!query) return true;
       return [therapist.name, ...therapistAreas, therapist.serviceArea, ...therapist.specialties].join(' ').toLowerCase().includes(query);
     });
+    // Nearest first when distances are available; therapists without a
+    // distance keep their original order after the located ones.
+    if (filtered.some(therapist => Number.isFinite(therapist.distanceKm))) {
+      return filtered
+        .map((therapist, index) => ({ therapist, index }))
+        .sort((a, b) => {
+          const aKm = Number.isFinite(a.therapist.distanceKm) ? a.therapist.distanceKm : Infinity;
+          const bKm = Number.isFinite(b.therapist.distanceKm) ? b.therapist.distanceKm : Infinity;
+          if (aKm !== bKm) return aKm - bKm;
+          return a.index - b.index;
+        })
+        .map(item => item.therapist);
+    }
+    return filtered;
   }, [catalogTherapists, matchSelectedService, selectedArea, serviceFilterName, wallSearch]);
   const availableServices = useMemo(() => servicesForTherapist(formData.requestedTechnicianId || 'any_available', bookingTherapists, catalogServices), [bookingTherapists, catalogServices, formData.requestedTechnicianId]);
   const selectedService = useMemo(() => findBookingServiceByName(formData.service, catalogServices), [catalogServices, formData.service]);
@@ -410,7 +431,10 @@ export default function BookingModal() {
     async function loadBookingCatalog() {
       setCatalogStatus('loading');
       try {
-        const response = await fetch('/api/booking-catalog', { cache: 'no-store' });
+        const catalogUrl = customerCoords
+          ? `/api/booking-catalog?lat=${encodeURIComponent(customerCoords.latitude)}&lng=${encodeURIComponent(customerCoords.longitude)}`
+          : '/api/booking-catalog';
+        const response = await fetch(catalogUrl, { cache: 'no-store' });
         const payload = await response.json().catch(() => null);
         if (!active || !response.ok || payload?.ok !== true) throw new Error('BOOKING_CATALOG_LOAD_FAILED');
         setBookingCatalog(payload);
@@ -431,7 +455,22 @@ export default function BookingModal() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [customerCoords]);
+
+  // 打开弹窗时轻声定位一次:拿到坐标 → 技师列表按距离显示,并预填下单定位。
+  // 客人拒绝或不支持时静默跳过,一切照常。
+  useEffect(() => {
+    if (!isOpen || customerCoords || typeof navigator === 'undefined' || !navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        const coords = { latitude: position.coords.latitude, longitude: position.coords.longitude };
+        setCustomerCoords(coords);
+        setFormData(current => (current.customerLocation ? current : { ...current, customerLocation: coords }));
+      },
+      () => {},
+      { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 }
+    );
+  }, [isOpen, customerCoords]);
 
   useEffect(() => {
     if (!isOpen) return undefined;

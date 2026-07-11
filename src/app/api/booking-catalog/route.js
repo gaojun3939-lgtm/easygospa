@@ -16,8 +16,25 @@ function parseJson(text) {
   }
 }
 
-export async function GET() {
-  const targetUrl = process.env.AIOFFICE_BOOKING_CATALOG_API_URL || DEFAULT_AIOFFICE_BOOKING_CATALOG_API_URL;
+export async function GET(request) {
+  const baseUrl = process.env.AIOFFICE_BOOKING_CATALOG_API_URL || DEFAULT_AIOFFICE_BOOKING_CATALOG_API_URL;
+
+  // Forward optional customer coordinates so the backend can attach an
+  // approximate distance per therapist. Coordinates are not stored.
+  let targetUrl = baseUrl;
+  try {
+    const incoming = new URL(request.url);
+    const lat = Number(incoming.searchParams.get('lat'));
+    const lng = Number(incoming.searchParams.get('lng'));
+    if (Number.isFinite(lat) && lat >= -90 && lat <= 90 && Number.isFinite(lng) && lng >= -180 && lng <= 180) {
+      const upstream = new URL(baseUrl);
+      upstream.searchParams.set('lat', String(lat));
+      upstream.searchParams.set('lng', String(lng));
+      targetUrl = upstream.toString();
+    }
+  } catch {
+    targetUrl = baseUrl;
+  }
 
   try {
     const response = await fetch(targetUrl, { cache: 'no-store' });

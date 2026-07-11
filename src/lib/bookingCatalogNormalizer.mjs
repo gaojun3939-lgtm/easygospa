@@ -124,6 +124,9 @@ export function normalizePublicBookingCatalog(payload = {}) {
         photoUrl: cleanText(therapist.photoUrl),
         imageUrl: cleanText(therapist.imageUrl || therapist.image_url || metadata.imageUrl || metadata.image_url),
         fallbackImageUrl: DEFAULT_THERAPIST_IMAGE_URL,
+        distanceKm: Number.isFinite(Number(therapist.approxDistanceKm)) && Number(therapist.approxDistanceKm) >= 0
+          ? Number(therapist.approxDistanceKm)
+          : null,
         distanceLabel: serviceAreaLabel(serviceAreas),
         availabilityLabel: therapist.therapistId === 'any_available' ? 'Matched after request review' : 'Available after schedule confirmation',
         serviceAreas,
