@@ -24,15 +24,13 @@
 - **保留 `ServicesSection`**(信息完整),**移除 `CategoriesSection`**(装饰性走马灯,内容重复):从 page 渲染中删掉 `<CategoriesSection />` 及其 import;组件文件可保留不删(以防将来复用)。
 - 删除后检查上下板块间距,保持首页节奏顺畅、不留空档。
 
-## 任务 3:去掉虚构的成绩数字(StatsSection)
+## 任务 3:处理 StatsSection 里难看的“0 条评价”
 
-`src/components/StatsSection.jsx` 现在写死了 `Happy Customers 5000+`、`Verified Therapists 50+`、`Verified Reviews 0` —— 生意未开张,这些是编的,`0 Reviews` 也难看。
-改造成**不吹牛的真实信任要素**(无捏造数字):把四个数字计数器换成四个价值主张卡/胶囊:
-```
-24/7 Available   ·   Verified Therapists   ·   Metro Manila Coverage   ·   Home & Hotel Service
-```
-- 保留 `24/7` 这个真实信息;去掉计数动画和一切写死的客户数/技师数/评价数。
-- 视觉沿用该区现有风格,只换内容与结构,别引入新配色。
+老板拍板:`Happy Customers 5000+` 和 `Verified Therapists 50+` 两个数字**保留不动**。
+只改一处:`Verified Reviews 0`（0 条评价显示出来很难看）——
+- 把这一项从四个统计里**移除**,StatsSection 改为展示其余三项（Happy Customers 5000+ / Verified Therapists 50+ / Service Hours 24/7），布局按三项重新均分。
+- 不新增捏造数字，不动其它两个数字与计数动画风格。
+（等将来有真实评价后，可再把“Verified Reviews”以真实数接回，本次先去掉。）
 
 ## 交活
 
