@@ -5,7 +5,6 @@ import WhyChooseUs from "../components/WhyChooseUs";
 import PromotionalBanner from "../components/PromotionalBanner";
 import ProductSpecialty from "../components/ProductSpecialty";
 import WhatWeDo from "../components/WhatWeDo";
-import CategoriesSection from "../components/CategoriesSection";
 import TestimonialsSection from "../components/TestimonialsSection";
 import BrandPartners from "../components/BrandPartners";
 import StatsSection from "../components/StatsSection";
@@ -24,7 +23,6 @@ export default function Home() {
         <ServicesSection />
         <StatsSection />
       </div>
-      <CategoriesSection />
       <ProductSpecialty />
       <div className="bg-[#FDFCF9] relative">
         <WhatWeDo />
