@@ -42,11 +42,41 @@ function money(value = 0) {
   return `PHP ${Number(value || 0).toLocaleString('en-US')}`;
 }
 
-function realReviewsLabel(therapist = {}) {
-  if (therapist.rating && therapist.reviewCount) {
-    return `${Number(therapist.rating).toFixed(1)} (${therapist.reviewCount} verified reviews)`;
+function TherapistRating({ therapist = {} }) {
+  const rating = Number(therapist.rating);
+  const reviewCount = Number(therapist.reviewCount);
+
+  if (!Number.isFinite(rating) || rating <= 0 || !Number.isFinite(reviewCount) || reviewCount <= 0) {
+    return <span>No verified reviews yet</span>;
   }
-  return 'No verified reviews yet';
+
+  const displayedRating = Math.min(5, Math.max(0, Math.round(rating * 2) / 2));
+
+  return (
+    <span
+      className="inline-flex items-center gap-1.5"
+      role="img"
+      aria-label={`${rating.toFixed(1)} out of 5 stars from ${reviewCount} verified reviews`}
+    >
+      <span className="inline-flex items-center gap-0.5" aria-hidden="true">
+        {[0, 1, 2, 3, 4].map(index => {
+          const fillPercent = displayedRating >= index + 1 ? 100 : displayedRating >= index + 0.5 ? 50 : 0;
+
+          return (
+            <span key={index} className="relative h-3.5 w-3.5 shrink-0">
+              <Star className="absolute inset-0 h-3.5 w-3.5 text-[#f0b429]" />
+              {fillPercent > 0 ? (
+                <span className="absolute inset-y-0 left-0 overflow-hidden" style={{ width: `${fillPercent}%` }}>
+                  <Star className="h-3.5 w-3.5 fill-[#f0b429] text-[#f0b429]" />
+                </span>
+              ) : null}
+            </span>
+          );
+        })}
+      </span>
+      <span className="font-semibold text-gray-700">{rating.toFixed(1)} ({reviewCount})</span>
+    </span>
+  );
 }
 
 function therapistAreaText(therapist = {}) {
@@ -202,7 +232,7 @@ function TherapistWallCard({ therapist, selected, onSelect }) {
               {therapist.distanceKm < 10 ? therapist.distanceKm.toFixed(1) : Math.round(therapist.distanceKm)} km
             </p>
           ) : null}
-          <p className="mt-1 text-xs font-medium text-gray-600">{realReviewsLabel(therapist)}</p>
+          <div className="mt-1 text-xs font-medium text-gray-600"><TherapistRating therapist={therapist} /></div>
           <div className="mt-3 flex items-center justify-between gap-3">
             <p className="flex min-w-0 items-center gap-1.5 text-xs font-semibold leading-5 text-[#3F7838]">
               <Clock className="h-4 w-4 shrink-0" />
@@ -303,7 +333,7 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
           <p className="mt-2 text-sm leading-6 text-gray-600">{therapistAreaText(therapist)}</p>
           <div className="mt-4 flex flex-wrap gap-2 text-xs">
             <span className="rounded-full bg-[#E8F5E9] px-3 py-1.5 font-bold text-[#3F7838]">Available after confirmation</span>
-            <span className="rounded-full bg-gray-100 px-3 py-1.5 font-semibold text-gray-700">{realReviewsLabel(therapist)}</span>
+            <span className="rounded-full bg-gray-100 px-3 py-1.5 font-semibold text-gray-700"><TherapistRating therapist={therapist} /></span>
           </div>
           <div className="mt-4 flex flex-wrap gap-2">
             {visibleServiceTags.map(item => <span key={item} className="rounded-full bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-700">{item}</span>)}
