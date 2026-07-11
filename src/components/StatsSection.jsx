@@ -1,11 +1,10 @@
 "use client"
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Users, Star, Award, Clock } from "lucide-react";
+import { Users, Award, Clock } from "lucide-react";
 
 const stats = [
   { icon: Users, label: "Happy Customers", value: 5000, suffix: "+" },
-  { icon: Star, label: "Verified Reviews", value: 0, suffix: "" },
   { icon: Award, label: "Verified Therapists", value: 50, suffix: "+" },
   { icon: Clock, label: "Service Hours", value: 24, suffix: "/7" },
 ];
@@ -125,7 +124,7 @@ const StatsSection = () => {
           </motion.p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {stats.map((stat, index) => (
             <motion.div
               key={stat.label}
