@@ -1,7 +1,1 @@
-<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="48" height="48" rx="11" fill="#f8f2ec"/>
-  <path d="M24 8 C28.4 14.2 28.4 21.6 24 28 C19.6 21.6 19.6 14.2 24 8 Z" fill="#279a43"/>
-  <path d="M11.6 15.6 C18.1 16.8 22.2 21.7 23.1 28.7 C16.3 28.3 11.8 23.1 11.6 15.6 Z" fill="#279a43" opacity="0.72"/>
-  <path d="M36.4 15.6 C29.9 16.8 25.8 21.7 24.9 28.7 C31.7 28.3 36.2 23.1 36.4 15.6 Z" fill="#279a43" opacity="0.72"/>
-  <path d="M12 32.8 C16.8 37.3 31.2 37.3 36 32.8 C34.2 39.6 13.8 39.6 12 32.8 Z" fill="#c9a24b"/>
-</svg>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="lcTile" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#211c46"/><stop offset="1" stop-color="#14102e"/></linearGradient><linearGradient id="lcGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6d27a"/><stop offset="1" stop-color="#e0a52b"/></linearGradient></defs><rect width="512" height="512" rx="114" fill="url(#lcTile)"/><g stroke="url(#lcGold)" stroke-width="14" stroke-linejoin="round" fill="none"><path d="M256 118 C 292 176 292 244 256 300 C 220 244 220 176 256 118 Z" fill="rgba(240,180,41,0.10)"/><path d="M172 170 C 226 186 258 232 262 296 C 204 288 170 244 172 170 Z"/><path d="M340 170 C 286 186 254 232 250 296 C 308 288 342 244 340 170 Z"/><path d="M104 246 C 158 240 216 268 246 312 C 188 324 130 300 104 246 Z" opacity="0.85"/><path d="M408 246 C 354 240 296 268 266 312 C 324 324 382 300 408 246 Z" opacity="0.85"/><path d="M140 344 C 208 384 304 384 372 344 C 348 408 164 408 140 344 Z" fill="rgba(240,180,41,0.14)"/></g></svg>

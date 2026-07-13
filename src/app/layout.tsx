@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     siteName: "EasyGo Spa",
     images: [
       {
-        url: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/287fd6130_13.jpg?w=1200&q=90",
+        url: "/opengraph-image.png",
         width: 1200,
         height: 630,
         alt: "EasyGo Spa",
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "EasyGo Spa | Home Massage Manila",
     description: "Book professional home massage services in Metro Manila.",
-    images: ["https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/287fd6130_13.jpg?w=1200&q=90"],
+    images: ["/twitter-image.png"],
   },
   robots: {
     index: true,
