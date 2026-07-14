@@ -17,6 +17,7 @@ import {
   servicesForTherapist
 } from '../lib/therapistServiceBookingFlow.mjs';
 import { getFallbackWebsiteBookingCatalog } from '../lib/bookingCatalogNormalizer.mjs';
+import { manilaNowMinutes, manilaToday } from '../lib/manilaTime.js';
 import { LocationPicker } from './LocationPicker.jsx';
 import { AddressAutocompleteInput } from './AddressAutocompleteInput.jsx';
 
@@ -34,8 +35,15 @@ const summaryLabelClass = 'font-semibold text-slate-700';
 const summaryValueClass = 'text-right font-semibold text-[#0F0F0F]';
 const summaryMoneyClass = 'text-right font-bold text-[#0E6F1A]';
 
-function getTodayDate() {
-  return new Date().toISOString().split('T')[0];
+function timeSlotMinutes(value = '') {
+  const [hour, minute] = String(value).split(':').map(Number);
+  if (!Number.isFinite(hour) || !Number.isFinite(minute)) return -1;
+  return (hour * 60) + minute;
+}
+
+function isSelectableManilaTime(preferredDate, preferredTime) {
+  if (!preferredTime || preferredDate !== manilaToday()) return Boolean(preferredTime);
+  return timeSlotMinutes(preferredTime) >= manilaNowMinutes() + 60;
 }
 
 function money(value = 0) {
@@ -405,6 +413,7 @@ export default function BookingModal() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [createdAppointment, setCreatedAppointment] = useState(null);
   const [error, setError] = useState('');
+  const [dateError, setDateError] = useState('');
   const [customerCoords, setCustomerCoords] = useState(null);
 
   const catalogServices = Array.isArray(bookingCatalog.services) ? bookingCatalog.services : [];
@@ -456,6 +465,11 @@ export default function BookingModal() {
   const selectedDuration = useMemo(() => selectedService ? findExactDurationOption(selectedService, formData.durationMinutes) : null, [selectedService, formData.durationMinutes]);
   const selectedServiceOption = useMemo(() => resolveSelectedServiceOption(formData, catalogServices), [catalogServices, formData]);
   const selectedTotalAmount = selectedServiceOption?.price ?? 0;
+  const availableTimeSlots = useMemo(() => (
+    formData.preferredDate === manilaToday()
+      ? timeSlots.filter(time => timeSlotMinutes(time) >= manilaNowMinutes() + 60)
+      : timeSlots
+  ), [formData.preferredDate]);
 
   useEffect(() => {
     let active = true;
@@ -520,6 +534,7 @@ export default function BookingModal() {
       const stored = readStoredSession();
       setCreatedAppointment(null);
       setError('');
+      setDateError('');
       setWallSearch('');
       setSelectedArea(allServiceAreasValue);
       setMatchSelectedService(false);
@@ -543,6 +558,18 @@ export default function BookingModal() {
 
   const updateField = (field, value) => {
     setFormData(current => ({ ...current, [field]: value }));
+    if (error) setError('');
+  };
+
+  const handlePreferredDateChange = value => {
+    const today = manilaToday();
+    const preferredDate = value && value < today ? today : value;
+    setDateError(value && value < today ? 'Please pick today or a future date.' : '');
+    setFormData(current => ({
+      ...current,
+      preferredDate,
+      preferredTime: isSelectableManilaTime(preferredDate, current.preferredTime) ? current.preferredTime : ''
+    }));
     if (error) setError('');
   };
 
@@ -613,8 +640,9 @@ export default function BookingModal() {
     if (!formData.phone.trim()) return 'Please enter your WhatsApp or phone number.';
     if (!isValidPhone(formData.phone)) return 'Please enter a valid WhatsApp or phone number.';
     if (!formData.preferredDate) return 'Please select your preferred date.';
-    if (formData.preferredDate < getTodayDate()) return 'Please select today or a future date.';
+    if (formData.preferredDate < manilaToday()) return 'Please select today or a future date.';
     if (!formData.preferredTime) return 'Please select your preferred time.';
+    if (!isSelectableManilaTime(formData.preferredDate, formData.preferredTime)) return 'Please pick a later time slot.';
     if (!formData.area.trim()) return 'Please enter your area.';
     if (!formData.addressNote.trim()) return 'Please enter your building, condo, hotel, or exact address details.';
     return null;
@@ -895,13 +923,14 @@ export default function BookingModal() {
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
                       <label className={bookingLabelClass}><Calendar className="mr-2 inline h-4 w-4" />Preferred date *</label>
-                      <input className={bookingInputClass} type="date" min={getTodayDate()} value={formData.preferredDate} onChange={event => updateField('preferredDate', event.target.value)} data-readability-field="preferredDate" required />
+                      <input className={bookingInputClass} type="date" min={manilaToday()} value={formData.preferredDate} onChange={event => handlePreferredDateChange(event.target.value)} data-readability-field="preferredDate" required />
+                      {dateError ? <p className="mt-2 text-sm font-medium text-red-600">{dateError}</p> : null}
                     </div>
                     <div>
                       <label className={bookingLabelClass}><Clock className="mr-2 inline h-4 w-4" />Preferred time *</label>
                       <select className={bookingInputClass} value={formData.preferredTime} onChange={event => updateField('preferredTime', event.target.value)} data-readability-field="preferredTime" required>
                         <option value="">Select time</option>
-                        {timeSlots.map(time => <option key={time} value={time}>{time}</option>)}
+                        {availableTimeSlots.map(time => <option key={time} value={time}>{time}</option>)}
                       </select>
                     </div>
                   </div>
