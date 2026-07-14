@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowLeft, Calendar, Check, Clock, Mail, MapPin, MessageSquare, Phone, Search, ShieldCheck, Star, User, X } from 'lucide-react';
 import {
@@ -1059,6 +1060,14 @@ export default function BookingModal() {
                       <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Payment</strong><span className={summaryValueClass}>{createdAppointment?.paymentMethod}</span></div>
                     </div>
                   </div>
+                  {createdAppointment?.id ? (
+                    <div className="mx-auto w-full max-w-xl">
+                      <Link href={`/track/${encodeURIComponent(createdAppointment.id)}`} className="flex h-12 w-full items-center justify-center rounded-2xl bg-[#4E8D43] px-6 font-bold text-white hover:bg-[#3F7838]">
+                        Track my booking
+                      </Link>
+                      <p className="mt-2 text-sm text-gray-600">Save this link to check your booking anytime.</p>
+                    </div>
+                  ) : null}
                   <button type="button" onClick={handleClose} className="h-12 w-full max-w-xl rounded-2xl bg-gray-100 px-6 font-bold text-gray-700 hover:bg-gray-200">Close</button>
                 </div>
               ) : null}
