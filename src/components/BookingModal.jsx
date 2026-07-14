@@ -936,8 +936,13 @@ export default function BookingModal() {
                   </div>
                   <div>
                     <label className={bookingLabelClass}><MapPin className="mr-2 inline h-4 w-4" />Area *</label>
-                    <input className={bookingInputClass} list="easygospa-area-options" value={formData.area} onChange={event => updateField('area', event.target.value)} placeholder="BGC, Makati, Taguig" data-readability-field="area" required />
-                    <datalist id="easygospa-area-options">{areaOptions.map(area => <option key={area} value={area} />)}</datalist>
+                    <div className="relative">
+                      <select className={`${bookingInputClass} appearance-none pr-10`} value={formData.area} onChange={event => updateField('area', event.target.value)} data-readability-field="area" required>
+                        <option value="">Select your area</option>
+                        {areaOptions.map(area => <option key={area} value={area}>{area}</option>)}
+                      </select>
+                      <span aria-hidden="true" className="pointer-events-none absolute right-4 top-1/2 h-2 w-2 -translate-y-2/3 rotate-45 border-b-2 border-r-2 border-gray-500" />
+                    </div>
                   </div>
                   <div>
                     <label className={bookingLabelClass}><MapPin className="mr-2 inline h-4 w-4" />Building, condo, hotel, or exact address *</label>
