@@ -17,6 +17,7 @@ import {
   servicesForTherapist
 } from '../lib/therapistServiceBookingFlow.mjs';
 import { getFallbackWebsiteBookingCatalog } from '../lib/bookingCatalogNormalizer.mjs';
+import { manilaNowMinutes, manilaToday } from '../lib/manilaTime.js';
 import { LocationPicker } from './LocationPicker.jsx';
 import { AddressAutocompleteInput } from './AddressAutocompleteInput.jsx';
 
@@ -26,6 +27,7 @@ const allServiceAreasValue = 'all_service_areas';
 const catalogUnavailableNotice = 'No specific therapist is available right now.';
 const catalogUnavailableFollowUp = 'Please try again in a few minutes, or message us on WhatsApp to book.';
 const missingProfileIntroduction = 'No profile introduction has been provided yet.';
+const phPhoneErrorMessage = 'Please enter a valid PH mobile number, e.g. 0917 123 4567.';
 const bookingInputClass = 'h-12 w-full rounded-2xl border border-gray-300 bg-white px-4 font-medium text-[#0F0F0F] caret-[#0F0F0F] placeholder:text-gray-500 focus:border-[#4E8D43] focus:outline-none';
 const bookingTextareaClass = `${bookingInputClass} min-h-28 resize-none py-3`;
 const bookingLabelClass = 'mb-2 block text-sm font-semibold text-slate-800';
@@ -34,8 +36,34 @@ const summaryLabelClass = 'font-semibold text-slate-700';
 const summaryValueClass = 'text-right font-semibold text-[#0F0F0F]';
 const summaryMoneyClass = 'text-right font-bold text-[#0E6F1A]';
 
-function getTodayDate() {
-  return new Date().toISOString().split('T')[0];
+function timeSlotMinutes(value = '') {
+  const [hour, minute] = String(value).split(':').map(Number);
+  if (!Number.isFinite(hour) || !Number.isFinite(minute)) return -1;
+  return (hour * 60) + minute;
+}
+
+function isSelectableManilaTime(preferredDate, preferredTime) {
+  if (!preferredTime || preferredDate !== manilaToday()) return Boolean(preferredTime);
+  return timeSlotMinutes(preferredTime) >= manilaNowMinutes() + 60;
+}
+
+function isUsableCoords({ latitude, longitude } = {}) {
+  return Number.isFinite(latitude)
+    && Number.isFinite(longitude)
+    && !(latitude === 0 && longitude === 0)
+    && latitude >= 4
+    && latitude <= 21
+    && longitude >= 116
+    && longitude <= 127;
+}
+
+function isValidPhilippineMobile(value = '') {
+  const compact = String(value).replace(/[\s\-()]/g, '');
+  return /^(?:09\d{9}|\+?639\d{9})$/.test(compact);
+}
+
+function cleanPhoneForPayload(value = '') {
+  return String(value).trim().replace(/[\s-]/g, '');
 }
 
 function money(value = 0) {
@@ -226,7 +254,7 @@ function TherapistWallCard({ therapist, selected, onSelect }) {
           </div>
           <p className="text-sm font-medium text-gray-700">Massage Therapist</p>
           <p className="mt-1 line-clamp-2 text-xs leading-5 text-gray-500">{therapistAreaText(therapist)}</p>
-          {Number.isFinite(therapist.distanceKm) ? (
+          {Number.isFinite(therapist.distanceKm) && therapist.distanceKm <= 100 ? (
             <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-[#3F7838]" data-testid="therapist-distance">
               <MapPin className="h-3.5 w-3.5 shrink-0" />
               {therapist.distanceKm < 10 ? therapist.distanceKm.toFixed(1) : Math.round(therapist.distanceKm)} km
@@ -405,6 +433,8 @@ export default function BookingModal() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [createdAppointment, setCreatedAppointment] = useState(null);
   const [error, setError] = useState('');
+  const [dateError, setDateError] = useState('');
+  const [phoneError, setPhoneError] = useState('');
   const [customerCoords, setCustomerCoords] = useState(null);
 
   const catalogServices = Array.isArray(bookingCatalog.services) ? bookingCatalog.services : [];
@@ -456,14 +486,20 @@ export default function BookingModal() {
   const selectedDuration = useMemo(() => selectedService ? findExactDurationOption(selectedService, formData.durationMinutes) : null, [selectedService, formData.durationMinutes]);
   const selectedServiceOption = useMemo(() => resolveSelectedServiceOption(formData, catalogServices), [catalogServices, formData]);
   const selectedTotalAmount = selectedServiceOption?.price ?? 0;
+  const availableTimeSlots = useMemo(() => (
+    formData.preferredDate === manilaToday()
+      ? timeSlots.filter(time => timeSlotMinutes(time) >= manilaNowMinutes() + 60)
+      : timeSlots
+  ), [formData.preferredDate]);
 
   useEffect(() => {
     let active = true;
     async function loadBookingCatalog() {
       setCatalogStatus('loading');
       try {
-        const catalogUrl = customerCoords
-          ? `/api/booking-catalog?lat=${encodeURIComponent(customerCoords.latitude)}&lng=${encodeURIComponent(customerCoords.longitude)}`
+        const catalogCoords = isUsableCoords(customerCoords) ? customerCoords : null;
+        const catalogUrl = catalogCoords
+          ? `/api/booking-catalog?lat=${encodeURIComponent(catalogCoords.latitude)}&lng=${encodeURIComponent(catalogCoords.longitude)}`
           : '/api/booking-catalog';
         const response = await fetch(catalogUrl, { cache: 'no-store' });
         const payload = await response.json().catch(() => null);
@@ -495,6 +531,7 @@ export default function BookingModal() {
     navigator.geolocation.getCurrentPosition(
       position => {
         const coords = { latitude: position.coords.latitude, longitude: position.coords.longitude };
+        if (!isUsableCoords(coords)) return;
         setCustomerCoords(coords);
         setFormData(current => (current.customerLocation ? current : { ...current, customerLocation: coords }));
       },
@@ -520,6 +557,8 @@ export default function BookingModal() {
       const stored = readStoredSession();
       setCreatedAppointment(null);
       setError('');
+      setDateError('');
+      setPhoneError('');
       setWallSearch('');
       setSelectedArea(allServiceAreasValue);
       setMatchSelectedService(false);
@@ -543,6 +582,39 @@ export default function BookingModal() {
 
   const updateField = (field, value) => {
     setFormData(current => ({ ...current, [field]: value }));
+    if (error) setError('');
+  };
+
+  const updateCustomerLocation = location => {
+    setFormData(current => ({
+      ...current,
+      customerLocation: isUsableCoords(location)
+        ? { latitude: location.latitude, longitude: location.longitude }
+        : null
+    }));
+    if (error) setError('');
+  };
+
+  const handlePhoneChange = value => {
+    updateField('phone', value);
+    if (phoneError) setPhoneError('');
+  };
+
+  const validatePhoneField = () => {
+    const valid = isValidPhilippineMobile(formData.phone);
+    setPhoneError(valid ? '' : phPhoneErrorMessage);
+    return valid;
+  };
+
+  const handlePreferredDateChange = value => {
+    const today = manilaToday();
+    const preferredDate = value && value < today ? today : value;
+    setDateError(value && value < today ? 'Please pick today or a future date.' : '');
+    setFormData(current => ({
+      ...current,
+      preferredDate,
+      preferredTime: isSelectableManilaTime(preferredDate, current.preferredTime) ? current.preferredTime : ''
+    }));
     if (error) setError('');
   };
 
@@ -610,11 +682,19 @@ export default function BookingModal() {
     if (!formData.service || !selectedServiceOption) return 'Please select a valid service duration and price before continuing.';
     if (!isValidEmail(formData.customerEmail)) return 'Please continue with a valid email first.';
     if (!formData.customerName.trim()) return 'Please enter your full name.';
-    if (!formData.phone.trim()) return 'Please enter your WhatsApp or phone number.';
-    if (!isValidPhone(formData.phone)) return 'Please enter a valid WhatsApp or phone number.';
+    if (!formData.phone.trim()) {
+      setPhoneError(phPhoneErrorMessage);
+      return 'Please enter your WhatsApp or phone number.';
+    }
+    if (!isValidPhilippineMobile(formData.phone)) {
+      setPhoneError(phPhoneErrorMessage);
+      return phPhoneErrorMessage;
+    }
+    setPhoneError('');
     if (!formData.preferredDate) return 'Please select your preferred date.';
-    if (formData.preferredDate < getTodayDate()) return 'Please select today or a future date.';
+    if (formData.preferredDate < manilaToday()) return 'Please select today or a future date.';
     if (!formData.preferredTime) return 'Please select your preferred time.';
+    if (!isSelectableManilaTime(formData.preferredDate, formData.preferredTime)) return 'Please pick a later time slot.';
     if (!formData.area.trim()) return 'Please enter your area.';
     if (!formData.addressNote.trim()) return 'Please enter your building, condo, hotel, or exact address details.';
     return null;
@@ -669,7 +749,7 @@ export default function BookingModal() {
       source: 'website',
       customerName: formData.customerName,
       customerEmail: formData.customerEmail,
-      phone: formData.phone,
+      phone: cleanPhoneForPayload(formData.phone),
       requestedTechnicianId: selectedTherapist.id,
       requestedTechnicianName: selectedTherapist.name,
       requestedTechnicianProfileId: selectedTherapist.profileId || selectedTherapist.id,
@@ -689,7 +769,7 @@ export default function BookingModal() {
       preferredTime: formData.preferredTime,
       area: formData.area,
       addressNote: formData.addressNote,
-      ...(formData.customerLocation?.latitude ? {
+      ...(isUsableCoords(formData.customerLocation) ? {
         customerLocation: {
           latitude: formData.customerLocation.latitude,
           longitude: formData.customerLocation.longitude
@@ -889,26 +969,33 @@ export default function BookingModal() {
                     </div>
                     <div>
                       <label className={bookingLabelClass}><Phone className="mr-2 inline h-4 w-4" />WhatsApp / Phone *</label>
-                      <input className={bookingInputClass} value={formData.phone} onChange={event => updateField('phone', event.target.value)} placeholder="+63 900 000 0000" data-readability-field="phone" required />
+                      <input className={bookingInputClass} value={formData.phone} onChange={event => handlePhoneChange(event.target.value)} onBlur={validatePhoneField} placeholder="+63 900 000 0000" data-readability-field="phone" required />
+                      {phoneError ? <p className="mt-2 text-sm font-medium text-red-600">{phoneError}</p> : null}
                     </div>
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
                       <label className={bookingLabelClass}><Calendar className="mr-2 inline h-4 w-4" />Preferred date *</label>
-                      <input className={bookingInputClass} type="date" min={getTodayDate()} value={formData.preferredDate} onChange={event => updateField('preferredDate', event.target.value)} data-readability-field="preferredDate" required />
+                      <input className={bookingInputClass} type="date" min={manilaToday()} value={formData.preferredDate} onChange={event => handlePreferredDateChange(event.target.value)} data-readability-field="preferredDate" required />
+                      {dateError ? <p className="mt-2 text-sm font-medium text-red-600">{dateError}</p> : null}
                     </div>
                     <div>
                       <label className={bookingLabelClass}><Clock className="mr-2 inline h-4 w-4" />Preferred time *</label>
                       <select className={bookingInputClass} value={formData.preferredTime} onChange={event => updateField('preferredTime', event.target.value)} data-readability-field="preferredTime" required>
                         <option value="">Select time</option>
-                        {timeSlots.map(time => <option key={time} value={time}>{time}</option>)}
+                        {availableTimeSlots.map(time => <option key={time} value={time}>{time}</option>)}
                       </select>
                     </div>
                   </div>
                   <div>
                     <label className={bookingLabelClass}><MapPin className="mr-2 inline h-4 w-4" />Area *</label>
-                    <input className={bookingInputClass} list="easygospa-area-options" value={formData.area} onChange={event => updateField('area', event.target.value)} placeholder="BGC, Makati, Taguig" data-readability-field="area" required />
-                    <datalist id="easygospa-area-options">{areaOptions.map(area => <option key={area} value={area} />)}</datalist>
+                    <div className="relative">
+                      <select className={`${bookingInputClass} appearance-none pr-10`} value={formData.area} onChange={event => updateField('area', event.target.value)} data-readability-field="area" required>
+                        <option value="">Select your area</option>
+                        {areaOptions.map(area => <option key={area} value={area}>{area}</option>)}
+                      </select>
+                      <span aria-hidden="true" className="pointer-events-none absolute right-4 top-1/2 h-2 w-2 -translate-y-2/3 rotate-45 border-b-2 border-r-2 border-gray-500" />
+                    </div>
                   </div>
                   <div>
                     <label className={bookingLabelClass}><MapPin className="mr-2 inline h-4 w-4" />Building, condo, hotel, or exact address *</label>
@@ -917,12 +1004,12 @@ export default function BookingModal() {
                       inputClassName={bookingInputClass}
                       placeholder="Start typing your building, condo, or hotel"
                       onTextChange={text => updateField('addressNote', text)}
-                      onLocationResolved={location => updateField('customerLocation', { latitude: location.latitude, longitude: location.longitude })}
+                      onLocationResolved={updateCustomerLocation}
                     />
                   </div>
                   <div>
                     <label className={bookingLabelClass}><MapPin className="mr-2 inline h-4 w-4" />Pin your location on the map <span className="font-normal text-gray-500">(helps us send the nearest therapist)</span></label>
-                    <LocationPicker value={formData.customerLocation} onChange={location => updateField('customerLocation', location)} />
+                    <LocationPicker value={formData.customerLocation} onChange={updateCustomerLocation} />
                   </div>
                   <div>
                     <label className={bookingLabelClass}><MessageSquare className="mr-2 inline h-4 w-4" />Notes optional</label>
