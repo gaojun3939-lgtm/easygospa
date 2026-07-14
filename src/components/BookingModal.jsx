@@ -27,6 +27,7 @@ const allServiceAreasValue = 'all_service_areas';
 const catalogUnavailableNotice = 'No specific therapist is available right now.';
 const catalogUnavailableFollowUp = 'Please try again in a few minutes, or message us on WhatsApp to book.';
 const missingProfileIntroduction = 'No profile introduction has been provided yet.';
+const phPhoneErrorMessage = 'Please enter a valid PH mobile number, e.g. 0917 123 4567.';
 const bookingInputClass = 'h-12 w-full rounded-2xl border border-gray-300 bg-white px-4 font-medium text-[#0F0F0F] caret-[#0F0F0F] placeholder:text-gray-500 focus:border-[#4E8D43] focus:outline-none';
 const bookingTextareaClass = `${bookingInputClass} min-h-28 resize-none py-3`;
 const bookingLabelClass = 'mb-2 block text-sm font-semibold text-slate-800';
@@ -54,6 +55,15 @@ function isUsableCoords({ latitude, longitude } = {}) {
     && latitude <= 21
     && longitude >= 116
     && longitude <= 127;
+}
+
+function isValidPhilippineMobile(value = '') {
+  const compact = String(value).replace(/[\s\-()]/g, '');
+  return /^(?:09\d{9}|\+?639\d{9})$/.test(compact);
+}
+
+function cleanPhoneForPayload(value = '') {
+  return String(value).trim().replace(/[\s-]/g, '');
 }
 
 function money(value = 0) {
@@ -424,6 +434,7 @@ export default function BookingModal() {
   const [createdAppointment, setCreatedAppointment] = useState(null);
   const [error, setError] = useState('');
   const [dateError, setDateError] = useState('');
+  const [phoneError, setPhoneError] = useState('');
   const [customerCoords, setCustomerCoords] = useState(null);
 
   const catalogServices = Array.isArray(bookingCatalog.services) ? bookingCatalog.services : [];
@@ -547,6 +558,7 @@ export default function BookingModal() {
       setCreatedAppointment(null);
       setError('');
       setDateError('');
+      setPhoneError('');
       setWallSearch('');
       setSelectedArea(allServiceAreasValue);
       setMatchSelectedService(false);
@@ -581,6 +593,17 @@ export default function BookingModal() {
         : null
     }));
     if (error) setError('');
+  };
+
+  const handlePhoneChange = value => {
+    updateField('phone', value);
+    if (phoneError) setPhoneError('');
+  };
+
+  const validatePhoneField = () => {
+    const valid = isValidPhilippineMobile(formData.phone);
+    setPhoneError(valid ? '' : phPhoneErrorMessage);
+    return valid;
   };
 
   const handlePreferredDateChange = value => {
@@ -659,8 +682,15 @@ export default function BookingModal() {
     if (!formData.service || !selectedServiceOption) return 'Please select a valid service duration and price before continuing.';
     if (!isValidEmail(formData.customerEmail)) return 'Please continue with a valid email first.';
     if (!formData.customerName.trim()) return 'Please enter your full name.';
-    if (!formData.phone.trim()) return 'Please enter your WhatsApp or phone number.';
-    if (!isValidPhone(formData.phone)) return 'Please enter a valid WhatsApp or phone number.';
+    if (!formData.phone.trim()) {
+      setPhoneError(phPhoneErrorMessage);
+      return 'Please enter your WhatsApp or phone number.';
+    }
+    if (!isValidPhilippineMobile(formData.phone)) {
+      setPhoneError(phPhoneErrorMessage);
+      return phPhoneErrorMessage;
+    }
+    setPhoneError('');
     if (!formData.preferredDate) return 'Please select your preferred date.';
     if (formData.preferredDate < manilaToday()) return 'Please select today or a future date.';
     if (!formData.preferredTime) return 'Please select your preferred time.';
@@ -719,7 +749,7 @@ export default function BookingModal() {
       source: 'website',
       customerName: formData.customerName,
       customerEmail: formData.customerEmail,
-      phone: formData.phone,
+      phone: cleanPhoneForPayload(formData.phone),
       requestedTechnicianId: selectedTherapist.id,
       requestedTechnicianName: selectedTherapist.name,
       requestedTechnicianProfileId: selectedTherapist.profileId || selectedTherapist.id,
@@ -939,7 +969,8 @@ export default function BookingModal() {
                     </div>
                     <div>
                       <label className={bookingLabelClass}><Phone className="mr-2 inline h-4 w-4" />WhatsApp / Phone *</label>
-                      <input className={bookingInputClass} value={formData.phone} onChange={event => updateField('phone', event.target.value)} placeholder="+63 900 000 0000" data-readability-field="phone" required />
+                      <input className={bookingInputClass} value={formData.phone} onChange={event => handlePhoneChange(event.target.value)} onBlur={validatePhoneField} placeholder="+63 900 000 0000" data-readability-field="phone" required />
+                      {phoneError ? <p className="mt-2 text-sm font-medium text-red-600">{phoneError}</p> : null}
                     </div>
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
