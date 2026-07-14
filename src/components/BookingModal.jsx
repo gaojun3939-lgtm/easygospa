@@ -46,6 +46,16 @@ function isSelectableManilaTime(preferredDate, preferredTime) {
   return timeSlotMinutes(preferredTime) >= manilaNowMinutes() + 60;
 }
 
+function isUsableCoords({ latitude, longitude } = {}) {
+  return Number.isFinite(latitude)
+    && Number.isFinite(longitude)
+    && !(latitude === 0 && longitude === 0)
+    && latitude >= 4
+    && latitude <= 21
+    && longitude >= 116
+    && longitude <= 127;
+}
+
 function money(value = 0) {
   return `PHP ${Number(value || 0).toLocaleString('en-US')}`;
 }
@@ -234,7 +244,7 @@ function TherapistWallCard({ therapist, selected, onSelect }) {
           </div>
           <p className="text-sm font-medium text-gray-700">Massage Therapist</p>
           <p className="mt-1 line-clamp-2 text-xs leading-5 text-gray-500">{therapistAreaText(therapist)}</p>
-          {Number.isFinite(therapist.distanceKm) ? (
+          {Number.isFinite(therapist.distanceKm) && therapist.distanceKm <= 100 ? (
             <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-[#3F7838]" data-testid="therapist-distance">
               <MapPin className="h-3.5 w-3.5 shrink-0" />
               {therapist.distanceKm < 10 ? therapist.distanceKm.toFixed(1) : Math.round(therapist.distanceKm)} km
@@ -476,8 +486,9 @@ export default function BookingModal() {
     async function loadBookingCatalog() {
       setCatalogStatus('loading');
       try {
-        const catalogUrl = customerCoords
-          ? `/api/booking-catalog?lat=${encodeURIComponent(customerCoords.latitude)}&lng=${encodeURIComponent(customerCoords.longitude)}`
+        const catalogCoords = isUsableCoords(customerCoords) ? customerCoords : null;
+        const catalogUrl = catalogCoords
+          ? `/api/booking-catalog?lat=${encodeURIComponent(catalogCoords.latitude)}&lng=${encodeURIComponent(catalogCoords.longitude)}`
           : '/api/booking-catalog';
         const response = await fetch(catalogUrl, { cache: 'no-store' });
         const payload = await response.json().catch(() => null);
@@ -509,6 +520,7 @@ export default function BookingModal() {
     navigator.geolocation.getCurrentPosition(
       position => {
         const coords = { latitude: position.coords.latitude, longitude: position.coords.longitude };
+        if (!isUsableCoords(coords)) return;
         setCustomerCoords(coords);
         setFormData(current => (current.customerLocation ? current : { ...current, customerLocation: coords }));
       },
@@ -558,6 +570,16 @@ export default function BookingModal() {
 
   const updateField = (field, value) => {
     setFormData(current => ({ ...current, [field]: value }));
+    if (error) setError('');
+  };
+
+  const updateCustomerLocation = location => {
+    setFormData(current => ({
+      ...current,
+      customerLocation: isUsableCoords(location)
+        ? { latitude: location.latitude, longitude: location.longitude }
+        : null
+    }));
     if (error) setError('');
   };
 
@@ -717,7 +739,7 @@ export default function BookingModal() {
       preferredTime: formData.preferredTime,
       area: formData.area,
       addressNote: formData.addressNote,
-      ...(formData.customerLocation?.latitude ? {
+      ...(isUsableCoords(formData.customerLocation) ? {
         customerLocation: {
           latitude: formData.customerLocation.latitude,
           longitude: formData.customerLocation.longitude
@@ -951,12 +973,12 @@ export default function BookingModal() {
                       inputClassName={bookingInputClass}
                       placeholder="Start typing your building, condo, or hotel"
                       onTextChange={text => updateField('addressNote', text)}
-                      onLocationResolved={location => updateField('customerLocation', { latitude: location.latitude, longitude: location.longitude })}
+                      onLocationResolved={updateCustomerLocation}
                     />
                   </div>
                   <div>
                     <label className={bookingLabelClass}><MapPin className="mr-2 inline h-4 w-4" />Pin your location on the map <span className="font-normal text-gray-500">(helps us send the nearest therapist)</span></label>
-                    <LocationPicker value={formData.customerLocation} onChange={location => updateField('customerLocation', location)} />
+                    <LocationPicker value={formData.customerLocation} onChange={updateCustomerLocation} />
                   </div>
                   <div>
                     <label className={bookingLabelClass}><MessageSquare className="mr-2 inline h-4 w-4" />Notes optional</label>
