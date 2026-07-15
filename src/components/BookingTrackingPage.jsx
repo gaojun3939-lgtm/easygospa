@@ -18,6 +18,7 @@ import {
   formatManilaBookingDateTime,
   getBookingStatusStepIndex
 } from '../lib/bookingStatus.mjs';
+import { apiUrl } from '../lib/apiUrl.js';
 
 function WhatsAppButton({ reference, whatsapp, compact = false }) {
   return (
@@ -134,7 +135,7 @@ export default function BookingTrackingPage({ reference }) {
     else setViewState('loading');
 
     try {
-      const response = await fetch(`/api/booking-status?ref=${encodeURIComponent(reference)}`, { cache: 'no-store' });
+      const response = await fetch(apiUrl(`/api/booking-status?ref=${encodeURIComponent(reference)}`), { cache: 'no-store' });
       const payload = await response.json().catch(() => null);
       if (response.status === 404 || payload?.reason === 'not_found') {
         setBooking(null);

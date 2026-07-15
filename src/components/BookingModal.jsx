@@ -19,6 +19,7 @@ import {
 } from '../lib/therapistServiceBookingFlow.mjs';
 import { getFallbackWebsiteBookingCatalog } from '../lib/bookingCatalogNormalizer.mjs';
 import { manilaNowMinutes, manilaToday } from '../lib/manilaTime.js';
+import { apiUrl } from '../lib/apiUrl.js';
 import { LocationPicker } from './LocationPicker.jsx';
 import { AddressAutocompleteInput } from './AddressAutocompleteInput.jsx';
 
@@ -500,8 +501,8 @@ export default function BookingModal() {
       try {
         const catalogCoords = isUsableCoords(customerCoords) ? customerCoords : null;
         const catalogUrl = catalogCoords
-          ? `/api/booking-catalog?lat=${encodeURIComponent(catalogCoords.latitude)}&lng=${encodeURIComponent(catalogCoords.longitude)}`
-          : '/api/booking-catalog';
+          ? apiUrl(`/api/booking-catalog?lat=${encodeURIComponent(catalogCoords.latitude)}&lng=${encodeURIComponent(catalogCoords.longitude)}`)
+          : apiUrl('/api/booking-catalog');
         const response = await fetch(catalogUrl, { cache: 'no-store' });
         const payload = await response.json().catch(() => null);
         if (!active || !response.ok || payload?.ok !== true) throw new Error('BOOKING_CATALOG_LOAD_FAILED');
@@ -796,7 +797,7 @@ export default function BookingModal() {
     };
 
     try {
-      const response = await fetch('/api/booking-request', {
+      const response = await fetch(apiUrl('/api/booking-request'), {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify(requestPayload)
