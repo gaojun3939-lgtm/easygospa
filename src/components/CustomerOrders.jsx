@@ -67,6 +67,7 @@ export default function CustomerOrders() {
   const [resendIn, setResendIn] = useState(0);
   const [orders, setOrders] = useState([]);
   const [ordersState, setOrdersState] = useState('idle'); // idle | loading | ready | error
+  const [errorDetail, setErrorDetail] = useState('');
   const [selected, setSelected] = useState(null);
   const timerRef = useRef(null);
   const onClose = useCallback(() => { setSelected(null); setOpen(false); }, []);
@@ -103,16 +104,23 @@ export default function CustomerOrders() {
     const token = session?.access_token;
     if (!token) return;
     setOrdersState('loading');
+    setErrorDetail('');
     try {
       const response = await fetch('/api/my-bookings', {
         headers: { Authorization: `Bearer ${token}` },
         cache: 'no-store'
       });
-      const payload = await response.json();
-      if (!response.ok || payload?.ok === false) throw new Error('failed');
+      let payload = null;
+      try { payload = await response.json(); } catch { payload = null; }
+      if (!response.ok || !payload || payload.ok === false) {
+        setErrorDetail(`HTTP ${response.status}${payload?.code ? ' · ' + payload.code : ''}`);
+        setOrdersState('error');
+        return;
+      }
       setOrders(Array.isArray(payload.bookings) ? payload.bookings : []);
       setOrdersState('ready');
-    } catch {
+    } catch (loadError) {
+      setErrorDetail(`network · ${String(loadError?.message || loadError).slice(0, 60)}`);
       setOrdersState('error');
     }
   }, [session?.access_token]);
@@ -218,7 +226,7 @@ export default function CustomerOrders() {
           ) : selectedOrder ? (
             <OrderDetail order={selectedOrder} />
           ) : (
-            <OrdersList state={ordersState} orders={orders} onOpen={setSelected} onRetry={loadOrders} />
+            <OrdersList state={ordersState} orders={orders} errorDetail={errorDetail} onOpen={setSelected} onRetry={loadOrders} />
           )}
         </div>
       </div>
@@ -294,12 +302,13 @@ function LoginView({ step, email, code, busy, error, notice, resendIn, onEmail, 
   );
 }
 
-function OrdersList({ state, orders, onOpen, onRetry }) {
+function OrdersList({ state, orders, errorDetail, onOpen, onRetry }) {
   if (state === 'loading' || state === 'idle') return <p className="mt-10 text-center text-sm text-gray-500">Loading your orders…</p>;
   if (state === 'error') {
     return (
       <div className="mt-10 text-center">
         <p className="text-sm text-gray-500">Could not load your orders.</p>
+        {errorDetail ? <p className="mt-1 text-xs text-gray-400">{errorDetail}</p> : null}
         <button type="button" onClick={onRetry} className="mt-3 rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-[#4E8D43]">Try again</button>
       </div>
     );
