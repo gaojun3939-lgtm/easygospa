@@ -163,10 +163,36 @@ export function concreteTherapistsForWall(preferredService = '', therapists = we
   const preferred = String(preferredService || '').trim();
   const concrete = therapists.filter(therapist => therapist.id !== 'any_available');
   if (!preferred) return concrete;
-  return [...concrete].sort((a, b) => {
-    const aMatch = Array.isArray(a.availableServices) && a.availableServices.includes(preferred) ? 0 : 1;
-    const bMatch = Array.isArray(b.availableServices) && b.availableServices.includes(preferred) ? 0 : 1;
-    return aMatch - bMatch;
+  return concrete.filter(therapist => (
+    Array.isArray(therapist.availableServices)
+    && therapist.availableServices.includes(preferred)
+  ));
+}
+
+export function filterTherapistsForWall({
+  therapists = websiteTherapists,
+  query = '',
+  selectedArea = 'all_service_areas',
+  allAreasValue = 'all_service_areas',
+  selectedService = '',
+  matchSelectedService = false
+} = {}) {
+  const normalizedQuery = String(query || '').trim().toLowerCase();
+  const normalizedArea = String(selectedArea || '');
+  return concreteTherapistsForWall('', therapists).filter(therapist => {
+    const therapistAreas = Array.isArray(therapist.serviceAreas) ? therapist.serviceAreas : [];
+    const therapistServices = Array.isArray(therapist.availableServices) ? therapist.availableServices : [];
+    const therapistSpecialties = Array.isArray(therapist.specialties) ? therapist.specialties : [];
+    const areaMatches = normalizedArea === allAreasValue
+      || therapistAreas.some(area => area.toLowerCase() === normalizedArea.toLowerCase());
+    if (!areaMatches) return false;
+    if (matchSelectedService && selectedService && !therapistServices.includes(selectedService)) return false;
+    if (!normalizedQuery) return true;
+    return [therapist.name, ...therapistAreas, therapist.serviceArea, ...therapistSpecialties]
+      .filter(Boolean)
+      .join(' ')
+      .toLowerCase()
+      .includes(normalizedQuery);
   });
 }
 

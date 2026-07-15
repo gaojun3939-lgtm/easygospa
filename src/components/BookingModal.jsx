@@ -8,6 +8,7 @@ import {
   BOOKING_FLOW_STORAGE_KEY,
   DEFAULT_THERAPIST_IMAGE_URL,
   concreteTherapistsForWall,
+  filterTherapistsForWall,
   findBookingServiceByName,
   findExactDurationOption,
   findWebsiteTherapist,
@@ -245,8 +246,9 @@ function TherapistWallCard({ therapist, selected, onSelect }) {
       onClick={openDetail}
       onKeyDown={handleKeyDown}
       data-testid={`therapist-card-${therapist.id}`}
-      className={`w-full cursor-pointer overflow-hidden rounded-[1.5rem] border bg-white p-3 text-left shadow-sm transition-all ${selected ? 'border-[#4E8D43] shadow-md' : 'border-gray-100 hover:border-[#4E8D43]/60 hover:shadow-md'}`}
+      className={`relative w-full cursor-pointer overflow-hidden rounded-[1.5rem] border bg-white p-3 text-left shadow-sm transition-all ${selected ? 'border-[#4E8D43] shadow-md' : 'border-gray-100 hover:border-[#4E8D43]/60 hover:shadow-md'}`}
     >
+      {therapist.isNew === true ? <span className="pointer-events-none absolute left-3 top-3 z-10 rounded-md bg-sky-600 px-2 py-1 text-[10px] font-extrabold leading-none tracking-[0.12em] text-white shadow-sm" data-testid="therapist-new-badge">NEW</span> : null}
       <div className="flex min-h-[112px] gap-3">
         <TherapistAvatar therapist={therapist} mode="wall" />
         <div className="min-w-0 flex-1">
@@ -462,30 +464,14 @@ export default function BookingModal() {
   const selectedTherapist = useMemo(() => findWebsiteTherapist(formData.requestedTechnicianId, bookingTherapists), [bookingTherapists, formData.requestedTechnicianId]);
   const availableAreaFilters = useMemo(() => Array.from(new Set(specificTherapists.flatMap(therapist => Array.isArray(therapist.serviceAreas) ? therapist.serviceAreas : []).filter(Boolean))).sort((a, b) => a.localeCompare(b)), [specificTherapists]);
   const serviceFilterName = formData.preferredService || formData.service;
-  const wallTherapists = useMemo(() => {
-    const query = wallSearch.trim().toLowerCase();
-    const filtered = concreteTherapistsForWall(matchSelectedService ? serviceFilterName : '', catalogTherapists).filter(therapist => {
-      const therapistAreas = Array.isArray(therapist.serviceAreas) ? therapist.serviceAreas : [];
-      const areaMatches = selectedArea === allServiceAreasValue || therapistAreas.some(area => area.toLowerCase() === selectedArea.toLowerCase());
-      if (!areaMatches) return false;
-      if (!query) return true;
-      return [therapist.name, ...therapistAreas, therapist.serviceArea, ...therapist.specialties].join(' ').toLowerCase().includes(query);
-    });
-    // Nearest first when distances are available; therapists without a
-    // distance keep their original order after the located ones.
-    if (filtered.some(therapist => Number.isFinite(therapist.distanceKm))) {
-      return filtered
-        .map((therapist, index) => ({ therapist, index }))
-        .sort((a, b) => {
-          const aKm = Number.isFinite(a.therapist.distanceKm) ? a.therapist.distanceKm : Infinity;
-          const bKm = Number.isFinite(b.therapist.distanceKm) ? b.therapist.distanceKm : Infinity;
-          if (aKm !== bKm) return aKm - bKm;
-          return a.index - b.index;
-        })
-        .map(item => item.therapist);
-    }
-    return filtered;
-  }, [catalogTherapists, matchSelectedService, selectedArea, serviceFilterName, wallSearch]);
+  const wallTherapists = useMemo(() => filterTherapistsForWall({
+    therapists: catalogTherapists,
+    query: wallSearch,
+    selectedArea,
+    allAreasValue: allServiceAreasValue,
+    selectedService: serviceFilterName,
+    matchSelectedService
+  }), [catalogTherapists, matchSelectedService, selectedArea, serviceFilterName, wallSearch]);
   const availableServices = useMemo(() => servicesForTherapist(formData.requestedTechnicianId || 'any_available', bookingTherapists, catalogServices), [bookingTherapists, catalogServices, formData.requestedTechnicianId]);
   const selectedService = useMemo(() => findBookingServiceByName(formData.service, catalogServices), [catalogServices, formData.service]);
   const selectedDuration = useMemo(() => selectedService ? findExactDurationOption(selectedService, formData.durationMinutes) : null, [selectedService, formData.durationMinutes]);
