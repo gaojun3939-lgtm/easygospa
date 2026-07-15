@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowLeft, Calendar, Check, Clock, Mail, MapPin, MessageSquare, Phone, Search, ShieldCheck, Star, User, X } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, Calendar, Check, Clock, Mail, MapPin, MessageSquare, Phone, Search, ShieldCheck, Star, User, X } from 'lucide-react';
 import {
   BOOKING_FLOW_STORAGE_KEY,
   DEFAULT_THERAPIST_IMAGE_URL,
@@ -263,11 +263,13 @@ function TherapistWallCard({ therapist, selected, onSelect }) {
             </p>
           ) : null}
           <div className="mt-1 text-xs font-medium text-gray-600"><TherapistRating therapist={therapist} /></div>
-          <div className="mt-3 flex items-center justify-between gap-3">
-            <p className="flex min-w-0 items-center gap-1.5 text-xs font-semibold leading-5 text-[#3F7838]">
-              <Clock className="h-4 w-4 shrink-0" />
-              <span>Available after confirmation</span>
-            </p>
+          <div className="mt-3 flex min-h-11 items-center justify-between gap-3">
+            {therapist.onShift === true && therapist.earliestAvailable ? (
+              <p className="flex min-w-0 items-center gap-1.5 text-xs font-semibold leading-5 text-[#3F7838]" data-testid="therapist-earliest-availability">
+                <Clock className="h-4 w-4 shrink-0" />
+                <span>Earliest {therapist.earliestAvailable}</span>
+              </p>
+            ) : null}
             <button
               type="button"
               onClick={event => {
@@ -275,7 +277,7 @@ function TherapistWallCard({ therapist, selected, onSelect }) {
                 openDetail();
               }}
               data-testid={`therapist-card-book-${therapist.id}`}
-              className="inline-flex h-11 min-w-20 shrink-0 items-center justify-center rounded-full bg-[#4E8D43] px-4 text-sm font-bold text-white transition hover:bg-[#3F7838]"
+              className="ml-auto inline-flex h-11 min-w-20 shrink-0 items-center justify-center rounded-full bg-[#4E8D43] px-4 text-sm font-bold text-white transition hover:bg-[#3F7838]"
             >
               Book
             </button>
@@ -432,6 +434,7 @@ export default function BookingModal() {
   const [wallSearch, setWallSearch] = useState('');
   const [selectedArea, setSelectedArea] = useState(allServiceAreasValue);
   const [matchSelectedService, setMatchSelectedService] = useState(false);
+  const [pendingRestingTherapistId, setPendingRestingTherapistId] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [createdAppointment, setCreatedAppointment] = useState(null);
   const [error, setError] = useState('');
@@ -564,6 +567,7 @@ export default function BookingModal() {
       setWallSearch('');
       setSelectedArea(allServiceAreasValue);
       setMatchSelectedService(false);
+      setPendingRestingTherapistId('');
       setIsSubmitting(false);
       setEmailDraft(stored ? { email: stored.customerEmail, name: stored.customerName || '', phone: stored.phone || '' } : { email: '', name: '', phone: '' });
       setFormData(current => {
@@ -620,12 +624,7 @@ export default function BookingModal() {
     if (error) setError('');
   };
 
-  const openTherapistDetail = therapistId => {
-    const therapist = findWebsiteTherapist(therapistId, bookingTherapists);
-    if (!therapist) {
-      setError('Current service profiles are temporarily unavailable. Please try again later.');
-      return;
-    }
+  const enterTherapistDetail = therapist => {
     setFormData(current => {
       const therapistServices = servicesForTherapist(therapist.id, bookingTherapists, catalogServices);
       const currentService = findBookingServiceByName(current.service, catalogServices);
@@ -642,6 +641,33 @@ export default function BookingModal() {
     });
     setError('');
     setStep('detail');
+  };
+
+  const openTherapistDetail = therapistId => {
+    const therapist = findWebsiteTherapist(therapistId, bookingTherapists);
+    if (!therapist) {
+      setError('Current service profiles are temporarily unavailable. Please try again later.');
+      return;
+    }
+    if (therapist.onShift !== true) {
+      setPendingRestingTherapistId(therapist.id);
+      return;
+    }
+    enterTherapistDetail(therapist);
+  };
+
+  const cancelRestingTherapistSelection = () => {
+    setPendingRestingTherapistId('');
+  };
+
+  const continueRestingTherapistSelection = () => {
+    const therapist = findWebsiteTherapist(pendingRestingTherapistId, bookingTherapists);
+    setPendingRestingTherapistId('');
+    if (!therapist) {
+      setError('Current service profiles are temporarily unavailable. Please try again later.');
+      return;
+    }
+    enterTherapistDetail(therapist);
   };
 
   const handleSelectService = service => {
@@ -831,6 +857,7 @@ export default function BookingModal() {
   const handleClose = () => {
     setIsOpen(false);
     setError('');
+    setPendingRestingTherapistId('');
     if (step === 'success') {
       setCreatedAppointment(null);
       setFormData(createInitialForm());
@@ -1074,6 +1101,44 @@ export default function BookingModal() {
               ) : null}
             </div>
           </motion.div>
+          {pendingRestingTherapistId ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[60] flex items-center justify-center bg-black/55 p-4 backdrop-blur-sm"
+              onClick={event => {
+                event.stopPropagation();
+                cancelRestingTherapistSelection();
+              }}
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.96, y: 16 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.96, y: 16 }}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="resting-therapist-warning-title"
+                data-testid="resting-therapist-warning"
+                className="w-full max-w-md rounded-[1.75rem] border border-amber-200 bg-white p-5 shadow-2xl sm:p-6"
+                onClick={event => event.stopPropagation()}
+              >
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 text-amber-700">
+                  <AlertTriangle className="h-6 w-6" />
+                </div>
+                <h2 id="resting-therapist-warning-title" className="mt-4 text-2xl font-bold text-[#0F0F0F]">Warning</h2>
+                <p className="mt-3 text-sm leading-6 text-gray-600">Therapist is currently resting, low chance of accepting orders, do you still want to continue?</p>
+                <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                  <button type="button" onClick={cancelRestingTherapistSelection} className="h-12 rounded-2xl border border-gray-200 bg-white px-4 font-bold text-gray-700 transition hover:bg-gray-50">
+                    Cancel
+                  </button>
+                  <button type="button" onClick={continueRestingTherapistSelection} className="h-12 rounded-2xl bg-[#4E8D43] px-4 font-bold text-white transition hover:bg-[#3F7838]">
+                    Continue anyway
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          ) : null}
         </motion.div>
       ) : null}
     </AnimatePresence>
