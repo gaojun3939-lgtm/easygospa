@@ -3,8 +3,13 @@ import { getFallbackWebsiteBookingCatalog, normalizePublicBookingCatalog } from 
 
 const DEFAULT_AIOFFICE_BOOKING_CATALOG_API_URL = 'https://staging.easygospa.com/api/public/booking-catalog';
 
+// Always fresh: a therapist toggling their work shift must reflect on the wall
+// immediately, so never let Next/CDN cache this proxy response.
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 function json(payload, status = 200) {
-  return NextResponse.json(payload, { status });
+  return NextResponse.json(payload, { status, headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } });
 }
 
 function parseJson(text) {

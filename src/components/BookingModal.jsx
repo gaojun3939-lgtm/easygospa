@@ -260,6 +260,11 @@ function TherapistWallCard({ therapist, selected, onSelect }) {
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <h3 className="min-w-0 flex-1 truncate text-[17px] font-bold leading-6 text-[#0F0F0F]">{therapist.name}</h3>
+            {therapist.onShift === true && therapist.earliestAvailable ? (
+              <span className="flex shrink-0 items-center gap-1 text-xs font-semibold leading-5 text-[#3F7838]" data-testid="therapist-earliest-availability">
+                <Clock className="h-3.5 w-3.5 shrink-0" />Earliest {therapist.earliestAvailable}
+              </span>
+            ) : null}
             {selected ? <Check className="h-4 w-4 shrink-0 text-[#4E8D43]" /> : null}
           </div>
           <p className="text-sm font-medium text-gray-700">Massage Therapist</p>
@@ -271,13 +276,7 @@ function TherapistWallCard({ therapist, selected, onSelect }) {
             </p>
           ) : null}
           <div className="mt-1 text-xs font-medium text-gray-600"><TherapistRating therapist={therapist} /></div>
-          <div className="mt-3 flex min-h-11 items-center justify-between gap-3">
-            {therapist.onShift === true && therapist.earliestAvailable ? (
-              <p className="flex min-w-0 items-center gap-1.5 text-xs font-semibold leading-5 text-[#3F7838]" data-testid="therapist-earliest-availability">
-                <Clock className="h-4 w-4 shrink-0" />
-                <span>Earliest {therapist.earliestAvailable}</span>
-              </p>
-            ) : null}
+          <div className="mt-3 flex min-h-11 items-center justify-end gap-3">
             <button
               type="button"
               onClick={event => {
