@@ -121,3 +121,10 @@ export async function POST(request) {
 export function GET() {
   return json({ ok: false, code: 'METHOD_NOT_ALLOWED', error: 'Method not allowed' }, 405);
 }
+
+// CORS preflight for cross-address booking submits (easygospa.com <-> www.easygospa.com).
+// The JSON POST triggers a preflight OPTIONS that must succeed with a 2xx before the
+// browser sends the real request. CORS response headers are applied by next.config.
+export function OPTIONS() {
+  return new Response(null, { status: 204 });
+}
