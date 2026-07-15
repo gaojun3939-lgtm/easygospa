@@ -144,7 +144,18 @@ export default function Navbar() {
             </div>
 
             {/* CTA */}
-            <div className="hidden lg:block">
+            <div className="hidden lg:flex items-center gap-5">
+              <button
+                onClick={() =>
+                  window.dispatchEvent(new CustomEvent("open-my-orders"))
+                }
+                className={`text-lg font-medium transition-colors duration-300 hover:text-[#2db83d] ${
+                  isScrolled || isMenuOpen ? "text-[#0F0F0F]" : "text-white text-shadow-dark"
+                }`}
+                aria-label="Open my orders"
+              >
+                My orders
+              </button>
               <button
                 onClick={() =>
                   window.dispatchEvent(new CustomEvent("open-booking-modal"))
@@ -200,6 +211,16 @@ export default function Navbar() {
                 </Link>
               );
             })}
+            <button
+              onClick={() => {
+                setIsMenuOpen(false);
+                window.dispatchEvent(new CustomEvent("open-my-orders"));
+              }}
+              className="text-2xl font-medium text-[#0F0F0F] transition-all duration-300 hover:text-[#2db83d] focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 rounded px-2 py-1"
+              aria-label="Open my orders"
+            >
+              My orders
+            </button>
             <button
               onClick={() => {
                 setIsMenuOpen(false);
