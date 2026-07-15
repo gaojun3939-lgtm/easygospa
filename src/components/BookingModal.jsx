@@ -27,6 +27,10 @@ import { AddressAutocompleteInput } from './AddressAutocompleteInput.jsx';
 // 24/7 service: offer every 30-minute slot across the full day (00:00–23:30).
 // Same-day past slots are filtered out later against Manila time.
 const timeSlots = Array.from({ length: 48 }, (_, index) => `${String(Math.floor(index / 2)).padStart(2, '0')}:${index % 2 === 0 ? '00' : '30'}`);
+// Minimum lead time (minutes) before the earliest same-day bookable slot.
+// Matches the backend bookingBufferMinutes so the "Earliest HH:MM" a therapist
+// advertises is actually pickable in the time dropdown.
+const BOOKING_LEAD_MINUTES = 30;
 const areaOptions = ['BGC', 'Makati', 'Taguig', 'Pasay', 'Ortigas', 'Metro Manila'];
 const allServiceAreasValue = 'all_service_areas';
 const catalogUnavailableNotice = 'No specific therapist is available right now.';
@@ -49,7 +53,7 @@ function timeSlotMinutes(value = '') {
 
 function isSelectableManilaTime(preferredDate, preferredTime) {
   if (!preferredTime || preferredDate !== manilaToday()) return Boolean(preferredTime);
-  return timeSlotMinutes(preferredTime) >= manilaNowMinutes() + 60;
+  return timeSlotMinutes(preferredTime) >= manilaNowMinutes() + BOOKING_LEAD_MINUTES;
 }
 
 function isUsableCoords({ latitude, longitude } = {}) {
@@ -481,7 +485,7 @@ export default function BookingModal() {
   const selectedTotalAmount = selectedServiceOption?.price ?? 0;
   const availableTimeSlots = useMemo(() => (
     formData.preferredDate === manilaToday()
-      ? timeSlots.filter(time => timeSlotMinutes(time) >= manilaNowMinutes() + 60)
+      ? timeSlots.filter(time => timeSlotMinutes(time) >= manilaNowMinutes() + BOOKING_LEAD_MINUTES)
       : timeSlots
   ), [formData.preferredDate]);
 
