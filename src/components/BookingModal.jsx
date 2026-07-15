@@ -24,7 +24,9 @@ import { apiUrl } from '../lib/apiUrl.js';
 import { LocationPicker } from './LocationPicker.jsx';
 import { AddressAutocompleteInput } from './AddressAutocompleteInput.jsx';
 
-const timeSlots = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00', '22:30', '23:00'];
+// 24/7 service: offer every 30-minute slot across the full day (00:00–23:30).
+// Same-day past slots are filtered out later against Manila time.
+const timeSlots = Array.from({ length: 48 }, (_, index) => `${String(Math.floor(index / 2)).padStart(2, '0')}:${index % 2 === 0 ? '00' : '30'}`);
 const areaOptions = ['BGC', 'Makati', 'Taguig', 'Pasay', 'Ortigas', 'Metro Manila'];
 const allServiceAreasValue = 'all_service_areas';
 const catalogUnavailableNotice = 'No specific therapist is available right now.';
