@@ -129,6 +129,8 @@ export function normalizePublicBookingCatalog(payload = {}) {
           : null,
         distanceLabel: serviceAreaLabel(serviceAreas),
         availabilityLabel: therapist.therapistId === 'any_available' ? 'Matched after request review' : 'Available after schedule confirmation',
+        onShift: therapist.onShift === true,
+        earliestAvailable: cleanText(therapist.earliestAvailable),
         serviceAreas,
         serviceArea: serviceAreas.join(', ') || 'Metro Manila coverage depends on schedule',
         specialties,
