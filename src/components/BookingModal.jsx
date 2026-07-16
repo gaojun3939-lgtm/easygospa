@@ -1118,15 +1118,28 @@ export default function BookingModal() {
                   <AlertTriangle className="h-6 w-6" />
                 </div>
                 <h2 id="resting-therapist-warning-title" className="mt-4 text-2xl font-bold text-[#0F0F0F]">Warning</h2>
-                <p className="mt-3 text-sm leading-6 text-gray-600">Therapist is currently resting, low chance of accepting orders, do you still want to continue?</p>
-                <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                  <button type="button" onClick={cancelRestingTherapistSelection} className="h-12 rounded-2xl border border-gray-200 bg-white px-4 font-bold text-gray-700 transition hover:bg-gray-50">
-                    Cancel
-                  </button>
-                  <button type="button" onClick={continueRestingTherapistSelection} className="h-12 rounded-2xl bg-[#4E8D43] px-4 font-bold text-white transition hover:bg-[#3F7838]">
-                    Continue anyway
-                  </button>
-                </div>
+                {findWebsiteTherapist(pendingRestingTherapistId, bookingTherapists)?.technicianAccountId ? (
+                  <>
+                    <p className="mt-3 text-sm leading-6 text-gray-600">Therapist is currently resting, low chance of accepting orders, do you still want to continue?</p>
+                    <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                      <button type="button" onClick={cancelRestingTherapistSelection} className="h-12 rounded-2xl border border-gray-200 bg-white px-4 font-bold text-gray-700 transition hover:bg-gray-50">
+                        Cancel
+                      </button>
+                      <button type="button" onClick={continueRestingTherapistSelection} className="h-12 rounded-2xl bg-[#4E8D43] px-4 font-bold text-white transition hover:bg-[#3F7838]">
+                        Continue anyway
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <p className="mt-3 text-sm leading-6 text-gray-600">This therapist is currently resting and not accepting bookings. Please choose another therapist.</p>
+                    <div className="mt-6">
+                      <button type="button" onClick={cancelRestingTherapistSelection} className="h-12 w-full rounded-2xl bg-[#4E8D43] px-4 font-bold text-white transition hover:bg-[#3F7838]">
+                        Choose another therapist
+                      </button>
+                    </div>
+                  </>
+                )}
               </motion.div>
             </motion.div>
           ) : null}
