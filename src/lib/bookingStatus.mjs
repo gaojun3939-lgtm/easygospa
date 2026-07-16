@@ -3,6 +3,7 @@ export const DEFAULT_PUBLIC_WHATSAPP = '+63 917 109 8079';
 export const BOOKING_STATUS_STEPS = Object.freeze([
   { status: 'submitted', label: 'Booking received' },
   { status: 'confirmed', label: 'Confirmed, matching therapist' },
+  { status: 'preparing', label: 'Your therapist is getting ready' },
   { status: 'on_the_way', label: 'Therapist on the way' },
   { status: 'arrived', label: 'Therapist arrived' },
   { status: 'in_service', label: 'Service in progress' },

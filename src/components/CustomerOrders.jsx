@@ -10,6 +10,7 @@ const WHATSAPP_FALLBACK = '+63 917 109 8079';
 const TIMELINE = [
   { key: 'submitted', label: 'Booking received' },
   { key: 'confirmed', label: 'Confirmed, matching therapist' },
+  { key: 'preparing', label: 'Your therapist is getting ready' },
   { key: 'on_the_way', label: 'Therapist on the way' },
   { key: 'arrived', label: 'Therapist arrived' },
   { key: 'in_service', label: 'Service in progress' },
