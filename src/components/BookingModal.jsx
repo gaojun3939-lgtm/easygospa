@@ -1081,7 +1081,7 @@ export default function BookingModal() {
                   </div>
                   {createdAppointment?.id ? (
                     <div className="mx-auto w-full max-w-xl">
-                      <Link href={`/track/${encodeURIComponent(createdAppointment.id)}`} className="flex h-12 w-full items-center justify-center rounded-2xl bg-[#4E8D43] px-6 font-bold text-white hover:bg-[#3F7838]">
+                      <Link href={`/track/${encodeURIComponent(createdAppointment.id)}`} onClick={handleClose} className="flex h-12 w-full items-center justify-center rounded-2xl bg-[#4E8D43] px-6 font-bold text-white hover:bg-[#3F7838]">
                         Track my booking
                       </Link>
                       <p className="mt-2 text-sm text-gray-600">Save this link to check your booking anytime.</p>
