@@ -56,6 +56,31 @@ function isSelectableManilaTime(preferredDate, preferredTime) {
   return timeSlotMinutes(preferredTime) >= manilaNowMinutes() + BOOKING_LEAD_MINUTES;
 }
 
+// On-demand booking: no schedule picker — the therapist departs right after
+// accepting. We still stamp a Manila date/time (now + lead buffer) because the
+// intake service and technician app expect one.
+function manilaAsapTime() {
+  const total = Math.min(23 * 60 + 55, manilaNowMinutes() + BOOKING_LEAD_MINUTES);
+  return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
+}
+
+// Area is inferred from the typed address / map pin instead of a manual dropdown.
+function inferAreaFromAddress(text = '') {
+  const value = String(text || '').toLowerCase();
+  if (/bgc|bonifacio|high street/.test(value)) return 'BGC';
+  if (/makati|马卡蒂/.test(value)) return 'Makati';
+  if (/taguig|塔吉格/.test(value)) return 'Taguig';
+  if (/pasay|帕赛/.test(value)) return 'Pasay';
+  if (/ortigas/.test(value)) return 'Ortigas';
+  if (/mandaluyong/.test(value)) return 'Mandaluyong';
+  if (/quezon/.test(value)) return 'Quezon City';
+  if (/paranaque|parañaque/.test(value)) return 'Paranaque';
+  if (/san juan/.test(value)) return 'San Juan';
+  if (/pasig/.test(value)) return 'Pasig';
+  if (/manila|马尼拉/.test(value)) return 'Manila';
+  return 'Metro Manila';
+}
+
 function isUsableCoords({ latitude, longitude } = {}) {
   return Number.isFinite(latitude)
     && Number.isFinite(longitude)
@@ -710,11 +735,7 @@ export default function BookingModal() {
       return phPhoneErrorMessage;
     }
     setPhoneError('');
-    if (!formData.preferredDate) return 'Please select your preferred date.';
-    if (formData.preferredDate < manilaToday()) return 'Please select today or a future date.';
-    if (!formData.preferredTime) return 'Please select your preferred time.';
-    if (!isSelectableManilaTime(formData.preferredDate, formData.preferredTime)) return 'Please pick a later time slot.';
-    if (!formData.area.trim()) return 'Please enter your area.';
+    // On-demand: no date/time/area pickers — schedule stamps and area are auto-derived.
     if (!formData.addressNote.trim()) return 'Please enter your building, condo, hotel, or exact address details.';
     return null;
   };
@@ -764,6 +785,11 @@ export default function BookingModal() {
       currency: selectedOption.currency || bookingCatalog.currency || 'PHP'
     }];
 
+    // On-demand: schedule + area are derived automatically (no pickers in the form).
+    const dispatchDate = manilaToday();
+    const dispatchTime = manilaAsapTime();
+    const derivedArea = inferAreaFromAddress(formData.addressNote);
+
     const requestPayload = {
       source: 'website',
       customerName: formData.customerName,
@@ -784,9 +810,9 @@ export default function BookingModal() {
       durationMinutes: selectedOption.durationMinutes,
       totalAmount: selectedOption.price,
       currency: selectedOption.currency || bookingCatalog.currency || 'PHP',
-      preferredDate: formData.preferredDate,
-      preferredTime: formData.preferredTime,
-      area: formData.area,
+      preferredDate: dispatchDate,
+      preferredTime: dispatchTime,
+      area: derivedArea,
       addressNote: formData.addressNote,
       ...(isUsableCoords(formData.customerLocation) ? {
         customerLocation: {
@@ -831,9 +857,9 @@ export default function BookingModal() {
         therapist: selectedTherapist.name,
         service: selectedOption.service.name,
         durationMinutes: selectedOption.durationMinutes,
-        preferredDate: formData.preferredDate,
-        preferredTime: formData.preferredTime,
-        address: `${formData.area} - ${formData.addressNote}`,
+        preferredDate: dispatchDate,
+        preferredTime: dispatchTime,
+        address: `${derivedArea} - ${formData.addressNote}`,
         totalAmount: selectedOption.price,
         paymentMethod: 'Cash after service'
       });
@@ -993,29 +1019,8 @@ export default function BookingModal() {
                       {phoneError ? <p className="mt-2 text-sm font-medium text-red-600">{phoneError}</p> : null}
                     </div>
                   </div>
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div>
-                      <label className={bookingLabelClass}><Calendar className="mr-2 inline h-4 w-4" />Preferred date *</label>
-                      <input className={bookingInputClass} type="date" min={manilaToday()} value={formData.preferredDate} onChange={event => handlePreferredDateChange(event.target.value)} data-readability-field="preferredDate" required />
-                      {dateError ? <p className="mt-2 text-sm font-medium text-red-600">{dateError}</p> : null}
-                    </div>
-                    <div>
-                      <label className={bookingLabelClass}><Clock className="mr-2 inline h-4 w-4" />Preferred time *</label>
-                      <select className={bookingInputClass} value={formData.preferredTime} onChange={event => updateField('preferredTime', event.target.value)} data-readability-field="preferredTime" required>
-                        <option value="">Select time</option>
-                        {availableTimeSlots.map(time => <option key={time} value={time}>{time}</option>)}
-                      </select>
-                    </div>
-                  </div>
-                  <div>
-                    <label className={bookingLabelClass}><MapPin className="mr-2 inline h-4 w-4" />Area *</label>
-                    <div className="relative">
-                      <select className={`${bookingInputClass} appearance-none pr-10`} value={formData.area} onChange={event => updateField('area', event.target.value)} data-readability-field="area" required>
-                        <option value="">Select your area</option>
-                        {areaOptions.map(area => <option key={area} value={area}>{area}</option>)}
-                      </select>
-                      <span aria-hidden="true" className="pointer-events-none absolute right-4 top-1/2 h-2 w-2 -translate-y-2/3 rotate-45 border-b-2 border-r-2 border-gray-500" />
-                    </div>
+                  <div className="rounded-2xl bg-[#eaf1e7] px-4 py-3 text-sm font-medium text-[#3F7838]">
+                    <Clock className="mr-2 inline h-4 w-4" />Your therapist departs as soon as the booking is accepted — no scheduling needed.
                   </div>
                   <div>
                     <label className={bookingLabelClass}><MapPin className="mr-2 inline h-4 w-4" />Building, condo, hotel, or exact address *</label>
@@ -1049,8 +1054,8 @@ export default function BookingModal() {
                     <div className="grid gap-3">
                       <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Therapist</strong><span className={summaryValueClass}>{selectedTherapist.name}</span></div>
                       <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Service</strong><span className={summaryValueClass}>{formData.service} / {formData.durationMinutes} mins</span></div>
-                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Date/time</strong><span className={summaryValueClass}>{formatDate(formData.preferredDate)} {formData.preferredTime}</span></div>
-                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Address</strong><span className={summaryValueClass}>{formData.area} - {formData.addressNote}</span></div>
+                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Schedule</strong><span className={summaryValueClass}>ASAP — therapist departs after accepting</span></div>
+                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Address</strong><span className={summaryValueClass}>{inferAreaFromAddress(formData.addressNote)} - {formData.addressNote}</span></div>
                       <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Total</strong><span className={summaryMoneyClass}>{money(selectedTotalAmount)}</span></div>
                       <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Payment</strong><span className={summaryValueClass}>Cash after service</span></div>
                     </div>
