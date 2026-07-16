@@ -15,7 +15,7 @@ function check(condition, message) {
 }
 
 check(modalSource.includes('No specific therapist is available right now.'), 'empty state uses the owner-approved primary copy');
-check(modalSource.includes('You can continue with Any available therapist.'), 'empty state uses the owner-approved follow-up copy');
+check(modalSource.includes('Please try again in a few minutes, or message us on WhatsApp to book.'), 'empty state uses the owner-approved follow-up copy');
 check(!modalSource.includes('legacyCatalogUnavailableNotice'), 'empty state does not retain hidden legacy copy');
 check(modalSource.includes('hasSpecificTherapists'), 'empty state is based on specific public-catalog therapist availability');
 check(modalSource.includes('All service areas'), 'area header is honest before the customer selects an area');

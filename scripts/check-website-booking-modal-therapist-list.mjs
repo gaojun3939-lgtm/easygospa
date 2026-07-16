@@ -37,8 +37,9 @@ check(modalSource.includes('All service areas') && modalSource.includes('data-te
 check(modalSource.includes('data-testid={`therapist-card-book-${therapist.id}`}'), 'Book button is directly addressable on each therapist card');
 check(modalSource.includes('data-testid="booking-therapist-list"'), 'therapist list has a dedicated compact list container');
 check(modalSource.includes('data-testid="booking-catalog-unavailable"'), 'catalog unavailable state is rendered inline on therapist wall');
-check(modalSource.includes('data-testid="booking-any-available-fallback"'), 'catalog unavailable state can continue with any available therapist');
-check(modalSource.includes('No specific therapist is available right now.') && modalSource.includes('You can continue with Any available therapist.'), 'catalog unavailable state uses owner-approved safe copy');
+check(!modalSource.includes('data-testid="booking-any-available-fallback"'), 'Any available is no longer offered as a selectable fallback card');
+check(modalSource.includes("getFallbackWebsiteBookingCatalog('specific_therapist_unavailable')"), 'Any available survives only as internal fallback resolution');
+check(modalSource.includes('No specific therapist is available right now.') && modalSource.includes('Please try again in a few minutes, or message us on WhatsApp to book.'), 'catalog unavailable state uses owner-approved safe copy');
 check(modalSource.includes('data-testid="booking-wall-toolbar"'), 'wall uses compact app-style toolbar');
 check(modalSource.includes('data-testid="booking-wall-filters"'), 'wall uses compact filter row');
 check(!modalSource.includes('Step 1 of 5'), 'wall hides step copy on the dense therapist-list screen');

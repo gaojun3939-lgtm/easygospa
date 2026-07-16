@@ -18,12 +18,13 @@ function test(name, fn) {
   }
 }
 
-test('six booking statuses map to the taxi-style timeline order', () => {
+test('seven booking statuses map to the taxi-style timeline order', () => {
   assert.deepEqual(
     BOOKING_STATUS_STEPS.map(step => [step.status, step.label]),
     [
       ['submitted', 'Booking received'],
       ['confirmed', 'Confirmed, matching therapist'],
+      ['preparing', 'Your therapist is getting ready'],
       ['on_the_way', 'Therapist on the way'],
       ['arrived', 'Therapist arrived'],
       ['in_service', 'Service in progress'],
@@ -121,7 +122,7 @@ test('tracking route is noindex and passes only the opaque route reference to th
   assert.ok(trackingPageSource.includes('noimageindex: true'));
 });
 
-test('tracking client implements polling, visibility pause, six steps, and read-only actions', () => {
+test('tracking client implements polling, visibility pause, seven steps, and read-only actions', () => {
   for (const marker of [
     'BOOKING_STATUS_STEPS',
     'getBookingStatusStepIndex',

@@ -112,7 +112,7 @@ test('payment UI and payload are cash-only and avoid external sends', () => {
 });
 
 test('success state stays on website and only appears after proxy ok', () => {
-  assert.ok(modalSource.includes("fetch('/api/booking-request'"));
+  assert.ok(modalSource.includes("fetch(apiUrl('/api/booking-request')"));
   assert.ok(modalSource.includes("payload?.ok !== true"));
   assert.ok(modalSource.includes('Booking request submitted'));
   assert.ok(modalSource.includes('Our team will contact you on WhatsApp to confirm therapist availability.'));

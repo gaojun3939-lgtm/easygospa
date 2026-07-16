@@ -28,7 +28,7 @@ test('booking modal no longer contains old in-spa confirmation copy', () => {
 });
 
 test('success state requires proxy ok and a real mbr reference', () => {
-  assert.ok(modalSource.includes("fetch('/api/booking-request'"));
+  assert.ok(modalSource.includes("fetch(apiUrl('/api/booking-request')"));
   assert.ok(modalSource.includes("payload?.ok !== true"));
   assert.ok(modalSource.includes('mbr-brand-a-'));
   assert.ok(modalSource.includes('Booking request submitted'));

@@ -143,7 +143,7 @@ test('payload carries therapist wall flow fields and does not redirect staging',
   assert.equal(payload.durationMinutes, 90);
   assert.equal(payload.totalAmount, 4200);
   assert.equal(payload.metadata.bookingFlow, 'therapist_wall_detail_service_cash');
-  assert.ok(modalSource.includes("fetch('/api/booking-request'"));
+  assert.ok(modalSource.includes("fetch(apiUrl('/api/booking-request')"));
   assert.ok(modalSource.includes('payload?.ok !== true'));
   assert.ok(!modalSource.includes('staging.easygospa.com'));
 });

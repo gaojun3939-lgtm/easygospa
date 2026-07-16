@@ -32,31 +32,40 @@ async function fetchCatalog() {
 const rawCatalog = await fetchCatalog();
 const normalized = normalizePublicBookingCatalog(rawCatalog);
 
+// The seed service 'Thai Dry Massage' was retired when the real business catalog
+// replaced test data, so live-catalog assertions are data-driven instead of
+// hard-coding a service name or price.
 test('AI Office public catalog normalizes for website booking flow', () => {
   assert.equal(normalized.catalogSource, 'ai_office_public_catalog');
   assert.equal(normalized.fallback, false);
   assert.equal(normalized.catalogUnavailable, false);
   assert.ok(normalized.therapists.some(therapist => therapist.catalogSource === 'ai_office_public_catalog' && therapist.id !== 'any_available'));
-  assert.ok(normalized.services.some(service => service.name === 'Thai Dry Massage'));
+  assert.ok(normalized.services.length > 0);
+  assert.ok(normalized.services.every(service => service.name));
 });
 
-test('valid public catalog therapist exposes Thai Dry Massage from catalog relation', () => {
+test('valid public catalog therapist exposes real services from catalog relations', () => {
   const therapist = normalized.therapists.find(item => item.id !== 'any_available');
   assert.ok(therapist);
   assert.ok(therapist.name);
   assert.ok(therapist.profileName);
   assert.ok(therapist.technicianAccountId);
   const services = servicesForTherapist(therapist.id, normalized.therapists, normalized.services);
-  assert.ok(services.some(service => service.name === 'Thai Dry Massage'));
+  assert.ok(services.length > 0);
+  const catalogServiceNames = new Set(normalized.services.map(service => service.name));
+  assert.ok(services.every(service => catalogServiceNames.has(service.name)));
 });
 
-test('Thai Dry Massage 120 mins is PHP 4900 from catalog API', () => {
-  const service = findBookingServiceByName('Thai Dry Massage', normalized.services);
+test('a live catalog service resolves a priced PHP duration option', () => {
+  const service = normalized.services.find(item => Array.isArray(item.durationOptions) && item.durationOptions.length > 0);
   assert.ok(service);
-  const option = findExactDurationOption(service, 120);
-  assert.equal(option.durationMinutes, 120);
-  assert.equal(option.price, 4900);
-  assert.equal(option.currency, 'PHP');
+  const byName = findBookingServiceByName(service.name, normalized.services);
+  assert.equal(byName?.id, service.id);
+  const option = findExactDurationOption(service, service.durationOptions[0].durationMinutes);
+  assert.ok(option);
+  assert.ok(Number.isFinite(option.durationMinutes) && option.durationMinutes > 0);
+  assert.ok(Number.isFinite(option.price) && option.price > 0);
+  assert.equal(option.currency || 'PHP', 'PHP');
 });
 
 test('hidden or inactive catalog rows are not normalized for website display', () => {
@@ -97,8 +106,10 @@ test('fallback catalog keeps booking usable without exposing named seed therapis
 });
 
 test('catalog-backed booking payload preserves selected duration, price, and source', () => {
-  const service = findBookingServiceByName('Thai Dry Massage', normalized.services);
-  const option = findExactDurationOption(service, 120);
+  const service = normalized.services.find(item => Array.isArray(item.durationOptions) && item.durationOptions.length > 0);
+  assert.ok(service);
+  const option = findExactDurationOption(service, service.durationOptions[0].durationMinutes);
+  assert.ok(option);
   const therapist = normalized.therapists.find(item => item.id !== 'any_available');
   assert.ok(therapist);
   const payload = normalizeWebsiteBookingRequest({
@@ -133,18 +144,19 @@ test('catalog-backed booking payload preserves selected duration, price, and sou
   assert.equal(payload.requestedTechnicianName, therapist.name);
   assert.equal(payload.requestedTechnicianProfileName, therapist.profileName);
   assert.equal(payload.requestedTechnicianAccountId, therapist.technicianAccountId);
-  assert.equal(payload.serviceId, 'thai-dry-massage');
-  assert.equal(payload.service, 'Thai Dry Massage');
-  assert.equal(payload.durationMinutes, 120);
-  assert.equal(payload.totalAmount, 4900);
-  assert.equal(payload.selectedServices[0].durationMinutes, 120);
-  assert.equal(payload.selectedServices[0].price, 4900);
+  assert.equal(payload.serviceId, service.id);
+  assert.equal(payload.service, service.name);
+  assert.equal(payload.durationMinutes, option.durationMinutes);
+  assert.equal(payload.totalAmount, option.price);
+  assert.equal(payload.selectedServices[0].durationMinutes, option.durationMinutes);
+  assert.equal(payload.selectedServices[0].price, option.price);
   assert.equal(payload.metadata.catalogSource, 'ai_office_public_catalog');
 });
 
 test('BookingModal fetches website catalog proxy and includes catalog source', () => {
   const source = fs.readFileSync('src/components/BookingModal.jsx', 'utf8');
-  assert.ok(source.includes("fetch('/api/booking-catalog'"));
+  assert.ok(source.includes("apiUrl('/api/booking-catalog')"));
+  assert.ok(source.includes('await fetch(catalogUrl'));
   assert.ok(source.includes('catalogSource: bookingCatalog.catalogSource'));
   assert.ok(source.includes('getFallbackWebsiteBookingCatalog'));
 });
