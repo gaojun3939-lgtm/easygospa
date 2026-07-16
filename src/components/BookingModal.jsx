@@ -919,7 +919,7 @@ export default function BookingModal() {
         preferredTime: dispatchTime,
         address: `${derivedArea} - ${formData.addressNote}`,
         totalAmount: selectedOption.price,
-        paymentMethod: 'Cash after service'
+        paymentMethod: 'Cash before service'
       });
       setStep('success');
     } catch (submitError) {
@@ -1105,7 +1105,7 @@ export default function BookingModal() {
               {step === 'confirm' ? (
                 <form onSubmit={handleSubmit} className="space-y-5" data-testid="confirm-step">
                   <div>
-                    <h3 className="text-2xl font-bold text-[#0F0F0F]">Confirm cash after service</h3>
+                    <h3 className="text-2xl font-bold text-[#0F0F0F]">Confirm Cash before service</h3>
                     <p className="mt-2 text-sm text-gray-600">Payment will be collected after the massage service. No online payment is collected on this website.</p>
                   </div>
                   <div className={summaryCardClass}>
@@ -1115,7 +1115,7 @@ export default function BookingModal() {
                       <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Schedule</strong><span className={summaryValueClass}>ASAP — therapist departs after accepting</span></div>
                       <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Address</strong><span className={summaryValueClass}>{inferAreaFromAddress(formData.addressNote)} - {formData.addressNote}</span></div>
                       <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Total</strong><span className={summaryMoneyClass}>{money(selectedTotalAmount)}</span></div>
-                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Payment</strong><span className={summaryValueClass}>Cash after service</span></div>
+                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Payment</strong><span className={summaryValueClass}>Cash before service</span></div>
                     </div>
                   </div>
                   <button type="submit" disabled={isSubmitting} className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-[#4E8D43] px-6 font-bold text-white hover:bg-[#3F7838] disabled:cursor-not-allowed disabled:opacity-60">
