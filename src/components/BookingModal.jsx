@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AlertTriangle, ArrowLeft, Calendar, Check, Clock, Mail, MapPin, MessageSquare, Phone, Search, ShieldCheck, Star, User, X } from 'lucide-react';
@@ -23,6 +23,36 @@ import { manilaNowMinutes, manilaToday } from '../lib/manilaTime.js';
 import { apiUrl } from '../lib/apiUrl.js';
 import { LocationPicker } from './LocationPicker.jsx';
 import { AddressAutocompleteInput } from './AddressAutocompleteInput.jsx';
+
+// 名单会话缓存(60 秒):整页刷新后先把上次名单端上墙,真名单在背后静默刷新。
+// 技师上下班仍然实时反映——每次都照常重新拉取,缓存只负责"先有得看"。
+const CATALOG_SESSION_CACHE_KEY = 'egBookingCatalogCache.v1';
+const CATALOG_SESSION_CACHE_MS = 60_000;
+
+function catalogStatusForPayload(payload) {
+  if (!payload || payload.ok !== true || payload.fallback) return 'error';
+  const services = Array.isArray(payload.services) ? payload.services : [];
+  const therapists = Array.isArray(payload.therapists) ? payload.therapists.filter(therapist => therapist.id !== 'any_available') : [];
+  return services.length && therapists.length ? 'ready' : 'empty';
+}
+
+function readCatalogSessionCache() {
+  if (typeof window === 'undefined') return null;
+  try {
+    const entry = JSON.parse(window.sessionStorage.getItem(CATALOG_SESSION_CACHE_KEY) || 'null');
+    if (!entry || !Number.isFinite(entry.at) || Date.now() - entry.at > CATALOG_SESSION_CACHE_MS) return null;
+    return catalogStatusForPayload(entry.payload) === 'ready' ? entry.payload : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeCatalogSessionCache(payload) {
+  if (typeof window === 'undefined') return;
+  try {
+    window.sessionStorage.setItem(CATALOG_SESSION_CACHE_KEY, JSON.stringify({ at: Date.now(), payload }));
+  } catch {}
+}
 
 // 24/7 service: offer every 30-minute slot across the full day (00:00–23:30).
 // Same-day past slots are filtered out later against Manila time.
@@ -81,7 +111,10 @@ function inferAreaFromAddress(text = '') {
   return 'Metro Manila';
 }
 
-function isUsableCoords({ latitude, longitude } = {}) {
+// Callers pass null while coordinates are still unknown; `= {}` only guards
+// undefined, so destructure via `|| {}` or a null argument crashes the caller.
+function isUsableCoords(coords) {
+  const { latitude, longitude } = coords || {};
   return Number.isFinite(latitude)
     && Number.isFinite(longitude)
     && !(latitude === 0 && longitude === 0)
@@ -459,6 +492,12 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
 export default function BookingModal() {
   const [bookingCatalog, setBookingCatalog] = useState(() => getFallbackWebsiteBookingCatalog());
   const [catalogStatus, setCatalogStatus] = useState('loading');
+  const catalogStatusRef = useRef('loading');
+  const catalogHydratedRef = useRef(false);
+
+  useEffect(() => {
+    catalogStatusRef.current = catalogStatus;
+  }, [catalogStatus]);
   const [isOpen, setIsOpen] = useState(false);
   const [step, setStep] = useState('wall');
   const [formData, setFormData] = useState(createInitialForm());
@@ -516,7 +555,19 @@ export default function BookingModal() {
   useEffect(() => {
     let active = true;
     async function loadBookingCatalog() {
-      setCatalogStatus('loading');
+      // 整页刷新后:60 秒内的上次名单先上墙,本次拉取转为背后静默刷新。
+      if (!catalogHydratedRef.current) {
+        catalogHydratedRef.current = true;
+        const cached = readCatalogSessionCache();
+        if (cached) {
+          setBookingCatalog(cached);
+          setCatalogStatus('ready');
+          catalogStatusRef.current = 'ready';
+        }
+      }
+      // 墙上已有名单(定位到达的补距离刷新、缓存命中)就保持显示,不再闪回 Loading。
+      const hasWall = catalogStatusRef.current === 'ready';
+      if (!hasWall) setCatalogStatus('loading');
       try {
         const catalogCoords = isUsableCoords(customerCoords) ? customerCoords : null;
         const catalogUrl = catalogCoords
@@ -525,16 +576,23 @@ export default function BookingModal() {
         const response = await fetch(catalogUrl, { cache: 'no-store' });
         const payload = await response.json().catch(() => null);
         if (!active || !response.ok || payload?.ok !== true) throw new Error('BOOKING_CATALOG_LOAD_FAILED');
-        setBookingCatalog(payload);
         if (payload.fallback) {
+          // 静默刷新撞上兜底名单:保住墙上的真名单,不用假名单顶掉。
+          if (catalogStatusRef.current === 'ready') return;
+          setBookingCatalog(payload);
           setCatalogStatus('error');
           return;
         }
+        setBookingCatalog(payload);
         const payloadServices = Array.isArray(payload.services) ? payload.services : [];
         const payloadTherapists = Array.isArray(payload.therapists) ? payload.therapists.filter(therapist => therapist.id !== 'any_available') : [];
-        setCatalogStatus(payloadServices.length && payloadTherapists.length ? 'ready' : 'empty');
+        const nextStatus = payloadServices.length && payloadTherapists.length ? 'ready' : 'empty';
+        if (nextStatus === 'ready') writeCatalogSessionCache(payload);
+        setCatalogStatus(nextStatus);
       } catch {
         if (!active) return;
+        // 静默刷新失败同样保住墙上的名单;只有首拉失败才亮错误卡。
+        if (catalogStatusRef.current === 'ready') return;
         setBookingCatalog(getFallbackWebsiteBookingCatalog('website_catalog_proxy_unavailable'));
         setCatalogStatus('error');
       }
