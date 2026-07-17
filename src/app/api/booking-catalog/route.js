@@ -32,9 +32,12 @@ export async function GET(request) {
     const lat = Number(incoming.searchParams.get('lat'));
     const lng = Number(incoming.searchParams.get('lng'));
     if (Number.isFinite(lat) && lat >= -90 && lat <= 90 && Number.isFinite(lng) && lng >= -180 && lng <= 180) {
+      // Coarsen to ~1km (2 decimals) so the exact customer location never lands
+      // in this proxy's or the backend's access logs; still precise enough for
+      // per-therapist distance banding.
       const upstream = new URL(baseUrl);
-      upstream.searchParams.set('lat', String(lat));
-      upstream.searchParams.set('lng', String(lng));
+      upstream.searchParams.set('lat', lat.toFixed(2));
+      upstream.searchParams.set('lng', lng.toFixed(2));
       targetUrl = upstream.toString();
     }
   } catch {
