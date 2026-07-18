@@ -318,7 +318,9 @@ function TherapistWallCard({ therapist, selected, onSelect }) {
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <h3 className="min-w-0 flex-1 truncate text-[17px] font-bold leading-6 text-[#0F0F0F]">{therapist.name}</h3>
-            {therapist.onShift === true && therapist.earliestAvailable ? (
+            {/* Owner call (2026-07-18): show the earliest slot even off-shift —
+                the backend now sends cross-day values like "Tomorrow 09:00". */}
+            {therapist.earliestAvailable ? (
               <span className="flex shrink-0 items-center gap-1 text-xs font-semibold leading-5 text-[#3F7838]" data-testid="therapist-earliest-availability">
                 <Clock className="h-3.5 w-3.5 shrink-0" />Earliest {therapist.earliestAvailable}
               </span>
