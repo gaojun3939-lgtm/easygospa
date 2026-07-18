@@ -278,9 +278,11 @@ function TherapistAvatar({ therapist, mode = 'wall' }) {
   const isFallback = imageUrl === DEFAULT_THERAPIST_IMAGE_URL;
   const sizeClass = mode === 'wall' ? 'h-[88px] w-[88px]' : 'h-full w-full';
   const radiusClass = mode === 'wall' ? 'rounded-[1.25rem]' : 'rounded-none';
+  // Owner report (2026-07-19): full-body detail photos were cropped to the torso —
+  // anchor the crop to the TOP so the face always stays in frame.
   const fitClass = isFallback
     ? `${mode === 'wall' ? 'p-2' : 'p-6'} object-contain`
-    : 'object-cover object-center';
+    : mode === 'detail' ? 'object-cover object-top' : 'object-cover object-center';
 
   return (
     <img
@@ -440,6 +442,18 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
           </div>
         </div>
       </section>
+      {Array.isArray(therapist.lifePhotos) && therapist.lifePhotos.length ? (
+        <section className="rounded-[1.5rem] bg-white p-5 shadow-sm" data-testid="therapist-life-photos">
+          <h3 className="text-lg font-bold text-[#0F0F0F]">Photos</h3>
+          <div className="mt-3 grid grid-cols-3 gap-2">
+            {therapist.lifePhotos.slice(0, 6).map((url, index) => (
+              <a key={url} href={url} target="_blank" rel="noreferrer" className="block overflow-hidden rounded-xl">
+                <img src={url} alt={`${therapist.name} photo ${index + 1}`} loading="lazy" decoding="async" className="aspect-[3/4] w-full object-cover object-top transition-transform hover:scale-105" />
+              </a>
+            ))}
+          </div>
+        </section>
+      ) : null}
       <section className="rounded-[1.5rem] border border-[#4E8D43]/20 bg-[#F1FBF3] p-5" data-testid="therapist-care">
         <div className="flex items-center gap-2">
           <ShieldCheck className="h-5 w-5 text-[#3F7838]" />
