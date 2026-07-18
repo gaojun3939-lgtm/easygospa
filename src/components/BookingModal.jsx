@@ -496,6 +496,7 @@ export default function BookingModal() {
   const [catalogStatus, setCatalogStatus] = useState('loading');
   const catalogStatusRef = useRef('loading');
   const catalogHydratedRef = useRef(false);
+  const bookingOpenRef = useRef(false);
 
   useEffect(() => {
     catalogStatusRef.current = catalogStatus;
@@ -600,10 +601,26 @@ export default function BookingModal() {
       }
     }
     loadBookingCatalog();
+    // 老板 2026-07-18:技师墙开着也要实时反映技师端动态(接单→最早可约往后跳,
+    // 完成/退单→往前跳)。每 12 秒静默重拉,只在弹窗打开且页面可见时跑,不闪
+    // Loading、不顶掉已选技师。
+    const liveTimer = window.setInterval(() => {
+      if (bookingOpenRef.current && document.visibilityState === 'visible') loadBookingCatalog();
+    }, 12000);
+    const onVisible = () => {
+      if (bookingOpenRef.current && document.visibilityState === 'visible') loadBookingCatalog();
+    };
+    document.addEventListener('visibilitychange', onVisible);
     return () => {
       active = false;
+      window.clearInterval(liveTimer);
+      document.removeEventListener('visibilitychange', onVisible);
     };
   }, [customerCoords]);
+
+  useEffect(() => {
+    bookingOpenRef.current = isOpen;
+  }, [isOpen]);
 
   // 打开弹窗时轻声定位一次:拿到坐标 → 技师列表按距离显示,并预填下单定位。
   // 客人拒绝或不支持时静默跳过,一切照常。
