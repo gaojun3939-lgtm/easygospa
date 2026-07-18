@@ -13,6 +13,11 @@ function visibleActive(item = {}) {
   return item.isVisibleOnWebsite !== false && !['inactive', 'hidden'].includes(String(item.status || 'active').toLowerCase());
 }
 
+// 工具人(充门面):后端标记或 id 前缀 mnq- 都算(老板 2026-07-19)。
+function isMannequinTherapist(therapist = {}) {
+  return therapist.isMannequin === true || /^mnq-/i.test(String(therapist.therapistId || therapist.id || ''));
+}
+
 function numberValue(value, fallback = 0) {
   const next = Number(value);
   return Number.isFinite(next) ? next : fallback;
@@ -130,6 +135,8 @@ export function normalizePublicBookingCatalog(payload = {}) {
         distanceLabel: serviceAreaLabel(serviceAreas),
         availabilityLabel: therapist.therapistId === 'any_available' ? 'Matched after request review' : 'Available after schedule confirmation',
         onShift: therapist.onShift === true,
+        // 工具人(充门面):官网显示但不可下单(老板 2026-07-19)。id 前缀 mnq- 或后端标记皆认。
+        isMannequin: therapist.isMannequin === true || /^mnq-/i.test(String(therapist.therapistId || '')),
         earliestAvailable: cleanText(therapist.earliestAvailable),
         lifePhotos: (Array.isArray(therapist.lifePhotos) ? therapist.lifePhotos : []).filter(url => /^https?:\/\//i.test(String(url || ''))).slice(0, 6),
         isNew: therapist.isNew === true,
@@ -142,12 +149,14 @@ export function normalizePublicBookingCatalog(payload = {}) {
         reviewCount: 0,
         reviewsLabel: 'No verified reviews yet',
         verifiedReviews: [],
-        availableServices,
+        // 工具人无真实服务绑定,用"展示服务"充填以便正常显示卡片(仅展示,下单被拦)。
+        availableServices: availableServices.length ? availableServices : (isMannequinTherapist(therapist) ? specialties : availableServices),
         therapistPreference: therapist.therapistId === 'any_available' ? 'any_available' : 'specific_therapist',
         catalogSource: 'ai_office_public_catalog'
       };
     })
-    .filter(therapist => therapist.id && therapist.name && therapist.availableServices.length);
+    // 工具人放行:即使没有真实可下单服务也显示(充门面),下单在卡片/详情层拦。
+    .filter(therapist => therapist.id && therapist.name && (therapist.availableServices.length || therapist.isMannequin));
 
   return {
     ok: true,

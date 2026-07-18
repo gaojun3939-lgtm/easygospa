@@ -297,7 +297,8 @@ function TherapistAvatar({ therapist, mode = 'wall' }) {
 }
 
 function TherapistWallCard({ therapist, selected, onSelect }) {
-  const openDetail = () => onSelect(therapist.id);
+  // 工具人只展示不可下单:点卡片不进详情(老板 2026-07-19)。
+  const openDetail = () => { if (therapist.isMannequin) return; onSelect(therapist.id); };
   const handleKeyDown = event => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
@@ -339,6 +340,9 @@ function TherapistWallCard({ therapist, selected, onSelect }) {
           ) : null}
           <div className="mt-1 text-xs font-medium text-gray-600"><TherapistRating therapist={therapist} /></div>
           <div className="mt-3 flex min-h-11 items-center justify-end gap-3">
+            {therapist.isMannequin ? (
+              <span className="ml-auto inline-flex h-11 shrink-0 items-center justify-center rounded-full bg-gray-100 px-4 text-sm font-bold text-gray-500" data-testid={`therapist-card-resting-${therapist.id}`}>Resting</span>
+            ) : (
             <button
               type="button"
               onClick={event => {
@@ -350,6 +354,7 @@ function TherapistWallCard({ therapist, selected, onSelect }) {
             >
               Book
             </button>
+            )}
           </div>
         </div>
       </div>
