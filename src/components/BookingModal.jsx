@@ -412,6 +412,7 @@ function ServiceCard({ service, selected, selectedDuration, onSelectService, onS
 
 function TherapistDetail({ therapist, availableServices, selectedServiceName, selectedDuration, totalAmount, onSelectService, onSelectDuration, onBack, onBook }) {
   const [showFullAbout, setShowFullAbout] = useState(false);
+  const [lightboxUrl, setLightboxUrl] = useState('');
   const aboutText = String(therapist.profileIntroduction || '').trim() || missingProfileIntroduction;
   const shouldClampAbout = aboutText.length > 170;
   const visibleServiceTags = availableServices.slice(0, 3).map(service => service.name);
@@ -447,12 +448,18 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
           <h3 className="text-lg font-bold text-[#0F0F0F]">Photos</h3>
           <div className="mt-3 grid grid-cols-3 gap-2">
             {therapist.lifePhotos.slice(0, 6).map((url, index) => (
-              <a key={url} href={url} target="_blank" rel="noreferrer" className="block overflow-hidden rounded-xl">
+              <button key={url} type="button" onClick={() => setLightboxUrl(url)} className="block overflow-hidden rounded-xl">
                 <img src={url} alt={`${therapist.name} photo ${index + 1}`} loading="lazy" decoding="async" className="aspect-[3/4] w-full object-cover object-top transition-transform hover:scale-105" />
-              </a>
+              </button>
             ))}
           </div>
         </section>
+      ) : null}
+      {lightboxUrl ? (
+        <div className="fixed inset-0 z-[70] grid place-items-center bg-black/85 p-4" role="dialog" aria-modal="true" onClick={() => setLightboxUrl('')}>
+          <button type="button" aria-label="Close" onClick={() => setLightboxUrl('')} className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white"><X className="h-5 w-5" /></button>
+          <img src={lightboxUrl} alt={`${therapist.name} photo`} className="max-h-[85vh] max-w-full rounded-2xl object-contain" onClick={event => event.stopPropagation()} />
+        </div>
       ) : null}
       <section className="rounded-[1.5rem] border border-[#4E8D43]/20 bg-[#F1FBF3] p-5" data-testid="therapist-care">
         <div className="flex items-center gap-2">
