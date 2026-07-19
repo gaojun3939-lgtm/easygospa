@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { AlertTriangle, ArrowLeft, Calendar, Check, Clock, Mail, MapPin, MessageSquare, Phone, Search, ShieldCheck, Star, User, X } from 'lucide-react';
 import {
   BOOKING_FLOW_STORAGE_KEY,
+  ALL_SERVICE_TYPES_VALUE,
   DEFAULT_THERAPIST_IMAGE_URL,
   concreteTherapistsForWall,
   filterTherapistsForWall,
@@ -16,6 +17,7 @@ import {
   getDefaultDurationOption,
   isValidEmail,
   isValidPhone,
+  serviceTypeOptionsForWall,
   servicesForTherapist
 } from '../lib/therapistServiceBookingFlow.mjs';
 import { getFallbackWebsiteBookingCatalog } from '../lib/bookingCatalogNormalizer.mjs';
@@ -425,14 +427,42 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
   const detailImageUrl = resolveTherapistImageUrl(therapist, 'detail');
   const usesFallbackImage = detailImageUrl === DEFAULT_THERAPIST_IMAGE_URL;
   const canBook = Boolean(selectedServiceName && selectedDuration && Number(totalAmount) > 0);
+  // 老板 2026-07-19:主图 + 已批准生活照 合成一个可左右滑的相册放最顶部(不再分两块)。
+  const heroPhotos = Array.from(new Set([
+    ...(usesFallbackImage ? [] : [detailImageUrl]),
+    ...((Array.isArray(therapist.lifePhotos) ? therapist.lifePhotos : []))
+  ].filter(url => /^https?:\/\//i.test(String(url || '')))));
+  const [photoIndex, setPhotoIndex] = useState(0);
+  const heroScrollRef = React.useRef(null);
+  const onHeroScroll = () => {
+    const el = heroScrollRef.current;
+    if (!el || !el.clientWidth) return;
+    setPhotoIndex(Math.round(el.scrollLeft / el.clientWidth));
+  };
 
   return (
     <div className="mx-auto max-w-4xl space-y-4 pb-32 sm:pb-8" data-testid="therapist-detail-view">
       <section className="overflow-hidden rounded-[1.75rem] bg-white shadow-sm" data-testid="therapist-detail-hero">
-        <div className={`relative bg-[#EAF8ED] ${usesFallbackImage ? 'h-[152px] sm:h-[180px]' : 'h-[280px] sm:h-[360px]'}`}>
-          <TherapistAvatar therapist={therapist} mode="detail" />
+        <div className={`relative bg-[#EAF8ED] ${usesFallbackImage && heroPhotos.length === 0 ? 'h-[152px] sm:h-[180px]' : 'h-[280px] sm:h-[360px]'}`}>
+          {heroPhotos.length > 1 ? (
+            <>
+              <div ref={heroScrollRef} onScroll={onHeroScroll} className="flex h-full w-full snap-x snap-mandatory overflow-x-auto scroll-smooth" data-testid="therapist-hero-carousel" style={{ scrollbarWidth: 'none' }}>
+                {heroPhotos.map((url, index) => (
+                  <button key={url} type="button" onClick={() => setLightboxUrl(url)} className="h-full w-full shrink-0 snap-center">
+                    <img src={url} alt={`${therapist.name} photo ${index + 1}`} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" className="h-full w-full object-cover object-top" />
+                  </button>
+                ))}
+              </div>
+              <span className="pointer-events-none absolute bottom-3 right-3 rounded-full bg-black/55 px-2.5 py-1 text-xs font-bold text-white" data-testid="therapist-hero-counter">{photoIndex + 1}/{heroPhotos.length}</span>
+              <div className="pointer-events-none absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
+                {heroPhotos.map((url, index) => <span key={url} className={`h-1.5 rounded-full transition-all ${index === photoIndex ? 'w-4 bg-white' : 'w-1.5 bg-white/60'}`} />)}
+              </div>
+            </>
+          ) : (
+            <TherapistAvatar therapist={therapist} mode="detail" />
+          )}
           <button type="button" onClick={onBack} className="absolute left-3 top-3 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-gray-700 shadow-sm" aria-label="Back to therapist list"><ArrowLeft className="h-5 w-5" /></button>
-          {usesFallbackImage ? <span className="absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-[#3F7838]">EasyGoSpa therapist profile</span> : null}
+          {usesFallbackImage && heroPhotos.length === 0 ? <span className="absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-[#3F7838]">EasyGoSpa therapist profile</span> : null}
         </div>
         <div className="p-5">
           <h3 className="text-3xl font-bold tracking-normal text-[#0F0F0F]">{therapist.name}</h3>
@@ -448,18 +478,7 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
           </div>
         </div>
       </section>
-      {Array.isArray(therapist.lifePhotos) && therapist.lifePhotos.length ? (
-        <section className="rounded-[1.5rem] bg-white p-5 shadow-sm" data-testid="therapist-life-photos">
-          <h3 className="text-lg font-bold text-[#0F0F0F]">Photos</h3>
-          <div className="mt-3 grid grid-cols-3 gap-2">
-            {therapist.lifePhotos.slice(0, 6).map((url, index) => (
-              <button key={url} type="button" onClick={() => setLightboxUrl(url)} className="block overflow-hidden rounded-xl">
-                <img src={url} alt={`${therapist.name} photo ${index + 1}`} loading="lazy" decoding="async" className="aspect-[3/4] w-full object-cover object-top transition-transform hover:scale-105" />
-              </button>
-            ))}
-          </div>
-        </section>
-      ) : null}
+      {/* 老板 2026-07-19:原单独的"Photos"块已合进顶部相册,这里不再重复展示。 */}
       {lightboxUrl ? (
         <div className="fixed inset-0 z-[70] grid place-items-center bg-black/85 p-4" role="dialog" aria-modal="true" onClick={() => setLightboxUrl('')}>
           <button type="button" aria-label="Close" onClick={() => setLightboxUrl('')} className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white"><X className="h-5 w-5" /></button>
@@ -534,6 +553,9 @@ export default function BookingModal() {
   const [wallSearch, setWallSearch] = useState('');
   const [selectedArea, setSelectedArea] = useState(allServiceAreasValue);
   const [matchSelectedService, setMatchSelectedService] = useState(false);
+  // 老板 2026-07-19:墙顶部筛选——Nearby / Most booked(默认)/ Service type。
+  const [wallSort, setWallSort] = useState('recommended');
+  const [serviceTypeFilter, setServiceTypeFilter] = useState(ALL_SERVICE_TYPES_VALUE);
   const [pendingRestingTherapistId, setPendingRestingTherapistId] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [createdAppointment, setCreatedAppointment] = useState(null);
@@ -562,14 +584,17 @@ export default function BookingModal() {
   const selectedTherapist = useMemo(() => findWebsiteTherapist(formData.requestedTechnicianId, bookingTherapists), [bookingTherapists, formData.requestedTechnicianId]);
   const availableAreaFilters = useMemo(() => Array.from(new Set(specificTherapists.flatMap(therapist => Array.isArray(therapist.serviceAreas) ? therapist.serviceAreas : []).filter(Boolean))).sort((a, b) => a.localeCompare(b)), [specificTherapists]);
   const serviceFilterName = formData.preferredService || formData.service;
+  const serviceTypeOptions = useMemo(() => serviceTypeOptionsForWall(catalogTherapists), [catalogTherapists]);
   const wallTherapists = useMemo(() => filterTherapistsForWall({
     therapists: catalogTherapists,
     query: wallSearch,
     selectedArea,
     allAreasValue: allServiceAreasValue,
     selectedService: serviceFilterName,
-    matchSelectedService
-  }), [catalogTherapists, matchSelectedService, selectedArea, serviceFilterName, wallSearch]);
+    matchSelectedService,
+    serviceType: serviceTypeFilter,
+    sortBy: wallSort
+  }), [catalogTherapists, matchSelectedService, selectedArea, serviceFilterName, serviceTypeFilter, wallSearch, wallSort]);
   const availableServices = useMemo(() => servicesForTherapist(formData.requestedTechnicianId || 'any_available', bookingTherapists, catalogServices), [bookingTherapists, catalogServices, formData.requestedTechnicianId]);
   const selectedService = useMemo(() => findBookingServiceByName(formData.service, catalogServices), [catalogServices, formData.service]);
   const selectedDuration = useMemo(() => selectedService ? findExactDurationOption(selectedService, formData.durationMinutes) : null, [selectedService, formData.durationMinutes]);
@@ -686,6 +711,8 @@ export default function BookingModal() {
       setWallSearch('');
       setSelectedArea(allServiceAreasValue);
       setMatchSelectedService(false);
+      setWallSort('recommended');
+      setServiceTypeFilter(ALL_SERVICE_TYPES_VALUE);
       setPendingRestingTherapistId('');
       setIsSubmitting(false);
       setEmailDraft(stored ? { email: stored.customerEmail, name: stored.customerName || '', phone: stored.phone || '' } : { email: '', name: '', phone: '' });
@@ -1021,7 +1048,20 @@ export default function BookingModal() {
                     <option value={allServiceAreasValue}>All service areas</option>
                     {availableAreaFilters.map(area => <option key={area} value={area}>{area}</option>)}
                   </select>
-                  {/* 老板 2026-07-19:去掉多余的"Matches selected service"开关(点了没变化、易误解)。 */}
+                  {/* 老板 2026-07-19:Nearby / Most booked 排序 + Service type 筛选(照参考图)。 */}
+                  <button type="button" onClick={() => setWallSort('nearby')} aria-pressed={wallSort === 'nearby'} data-testid="wall-sort-nearby" className={`h-11 rounded-full border px-4 text-sm font-bold ${wallSort === 'nearby' ? 'border-[#4E8D43] bg-[#4E8D43] text-white' : 'border-gray-200 bg-white text-gray-700'}`}>Nearby</button>
+                  <button type="button" onClick={() => setWallSort('recommended')} aria-pressed={wallSort === 'recommended'} data-testid="wall-sort-popular" className={`h-11 rounded-full border px-4 text-sm font-bold ${wallSort === 'recommended' ? 'border-[#4E8D43] bg-[#4E8D43] text-white' : 'border-gray-200 bg-white text-gray-700'}`}>Most booked</button>
+                  <label className="sr-only" htmlFor="therapist-servicetype-filter">Filter therapists by service type</label>
+                  <select
+                    id="therapist-servicetype-filter"
+                    value={serviceTypeFilter}
+                    onChange={event => setServiceTypeFilter(event.target.value)}
+                    data-testid="therapist-servicetype-filter"
+                    className="h-11 max-w-full rounded-full border border-gray-200 bg-white px-4 text-sm font-bold text-gray-700 outline-none focus:border-[#4E8D43]"
+                  >
+                    <option value={ALL_SERVICE_TYPES_VALUE}>Service type</option>
+                    {serviceTypeOptions.map(name => <option key={name} value={name}>{name}</option>)}
+                  </select>
                 </div>
               </div>
             ) : step !== 'detail' ? (

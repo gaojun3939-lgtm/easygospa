@@ -169,17 +169,24 @@ export function concreteTherapistsForWall(preferredService = '', therapists = we
   ));
 }
 
+// 老板 2026-07-19:墙顶部筛选——Nearby(按距离)/ Most booked(默认推荐排名)/
+// Service type(按服务项目筛选)。ALL_SERVICE_TYPES_VALUE 表示不限服务类型。
+export const ALL_SERVICE_TYPES_VALUE = 'all_service_types';
+
 export function filterTherapistsForWall({
   therapists = websiteTherapists,
   query = '',
   selectedArea = 'all_service_areas',
   allAreasValue = 'all_service_areas',
   selectedService = '',
-  matchSelectedService = false
+  matchSelectedService = false,
+  serviceType = ALL_SERVICE_TYPES_VALUE,
+  sortBy = 'recommended'
 } = {}) {
   const normalizedQuery = String(query || '').trim().toLowerCase();
   const normalizedArea = String(selectedArea || '');
-  return concreteTherapistsForWall('', therapists).filter(therapist => {
+  const normalizedType = String(serviceType || ALL_SERVICE_TYPES_VALUE);
+  const rows = concreteTherapistsForWall('', therapists).filter(therapist => {
     const therapistAreas = Array.isArray(therapist.serviceAreas) ? therapist.serviceAreas : [];
     const therapistServices = Array.isArray(therapist.availableServices) ? therapist.availableServices : [];
     const therapistSpecialties = Array.isArray(therapist.specialties) ? therapist.specialties : [];
@@ -187,6 +194,10 @@ export function filterTherapistsForWall({
       || therapistAreas.some(area => area.toLowerCase() === normalizedArea.toLowerCase());
     if (!areaMatches) return false;
     if (matchSelectedService && selectedService && !therapistServices.includes(selectedService)) return false;
+    if (normalizedType !== ALL_SERVICE_TYPES_VALUE) {
+      const pool = [...therapistServices, ...therapistSpecialties].map(name => String(name || '').toLowerCase());
+      if (!pool.includes(normalizedType.toLowerCase())) return false;
+    }
     if (!normalizedQuery) return true;
     return [therapist.name, ...therapistAreas, therapist.serviceArea, ...therapistSpecialties]
       .filter(Boolean)
@@ -194,6 +205,27 @@ export function filterTherapistsForWall({
       .toLowerCase()
       .includes(normalizedQuery);
   });
+  // Nearby = 距离升序(无距离排后);默认保持 API 推荐排名(= Most booked)。
+  if (sortBy === 'nearby') {
+    return [...rows].sort((a, b) => {
+      const da = Number.isFinite(Number(a.distanceKm)) ? Number(a.distanceKm) : Infinity;
+      const db = Number.isFinite(Number(b.distanceKm)) ? Number(b.distanceKm) : Infinity;
+      return da - db;
+    });
+  }
+  return rows;
+}
+
+// 墙上可选的服务类型(所有技师的服务/展示服务并集)。
+export function serviceTypeOptionsForWall(therapists = websiteTherapists) {
+  const set = new Set();
+  for (const therapist of concreteTherapistsForWall('', therapists)) {
+    for (const name of [...(therapist.availableServices || []), ...(therapist.specialties || [])]) {
+      const clean = String(name || '').trim();
+      if (clean) set.add(clean);
+    }
+  }
+  return Array.from(set).sort((a, b) => a.localeCompare(b));
 }
 
 export function servicesForTherapist(therapistId = '', therapists = websiteTherapists, services = websiteBookingServices) {
