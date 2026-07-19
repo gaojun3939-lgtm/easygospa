@@ -133,7 +133,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Contact
 
 - **Location**: P-145, Sector A, Metropolitan Co-Operative Housing Society Limited,  Metro Manila 1229
-- **Phone**: +63 917 109 8079
+- **Phone**: +63 964 857 0967
 - **Email**: easygospa@gmail.com
 - **Social**: Follow us on [Instagram](https://instagram.com/EasyGo Spa) and [Facebook](https://facebook.com/EasyGo Spa)
 
