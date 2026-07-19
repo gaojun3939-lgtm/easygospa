@@ -1,49 +1,23 @@
 "use client"
 
-import React, { useState } from 'react'
-import { whatsappLink } from '@/lib/contactConfig'
+import React from 'react'
+import { Facebook } from 'lucide-react'
+import { FACEBOOK_URL } from '@/lib/contactConfig'
 
-// 老板 2026-07-19:订阅原来是空的(只挡了刷新)。改为一键发到 EasyGoSpa WhatsApp
-// (无需邮件服务即刻送达),并给出成功提示。
+// 老板 2026-07-19:订阅邮箱改为"关注脸书"——发促销/优惠直接发 FB,零成本零维护,
+// 比接邮件服务更适合(菲律宾客人重度用 Facebook)。
 function SubscribeForm() {
-  const [email, setEmail] = useState('')
-  const [done, setDone] = useState(false)
-
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    const value = email.trim()
-    if (!value) return
-    window.open(whatsappLink(`Hi EasyGoSpa, please add me to your offers and promotions. Email: ${value}`), '_blank', 'noopener')
-    setDone(true)
-    setEmail('')
-  }
-
   return (
-    <div>
-      <form
-        className="flex flex-col sm:flex-row gap-2 max-w-sm mx-auto md:max-w-none"
-        aria-label="Newsletter subscription"
-        onSubmit={handleSubmit}
-      >
-        <label htmlFor="newsletter-email" className="sr-only">Email address</label>
-        <input
-          id="newsletter-email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Your email"
-          className="flex-1 px-4 py-2 bg-white/10 border border-[#2db83d]/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-[#2db83d] focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 focus:ring-offset-[#0F0F0F]"
-          required
-        />
-        <button
-          type="submit"
-          className="px-4 py-2 bg-[#2db83d] text-white rounded-lg hover:bg-[#45f248] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 focus:ring-offset-[#0F0F0F]"
-        >
-          Subscribe
-        </button>
-      </form>
-      {done ? <p className="mt-2 text-center text-xs font-medium text-[#45f248] md:text-left">Thanks! Send the WhatsApp message to confirm your subscription.</p> : null}
-    </div>
+    <a
+      href={FACEBOOK_URL}
+      target="_blank"
+      rel="noreferrer"
+      aria-label="Follow EasyGoSpa on Facebook"
+      className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#2db83d] px-5 py-3 font-medium text-white transition-colors duration-300 hover:bg-[#45f248] focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 focus:ring-offset-[#0F0F0F] sm:w-auto"
+    >
+      <Facebook className="h-5 w-5" aria-hidden="true" />
+      Follow us on Facebook
+    </a>
   )
 }
 

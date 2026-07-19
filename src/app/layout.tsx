@@ -265,7 +265,7 @@ export default function RootLayout({
                 Special Offers
               </h3>
               <p className="text-sm text-gray-300 mb-4 leading-[1.618]">
-                Get promotions, discounts, and home massage service updates.
+                Follow us on Facebook for promotions, discounts, and home massage service updates.
               </p>
               <SubscribeForm/>
             </div>
