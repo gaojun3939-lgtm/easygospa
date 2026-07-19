@@ -5,7 +5,7 @@ import { Check, ChevronLeft, Clock, LogOut, Mail, MapPin, MessageCircle, X } fro
 import { getSupabaseClient, isCustomerAuthConfigured } from '../lib/supabaseClient';
 
 const RESEND_SECONDS = 60;
-const WHATSAPP_FALLBACK = '+63 917 109 8079';
+const WHATSAPP_FALLBACK = '+63 964 857 0967';
 
 const TIMELINE = [
   { key: 'submitted', label: 'Booking received' },

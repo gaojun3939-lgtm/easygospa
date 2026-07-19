@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { MapPin, Phone, Mail, Clock, Instagram, Facebook, Sparkles, Send, CheckCircle } from "lucide-react";
+import { whatsappLink } from "@/lib/contactConfig";
 
 
 export default function Contact() {
@@ -71,20 +72,20 @@ export default function Contact() {
     }
     
     setIsSubmitting(true);
-    
+
     try {
-      // Simulate form submission
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Here you would typically send the form data to your backend
-      // const response = await fetch('/api/contact', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(formData)
-      // });
-      
+      // 老板 2026-07-19:原来是假的(等 2 秒假成功,啥都没发)。改为一键发到 EasyGoSpa
+      // WhatsApp(无需邮件服务即刻送达),把表单内容整理好预填。
+      const lines = [
+        'New message from EasyGoSpa website:',
+        `Name: ${formData.firstName} ${formData.lastName}`.trim(),
+        formData.email ? `Email: ${formData.email}` : '',
+        formData.phone ? `Phone: ${formData.phone}` : '',
+        formData.service ? `Interested service: ${formData.service}` : '',
+        formData.message ? `Message: ${formData.message}` : ''
+      ].filter(Boolean).join('\n');
+      window.open(whatsappLink(lines), '_blank', 'noopener');
+
       setIsSubmitted(true);
       setFormData({
         firstName: '',
@@ -110,8 +111,8 @@ export default function Contact() {
   const handleSocialClick = (platform) => {
     // Replace with actual social media links
     const links = {
-      instagram: 'https://instagram.com/EasyGo Spa',
-      facebook: 'https://facebook.com/EasyGo Spa'
+      instagram: 'https://www.instagram.com/easygospa_services',
+      facebook: 'https://web.facebook.com/easygospa'
     };
     
     if (typeof window !== 'undefined') {
@@ -186,7 +187,7 @@ export default function Contact() {
                         href="tel:+639171098079"
                         className="text-[#2db83d] hover:text-[#45f248] transition-colors duration-300 font-medium"
                       >
-                        +63 917 109 8079
+                        +63 964 857 0967
                       </a>
                       <br />
                       <span className="text-sm">Message us anytime to book or ask about therapist availability.</span>
@@ -366,7 +367,7 @@ export default function Contact() {
                             ? 'border-red-300 focus:border-red-500' 
                             : 'border-gray-200 focus:border-[#2db83d]'
                         }`}
-                        placeholder="+63 917 109 8079"
+                        placeholder="+63 964 857 0967"
                       />
                       {errors.phone && (
                         <p className="text-red-500 text-sm mt-1">{errors.phone}</p>

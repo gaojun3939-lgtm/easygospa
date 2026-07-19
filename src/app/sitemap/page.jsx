@@ -204,7 +204,7 @@ export default function Sitemap() {
                 <p>P-145, Sector A, Metropolitan Co-Operative</p>
                 <p>Housing Society Limited, Ho</p>
                 <p>Metro Manila, Metro Manila 1229</p>
-                <p className="mt-3 font-medium">Phone: +63 917 109 8079</p>
+                <p className="mt-3 font-medium">Phone: +63 964 857 0967</p>
               </div>
             </div>
           </div>

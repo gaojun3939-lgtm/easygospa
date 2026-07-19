@@ -2,6 +2,7 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/navbar"
 import BookingModal from "@/components/BookingModal"
+import WhatsAppFloatButton from "@/components/WhatsAppFloatButton"
 import CustomerOrders from "@/components/CustomerOrders"
 import ReviewWidget from "@/components/ReviewWidget"
 import LoadingScreen from "@/components/LoadingScreen"
@@ -127,7 +128,9 @@ export default function RootLayout({
               </p>
               <div className="flex gap-4" role="list" aria-label="Social media links">
                 <a
-                  href="#"
+                  href="https://www.instagram.com/easygospa_services"
+                  target="_blank"
+                  rel="noreferrer"
                   className="w-10 h-10 bg-[#2db83d] rounded-full flex items-center justify-center hover:bg-[#45f248] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 focus:ring-offset-[#0F0F0F]"
                   aria-label="Follow us on Instagram"
                   role="listitem"
@@ -135,7 +138,9 @@ export default function RootLayout({
                   <Instagram className="w-5 h-5" aria-hidden="true" />
                 </a>
                 <a
-                  href="#"
+                  href="https://web.facebook.com/easygospa"
+                  target="_blank"
+                  rel="noreferrer"
                   className="w-10 h-10 bg-[#2db83d] rounded-full flex items-center justify-center hover:bg-[#45f248] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 focus:ring-offset-[#0F0F0F]"
                   aria-label="Follow us on Facebook"
                   role="listitem"
@@ -239,7 +244,7 @@ export default function RootLayout({
                     href="tel:+639171098079"
                     className="text-gray-300 hover:text-[#2db83d] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 focus:ring-offset-[#0F0F0F] rounded"
                   >
-                    Phone / WhatsApp: +63 917 109 8079
+                    Phone / WhatsApp: +63 964 857 0967
                   </a>
                 </div>
                 <div className="flex items-center gap-3">
@@ -294,6 +299,7 @@ export default function RootLayout({
       {/* ChatBot 暂时下架:LLM 接口未接通,且菜单数据为模板假数据;AI 阶段接真模型后再恢复 */}
       <BookingModal/>
       <CustomerOrders/>
+      <WhatsAppFloatButton/>
       </body>
     </html>
   );

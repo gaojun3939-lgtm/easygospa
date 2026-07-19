@@ -90,7 +90,7 @@ export default function ChatBot() {
 
 EasyGo Spa Information:
 - Location: P-145, Sector A, Metropolitan Co-Operative Housing Society Limited,  Metro Manila, Metro Manila 1229
-- Phone: +63 917 109 8079
+- Phone: +63 964 857 0967
 - Email: easygospa@gmail.com
 - Hours: 
   * Available 24/7
@@ -180,7 +180,7 @@ Guidelines:
 - For existing appointment queries, search by email or phone number in the recent appointments
 - Provide accurate pricing and service information
 - Promote the spa's organic, chemical-free philosophy
-- If you can't find specific information, suggest they call +63 917 109 8079
+- If you can't find specific information, suggest they call +63 964 857 0967
 - Always mention that we're located in Metro Manila when relevant
 - Suggest service combinations when appropriate (e.g., Hair Spa + Hair Cut, Manicure + Pedicure)
 - Explain the benefits of regular treatments for best results
@@ -229,7 +229,7 @@ Please respond as EasyGo Spa, the AI assistant for EasyGo Spa. Be helpful, frien
       console.error('Chat error:', error);
       const errorMessage = {
         id: Date.now() + 1,
-        text: "I apologize, but I'm experiencing technical difficulties. Please call us directly at +63 917 109 8079 or visit our contact page for assistance. Our team will be happy to help you! ✨",
+        text: "I apologize, but I'm experiencing technical difficulties. Please call us directly at +63 964 857 0967 or visit our contact page for assistance. Our team will be happy to help you! ✨",
         sender: "bot",
         timestamp: new Date()
       };

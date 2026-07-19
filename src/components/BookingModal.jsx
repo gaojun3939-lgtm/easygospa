@@ -1021,11 +1021,7 @@ export default function BookingModal() {
                     <option value={allServiceAreasValue}>All service areas</option>
                     {availableAreaFilters.map(area => <option key={area} value={area}>{area}</option>)}
                   </select>
-                  {serviceFilterName ? (
-                    <button type="button" onClick={() => setMatchSelectedService(current => !current)} aria-pressed={matchSelectedService} className={`h-11 rounded-full border px-4 text-sm font-bold ${matchSelectedService ? 'border-[#4E8D43] bg-[#4E8D43] text-white' : 'border-gray-200 bg-white text-gray-700'}`}>
-                      {matchSelectedService ? 'All therapists' : 'Matches selected service'}
-                    </button>
-                  ) : null}
+                  {/* 老板 2026-07-19:去掉多余的"Matches selected service"开关(点了没变化、易误解)。 */}
                 </div>
               </div>
             ) : step !== 'detail' ? (
