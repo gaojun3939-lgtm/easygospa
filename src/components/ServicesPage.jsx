@@ -163,27 +163,8 @@ export default function ServicesPage() {
             </p>
           </motion.div>
 
-          {/* Category Filters */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="flex flex-wrap justify-center gap-4 mb-12"
-          >
-            {categories.map((category) => (
-              <button
-                key={category.key}
-                onClick={() => handleFilterChange(category.key)}
-                className={`px-6 py-3 rounded-full font-medium transition-all duration-300 ${
-                  activeFilter === category.key
-                    ? 'bg-[#2db83d] text-white shadow-lg'
-                    : 'bg-white text-gray-600 hover:bg-[#2db83d]/10 hover:text-[#2db83d] border border-gray-200'
-                }`}
-              >
-                {category.name}
-              </button>
-            ))}
-          </motion.div>
+          {/* 老板 2026-07-19:去掉"Massage Therapy"分类筛选;服务本就全是按摩,
+              整条筛选无意义,直接移除(默认展示全部服务)。 */}
 
           {/* Services Grid */}
           <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-[clamp(1rem,2vw,2.5rem)]">

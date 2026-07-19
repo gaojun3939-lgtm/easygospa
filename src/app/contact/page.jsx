@@ -135,9 +135,10 @@ export default function Contact() {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <div className="inline-flex items-center gap-2 bg-[#2db83d]/10 rounded-full px-4 py-2 mb-6">
-              <Sparkles className="w-4 h-4 text-[#2db83d]" />
-              <span className="text-lg font-medium">Get In Touch</span>
+            {/* 老板 2026-07-19:字体太浅看不清 → 深绿底白字加粗,清晰可读。 */}
+            <div className="inline-flex items-center gap-2 bg-[#2db83d] rounded-full px-6 py-3 mb-6 shadow-sm">
+              <Sparkles className="w-5 h-5 text-white" strokeWidth={2.5} />
+              <span className="text-lg font-semibold text-white">Get In Touch</span>
             </div>
             
             <h1 className="font-serif font-medium text-[clamp(2.5rem,5vw,4rem)] text-[#0F0F0F] mb-6 leading-tight">

@@ -104,10 +104,15 @@ export default function ServicesSection() {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <div className="inline-flex items-center gap-2 bg-[#2db83d]/10 rounded-full px-4 py-2 mb-6">
-              <Sparkles className="w-4 h-4 text-[#2db83d]" />
-              <span className="text-lg font-medium">Our Services</span>
-            </div>
+            {/* 老板 2026-07-19:图标/字体加清晰,并做成可点按钮→直接打开技师墙。 */}
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new CustomEvent('open-booking-modal'))}
+              className="inline-flex items-center gap-2 bg-[#2db83d] rounded-full px-6 py-3 mb-6 shadow-md hover:bg-[#249c32] transition-colors"
+            >
+              <Sparkles className="w-5 h-5 text-white" strokeWidth={2.5} />
+              <span className="text-lg font-semibold text-white">Our Services</span>
+            </button>
             
             <h1 className="max-w-3xl mx-auto text-center flex flex-col justify-center font-serif font-bold text-[clamp(2.5rem,5vw,4rem)] text-[#0F0F0F] mb-6 leading-tight">
               <div>Home Massage Services</div> 
