@@ -1,5 +1,6 @@
 ﻿import { NextResponse } from 'next/server';
 import { BookingRequestValidationError, normalizeWebsiteBookingRequest } from '../../../lib/bookingRequestPayload.mjs';
+import { projectPublicBookingSuccess } from '../../../lib/publicBookingResponse.mjs';
 
 const DEFAULT_AIOFFICE_BOOKING_API_URL = 'https://staging.easygospa.com/api/bookings/public-request';
 
@@ -64,7 +65,6 @@ export async function POST(request) {
       }, response.ok ? 502 : response.status);
     }
 
-    const bookingRequest = payload?.bookingRequest || null;
     const reference = extractBookingReference(payload);
     if (!isValidBookingReference(reference)) {
       return json({
@@ -74,41 +74,7 @@ export async function POST(request) {
       }, 502);
     }
 
-    return json({
-      ok: true,
-      mode: 'website_booking_request_proxy',
-      providerMode: 'ai_office_public_booking_request',
-      reference,
-      bookingRequest,
-      customer: payload?.customer || null,
-      thread: payload?.thread || null,
-      summary: {
-        customerEmail: aiOfficePayload.customerEmail,
-        requestedTechnicianId: aiOfficePayload.requestedTechnicianId,
-        requestedTechnicianName: aiOfficePayload.requestedTechnicianName,
-        requestedTechnicianProfileId: aiOfficePayload.requestedTechnicianProfileId,
-        requestedTechnicianProfileName: aiOfficePayload.requestedTechnicianProfileName,
-        requestedTechnicianAccountId: aiOfficePayload.requestedTechnicianAccountId,
-        requestedTechnicianAccountName: aiOfficePayload.requestedTechnicianAccountName,
-        serviceId: aiOfficePayload.serviceId,
-        service: aiOfficePayload.service,
-        selectedServices: aiOfficePayload.selectedServices,
-        durationMinutes: aiOfficePayload.durationMinutes,
-        totalAmount: aiOfficePayload.totalAmount,
-        currency: aiOfficePayload.currency,
-        preferredDate: aiOfficePayload.preferredDate,
-        preferredTime: aiOfficePayload.preferredTime,
-        area: aiOfficePayload.area,
-        paymentMethod: aiOfficePayload.paymentMethod,
-        paymentStatus: aiOfficePayload.paymentStatus,
-        paymentTiming: aiOfficePayload.paymentTiming
-      },
-      externalSend: false,
-      customerMessageSent: false,
-      financeWrite: false,
-      autoDispatch: false,
-      autoPaid: false
-    });
+    return json(projectPublicBookingSuccess(payload, reference));
   } catch {
     return json({
       ok: false,
