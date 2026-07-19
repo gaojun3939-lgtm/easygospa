@@ -439,23 +439,33 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
     if (!el || !el.clientWidth) return;
     setPhotoIndex(Math.round(el.scrollLeft / el.clientWidth));
   };
+  // 桌面没有触摸滑动 → 用箭头/圆点按页翻(老板 2026-07-19)。
+  const goToPhoto = (index) => {
+    const el = heroScrollRef.current;
+    if (!el) return;
+    const next = Math.max(0, Math.min(heroPhotos.length - 1, index));
+    el.scrollTo({ left: next * el.clientWidth, behavior: 'smooth' });
+    setPhotoIndex(next);
+  };
 
   return (
     <div className="mx-auto max-w-4xl space-y-4 pb-32 sm:pb-8" data-testid="therapist-detail-view">
       <section className="overflow-hidden rounded-[1.75rem] bg-white shadow-sm" data-testid="therapist-detail-hero">
-        <div className={`relative bg-[#EAF8ED] ${usesFallbackImage && heroPhotos.length === 0 ? 'h-[152px] sm:h-[180px]' : 'h-[280px] sm:h-[360px]'}`}>
+        <div className={`relative bg-[#11150f] ${usesFallbackImage && heroPhotos.length === 0 ? 'h-[152px] sm:h-[180px]' : 'h-[320px] sm:h-[440px]'}`}>
           {heroPhotos.length > 1 ? (
             <>
               <div ref={heroScrollRef} onScroll={onHeroScroll} className="flex h-full w-full snap-x snap-mandatory overflow-x-auto scroll-smooth" data-testid="therapist-hero-carousel" style={{ scrollbarWidth: 'none' }}>
                 {heroPhotos.map((url, index) => (
-                  <button key={url} type="button" onClick={() => setLightboxUrl(url)} className="h-full w-full shrink-0 snap-center">
-                    <img src={url} alt={`${therapist.name} photo ${index + 1}`} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" className="h-full w-full object-cover object-top" />
+                  <button key={url} type="button" onClick={() => setLightboxUrl(url)} className="flex h-full w-full shrink-0 snap-center items-center justify-center">
+                    <img src={url} alt={`${therapist.name} photo ${index + 1}`} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" className="max-h-full max-w-full object-contain" />
                   </button>
                 ))}
               </div>
+              {photoIndex > 0 ? <button type="button" onClick={() => goToPhoto(photoIndex - 1)} aria-label="Previous photo" data-testid="hero-prev" className="absolute left-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-gray-700 shadow"><ArrowLeft className="h-5 w-5" /></button> : null}
+              {photoIndex < heroPhotos.length - 1 ? <button type="button" onClick={() => goToPhoto(photoIndex + 1)} aria-label="Next photo" data-testid="hero-next" className="absolute right-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-gray-700 shadow"><ArrowLeft className="h-5 w-5 rotate-180" /></button> : null}
               <span className="pointer-events-none absolute bottom-3 right-3 rounded-full bg-black/55 px-2.5 py-1 text-xs font-bold text-white" data-testid="therapist-hero-counter">{photoIndex + 1}/{heroPhotos.length}</span>
-              <div className="pointer-events-none absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
-                {heroPhotos.map((url, index) => <span key={url} className={`h-1.5 rounded-full transition-all ${index === photoIndex ? 'w-4 bg-white' : 'w-1.5 bg-white/60'}`} />)}
+              <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
+                {heroPhotos.map((url, index) => <button key={url} type="button" aria-label={`Go to photo ${index + 1}`} onClick={() => goToPhoto(index)} className={`h-1.5 rounded-full transition-all ${index === photoIndex ? 'w-4 bg-white' : 'w-1.5 bg-white/60'}`} />)}
               </div>
             </>
           ) : (

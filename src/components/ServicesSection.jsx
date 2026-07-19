@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Head from "next/head";
-import Link from "next/link";
 
 // Complete EasyGo Spa Service Menu with SEO-optimized alt text and optimized image URLs
 const servicesData = [
@@ -180,13 +179,14 @@ export default function ServicesSection() {
             <div className="bg-white">
               <h2 className="font-serif text-[clamp(2rem,4vw,3rem)] font-bold text-[#0F0F0F] mb-4">
               </h2>
-              <Link
-                href="/services" 
-                
+              {/* 老板 2026-07-19:原来是跳 /services 页,改成直接打开技师墙。 */}
+              <button
+                type="button"
+                onClick={() => window.dispatchEvent(new CustomEvent('open-booking-modal'))}
                 className="bg-[#2db83d] text-white px-8 py-4 rounded-full font-medium hover:bg-[#45f248] transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
               >
-                                Book Massage Now
-              </Link>
+                Book Massage Now
+              </button>
             </div>
           </motion.div>
         </div>
