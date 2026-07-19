@@ -1,8 +1,7 @@
 ﻿import { NextResponse } from 'next/server';
 import { BookingRequestValidationError, normalizeWebsiteBookingRequest } from '../../../lib/bookingRequestPayload.mjs';
+import { resolveAiOfficeApiUrl } from '../../../lib/aiofficeApiBase.mjs';
 import { projectPublicBookingSuccess } from '../../../lib/publicBookingResponse.mjs';
-
-const DEFAULT_AIOFFICE_BOOKING_API_URL = 'https://staging.easygospa.com/api/bookings/public-request';
 
 function json(payload, status = 200) {
   return NextResponse.json(payload, { status });
@@ -34,6 +33,9 @@ function isValidBookingReference(value = '') {
 }
 
 export async function POST(request) {
+  const backend = resolveAiOfficeApiUrl('bookingRequest');
+  if (!backend.ok) return json({ ok: false, code: backend.code, error: backend.error }, backend.status);
+
   let aiOfficePayload;
   try {
     const body = await request.json().catch(() => ({}));
@@ -45,7 +47,7 @@ export async function POST(request) {
     return json({ ok: false, code: 'INVALID_BOOKING_REQUEST', error: 'Invalid booking request.' }, 400);
   }
 
-  const targetUrl = process.env.AIOFFICE_BOOKING_API_URL || DEFAULT_AIOFFICE_BOOKING_API_URL;
+  const targetUrl = backend.url;
 
   try {
     const response = await fetch(targetUrl, {

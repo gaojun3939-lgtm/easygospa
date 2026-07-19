@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getFallbackWebsiteBookingCatalog, normalizePublicBookingCatalog } from '../../../lib/bookingCatalogNormalizer.mjs';
-
-const DEFAULT_AIOFFICE_BOOKING_CATALOG_API_URL = 'https://staging.easygospa.com/api/public/booking-catalog';
+import { resolveAiOfficeApiUrl } from '../../../lib/aiofficeApiBase.mjs';
 
 // Always fresh: a therapist toggling their work shift must reflect on the wall
 // immediately, so never let Next/CDN cache this proxy response.
@@ -22,7 +21,9 @@ function parseJson(text) {
 }
 
 export async function GET(request) {
-  const baseUrl = process.env.AIOFFICE_BOOKING_CATALOG_API_URL || DEFAULT_AIOFFICE_BOOKING_CATALOG_API_URL;
+  const backend = resolveAiOfficeApiUrl('bookingCatalog');
+  if (!backend.ok) return json({ ok: false, code: backend.code, error: backend.error }, backend.status);
+  const baseUrl = backend.url;
 
   // Forward optional customer coordinates so the backend can attach an
   // approximate distance per therapist. Coordinates are not stored.

@@ -14,6 +14,7 @@ function test(name, fn) {
 
 const modalSource = fs.readFileSync('src/components/BookingModal.jsx', 'utf8');
 const proxySource = fs.readFileSync('src/app/api/booking-request/route.js', 'utf8');
+const apiBaseSource = fs.readFileSync('src/lib/aiofficeApiBase.mjs', 'utf8');
 
 test('booking modal no longer contains old in-spa confirmation copy', () => {
   for (const forbidden of [
@@ -40,7 +41,8 @@ test('server proxy rejects successful upstream responses without a real referenc
   assert.ok(proxySource.includes('extractBookingReference'));
   assert.ok(proxySource.includes('AIOFFICE_BOOKING_REFERENCE_MISSING'));
   assert.ok(proxySource.includes('mbr-brand-a-'));
-  assert.ok(proxySource.includes('process.env.AIOFFICE_BOOKING_API_URL'));
+  assert.ok(proxySource.includes("resolveAiOfficeApiUrl('bookingRequest')"));
+  assert.ok(apiBaseSource.includes('AIOFFICE_BOOKING_API_URL'));
 });
 
 test('therapist wall payload preserves specific therapist booking fields', () => {

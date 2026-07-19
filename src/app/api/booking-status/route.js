@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { normalizeBookingStatusPayload } from '../../../lib/bookingStatus.mjs';
-
-const DEFAULT_AIOFFICE_BOOKING_STATUS_API_URL = 'https://staging.easygospa.com/api/public/booking-status';
+import { resolveAiOfficeApiUrl } from '../../../lib/aiofficeApiBase.mjs';
 
 function json(payload, status = 200) {
   return NextResponse.json(payload, { status });
@@ -17,12 +16,14 @@ function parseJson(text) {
 }
 
 export async function GET(request) {
+  const backend = resolveAiOfficeApiUrl('bookingStatus');
+  if (!backend.ok) return json({ ok: false, code: backend.code, error: backend.error }, backend.status);
+
   const incomingUrl = new URL(request.url);
   const reference = incomingUrl.searchParams.get('ref')?.trim() || '';
   if (!reference) return json({ ok: false, reason: 'not_found' }, 404);
 
-  const baseUrl = process.env.AIOFFICE_BOOKING_STATUS_API_URL || DEFAULT_AIOFFICE_BOOKING_STATUS_API_URL;
-  const targetUrl = new URL(baseUrl);
+  const targetUrl = new URL(backend.url);
   targetUrl.searchParams.set('ref', reference);
 
   try {

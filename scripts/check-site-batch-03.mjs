@@ -95,11 +95,13 @@ test('booking tracker formats Manila time and creates the public WhatsApp link',
 });
 
 const proxySource = fs.readFileSync('src/app/api/booking-status/route.js', 'utf8');
+const apiBaseSource = fs.readFileSync('src/lib/aiofficeApiBase.mjs', 'utf8');
 const envExampleSource = fs.readFileSync('.env.example', 'utf8');
 
 test('booking status proxy forwards only the opaque reference to the configured backend', () => {
-  assert.ok(proxySource.includes('process.env.AIOFFICE_BOOKING_STATUS_API_URL'));
-  assert.ok(proxySource.includes('https://staging.easygospa.com/api/public/booking-status'));
+  assert.ok(proxySource.includes("resolveAiOfficeApiUrl('bookingStatus')"));
+  assert.ok(apiBaseSource.includes('AIOFFICE_BOOKING_STATUS_API_URL'));
+  assert.ok(apiBaseSource.includes('https://staging.easygospa.com/api/public/booking-status'));
   assert.ok(proxySource.includes("targetUrl.searchParams.set('ref', reference)"));
   assert.ok(proxySource.includes("cache: 'no-store'"));
   assert.ok(proxySource.includes('normalizeBookingStatusPayload'));
