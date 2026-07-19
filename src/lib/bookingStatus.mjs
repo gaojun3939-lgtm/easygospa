@@ -1,4 +1,4 @@
-export const DEFAULT_PUBLIC_WHATSAPP = '+63 917 109 8079';
+export const DEFAULT_PUBLIC_WHATSAPP = '+63 964 857 0967';
 
 export const BOOKING_STATUS_STEPS = Object.freeze([
   { status: 'submitted', label: 'Booking received' },

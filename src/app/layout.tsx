@@ -241,7 +241,7 @@ export default function RootLayout({
                 <div className="flex items-center gap-3">
                   <Phone className="w-5 h-5 text-[#2db83d]" aria-hidden="true" />
                   <a
-                    href="tel:+639171098079"
+                    href="tel:+63 964 857 0967"
                     className="text-gray-300 hover:text-[#2db83d] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 focus:ring-offset-[#0F0F0F] rounded"
                   >
                     Phone / WhatsApp: +63 964 857 0967
@@ -279,13 +279,13 @@ export default function RootLayout({
             <nav aria-label="Legal links">
               <div className="flex gap-6 text-sm">
                 <a
-                  href="#"
+                  href="/privacy-policy"
                   className="text-gray-400 hover:text-[#2db83d] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 focus:ring-offset-[#0F0F0F] rounded"
                 >
                   Privacy Policy
                 </a>
                 <a
-                  href="#"
+                  href="/terms-of-service"
                   className="text-gray-400 hover:text-[#2db83d] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 focus:ring-offset-[#0F0F0F] rounded"
                 >
                   Terms of Service

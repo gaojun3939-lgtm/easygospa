@@ -185,7 +185,7 @@ export default function Contact() {
                     <h3 className="font-serif text-xl font-bold text-[#0F0F0F] mb-2">Booking & WhatsApp</h3>
                     <div className="leading-[1.618] text-gray-600">
                       <a 
-                        href="tel:+639171098079"
+                        href="tel:+63 964 857 0967"
                         className="text-[#2db83d] hover:text-[#45f248] transition-colors duration-300 font-medium"
                       >
                         +63 964 857 0967
