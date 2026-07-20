@@ -74,6 +74,10 @@ export const metadata: Metadata = {
   },
   verification: {
     google: "your-google-verification-code",
+    // Meta 域名验证(老板 2026-07-20):证明 easygospa.com 归属,投流/像素的前置条件。
+    other: {
+      "facebook-domain-verification": "wk56gls7xghwf0rpfv57imh1zdp6ey",
+    },
   },
   metadataBase: new URL("https://easygospa.com"),
 };
