@@ -18,7 +18,9 @@ import {
   isValidEmail,
   isValidPhone,
   serviceTypeOptionsForWall,
-  servicesForTherapist
+  servicesForTherapist,
+  MAX_SERVICE_DISTANCE_KM,
+  therapistDistanceKm
 } from '../lib/therapistServiceBookingFlow.mjs';
 import { getFallbackWebsiteBookingCatalog } from '../lib/bookingCatalogNormalizer.mjs';
 import { manilaNowMinutes, manilaToday } from '../lib/manilaTime.js';
@@ -592,7 +594,6 @@ export default function BookingModal() {
   // 2026-07-11 老板拍板:下单必选具体技师,"任意技师"入口已移除;
   // safeFallbackTherapist 仅保留给历史链接兜底解析,不再作为可选项展示。
   const selectedTherapist = useMemo(() => findWebsiteTherapist(formData.requestedTechnicianId, bookingTherapists), [bookingTherapists, formData.requestedTechnicianId]);
-  const availableAreaFilters = useMemo(() => Array.from(new Set(specificTherapists.flatMap(therapist => Array.isArray(therapist.serviceAreas) ? therapist.serviceAreas : []).filter(Boolean))).sort((a, b) => a.localeCompare(b)), [specificTherapists]);
   const serviceFilterName = formData.preferredService || formData.service;
   const serviceTypeOptions = useMemo(() => serviceTypeOptionsForWall(catalogTherapists), [catalogTherapists]);
   const wallTherapists = useMemo(() => filterTherapistsForWall({
@@ -925,6 +926,15 @@ export default function BookingModal() {
       currency: selectedOption.currency || bookingCatalog.currency || 'PHP'
     }];
 
+    // 服务半径闸门(老板 2026-07-20,方案C):浏览不拦,下单必拦——
+    // 已知距离且超过 10 km 就不接单,跑远单车费和路上时间会把利润吃光。
+    const selectedDistanceKm = therapistDistanceKm(selectedTherapist);
+    if (selectedDistanceKm !== null && selectedDistanceKm > MAX_SERVICE_DISTANCE_KM) {
+      setIsSubmitting(false);
+      setError(`Sorry, ${selectedTherapist.name || 'this therapist'} is about ${selectedDistanceKm} km away — outside our ${MAX_SERVICE_DISTANCE_KM} km service range. Please choose a therapist closer to you, or message us on WhatsApp.`);
+      return;
+    }
+
     // On-demand: schedule + area are derived automatically (no pickers in the form).
     const dispatchDate = manilaToday();
     const dispatchTime = manilaAsapTime();
@@ -1035,7 +1045,7 @@ export default function BookingModal() {
                     <h2 className="truncate text-xl font-bold text-[#0F0F0F]">Choose therapist</h2>
                     <p className="mt-1 inline-flex max-w-full items-center gap-1 text-xs font-bold text-[#3F7838]" data-testid="therapist-area-label">
                       <MapPin className="h-3.5 w-3.5 shrink-0" />
-                      <span className="truncate">{selectedArea === allServiceAreasValue ? 'All service areas' : selectedArea}</span>
+                      <span className="truncate">Serving within {MAX_SERVICE_DISTANCE_KM} km</span>
                     </p>
                   </div>
                   <button type="button" onClick={handleClose} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200" aria-label="Close booking modal"><X className="h-5 w-5 text-gray-700" /></button>
@@ -1046,21 +1056,9 @@ export default function BookingModal() {
                     <input value={wallSearch} onChange={event => setWallSearch(event.target.value)} className="w-full bg-transparent text-sm font-medium outline-none placeholder:text-gray-500" placeholder="Search therapist..." />
                   </div>
                 </div>
+                {/* 老板 2026-07-20:删掉区域下拉——我们只服务 10km 内,按区域名筛选没意义还会误导;
+                    Service type 顶上原来的位置,排序保留 Nearby / Most booked。 */}
                 <div className="mt-3 flex flex-wrap items-center gap-2" data-testid="booking-wall-filters">
-                  <label className="sr-only" htmlFor="therapist-area-filter">Filter therapists by service area</label>
-                  <select
-                    id="therapist-area-filter"
-                    value={selectedArea}
-                    onChange={event => setSelectedArea(event.target.value)}
-                    data-testid="therapist-area-filter"
-                    className="h-11 max-w-full rounded-full border border-gray-200 bg-white px-4 text-sm font-bold text-gray-700 outline-none focus:border-[#4E8D43]"
-                  >
-                    <option value={allServiceAreasValue}>All service areas</option>
-                    {availableAreaFilters.map(area => <option key={area} value={area}>{area}</option>)}
-                  </select>
-                  {/* 老板 2026-07-19:Nearby / Most booked 排序 + Service type 筛选(照参考图)。 */}
-                  <button type="button" onClick={() => setWallSort('nearby')} aria-pressed={wallSort === 'nearby'} data-testid="wall-sort-nearby" className={`h-11 rounded-full border px-4 text-sm font-bold ${wallSort === 'nearby' ? 'border-[#4E8D43] bg-[#4E8D43] text-white' : 'border-gray-200 bg-white text-gray-700'}`}>Nearby</button>
-                  <button type="button" onClick={() => setWallSort('recommended')} aria-pressed={wallSort === 'recommended'} data-testid="wall-sort-popular" className={`h-11 rounded-full border px-4 text-sm font-bold ${wallSort === 'recommended' ? 'border-[#4E8D43] bg-[#4E8D43] text-white' : 'border-gray-200 bg-white text-gray-700'}`}>Most booked</button>
                   <label className="sr-only" htmlFor="therapist-servicetype-filter">Filter therapists by service type</label>
                   <select
                     id="therapist-servicetype-filter"
@@ -1072,6 +1070,8 @@ export default function BookingModal() {
                     <option value={ALL_SERVICE_TYPES_VALUE}>Service type</option>
                     {serviceTypeOptions.map(name => <option key={name} value={name}>{name}</option>)}
                   </select>
+                  <button type="button" onClick={() => setWallSort('nearby')} aria-pressed={wallSort === 'nearby'} data-testid="wall-sort-nearby" className={`h-11 rounded-full border px-4 text-sm font-bold ${wallSort === 'nearby' ? 'border-[#4E8D43] bg-[#4E8D43] text-white' : 'border-gray-200 bg-white text-gray-700'}`}>Nearby</button>
+                  <button type="button" onClick={() => setWallSort('recommended')} aria-pressed={wallSort === 'recommended'} data-testid="wall-sort-popular" className={`h-11 rounded-full border px-4 text-sm font-bold ${wallSort === 'recommended' ? 'border-[#4E8D43] bg-[#4E8D43] text-white' : 'border-gray-200 bg-white text-gray-700'}`}>Most booked</button>
                 </div>
               </div>
             ) : step !== 'detail' ? (
