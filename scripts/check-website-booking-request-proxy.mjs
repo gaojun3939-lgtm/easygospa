@@ -96,3 +96,23 @@ test('forces cash after service without paid confirmation or external send', () 
   assert.equal(payload.metadata.financeWrite, false);
   assert.equal(payload.metadata.externalSend, false);
 });
+
+test('does not forward string customer coordinates as trusted numeric coordinates', () => {
+  const payload = normalizeWebsiteBookingRequest({
+    customerName: 'String Coordinate Guest',
+    customerEmail: 'string-coordinates@example.com',
+    phone: '+639171234567',
+    service: 'Swedish Massage',
+    durationMinutes: 60,
+    totalAmount: 2500,
+    preferredDate: '2026-07-21',
+    preferredTime: '20:00',
+    area: 'Makati',
+    addressNote: 'Test Condo',
+    requestedTechnicianId: 'therapist-test',
+    requestedTechnicianProfileId: 'therapist-test',
+    customerLocation: { latitude: '14.5547', longitude: '121.0244' }
+  });
+
+  assert.equal(Object.hasOwn(payload, 'customerLocation'), false, 'string coordinates must not enter the forwarded payload');
+});

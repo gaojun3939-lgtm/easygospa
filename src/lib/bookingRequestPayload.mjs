@@ -84,10 +84,10 @@ function normalizeSelectedServices(input = {}) {
 
 function normalizeCustomerLocation(value) {
   if (!value || typeof value !== 'object') return null;
-  const latitude = Number(value.latitude ?? value.lat);
-  const longitude = Number(value.longitude ?? value.lng ?? value.lon);
-  if (!Number.isFinite(latitude) || latitude < -90 || latitude > 90) return null;
-  if (!Number.isFinite(longitude) || longitude < -180 || longitude > 180) return null;
+  const latitude = value.latitude ?? value.lat;
+  const longitude = value.longitude ?? value.lng ?? value.lon;
+  if (typeof latitude !== 'number' || !Number.isFinite(latitude) || latitude < -90 || latitude > 90) return null;
+  if (typeof longitude !== 'number' || !Number.isFinite(longitude) || longitude < -180 || longitude > 180) return null;
   const accuracyMeters = Math.max(0, Number(value.accuracyMeters ?? value.accuracy ?? 0) || 0);
   return { latitude, longitude, accuracyMeters };
 }

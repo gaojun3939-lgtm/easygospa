@@ -20,7 +20,11 @@ import {
   serviceTypeOptionsForWall,
   servicesForTherapist,
   MAX_SERVICE_DISTANCE_KM,
-  isTherapistWithinServiceRange,
+  SERVICE_RADIUS_LOCATION_REQUIRED_MESSAGE,
+  SERVICE_RADIUS_TOO_FAR_MESSAGE,
+  getTherapistServiceRadiusBlockMessage,
+  isUsableCustomerLocation,
+  submitBookingWithinServiceRadius,
   therapistDistanceKm
 } from '../lib/therapistServiceBookingFlow.mjs';
 import { getFallbackWebsiteBookingCatalog } from '../lib/bookingCatalogNormalizer.mjs';
@@ -114,19 +118,6 @@ function inferAreaFromAddress(text = '') {
   if (/pasig/.test(value)) return 'Pasig';
   if (/manila|马尼拉/.test(value)) return 'Manila';
   return 'Metro Manila';
-}
-
-// Callers pass null while coordinates are still unknown; `= {}` only guards
-// undefined, so destructure via `|| {}` or a null argument crashes the caller.
-function isUsableCoords(coords) {
-  const { latitude, longitude } = coords || {};
-  return Number.isFinite(latitude)
-    && Number.isFinite(longitude)
-    && !(latitude === 0 && longitude === 0)
-    && latitude >= 4
-    && latitude <= 21
-    && longitude >= 116
-    && longitude <= 127;
 }
 
 function isValidPhilippineMobile(value = '') {
@@ -302,9 +293,11 @@ function TherapistAvatar({ therapist, mode = 'wall' }) {
 }
 
 function TherapistWallCard({ therapist, selected, onSelect }) {
-  // 超出 10km 服务半径:卡片照常显示(墙不能空),但点不动,给一句提示(老板 2026-07-20)。
+  // 超出 10km 或距离未知:卡片照常显示(墙不能空),但点不动。
   const distanceKm = therapistDistanceKm(therapist);
-  const outOfRange = !isTherapistWithinServiceRange(therapist);
+  const rangeBlockMessage = getTherapistServiceRadiusBlockMessage(therapist);
+  const rangeBlocked = Boolean(rangeBlockMessage);
+  const outOfRange = distanceKm !== null && distanceKm > MAX_SERVICE_DISTANCE_KM;
   const [showRangeHint, setShowRangeHint] = useState(false);
 
   useEffect(() => {
@@ -316,7 +309,7 @@ function TherapistWallCard({ therapist, selected, onSelect }) {
   // 工具人只展示不可下单:点卡片不进详情(老板 2026-07-19)。
   const openDetail = () => {
     if (therapist.isMannequin) return;
-    if (outOfRange) { setShowRangeHint(true); return; }
+    if (rangeBlocked) { setShowRangeHint(true); return; }
     onSelect(therapist.id);
   };
   const handleKeyDown = event => {
@@ -342,7 +335,7 @@ function TherapistWallCard({ therapist, selected, onSelect }) {
           data-testid={`therapist-card-out-of-range-hint-${therapist.id}`}
           className="pointer-events-none absolute left-1/2 top-1/2 z-20 w-[86%] -translate-x-1/2 -translate-y-1/2 rounded-xl bg-black/85 px-4 py-3 text-center text-sm font-semibold leading-5 text-white shadow-lg"
         >
-          Please choose a therapist near you — this one is outside our {MAX_SERVICE_DISTANCE_KM} km service area.
+          {distanceKm === null ? SERVICE_RADIUS_LOCATION_REQUIRED_MESSAGE : SERVICE_RADIUS_TOO_FAR_MESSAGE}
         </span>
       ) : null}
       <div className="flex min-h-[112px] gap-3">
@@ -380,8 +373,8 @@ function TherapistWallCard({ therapist, selected, onSelect }) {
                 openDetail();
               }}
               data-testid={`therapist-card-book-${therapist.id}`}
-              aria-disabled={outOfRange || undefined}
-              className={`ml-auto inline-flex h-11 min-w-20 shrink-0 items-center justify-center rounded-full px-4 text-sm font-bold transition ${outOfRange ? 'cursor-not-allowed bg-gray-200 text-gray-500' : 'bg-[#4E8D43] text-white hover:bg-[#3F7838]'}`}
+              aria-disabled={rangeBlocked || undefined}
+              className={`ml-auto inline-flex h-11 min-w-20 shrink-0 items-center justify-center rounded-full px-4 text-sm font-bold transition ${rangeBlocked ? 'cursor-not-allowed bg-gray-200 text-gray-500' : 'bg-[#4E8D43] text-white hover:bg-[#3F7838]'}`}
             >
               Book
             </button>
@@ -661,7 +654,7 @@ export default function BookingModal() {
       const hasWall = catalogStatusRef.current === 'ready';
       if (!hasWall) setCatalogStatus('loading');
       try {
-        const catalogCoords = isUsableCoords(customerCoords) ? customerCoords : null;
+        const catalogCoords = isUsableCustomerLocation(customerCoords) ? customerCoords : null;
         const catalogUrl = catalogCoords
           ? apiUrl(`/api/booking-catalog?lat=${encodeURIComponent(catalogCoords.latitude)}&lng=${encodeURIComponent(catalogCoords.longitude)}`)
           : apiUrl('/api/booking-catalog');
@@ -718,7 +711,7 @@ export default function BookingModal() {
     navigator.geolocation.getCurrentPosition(
       position => {
         const coords = { latitude: position.coords.latitude, longitude: position.coords.longitude };
-        if (!isUsableCoords(coords)) return;
+        if (!isUsableCustomerLocation(coords)) return;
         setCustomerCoords(coords);
         setFormData(current => (current.customerLocation ? current : { ...current, customerLocation: coords }));
       },
@@ -778,7 +771,7 @@ export default function BookingModal() {
   const updateCustomerLocation = location => {
     setFormData(current => ({
       ...current,
-      customerLocation: isUsableCoords(location)
+      customerLocation: isUsableCustomerLocation(location)
         ? { latitude: location.latitude, longitude: location.longitude }
         : null
     }));
@@ -953,15 +946,6 @@ export default function BookingModal() {
       currency: selectedOption.currency || bookingCatalog.currency || 'PHP'
     }];
 
-    // 服务半径闸门(老板 2026-07-20,方案C):浏览不拦,下单必拦——
-    // 已知距离且超过 10 km 就不接单,跑远单车费和路上时间会把利润吃光。
-    const selectedDistanceKm = therapistDistanceKm(selectedTherapist);
-    if (selectedDistanceKm !== null && selectedDistanceKm > MAX_SERVICE_DISTANCE_KM) {
-      setIsSubmitting(false);
-      setError(`Sorry, ${selectedTherapist.name || 'this therapist'} is about ${selectedDistanceKm} km away — outside our ${MAX_SERVICE_DISTANCE_KM} km service range. Please choose a therapist closer to you, or message us on WhatsApp.`);
-      return;
-    }
-
     // On-demand: schedule + area are derived automatically (no pickers in the form).
     const dispatchDate = manilaToday();
     const dispatchTime = manilaAsapTime();
@@ -991,7 +975,7 @@ export default function BookingModal() {
       preferredTime: dispatchTime,
       area: derivedArea,
       addressNote: formData.addressNote,
-      ...(isUsableCoords(formData.customerLocation) ? {
+      ...(isUsableCustomerLocation(formData.customerLocation) ? {
         customerLocation: {
           latitude: formData.customerLocation.latitude,
           longitude: formData.customerLocation.longitude
@@ -1017,11 +1001,18 @@ export default function BookingModal() {
     };
 
     try {
-      const response = await fetch(apiUrl('/api/booking-request'), {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(requestPayload)
+      // 提交紧贴网络请求再校验一次:缺坐标、距离未知、或 >10 km 都不会调用 fetch。
+      const guardedSubmission = await submitBookingWithinServiceRadius({
+        therapist: selectedTherapist,
+        customerLocation: formData.customerLocation,
+        submit: () => fetch(apiUrl('/api/booking-request'), {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(requestPayload)
+        })
       });
+      if (!guardedSubmission.ok) throw new Error(guardedSubmission.error);
+      const response = guardedSubmission.response;
       const payload = await response.json().catch(() => null);
       if (!response.ok || payload?.ok !== true) throw new Error(payload?.error || 'Booking request could not be submitted.');
       const reference = String(payload.reference || payload.bookingRequest?.id || '').trim();

@@ -174,21 +174,48 @@ export function concreteTherapistsForWall(preferredService = '', therapists = we
 export const ALL_SERVICE_TYPES_VALUE = 'all_service_types';
 
 // 服务半径闸门(老板 2026-07-20 拍板 10 km):超出这个距离不接单——车费和路上时间
-// 吃掉利润,跑远单就是亏钱。
-// ⚠️ 老板同日纠正:超距技师**照常显示、但点不动**,不许从墙上藏起来——
-// 新区域本来人就少,藏掉墙就空了,客人看见光秃秃的页面直接走人。
-// 距离未知(客人没给定位)不拦,由下单那一步再校验(老板选的方案 C)。
+// 吃掉利润,跑远单就是亏钱。超距技师仍留在墙上,但不得进入下单流程。
+// P0 图纸同日收紧:距离算不出来也不得进入下单流程。
 export const MAX_SERVICE_DISTANCE_KM = 10;
+export const SERVICE_RADIUS_LOCATION_REQUIRED_MESSAGE = 'Please confirm your location first';
+export const SERVICE_RADIUS_TOO_FAR_MESSAGE = `Please select a nearby therapist within ${MAX_SERVICE_DISTANCE_KM} km.`;
 
 export function therapistDistanceKm(therapist = {}) {
-  const distance = Number(therapist?.distanceKm ?? therapist?.approxDistanceKm);
-  return Number.isFinite(distance) ? distance : null;
+  const rawDistance = therapist?.distanceKm ?? therapist?.approxDistanceKm;
+  if (rawDistance === null || rawDistance === undefined || rawDistance === '') return null;
+  const distance = Number(rawDistance);
+  return Number.isFinite(distance) && distance >= 0 ? distance : null;
 }
 
 export function isTherapistWithinServiceRange(therapist = {}, maxKm = MAX_SERVICE_DISTANCE_KM) {
   const distance = therapistDistanceKm(therapist);
-  if (distance === null) return true; // 距离未知:这一层不拦,下单时再校验
-  return distance <= maxKm;
+  return distance !== null && distance <= maxKm;
+}
+
+export function getTherapistServiceRadiusBlockMessage(therapist = {}, maxKm = MAX_SERVICE_DISTANCE_KM) {
+  const distance = therapistDistanceKm(therapist);
+  if (distance === null) return SERVICE_RADIUS_LOCATION_REQUIRED_MESSAGE;
+  return distance <= maxKm ? '' : SERVICE_RADIUS_TOO_FAR_MESSAGE;
+}
+
+export function isUsableCustomerLocation(coords) {
+  const { latitude, longitude } = coords || {};
+  return Number.isFinite(latitude)
+    && Number.isFinite(longitude)
+    && !(latitude === 0 && longitude === 0)
+    && latitude >= 4
+    && latitude <= 21
+    && longitude >= 116
+    && longitude <= 127;
+}
+
+export async function submitBookingWithinServiceRadius({ therapist, customerLocation, submit } = {}) {
+  const error = !isUsableCustomerLocation(customerLocation)
+    ? SERVICE_RADIUS_LOCATION_REQUIRED_MESSAGE
+    : getTherapistServiceRadiusBlockMessage(therapist);
+  if (error) return { ok: false, error, response: null };
+  if (typeof submit !== 'function') throw new TypeError('submit must be a function');
+  return { ok: true, error: '', response: await submit() };
 }
 
 export function filterTherapistsForWall({
