@@ -151,11 +151,20 @@ assert.ok(modal.includes('wall-sort-nearby') && modal.includes('wall-sort-popula
 assert.ok(modal.includes('MAX_SERVICE_DISTANCE_KM') && modal.includes('therapistDistanceKm'), '下单流程必须引用服务半径闸门');
 assert.ok(modal.includes('submitBookingWithinServiceRadius'), '提交必须走服务半径二次守卫');
 // 卡片层:超距/未知距离点不动 + 精确提示 + 灰按钮 + Too far 标记
-assert.ok(modal.includes('if (rangeBlocked) { setShowRangeHint(true); return; }'), '点超距或未知距离技师必须被拦住,不能进详情');
+assert.ok(/if \(rangeBlocked\) \{[\s\S]{0,400}?setShowRangeHint\(true\);\s*return;\s*\}/.test(modal), '点超距或未知距离技师必须被拦住,不能进详情');
+assert.ok(/if \(rangeBlocked\) \{[\s\S]{0,400}?onRequireLocation\(\)/.test(modal), '距离未知被拦时必须顺手唤起墙面定位入口');
 assert.ok(/therapist-card-out-of-range-hint-\$\{therapist\.id\}/.test(modal), '必须有"请选择您附近的技师"提示元素');
 assert.ok(modal.includes('SERVICE_RADIUS_LOCATION_REQUIRED_MESSAGE'), '未知距离必须使用精确的确认位置提示');
 assert.ok(modal.includes('SERVICE_RADIUS_TOO_FAR_MESSAGE'), '超距必须使用精确的附近技师提示');
 assert.ok(modal.includes('therapist-out-of-range-tag') && modal.includes('Too far'), '超距卡片距离旁必须标注 Too far');
 assert.ok(/rangeBlocked \? 'cursor-not-allowed bg-gray-200 text-gray-500'/.test(modal), '超距或距离未知的 Book 按钮必须置灰');
+
+// 6) 定位死锁修复(老板 2026-07-20 拍板通过):拒绝浏览器定位的客人必须有墙面补位置入口
+assert.ok(modal.includes('wall-location-entry'), '墙上必须有"确认我的位置"入口(定位死锁修复)');
+assert.ok(modal.includes('wall-location-entry-toggle'), '定位入口必须有可点的按钮');
+assert.ok(modal.includes('wall-location-picker'), '定位入口必须能展开 LocationPicker');
+assert.ok(modal.includes('onRequireLocation'), '距离未知的卡片点击必须能唤起定位入口');
+assert.ok(modal.includes('handleWallLocationChange'), '墙面选点必须写回 customerCoords 触发距离刷新');
+console.log('[radius-deadlock-fix] wall_location_entry=present card_opens_picker_on_unknown_distance=true');
 
 console.log('SERVICE_RADIUS_GATE_CHECK_PASS');

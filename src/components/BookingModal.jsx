@@ -292,7 +292,7 @@ function TherapistAvatar({ therapist, mode = 'wall' }) {
   );
 }
 
-function TherapistWallCard({ therapist, selected, onSelect }) {
+function TherapistWallCard({ therapist, selected, onSelect, onRequireLocation }) {
   // 超出 10km 或距离未知:卡片照常显示(墙不能空),但点不动。
   const distanceKm = therapistDistanceKm(therapist);
   const rangeBlockMessage = getTherapistServiceRadiusBlockMessage(therapist);
@@ -309,7 +309,13 @@ function TherapistWallCard({ therapist, selected, onSelect }) {
   // 工具人只展示不可下单:点卡片不进详情(老板 2026-07-19)。
   const openDetail = () => {
     if (therapist.isMannequin) return;
-    if (rangeBlocked) { setShowRangeHint(true); return; }
+    if (rangeBlocked) {
+      // 距离未知=客人还没给位置。老板 2026-07-20 拍板:不能让拒绝过浏览器定位的
+      // 客人无路可走,点卡片时顺手把墙上的定位入口打开让他补位置。
+      if (distanceKm === null && typeof onRequireLocation === 'function') onRequireLocation();
+      setShowRangeHint(true);
+      return;
+    }
     onSelect(therapist.id);
   };
   const handleKeyDown = event => {
@@ -595,6 +601,8 @@ export default function BookingModal() {
   const [dateError, setDateError] = useState('');
   const [phoneError, setPhoneError] = useState('');
   const [customerCoords, setCustomerCoords] = useState(null);
+  // 定位死锁修复(老板 2026-07-20 拍板通过):拒绝浏览器定位的客人从墙上补位置。
+  const [showWallLocationPicker, setShowWallLocationPicker] = useState(false);
 
   const catalogServices = Array.isArray(bookingCatalog.services) ? bookingCatalog.services : [];
   const catalogTherapists = Array.isArray(bookingCatalog.therapists) ? bookingCatalog.therapists : [];
@@ -776,6 +784,15 @@ export default function BookingModal() {
         : null
     }));
     if (error) setError('');
+  };
+
+  // 墙上定位入口:选点即刷新技师距离(customerCoords 触发目录重拉),并预填下单定位。
+  const handleWallLocationChange = location => {
+    if (!isUsableCustomerLocation(location)) return;
+    const coords = { latitude: location.latitude, longitude: location.longitude };
+    setCustomerCoords(coords);
+    updateCustomerLocation(coords);
+    setShowWallLocationPicker(false);
   };
 
   const handlePhoneChange = value => {
@@ -1113,6 +1130,26 @@ export default function BookingModal() {
 
               {step === 'wall' ? (
                 <div className="space-y-2">
+                  {!isUsableCustomerLocation(customerCoords) ? (
+                    <div className="mx-1 rounded-[1.5rem] border border-amber-200 bg-amber-50 p-4" data-testid="wall-location-entry">
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <p className="min-w-0 flex-1 text-sm font-semibold text-amber-900">Share your location to see distances and book a nearby therapist.</p>
+                        <button
+                          type="button"
+                          onClick={() => setShowWallLocationPicker(current => !current)}
+                          data-testid="wall-location-entry-toggle"
+                          className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-full bg-[#4E8D43] px-4 text-sm font-bold text-white transition hover:bg-[#3F7838]"
+                        >
+                          <MapPin className="h-4 w-4" />Confirm my location
+                        </button>
+                      </div>
+                      {showWallLocationPicker ? (
+                        <div className="mt-3" data-testid="wall-location-picker">
+                          <LocationPicker value={formData.customerLocation} onChange={handleWallLocationChange} />
+                        </div>
+                      ) : null}
+                    </div>
+                  ) : null}
                   {catalogStatus === 'ready' ? <p className="px-1 text-sm font-semibold text-gray-600" data-testid="therapist-result-count">{wallTherapists.length} {wallTherapists.length === 1 ? 'therapist' : 'therapists'} available</p> : null}
                   <div className="grid gap-3 px-1 pb-6 sm:grid-cols-2" data-testid="booking-therapist-list">
                     {catalogStatus === 'loading' ? (
@@ -1121,7 +1158,7 @@ export default function BookingModal() {
                         <p className="mt-1">Checking the current public booking catalog.</p>
                       </div>
                     ) : null}
-                    {catalogStatus === 'ready' ? wallTherapists.map(therapist => <TherapistWallCard key={therapist.id} therapist={therapist} selected={formData.requestedTechnicianId === therapist.id} onSelect={openTherapistDetail} />) : null}
+                    {catalogStatus === 'ready' ? wallTherapists.map(therapist => <TherapistWallCard key={therapist.id} therapist={therapist} selected={formData.requestedTechnicianId === therapist.id} onSelect={openTherapistDetail} onRequireLocation={() => setShowWallLocationPicker(true)} />) : null}
                     {catalogUnavailable ? (
                       <div className="rounded-[1.5rem] border border-amber-200 bg-amber-50 p-5 text-sm text-amber-900" data-testid="booking-catalog-unavailable">
                         <p className="text-base font-bold">{catalogUnavailableNotice}</p>
