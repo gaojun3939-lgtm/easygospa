@@ -2,9 +2,13 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {
   BOOKING_STATUS_STEPS,
+  DEFAULT_BOOKING_POLL_MS,
+  WAITING_ACCEPTANCE_POLL_MS,
   buildBookingWhatsAppUrl,
   formatManilaBookingDateTime,
+  getBookingPollingIntervalMs,
   getBookingStatusStepIndex,
+  isTherapistConfirmationTransition,
   normalizeBookingStatusPayload
 } from '../src/lib/bookingStatus.mjs';
 
@@ -18,12 +22,13 @@ function test(name, fn) {
   }
 }
 
-test('seven booking statuses map to the taxi-style timeline order', () => {
+test('eight booking statuses map to the taxi-style timeline order', () => {
   assert.deepEqual(
     BOOKING_STATUS_STEPS.map(step => [step.status, step.label]),
     [
       ['submitted', 'Booking received'],
       ['confirmed', 'Confirmed, matching therapist'],
+      ['waiting_acceptance', 'Waiting for confirmation'],
       ['preparing', 'Your therapist is getting ready'],
       ['on_the_way', 'Therapist on the way'],
       ['arrived', 'Therapist arrived'],
@@ -35,6 +40,17 @@ test('seven booking statuses map to the taxi-style timeline order', () => {
     assert.equal(getBookingStatusStepIndex(step.status), index);
   });
   assert.equal(getBookingStatusStepIndex('cancelled'), -1);
+});
+
+test('waiting acceptance uses three-second polling and only real confirmation transitions notify', () => {
+  assert.equal(WAITING_ACCEPTANCE_POLL_MS, 3000);
+  assert.equal(DEFAULT_BOOKING_POLL_MS, 25000);
+  assert.equal(getBookingPollingIntervalMs('waiting_acceptance'), 3000);
+  assert.equal(getBookingPollingIntervalMs('preparing'), 25000);
+  assert.equal(isTherapistConfirmationTransition('waiting_acceptance', 'preparing'), true);
+  assert.equal(isTherapistConfirmationTransition('waiting_acceptance', 'on_the_way'), true);
+  assert.equal(isTherapistConfirmationTransition('waiting_acceptance', 'cancelled'), false);
+  assert.equal(isTherapistConfirmationTransition('preparing', 'on_the_way'), false);
 });
 
 test('booking status normalization keeps only the public contract whitelist', () => {
@@ -82,6 +98,13 @@ test('booking status normalization keeps only the public contract whitelist', ()
   });
   assert.equal(nullable.durationMinutes, null);
   assert.equal(nullable.etaMinutes, null);
+  const waiting = normalizeBookingStatusPayload({
+    ok: true,
+    reference: 'mbr-brand-a-waiting123',
+    status: 'waiting_acceptance'
+  });
+  assert.equal(waiting.status, 'waiting_acceptance');
+  assert.equal(waiting.statusLabel, 'Waiting for confirmation');
 });
 
 test('booking tracker formats Manila time and creates the public WhatsApp link', () => {
@@ -124,14 +147,25 @@ test('tracking route is noindex and passes only the opaque route reference to th
   assert.ok(trackingPageSource.includes('noimageindex: true'));
 });
 
-test('tracking client implements polling, visibility pause, seven steps, and read-only actions', () => {
+test('tracking client implements 3s/25s polling, visibility pause, confirmation alerts, and waiting cancellation', () => {
   for (const marker of [
     'BOOKING_STATUS_STEPS',
     'getBookingStatusStepIndex',
     "status === 'cancelled'",
-    '25000',
+    'WAITING_ACCEPTANCE_POLL_MS',
+    'DEFAULT_BOOKING_POLL_MS',
+    'getBookingPollingIntervalMs',
     'visibilitychange',
     "document.visibilityState === 'visible'",
+    'Notification.requestPermission()',
+    "new Notification('EasyGoSpa'",
+    'navigator.vibrate(200)',
+    'confirmationNotifiedRef',
+    'requestSequenceRef',
+    'Usually confirmed within a few minutes',
+    'confirmed your booking!',
+    'Cancel booking',
+    'Confirm cancellation',
     'Refresh',
     'Copy',
     'buildBookingWhatsAppUrl',
@@ -145,21 +179,40 @@ test('tracking client implements polling, visibility pause, seven steps, and rea
   for (const forbidden of ['customerName', 'customerPhone', 'customerEmail', 'addressNote', 'notes']) {
     assert.ok(!trackingClientSource.includes(forbidden), `tracking UI must not display ${forbidden}`);
   }
+  for (const forbidden of ['countdown', 'autoCancel', 'auto_cancel']) {
+    assert.ok(!trackingClientSource.includes(forbidden), `tracking UI must not include ${forbidden}`);
+  }
 });
 
 const bookingModalSource = fs.readFileSync('src/components/BookingModal.jsx', 'utf8');
+const activeBookingSource = fs.readFileSync('src/lib/activeBooking.mjs', 'utf8');
+const customerOrdersSource = fs.readFileSync('src/components/CustomerOrders.jsx', 'utf8');
 const homePageSource = fs.readFileSync('src/app/page.tsx', 'utf8');
 const navbarSource = fs.readFileSync('src/components/navbar.jsx', 'utf8');
-const successSource = bookingModalSource.slice(bookingModalSource.indexOf("{step === 'success'"));
-
-test('only the booking success state links to the opaque tracking route', () => {
-  assert.ok(bookingModalSource.includes("import Link from 'next/link'"));
-  assert.ok(successSource.includes('Track my booking'));
-  assert.ok(successSource.includes('Save this link to check your booking anytime.'));
-  assert.ok(successSource.includes('`/track/${encodeURIComponent(createdAppointment.id)}`'));
-  assert.ok(successSource.includes('createdAppointment?.id ?'));
+test('successful booking redirects immediately and the modal blocks only a confirmed local waiting marker', () => {
+  assert.ok(bookingModalSource.includes("import { useRouter } from 'next/navigation'"));
+  assert.ok(bookingModalSource.includes('writeActiveBooking(reference)'));
+  assert.ok(bookingModalSource.includes("router.push(`/track/${encodeURIComponent(reference)}`)"));
+  assert.ok(!bookingModalSource.includes("setStep('success')"));
+  assert.ok(!bookingModalSource.includes("step === 'success'"));
+  assert.ok(bookingModalSource.includes('data-testid="active-booking-dialog"'));
+  assert.ok(bookingModalSource.includes('You already have a booking waiting for confirmation'));
+  assert.ok(bookingModalSource.includes('View my booking'));
+  assert.ok(bookingModalSource.includes('Cancel that booking'));
+  assert.ok(bookingModalSource.includes('resolveActiveBookingGate'));
+  assert.ok(bookingModalSource.includes('activeBookingInspectionSequenceRef'));
+  assert.ok(activeBookingSource.includes("payload?.status === 'waiting_acceptance'"));
+  assert.ok(activeBookingSource.includes('clearActiveBooking'));
+  assert.ok(bookingModalSource.includes("payload?.code === 'ACTIVE_BOOKING_EXISTS'"));
+  assert.ok(bookingModalSource.includes('clearActiveBooking'));
   assert.ok(!homePageSource.includes('/track/'));
   assert.ok(!homePageSource.includes('Track my booking'));
   assert.ok(!navbarSource.includes('/track/'));
   assert.ok(!navbarSource.includes('Track my booking'));
+});
+
+test('customer orders reuses the same expanded public status timeline', () => {
+  assert.ok(customerOrdersSource.includes("import { BOOKING_STATUS_STEPS } from '../lib/bookingStatus.mjs'"));
+  assert.ok(customerOrdersSource.includes('BOOKING_STATUS_STEPS.map'));
+  assert.ok(!customerOrdersSource.includes("{ key: 'preparing', label: 'Your therapist is getting ready' }"));
 });

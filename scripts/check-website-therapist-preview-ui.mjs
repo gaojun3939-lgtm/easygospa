@@ -7,7 +7,7 @@ const normalizerSource = fs.readFileSync('src/lib/bookingCatalogNormalizer.mjs',
 const globalStylesSource = fs.readFileSync('src/app/globals.css', 'utf8');
 const wallCardSource = modalSource.slice(modalSource.indexOf('function TherapistWallCard'), modalSource.indexOf('function ServiceCard'));
 const detailSource = modalSource.slice(modalSource.indexOf('function TherapistDetail'), modalSource.indexOf('export default function BookingModal'));
-const bookingFormSource = modalSource.slice(modalSource.indexOf("{step === 'email'"), modalSource.indexOf("{step === 'success'"));
+const bookingFormSource = modalSource.slice(modalSource.indexOf("{step === 'email'"), modalSource.indexOf('{activeBookingDialog ?'));
 
 function check(condition, message) {
   assert.ok(condition, message);

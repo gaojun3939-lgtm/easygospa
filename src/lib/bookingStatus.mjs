@@ -3,11 +3,23 @@ export const DEFAULT_PUBLIC_WHATSAPP = '+63 964 857 0967';
 export const BOOKING_STATUS_STEPS = Object.freeze([
   { status: 'submitted', label: 'Booking received' },
   { status: 'confirmed', label: 'Confirmed, matching therapist' },
+  { status: 'waiting_acceptance', label: 'Waiting for confirmation' },
   { status: 'preparing', label: 'Your therapist is getting ready' },
   { status: 'on_the_way', label: 'Therapist on the way' },
   { status: 'arrived', label: 'Therapist arrived' },
   { status: 'in_service', label: 'Service in progress' },
   { status: 'completed', label: 'Completed' }
+]);
+
+export const WAITING_ACCEPTANCE_POLL_MS = 3000;
+export const DEFAULT_BOOKING_POLL_MS = 25000;
+
+const THERAPIST_CONFIRMED_STATUSES = new Set([
+  'preparing',
+  'on_the_way',
+  'arrived',
+  'in_service',
+  'completed'
 ]);
 
 const allowedStatuses = new Set([
@@ -32,6 +44,14 @@ function cleanNullableNumber(value) {
 
 export function getBookingStatusStepIndex(status) {
   return BOOKING_STATUS_STEPS.findIndex(step => step.status === status);
+}
+
+export function getBookingPollingIntervalMs(status) {
+  return status === 'waiting_acceptance' ? WAITING_ACCEPTANCE_POLL_MS : DEFAULT_BOOKING_POLL_MS;
+}
+
+export function isTherapistConfirmationTransition(previousStatus, nextStatus) {
+  return previousStatus === 'waiting_acceptance' && THERAPIST_CONFIRMED_STATUSES.has(nextStatus);
 }
 
 export function normalizeBookingStatusPayload(payload = {}) {

@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import Link from 'next/link';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AlertTriangle, ArrowLeft, Calendar, Check, Clock, Mail, MapPin, MessageSquare, Phone, Search, ShieldCheck, Star, User, X } from 'lucide-react';
 import {
@@ -30,6 +30,13 @@ import {
 import { getFallbackWebsiteBookingCatalog } from '../lib/bookingCatalogNormalizer.mjs';
 import { manilaNowMinutes, manilaToday } from '../lib/manilaTime.js';
 import { apiUrl } from '../lib/apiUrl.js';
+import {
+  clearActiveBooking,
+  isActiveBookingReference,
+  resolveActiveBookingGate,
+  writeActiveBooking
+} from '../lib/activeBooking.mjs';
+import { cancelPublicBooking } from '../lib/publicBookingCancel.mjs';
 import { LocationPicker } from './LocationPicker.jsx';
 import { AddressAutocompleteInput } from './AddressAutocompleteInput.jsx';
 
@@ -177,18 +184,6 @@ function therapistAreaText(therapist = {}) {
   if (area) return area;
   const label = String(therapist.distanceLabel || '').trim();
   return label || 'Metro Manila coverage depends on schedule';
-}
-
-function formatDate(dateString) {
-  if (!dateString) return '';
-  const date = new Date(`${dateString}T00:00:00`);
-  if (Number.isNaN(date.getTime())) return '';
-  return date.toLocaleDateString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
 }
 
 function serviceToCatalogName(service = {}) {
@@ -575,11 +570,13 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
 }
 
 export default function BookingModal() {
+  const router = useRouter();
   const [bookingCatalog, setBookingCatalog] = useState(() => getFallbackWebsiteBookingCatalog());
   const [catalogStatus, setCatalogStatus] = useState('loading');
   const catalogStatusRef = useRef('loading');
   const catalogHydratedRef = useRef(false);
   const bookingOpenRef = useRef(false);
+  const activeBookingInspectionSequenceRef = useRef(0);
 
   useEffect(() => {
     catalogStatusRef.current = catalogStatus;
@@ -596,13 +593,17 @@ export default function BookingModal() {
   const [serviceTypeFilter, setServiceTypeFilter] = useState(ALL_SERVICE_TYPES_VALUE);
   const [pendingRestingTherapistId, setPendingRestingTherapistId] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [createdAppointment, setCreatedAppointment] = useState(null);
   const [error, setError] = useState('');
   const [dateError, setDateError] = useState('');
   const [phoneError, setPhoneError] = useState('');
   const [customerCoords, setCustomerCoords] = useState(null);
   // 定位死锁修复(老板 2026-07-20 拍板通过):拒绝浏览器定位的客人从墙上补位置。
   const [showWallLocationPicker, setShowWallLocationPicker] = useState(false);
+  const [activeBookingDialog, setActiveBookingDialog] = useState(null);
+  const [activeCancelContact, setActiveCancelContact] = useState('');
+  const [activeCancelConfirming, setActiveCancelConfirming] = useState(false);
+  const [activeCancelPending, setActiveCancelPending] = useState(false);
+  const [activeCancelError, setActiveCancelError] = useState('');
 
   const catalogServices = Array.isArray(bookingCatalog.services) ? bookingCatalog.services : [];
   const catalogTherapists = Array.isArray(bookingCatalog.therapists) ? bookingCatalog.therapists : [];
@@ -739,11 +740,41 @@ export default function BookingModal() {
     };
   }, [isOpen]);
 
+  const showActiveBookingDialog = useCallback((reference, { contactHint = '', persist = false } = {}) => {
+    if (!isActiveBookingReference(reference)) return false;
+    activeBookingInspectionSequenceRef.current += 1;
+    if (persist) writeActiveBooking(reference);
+    const stored = readStoredSession();
+    setActiveBookingDialog({ reference });
+    setActiveCancelContact(String(contactHint || stored?.customerEmail || stored?.phone || '').trim());
+    setActiveCancelConfirming(false);
+    setActiveCancelPending(false);
+    setActiveCancelError('');
+    return true;
+  }, []);
+
+  const inspectStoredActiveBooking = useCallback(async () => {
+    const inspectionSequence = ++activeBookingInspectionSequenceRef.current;
+    const marker = await resolveActiveBookingGate({
+      isCurrent: () => inspectionSequence === activeBookingInspectionSequenceRef.current,
+      loadStatus: async reference => {
+        const response = await fetch(apiUrl(`/api/booking-status?ref=${encodeURIComponent(reference)}`), { cache: 'no-store' });
+        if (!response.ok) return null;
+        return response.json().catch(() => null);
+      }
+    });
+    if (inspectionSequence !== activeBookingInspectionSequenceRef.current) return;
+    if (!marker) {
+      setActiveBookingDialog(null);
+      return;
+    }
+    showActiveBookingDialog(marker.reference);
+  }, [showActiveBookingDialog]);
+
   useEffect(() => {
     const openModal = event => {
       const serviceName = serviceToCatalogName(event?.detail?.service);
       const stored = readStoredSession();
-      setCreatedAppointment(null);
       setError('');
       setDateError('');
       setPhoneError('');
@@ -754,6 +785,9 @@ export default function BookingModal() {
       setServiceTypeFilter(ALL_SERVICE_TYPES_VALUE);
       setPendingRestingTherapistId('');
       setIsSubmitting(false);
+      setActiveBookingDialog(null);
+      setActiveCancelConfirming(false);
+      setActiveCancelError('');
       setEmailDraft(stored ? { email: stored.customerEmail, name: stored.customerName || '', phone: stored.phone || '' } : { email: '', name: '', phone: '' });
       setFormData(current => {
         const nextForm = createInitialForm(serviceName, catalogServices);
@@ -761,6 +795,7 @@ export default function BookingModal() {
       });
       setStep('wall');
       setIsOpen(true);
+      void inspectStoredActiveBooking();
     };
 
     window.addEventListener('open-booking-modal', openModal);
@@ -769,7 +804,7 @@ export default function BookingModal() {
       window.removeEventListener('open-booking-modal', openModal);
       window.removeEventListener('open-booking-modal-with-service', openModal);
     };
-  }, [catalogServices]);
+  }, [catalogServices, inspectStoredActiveBooking]);
 
   const updateField = (field, value) => {
     setFormData(current => ({ ...current, [field]: value }));
@@ -937,6 +972,39 @@ export default function BookingModal() {
     setStep('confirm');
   };
 
+  const handleActiveBookingCancellation = async event => {
+    event.preventDefault();
+    if (!activeBookingDialog || activeCancelPending) return;
+    if (!activeCancelConfirming) {
+      setActiveCancelConfirming(true);
+      setActiveCancelError('');
+      return;
+    }
+    if (!activeCancelContact.trim()) {
+      setActiveCancelError('Enter the booking email or phone to continue.');
+      return;
+    }
+    setActiveCancelPending(true);
+    setActiveCancelError('');
+    const result = await cancelPublicBooking({
+      reference: activeBookingDialog.reference,
+      contact: activeCancelContact
+    });
+    setActiveCancelPending(false);
+    if (result.ok) {
+      clearActiveBooking({ reference: activeBookingDialog.reference });
+      setActiveBookingDialog(null);
+      setActiveCancelConfirming(false);
+      setActiveCancelContact('');
+      return;
+    }
+    if (result.httpStatus === 404) {
+      setActiveCancelError("We couldn't verify that booking with those details.");
+      return;
+    }
+    setActiveCancelError(result.error || 'Booking cancellation is temporarily unavailable. Please try again.');
+  };
+
   const handleSubmit = async event => {
     event.preventDefault();
     const validationError = validateDetails();
@@ -1031,24 +1099,28 @@ export default function BookingModal() {
       if (!guardedSubmission.ok) throw new Error(guardedSubmission.error);
       const response = guardedSubmission.response;
       const payload = await response.json().catch(() => null);
+      if (
+        response.status === 409
+        && payload?.code === 'ACTIVE_BOOKING_EXISTS'
+        && isActiveBookingReference(payload?.activeReference)
+      ) {
+        setError('');
+        showActiveBookingDialog(payload.activeReference, {
+          contactHint: formData.customerEmail || formData.phone,
+          persist: true
+        });
+        return;
+      }
       if (!response.ok || payload?.ok !== true) throw new Error(payload?.error || 'Booking request could not be submitted.');
       const reference = String(payload.reference || payload.bookingRequest?.id || '').trim();
       if (!/^mbr-brand-a-[a-z0-9]+$/i.test(reference)) {
         throw new Error('Booking request was not confirmed by the intake service. Please try again or contact us on WhatsApp.');
       }
 
-      setCreatedAppointment({
-        id: reference,
-        therapist: selectedTherapist.name,
-        service: selectedOption.service.name,
-        durationMinutes: selectedOption.durationMinutes,
-        preferredDate: dispatchDate,
-        preferredTime: dispatchTime,
-        address: `${derivedArea} - ${formData.addressNote}`,
-        totalAmount: selectedOption.price,
-        paymentMethod: 'Cash before service'
-      });
-      setStep('success');
+      writeActiveBooking(reference);
+      activeBookingInspectionSequenceRef.current += 1;
+      setIsOpen(false);
+      router.push(`/track/${encodeURIComponent(reference)}`);
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : 'Booking request could not be submitted.');
     } finally {
@@ -1057,14 +1129,10 @@ export default function BookingModal() {
   };
 
   const handleClose = () => {
+    activeBookingInspectionSequenceRef.current += 1;
     setIsOpen(false);
     setError('');
     setPendingRestingTherapistId('');
-    if (step === 'success') {
-      setCreatedAppointment(null);
-      setFormData(createInitialForm());
-      setStep('wall');
-    }
   };
 
   return (
@@ -1112,9 +1180,7 @@ export default function BookingModal() {
             ) : step !== 'detail' ? (
               <div className="sticky top-0 z-30 flex items-center justify-between border-b border-gray-100 bg-white p-4 sm:p-5">
                 <div className="flex min-w-0 items-center gap-3">
-                  {step !== 'success' ? (
-                    <button type="button" onClick={goBack} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200" aria-label="Back"><ArrowLeft className="h-5 w-5 text-gray-600" /></button>
-                  ) : null}
+                  <button type="button" onClick={goBack} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200" aria-label="Back"><ArrowLeft className="h-5 w-5 text-gray-600" /></button>
                   <div className="min-w-0">
                     <h2 className="text-xl font-bold text-[#0F0F0F] sm:text-2xl">Book EasyGoSpa</h2>
                     <p className="text-sm text-gray-500">Enter your details to continue.</p>
@@ -1270,37 +1336,89 @@ export default function BookingModal() {
                 </form>
               ) : null}
 
-              {step === 'success' ? (
-                <div className="space-y-5 py-6 text-center">
-                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100"><Check className="h-8 w-8 text-green-600" /></div>
-                  <div>
-                    <h3 className="text-3xl font-bold text-[#0F0F0F]">Booking request submitted</h3>
-                    <p className="mt-2 text-gray-600">Our team will contact you on WhatsApp to confirm therapist availability.</p>
-                  </div>
-                  <div className={`${summaryCardClass} mx-auto max-w-xl text-left`}>
-                    <div className="grid gap-3">
-                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Booking reference</strong><span className="text-right font-mono text-[#0F0F0F] font-bold">{createdAppointment?.id}</span></div>
-                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Selected therapist</strong><span className={summaryValueClass}>{createdAppointment?.therapist}</span></div>
-                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Selected service</strong><span className={summaryValueClass}>{createdAppointment?.service} / {createdAppointment?.durationMinutes} mins</span></div>
-                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Date/time</strong><span className={summaryValueClass}>{formatDate(createdAppointment?.preferredDate)} {createdAppointment?.preferredTime}</span></div>
-                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Address</strong><span className={summaryValueClass}>{createdAppointment?.address}</span></div>
-                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Total amount</strong><span className={summaryMoneyClass}>{money(createdAppointment?.totalAmount)}</span></div>
-                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Payment</strong><span className={summaryValueClass}>{createdAppointment?.paymentMethod}</span></div>
-                    </div>
-                  </div>
-                  {createdAppointment?.id ? (
-                    <div className="mx-auto w-full max-w-xl">
-                      <Link href={`/track/${encodeURIComponent(createdAppointment.id)}`} onClick={handleClose} className="flex h-12 w-full items-center justify-center rounded-2xl bg-[#4E8D43] px-6 font-bold text-white hover:bg-[#3F7838]">
-                        Track my booking
-                      </Link>
-                      <p className="mt-2 text-sm text-gray-600">Save this link to check your booking anytime.</p>
-                    </div>
-                  ) : null}
-                  <button type="button" onClick={handleClose} className="h-12 w-full max-w-xl rounded-2xl bg-gray-100 px-6 font-bold text-gray-700 hover:bg-gray-200">Close</button>
-                </div>
-              ) : null}
             </div>
           </motion.div>
+          {activeBookingDialog ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+              onClick={event => event.stopPropagation()}
+            >
+              <motion.form
+                initial={{ opacity: 0, scale: 0.96, y: 16 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.96, y: 16 }}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="active-booking-dialog-title"
+                data-testid="active-booking-dialog"
+                className="w-full max-w-md rounded-[1.75rem] border border-amber-200 bg-white p-5 shadow-2xl sm:p-6"
+                onSubmit={handleActiveBookingCancellation}
+                onClick={event => event.stopPropagation()}
+              >
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 text-amber-700">
+                  <Clock className="h-6 w-6" />
+                </div>
+                <h2 id="active-booking-dialog-title" className="mt-4 text-2xl font-bold text-[#0F0F0F]">You already have a booking waiting for confirmation</h2>
+                <p className="mt-3 break-all font-mono text-xs text-gray-500">{activeBookingDialog.reference}</p>
+                {!activeCancelConfirming ? (
+                  <div className="mt-6 grid gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        activeBookingInspectionSequenceRef.current += 1;
+                        setActiveBookingDialog(null);
+                        setIsOpen(false);
+                        router.push(`/track/${encodeURIComponent(activeBookingDialog.reference)}`);
+                      }}
+                      className="h-12 rounded-2xl bg-[#4E8D43] px-4 font-bold text-white transition hover:bg-[#3F7838]"
+                    >
+                      View my booking
+                    </button>
+                    <button type="submit" className="h-12 rounded-2xl border border-red-200 bg-white px-4 font-bold text-red-700 transition hover:bg-red-50">
+                      Cancel that booking
+                    </button>
+                  </div>
+                ) : (
+                  <div className="mt-5 space-y-4">
+                    <p className="text-sm leading-6 text-gray-600">Enter the email or phone used for this booking, then confirm cancellation.</p>
+                    <div>
+                      <label htmlFor="active-booking-contact" className={bookingLabelClass}>Booking email or phone</label>
+                      <input
+                        id="active-booking-contact"
+                        value={activeCancelContact}
+                        onChange={event => {
+                          setActiveCancelContact(event.target.value);
+                          setActiveCancelError('');
+                        }}
+                        className={bookingInputClass}
+                        autoComplete="email"
+                        required
+                      />
+                    </div>
+                    {activeCancelError ? <p className="rounded-2xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">{activeCancelError}</p> : null}
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setActiveCancelConfirming(false);
+                          setActiveCancelError('');
+                        }}
+                        className="h-12 rounded-2xl border border-gray-200 bg-white px-4 font-bold text-gray-700 transition hover:bg-gray-50"
+                      >
+                        Keep booking
+                      </button>
+                      <button type="submit" disabled={activeCancelPending} className="h-12 rounded-2xl bg-red-600 px-4 font-bold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60">
+                        {activeCancelPending ? 'Cancelling...' : 'Confirm cancellation'}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </motion.form>
+            </motion.div>
+          ) : null}
           {pendingRestingTherapistId ? (
             <motion.div
               initial={{ opacity: 0 }}

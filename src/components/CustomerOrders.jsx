@@ -3,19 +3,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Check, ChevronLeft, Clock, LogOut, Mail, MapPin, MessageCircle, X } from 'lucide-react';
 import { getSupabaseClient, isCustomerAuthConfigured } from '../lib/supabaseClient';
+import { BOOKING_STATUS_STEPS } from '../lib/bookingStatus.mjs';
 
 const RESEND_SECONDS = 60;
 const WHATSAPP_FALLBACK = '+63 964 857 0967';
 
-const TIMELINE = [
-  { key: 'submitted', label: 'Booking received' },
-  { key: 'confirmed', label: 'Confirmed, matching therapist' },
-  { key: 'preparing', label: 'Your therapist is getting ready' },
-  { key: 'on_the_way', label: 'Therapist on the way' },
-  { key: 'arrived', label: 'Therapist arrived' },
-  { key: 'in_service', label: 'Service in progress' },
-  { key: 'completed', label: 'Completed' }
-];
+const TIMELINE = BOOKING_STATUS_STEPS.map(step => ({ key: step.status, label: step.label }));
 
 // Official Google "G" mark — required by Google's branding guidelines so the
 // button reads as genuine (never a hand-drawn substitute).

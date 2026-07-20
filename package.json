@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "check:ride-hailing-flow": "node scripts/check-ride-hailing-flow.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.110.6",

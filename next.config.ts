@@ -10,6 +10,7 @@ const CORS_HEADERS = [
   { key: "Access-Control-Allow-Origin", value: "*" },
   { key: "Access-Control-Allow-Methods", value: "GET, POST, OPTIONS" },
   { key: "Access-Control-Allow-Headers", value: "Content-Type" },
+  { key: "Access-Control-Expose-Headers", value: "Retry-After" },
   { key: "Access-Control-Max-Age", value: "86400" },
 ];
 

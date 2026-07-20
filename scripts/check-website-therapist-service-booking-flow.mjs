@@ -111,10 +111,11 @@ test('payment UI and payload are cash-only and avoid external sends', () => {
   }
 });
 
-test('success state stays on website and only appears after proxy ok', () => {
+test('successful proxy response stores the active reference and redirects to tracking', () => {
   assert.ok(modalSource.includes("fetch(apiUrl('/api/booking-request')"));
   assert.ok(modalSource.includes("payload?.ok !== true"));
-  assert.ok(modalSource.includes('Booking request submitted'));
-  assert.ok(modalSource.includes('Our team will contact you on WhatsApp to confirm therapist availability.'));
+  assert.ok(modalSource.includes('writeActiveBooking(reference)'));
+  assert.ok(modalSource.includes("router.push(`/track/${encodeURIComponent(reference)}`)"));
+  assert.ok(!modalSource.includes("setStep('success')"));
   assert.ok(!modalSource.includes('window.location.href = \'https://staging.easygospa.com'));
 });

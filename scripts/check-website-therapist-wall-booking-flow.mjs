@@ -148,9 +148,10 @@ test('payload carries therapist wall flow fields and does not redirect staging',
   assert.ok(!modalSource.includes('staging.easygospa.com'));
 });
 
-test('success and validation text are readable and no bad placeholder values are visible', () => {
-  assert.ok(modalSource.includes('Booking reference'), 'success page must label booking reference clearly');
-  assert.ok(modalSource.includes('font-mono text-[#0F0F0F]'), 'booking reference must use readable dark text');
+test('success redirects immediately and validation text has no bad placeholder values', () => {
+  assert.ok(modalSource.includes('writeActiveBooking(reference)'), 'success must persist the active booking marker');
+  assert.ok(modalSource.includes("router.push(`/track/${encodeURIComponent(reference)}`)"), 'success must redirect to tracking');
+  assert.ok(!modalSource.includes("setStep('success')"), 'success must not stop on an in-modal card');
   assert.ok(modalSource.includes('Please enter a valid WhatsApp or phone number.'), 'phone validation copy missing');
   for (const forbidden of ['Invalid Date', 'undefined', 'null', 'NaN']) {
     assert.ok(!modalSource.includes(`>${forbidden}<`), `modal must not visibly render ${forbidden}`);

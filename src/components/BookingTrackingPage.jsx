@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   AlertTriangle,
   CalendarClock,
@@ -14,11 +14,31 @@ import {
 } from 'lucide-react';
 import {
   BOOKING_STATUS_STEPS,
+  DEFAULT_BOOKING_POLL_MS,
+  WAITING_ACCEPTANCE_POLL_MS,
   buildBookingWhatsAppUrl,
   formatManilaBookingDateTime,
-  getBookingStatusStepIndex
+  getBookingPollingIntervalMs,
+  getBookingStatusStepIndex,
+  isTherapistConfirmationTransition
 } from '../lib/bookingStatus.mjs';
 import { apiUrl } from '../lib/apiUrl.js';
+import { clearActiveBooking } from '../lib/activeBooking.mjs';
+import { cancelPublicBooking } from '../lib/publicBookingCancel.mjs';
+
+function notifyTherapistConfirmed(therapistName) {
+  try {
+    if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') navigator.vibrate(200);
+  } catch {}
+  try {
+    if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
+    const notification = new Notification('EasyGoSpa', { body: `${therapistName} confirmed your booking` });
+    notification.onclick = () => {
+      window.focus();
+      notification.close();
+    };
+  } catch {}
+}
 
 function WhatsAppButton({ reference, whatsapp, compact = false }) {
   return (
@@ -125,10 +145,22 @@ export default function BookingTrackingPage({ reference }) {
   const [booking, setBooking] = useState(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [confirmationNotice, setConfirmationNotice] = useState('');
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+  const [cancelContact, setCancelContact] = useState('');
+  const [cancelPending, setCancelPending] = useState(false);
+  const [cancelError, setCancelError] = useState('');
+  const previousStatusRef = useRef(null);
+  const lastTherapistNameRef = useRef('');
+  const notificationPermissionRequestedRef = useRef(false);
+  const confirmationNotifiedRef = useRef(false);
+  const requestSequenceRef = useRef(0);
 
   const loadBooking = useCallback(async ({ silent = false } = {}) => {
+    const requestSequence = ++requestSequenceRef.current;
     if (!reference) {
       setViewState('not_found');
+      setIsRefreshing(false);
       return;
     }
     if (silent) setIsRefreshing(true);
@@ -137,20 +169,48 @@ export default function BookingTrackingPage({ reference }) {
     try {
       const response = await fetch(apiUrl(`/api/booking-status?ref=${encodeURIComponent(reference)}`), { cache: 'no-store' });
       const payload = await response.json().catch(() => null);
+      if (requestSequence !== requestSequenceRef.current) return;
       if (response.status === 404 || payload?.reason === 'not_found') {
         setBooking(null);
         setViewState('not_found');
         return;
       }
       if (!response.ok || payload?.ok !== true) throw new Error('BOOKING_STATUS_LOAD_FAILED');
+      const previousStatus = previousStatusRef.current;
+      const nextStatus = payload.status;
+      const therapistName = payload.therapist?.name || lastTherapistNameRef.current || 'Your Therapist';
+      if (payload.therapist?.name) lastTherapistNameRef.current = payload.therapist.name;
+      if (isTherapistConfirmationTransition(previousStatus, nextStatus) && !confirmationNotifiedRef.current) {
+        confirmationNotifiedRef.current = true;
+        setConfirmationNotice(`✅ ${therapistName} confirmed your booking!`);
+        notifyTherapistConfirmed(therapistName);
+      }
+      previousStatusRef.current = nextStatus;
+      if (nextStatus !== 'waiting_acceptance') {
+        clearActiveBooking({ reference });
+      }
       setBooking(payload);
       setViewState('ready');
     } catch {
-      setViewState('error');
+      if (requestSequence === requestSequenceRef.current) setViewState('error');
     } finally {
-      setIsRefreshing(false);
+      if (requestSequence === requestSequenceRef.current) setIsRefreshing(false);
     }
   }, [reference]);
+
+  useEffect(() => {
+    previousStatusRef.current = null;
+    lastTherapistNameRef.current = '';
+    confirmationNotifiedRef.current = false;
+    notificationPermissionRequestedRef.current = false;
+    setConfirmationNotice('');
+    loadBooking();
+  }, [loadBooking]);
+
+  const pollIntervalMs = getBookingPollingIntervalMs(booking?.status);
+  const pollingSeconds = pollIntervalMs === WAITING_ACCEPTANCE_POLL_MS
+    ? WAITING_ACCEPTANCE_POLL_MS / 1000
+    : DEFAULT_BOOKING_POLL_MS / 1000;
 
   useEffect(() => {
     let intervalId;
@@ -161,7 +221,7 @@ export default function BookingTrackingPage({ reference }) {
     const startPolling = () => {
       stopPolling();
       if (document.visibilityState === 'visible') {
-        intervalId = window.setInterval(() => loadBooking({ silent: true }), 25000);
+        intervalId = window.setInterval(() => loadBooking({ silent: true }), pollIntervalMs);
       }
     };
     const handleVisibilityChange = () => {
@@ -173,14 +233,54 @@ export default function BookingTrackingPage({ reference }) {
       }
     };
 
-    loadBooking();
     startPolling();
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => {
       stopPolling();
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [loadBooking]);
+  }, [loadBooking, pollIntervalMs]);
+
+  useEffect(() => {
+    if (booking?.status !== 'waiting_acceptance' || notificationPermissionRequestedRef.current) return;
+    notificationPermissionRequestedRef.current = true;
+    try {
+      if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
+        void Notification.requestPermission().catch(() => {});
+      }
+    } catch {}
+  }, [booking?.status]);
+
+  const openCancellationDialog = () => {
+    setCancelContact('');
+    setCancelError('');
+    setCancelPending(false);
+    setCancelDialogOpen(true);
+  };
+
+  const handleCancellation = async event => {
+    event.preventDefault();
+    if (cancelPending) return;
+    if (!cancelContact.trim()) {
+      setCancelError('Enter the booking email or phone to continue.');
+      return;
+    }
+    setCancelPending(true);
+    setCancelError('');
+    const result = await cancelPublicBooking({ reference, contact: cancelContact });
+    setCancelPending(false);
+    if (result.ok) {
+      clearActiveBooking({ reference });
+      setCancelDialogOpen(false);
+      await loadBooking({ silent: true });
+      return;
+    }
+    if (result.httpStatus === 404) {
+      setCancelError("We couldn't verify that booking with those details.");
+      return;
+    }
+    setCancelError(result.error || 'Booking cancellation is temporarily unavailable. Please try again.');
+  };
 
   const copyReference = async () => {
     try {
@@ -193,6 +293,7 @@ export default function BookingTrackingPage({ reference }) {
   };
 
   const whatsappButton = <WhatsAppButton reference={reference} whatsapp={booking?.whatsapp} />;
+  const therapistDisplayName = booking?.therapist?.name || 'your Therapist';
 
   return (
     <main className="min-h-screen overflow-x-hidden bg-[linear-gradient(180deg,#f5f0e7_0%,#fbfaf7_42%,#f3f5f4_100%)] px-4 pb-20 pt-28 sm:px-6 sm:pt-32">
@@ -227,8 +328,16 @@ export default function BookingTrackingPage({ reference }) {
             <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0">
                 <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#f6d27a]">My booking</p>
-                <h1 className="mt-3 text-3xl font-bold sm:text-4xl">Track your massage</h1>
-                <p className="mt-3 text-sm leading-6 text-white/70">Live status updates refresh automatically every 25 seconds.</p>
+                <h1 className="mt-3 text-3xl font-bold sm:text-4xl">
+                  {confirmationNotice || (booking.status === 'waiting_acceptance'
+                    ? `Waiting for ${therapistDisplayName} to confirm...`
+                    : 'Track your massage')}
+                </h1>
+                <p className="mt-3 text-sm leading-6 text-white/70">
+                  {booking.status === 'waiting_acceptance'
+                    ? 'Usually confirmed within a few minutes'
+                    : `Live status updates refresh automatically every ${pollingSeconds} seconds.`}
+                </p>
               </div>
               <span className="w-fit rounded-full border border-[#f6d27a]/35 bg-[#f6d27a]/10 px-4 py-2 text-sm font-bold text-[#f6d27a]">{booking.statusLabel}</span>
             </div>
@@ -272,6 +381,11 @@ export default function BookingTrackingPage({ reference }) {
               </button>
             </div>
             <BookingStatusTimeline booking={booking} />
+            {booking.status === 'waiting_acceptance' ? (
+              <button type="button" onClick={openCancellationDialog} className="mt-7 h-12 w-full rounded-2xl border border-red-200 bg-white px-5 font-bold text-red-700 transition hover:bg-red-50">
+                Cancel booking
+              </button>
+            ) : null}
           </section>
 
           <section className="rounded-[2rem] border border-[#e0a52b]/25 bg-[#fffaf0] p-5 sm:p-6">
@@ -284,6 +398,44 @@ export default function BookingTrackingPage({ reference }) {
             </div>
             <div className="mt-5"><WhatsAppButton reference={reference} whatsapp={booking.whatsapp} /></div>
           </section>
+        </div>
+      ) : null}
+
+      {cancelDialogOpen ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm" onClick={() => !cancelPending && setCancelDialogOpen(false)}>
+          <form
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="booking-cancel-dialog-title"
+            data-testid="booking-cancel-dialog"
+            className="w-full max-w-md rounded-[1.75rem] border border-red-100 bg-white p-5 shadow-2xl sm:p-6"
+            onSubmit={handleCancellation}
+            onClick={event => event.stopPropagation()}
+          >
+            <h2 id="booking-cancel-dialog-title" className="text-2xl font-bold text-[#17142f]">Cancel this booking?</h2>
+            <p className="mt-3 text-sm leading-6 text-slate-600">Only a booking still waiting for Therapist confirmation can be cancelled here.</p>
+            <div className="mt-5">
+              <label htmlFor="booking-cancel-contact" className="mb-2 block text-sm font-semibold text-slate-800">Booking email or phone</label>
+              <input
+                id="booking-cancel-contact"
+                value={cancelContact}
+                onChange={event => {
+                  setCancelContact(event.target.value);
+                  setCancelError('');
+                }}
+                className="h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 font-medium text-[#17142f] outline-none focus:border-[#4E8D43]"
+                autoComplete="email"
+                required
+              />
+            </div>
+            {cancelError ? <p className="mt-4 rounded-2xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">{cancelError}</p> : null}
+            <div className="mt-6 grid gap-3 sm:grid-cols-2">
+              <button type="button" disabled={cancelPending} onClick={() => setCancelDialogOpen(false)} className="h-12 rounded-2xl border border-slate-200 bg-white px-4 font-bold text-slate-700 hover:bg-slate-50 disabled:opacity-60">Keep booking</button>
+              <button type="submit" disabled={cancelPending} className="h-12 rounded-2xl bg-red-600 px-4 font-bold text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60">
+                {cancelPending ? 'Cancelling...' : 'Confirm cancellation'}
+              </button>
+            </div>
+          </form>
         </div>
       ) : null}
     </main>

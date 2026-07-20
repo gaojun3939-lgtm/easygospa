@@ -23,9 +23,9 @@ for (const field of ['booking-email', 'customerName', 'phone', 'notes']) {
 const addressInputSource = fs.readFileSync('src/components/AddressAutocompleteInput.jsx', 'utf8');
 check(addressInputSource.includes('data-readability-field="addressNote"'), 'addressNote field has readability marker (AddressAutocompleteInput)');
 
-for (const label of ['Therapist', 'Service', 'Date/time', 'Address', 'Total', 'Payment', 'Booking reference', 'Selected therapist', 'Selected service', 'Total amount']) {
+for (const label of ['Therapist', 'Service', 'Address', 'Total', 'Payment']) {
   check(source.includes(label), `${label} summary label remains visible`);
 }
 
 check(!/text-white[^'"]*\{selectedTherapist\.name\}/.test(source), 'confirm summary does not render value as white text');
-check(!/text-white[^'"]*\{createdAppointment\?\./.test(source), 'success summary does not render value as white text');
+check(source.includes("router.push(`/track/${encodeURIComponent(reference)}`)"), 'successful booking redirects instead of rendering a duplicate summary');

@@ -11,6 +11,10 @@ const ENDPOINTS = Object.freeze({
     envName: 'AIOFFICE_BOOKING_STATUS_API_URL',
     developmentUrl: 'https://staging.easygospa.com/api/public/booking-status'
   },
+  bookingCancel: {
+    envName: 'AIOFFICE_BOOKING_CANCEL_API_URL',
+    developmentUrl: 'https://staging.easygospa.com/api/public/booking-cancel'
+  },
   myBookings: {
     envName: 'AIOFFICE_MY_BOOKINGS_API_URL',
     developmentUrl: 'https://staging.easygospa.com/api/public/my-bookings'

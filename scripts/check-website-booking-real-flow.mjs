@@ -15,6 +15,7 @@ function test(name, fn) {
 const modalSource = fs.readFileSync('src/components/BookingModal.jsx', 'utf8');
 const proxySource = fs.readFileSync('src/app/api/booking-request/route.js', 'utf8');
 const apiBaseSource = fs.readFileSync('src/lib/aiofficeApiBase.mjs', 'utf8');
+const publicResponseSource = fs.readFileSync('src/lib/publicBookingResponse.mjs', 'utf8');
 
 test('booking modal no longer contains old in-spa confirmation copy', () => {
   for (const forbidden of [
@@ -28,13 +29,24 @@ test('booking modal no longer contains old in-spa confirmation copy', () => {
   }
 });
 
-test('success state requires proxy ok and a real mbr reference', () => {
+test('success requires proxy ok, stores the opaque reference, and redirects immediately', () => {
   assert.ok(modalSource.includes("fetch(apiUrl('/api/booking-request')"));
   assert.ok(modalSource.includes("payload?.ok !== true"));
   assert.ok(modalSource.includes('mbr-brand-a-'));
-  assert.ok(modalSource.includes('Booking request submitted'));
-  assert.ok(modalSource.includes('Our team will contact you on WhatsApp to confirm therapist availability.'));
+  assert.ok(modalSource.includes('writeActiveBooking(reference)'));
+  assert.ok(modalSource.includes("router.push(`/track/${encodeURIComponent(reference)}`)"));
+  assert.ok(!modalSource.includes("setStep('success')"));
+  assert.ok(!modalSource.includes('Booking request submitted'));
   assert.ok(!modalSource.includes("createdAppointment?.id || 'Pending'"));
+});
+
+test('duplicate response uses only validated activeReference and opens the same active-booking dialog', () => {
+  assert.ok(proxySource.includes('projectPublicBookingError(payload)'));
+  assert.ok(publicResponseSource.includes("code === 'ACTIVE_BOOKING_EXISTS'"));
+  assert.ok(publicResponseSource.includes('/^mbr-brand-a-'));
+  assert.ok(modalSource.includes("payload?.code === 'ACTIVE_BOOKING_EXISTS'"));
+  assert.ok(modalSource.includes('showActiveBookingDialog(payload.activeReference'));
+  assert.ok(modalSource.includes('data-testid="active-booking-dialog"'));
 });
 
 test('server proxy rejects successful upstream responses without a real reference', () => {

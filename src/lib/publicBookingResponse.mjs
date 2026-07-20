@@ -20,3 +20,18 @@ export function projectPublicBookingSuccess(payload = {}, reference = '') {
 
   return Object.fromEntries(Object.entries(response).filter(([, value]) => value !== ''));
 }
+
+export function projectPublicBookingError(payload = {}) {
+  const source = payload && typeof payload === 'object' && !Array.isArray(payload) ? payload : {};
+  const code = firstString(source.code, 'AIOFFICE_BOOKING_REQUEST_FAILED');
+  const response = {
+    ok: false,
+    code,
+    error: firstString(source.error, 'Booking request could not be submitted.')
+  };
+  const activeReference = firstString(source.activeReference);
+  if (code === 'ACTIVE_BOOKING_EXISTS' && /^mbr-brand-a-[a-z0-9]+$/i.test(activeReference)) {
+    response.activeReference = activeReference;
+  }
+  return response;
+}

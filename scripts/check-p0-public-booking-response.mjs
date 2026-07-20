@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { projectPublicBookingSuccess } from '../src/lib/publicBookingResponse.mjs';
+import { projectPublicBookingError, projectPublicBookingSuccess } from '../src/lib/publicBookingResponse.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const routeSource = fs.readFileSync(path.join(root, 'src/app/api/booking-request/route.js'), 'utf8');
@@ -67,5 +67,34 @@ assertNoForbiddenKeys(projected);
 assert.match(routeSource, /projectPublicBookingSuccess\(payload, reference\)/);
 assert.doesNotMatch(routeSource, /customer:\s*payload/);
 assert.doesNotMatch(routeSource, /thread:\s*payload/);
+
+assert.deepEqual(projectPublicBookingError({
+  ok: false,
+  code: 'ACTIVE_BOOKING_EXISTS',
+  error: 'A booking is already waiting for confirmation.',
+  activeReference: 'mbr-brand-a-active123',
+  customerEmail: 'secret@example.test',
+  metadata: { secret: true }
+}), {
+  ok: false,
+  code: 'ACTIVE_BOOKING_EXISTS',
+  error: 'A booking is already waiting for confirmation.',
+  activeReference: 'mbr-brand-a-active123'
+});
+assert.deepEqual(projectPublicBookingError({
+  code: 'ACTIVE_BOOKING_EXISTS',
+  error: 'A booking is already waiting for confirmation.',
+  activeReference: 'invalid-reference'
+}), {
+  ok: false,
+  code: 'ACTIVE_BOOKING_EXISTS',
+  error: 'A booking is already waiting for confirmation.'
+});
+assert.deepEqual(projectPublicBookingError(null), {
+  ok: false,
+  code: 'AIOFFICE_BOOKING_REQUEST_FAILED',
+  error: 'Booking request could not be submitted.'
+});
+assert.match(routeSource, /projectPublicBookingError\(payload\)/);
 
 console.log('P0_PUBLIC_BOOKING_RESPONSE_CHECK_PASS');

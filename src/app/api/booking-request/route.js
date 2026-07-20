@@ -1,10 +1,11 @@
 ﻿import { NextResponse } from 'next/server';
 import { BookingRequestValidationError, normalizeWebsiteBookingRequest } from '../../../lib/bookingRequestPayload.mjs';
 import { resolveAiOfficeApiUrl } from '../../../lib/aiofficeApiBase.mjs';
-import { projectPublicBookingSuccess } from '../../../lib/publicBookingResponse.mjs';
+import { projectPublicBookingError, projectPublicBookingSuccess } from '../../../lib/publicBookingResponse.mjs';
+import { forwardedClientIpHeaders } from '../../../lib/serverForwardedIp.mjs';
 
-function json(payload, status = 200) {
-  return NextResponse.json(payload, { status });
+function json(payload, status = 200, headers = {}) {
+  return NextResponse.json(payload, { status, headers });
 }
 
 function parseJson(text) {
@@ -52,7 +53,7 @@ export async function POST(request) {
   try {
     const response = await fetch(targetUrl, {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', ...forwardedClientIpHeaders(request) },
       body: JSON.stringify(aiOfficePayload),
       cache: 'no-store'
     });
@@ -60,11 +61,12 @@ export async function POST(request) {
     const payload = parseJson(text);
 
     if (!response.ok || payload?.ok === false) {
-      return json({
-        ok: false,
-        code: payload?.code || 'AIOFFICE_BOOKING_REQUEST_FAILED',
-        error: payload?.error || 'Booking request could not be submitted.'
-      }, response.ok ? 502 : response.status);
+      const retryAfter = response.headers.get('retry-after');
+      return json(
+        projectPublicBookingError(payload),
+        response.ok ? 502 : response.status,
+        retryAfter ? { 'retry-after': retryAfter } : {}
+      );
     }
 
     const reference = extractBookingReference(payload);
