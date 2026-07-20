@@ -400,61 +400,59 @@ function defaultDurationOption(service) {
 }
 
 function ServiceCard({ service, selected, selectedDuration, onSelectService, onSelectDuration }) {
+  // 档位药丸常驻卡面(老板 2026-07-21 参考打车式竞品):没选中的卡也能看到
+  // 60/90/120 全档,点任意档 = 同时选中该服务和该档;价格大字实时跟着档位走。
   const selectedOption = selected
     ? service.durationOptions.find(option => option.durationMinutes === selectedDuration) || null
     : null;
   const priceOption = selectedOption || defaultDurationOption(service);
 
   return (
-    <section className={`overflow-hidden rounded-[1.5rem] border bg-white shadow-sm transition-all ${selected ? 'border-[#4E8D43] ring-1 ring-[#4E8D43]/20' : 'border-gray-200'}`} data-testid={`therapist-service-${service.id}`}>
-      <button
-        type="button"
-        onClick={() => onSelectService(service)}
-        data-testid={`service-select-${service.id}`}
-        aria-pressed={selected}
-        className={`flex min-h-24 w-full items-start justify-between gap-4 p-4 text-left transition ${selected ? 'bg-[#F1FBF3]' : 'bg-white hover:bg-gray-50'}`}
-      >
-        <span className="min-w-0 flex-1">
-          <span className="block text-lg font-bold text-[#0F0F0F]">{service.name}</span>
-          <span className="mt-1 block text-sm leading-6 text-gray-600 line-clamp-2">{service.description}</span>
-          {priceOption ? (
-            <span className="mt-2 flex items-baseline gap-1.5" data-testid={`service-price-${service.id}`}>
-              <span className="text-2xl font-extrabold text-[#0F0F0F]">{money(priceOption.price)}</span>
-              <span className="text-xs font-semibold text-gray-500">/ {priceOption.durationMinutes} mins</span>
-            </span>
-          ) : null}
-        </span>
-        <span className={`mt-1 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border ${selected ? 'border-[#4E8D43] bg-[#4E8D43] text-white' : 'border-gray-300 bg-white text-transparent'}`}>
-          <Check className="h-4 w-4" />
-        </span>
-      </button>
-      {selected ? (
-        <div className="border-t border-[#4E8D43]/20 p-4">
-          <p className="text-sm font-bold text-[#0F0F0F]">Choose a duration</p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {service.durationOptions.map(option => {
-              const durationSelected = selectedDuration === option.durationMinutes;
-              return (
-                <button
-                  key={`${service.id}-${option.durationMinutes}`}
-                  type="button"
-                  onClick={() => onSelectDuration(service, option)}
-                  data-testid="service-duration-option"
-                  aria-pressed={durationSelected}
-                  className={`inline-flex h-11 items-center gap-1.5 rounded-full border px-4 text-sm font-bold transition-all ${durationSelected ? 'border-[#4E8D43] bg-[#E8F5E9] text-[#3F7838]' : 'border-gray-200 bg-white text-gray-700 hover:border-[#4E8D43]/60'}`}
-                >
-                  {option.durationMinutes} mins
-                  {durationSelected ? <Check className="h-4 w-4" /> : null}
-                </button>
-              );
-            })}
-          </div>
-          <div className="mt-4 border-t border-gray-100 pt-4">
-            <p className="text-xs font-medium text-gray-500">Selected price</p>
-            <p className="mt-1 text-xl font-bold text-[#0F0F0F]">{selectedOption ? money(selectedOption.price) : 'Select a duration'}</p>
-          </div>
+    <section
+      className={`cursor-pointer overflow-hidden rounded-[1.5rem] border shadow-sm transition-all ${selected ? 'border-[#4E8D43] bg-[#F1FBF3] ring-1 ring-[#4E8D43]/20' : 'border-gray-200 bg-white hover:border-[#4E8D43]/50 hover:shadow-md'}`}
+      data-testid={`therapist-service-${service.id}`}
+      onClick={() => onSelectService(service)}
+    >
+      <div className="p-4">
+        <div className="flex items-start justify-between gap-3">
+          <span className="block min-w-0 flex-1 text-lg font-bold text-[#0F0F0F]">{service.name}</span>
+          <button
+            type="button"
+            onClick={event => { event.stopPropagation(); onSelectService(service); }}
+            data-testid={`service-select-${service.id}`}
+            aria-pressed={selected}
+            aria-label={`Select ${service.name}`}
+            className={`mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border transition ${selected ? 'border-[#4E8D43] bg-[#4E8D43] text-white' : 'border-gray-300 bg-white text-transparent'}`}
+          >
+            <Check className="h-4 w-4" />
+          </button>
         </div>
-      ) : null}
+        <p className="mt-1 text-sm leading-6 text-gray-600 line-clamp-2">{service.description}</p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {service.durationOptions.map(option => {
+            const durationSelected = selected && selectedDuration === option.durationMinutes;
+            return (
+              <button
+                key={`${service.id}-${option.durationMinutes}`}
+                type="button"
+                onClick={event => { event.stopPropagation(); onSelectDuration(service, option); }}
+                data-testid="service-duration-option"
+                aria-pressed={durationSelected}
+                className={`inline-flex h-10 items-center gap-1.5 rounded-full border px-4 text-sm font-bold transition-all ${durationSelected ? 'border-[#4E8D43] bg-[#E8F5E9] text-[#3F7838]' : 'border-gray-200 bg-white text-gray-700 hover:border-[#4E8D43]/60'}`}
+              >
+                {option.durationMinutes} mins
+                {durationSelected ? <Check className="h-4 w-4" /> : null}
+              </button>
+            );
+          })}
+        </div>
+        {priceOption ? (
+          <div className="mt-3 flex items-baseline gap-1.5" data-testid={`service-price-${service.id}`}>
+            <span className="text-2xl font-extrabold text-[#0F0F0F]">{money(priceOption.price)}</span>
+            <span className="text-xs font-semibold text-gray-500">/ {priceOption.durationMinutes} mins</span>
+          </div>
+        ) : null}
+      </div>
     </section>
   );
 }
@@ -654,7 +652,11 @@ export default function BookingModal() {
     serviceType: serviceTypeFilter,
     sortBy: wallSort
   }), [catalogTherapists, matchSelectedService, selectedArea, serviceFilterName, serviceTypeFilter, wallSearch, wallSort]);
-  const availableServices = useMemo(() => servicesForTherapist(formData.requestedTechnicianId || 'any_available', bookingTherapists, catalogServices), [bookingTherapists, catalogServices, formData.requestedTechnicianId]);
+  // 服务列表按默认档(60 分钟)价格从低到高排(老板 2026-07-21:最便宜的放最前面)。
+  const availableServices = useMemo(() => {
+    const list = servicesForTherapist(formData.requestedTechnicianId || 'any_available', bookingTherapists, catalogServices);
+    return [...list].sort((a, b) => (Number(defaultDurationOption(a)?.price) || Infinity) - (Number(defaultDurationOption(b)?.price) || Infinity));
+  }, [bookingTherapists, catalogServices, formData.requestedTechnicianId]);
   const selectedService = useMemo(() => findBookingServiceByName(formData.service, catalogServices), [catalogServices, formData.service]);
   const selectedDuration = useMemo(() => selectedService ? findExactDurationOption(selectedService, formData.durationMinutes) : null, [selectedService, formData.durationMinutes]);
   const selectedServiceOption = useMemo(() => resolveSelectedServiceOption(formData, catalogServices), [catalogServices, formData]);
@@ -878,8 +880,10 @@ export default function BookingModal() {
       const currentService = findBookingServiceByName(current.service, catalogServices);
       const selectedServiceAllowed = currentService && therapistServices.some(service => service.id === currentService.id);
       const selectedOption = selectedServiceAllowed ? findExactDurationOption(currentService, current.durationMinutes) : null;
-      // 没带着已选服务进来 → 默认选中第一个服务的 60 分钟档,像打车一样开门见价。
-      const defaultService = selectedServiceAllowed ? currentService : (therapistServices[0] || null);
+      // 没带着已选服务进来 → 默认选中最便宜服务的 60 分钟档,像打车一样开门见价
+      // (排序口径与列表一致:按默认档价格从低到高)。
+      const cheapestFirst = [...therapistServices].sort((a, b) => (Number(defaultDurationOption(a)?.price) || Infinity) - (Number(defaultDurationOption(b)?.price) || Infinity));
+      const defaultService = selectedServiceAllowed ? currentService : (cheapestFirst[0] || null);
       const defaultOption = selectedServiceAllowed ? selectedOption : defaultDurationOption(defaultService);
       return {
         ...current,
