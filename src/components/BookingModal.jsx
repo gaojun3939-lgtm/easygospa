@@ -270,11 +270,13 @@ function TherapistAvatar({ therapist, mode = 'wall' }) {
   const isFallback = imageUrl === DEFAULT_THERAPIST_IMAGE_URL;
   const sizeClass = mode === 'wall' ? 'h-[88px] w-[88px]' : 'h-full w-full';
   const radiusClass = mode === 'wall' ? 'rounded-[1.25rem]' : 'rounded-none';
-  // Owner report (2026-07-19): full-body detail photos were cropped to the torso —
-  // anchor the crop to the TOP so the face always stays in frame.
+  // Owner report (2026-07-19): full-body detail photos were cropped to the torso;
+  // top-anchored crop then scalped centered portraits (2026-07-21). Fixed-anchor
+  // cropping loses either way, so the detail hero shows the WHOLE photo
+  // letterboxed on the dark backdrop — same treatment as the multi-photo carousel.
   const fitClass = isFallback
     ? `${mode === 'wall' ? 'p-2' : 'p-6'} object-contain`
-    : mode === 'detail' ? 'object-cover object-top' : 'object-cover object-center';
+    : mode === 'detail' ? 'object-contain' : 'object-cover object-center';
 
   return (
     <img
@@ -389,10 +391,19 @@ function TherapistWallCard({ therapist, selected, onSelect, onRequireLocation, c
   );
 }
 
+// 默认档 = 60 分钟,没有 60 分钟档就取最短档(老板 2026-07-21:客人要一眼看到价格)。
+function defaultDurationOption(service) {
+  const options = Array.isArray(service?.durationOptions) ? service.durationOptions : [];
+  if (!options.length) return null;
+  return options.find(option => Number(option.durationMinutes) === 60)
+    || [...options].sort((a, b) => Number(a.durationMinutes) - Number(b.durationMinutes))[0];
+}
+
 function ServiceCard({ service, selected, selectedDuration, onSelectService, onSelectDuration }) {
   const selectedOption = selected
     ? service.durationOptions.find(option => option.durationMinutes === selectedDuration) || null
     : null;
+  const priceOption = selectedOption || defaultDurationOption(service);
 
   return (
     <section className={`overflow-hidden rounded-[1.5rem] border bg-white shadow-sm transition-all ${selected ? 'border-[#4E8D43] ring-1 ring-[#4E8D43]/20' : 'border-gray-200'}`} data-testid={`therapist-service-${service.id}`}>
@@ -405,7 +416,13 @@ function ServiceCard({ service, selected, selectedDuration, onSelectService, onS
       >
         <span className="min-w-0 flex-1">
           <span className="block text-lg font-bold text-[#0F0F0F]">{service.name}</span>
-          <span className="mt-1 block text-sm leading-6 text-gray-600">{service.description}</span>
+          <span className="mt-1 block text-sm leading-6 text-gray-600 line-clamp-2">{service.description}</span>
+          {priceOption ? (
+            <span className="mt-2 flex items-baseline gap-1.5" data-testid={`service-price-${service.id}`}>
+              <span className="text-2xl font-extrabold text-[#0F0F0F]">{money(priceOption.price)}</span>
+              <span className="text-xs font-semibold text-gray-500">/ {priceOption.durationMinutes} mins</span>
+            </span>
+          ) : null}
         </span>
         <span className={`mt-1 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border ${selected ? 'border-[#4E8D43] bg-[#4E8D43] text-white' : 'border-gray-300 bg-white text-transparent'}`}>
           <Check className="h-4 w-4" />
@@ -861,13 +878,16 @@ export default function BookingModal() {
       const currentService = findBookingServiceByName(current.service, catalogServices);
       const selectedServiceAllowed = currentService && therapistServices.some(service => service.id === currentService.id);
       const selectedOption = selectedServiceAllowed ? findExactDurationOption(currentService, current.durationMinutes) : null;
+      // 没带着已选服务进来 → 默认选中第一个服务的 60 分钟档,像打车一样开门见价。
+      const defaultService = selectedServiceAllowed ? currentService : (therapistServices[0] || null);
+      const defaultOption = selectedServiceAllowed ? selectedOption : defaultDurationOption(defaultService);
       return {
         ...current,
         requestedTechnicianId: therapist.id,
-        serviceId: selectedServiceAllowed ? currentService.id : '',
-        service: selectedServiceAllowed ? currentService.name : '',
-        durationMinutes: selectedOption?.durationMinutes || '',
-        totalAmount: selectedOption?.price || 0
+        serviceId: defaultService?.id || '',
+        service: defaultService?.name || '',
+        durationMinutes: defaultOption?.durationMinutes || '',
+        totalAmount: defaultOption?.price || 0
       };
     });
     setError('');
@@ -902,9 +922,11 @@ export default function BookingModal() {
   };
 
   const handleSelectService = service => {
+    // 点服务即默认选中 60 分钟档(或最短档),价格立即出现在底部总计,不再等第二步。
+    const option = defaultDurationOption(service);
     setFormData(current => current.serviceId === service.id
       ? current
-      : { ...current, serviceId: service.id, service: service.name, durationMinutes: '', totalAmount: 0 });
+      : { ...current, serviceId: service.id, service: service.name, durationMinutes: option?.durationMinutes || '', totalAmount: option?.price || 0 });
     if (error) setError('');
   };
 
