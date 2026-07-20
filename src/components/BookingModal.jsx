@@ -22,6 +22,7 @@ import {
   MAX_SERVICE_DISTANCE_KM,
   SERVICE_RADIUS_LOCATION_REQUIRED_MESSAGE,
   SERVICE_RADIUS_TOO_FAR_MESSAGE,
+  THERAPIST_TEMPORARILY_UNAVAILABLE_MESSAGE,
   getTherapistServiceRadiusBlockMessage,
   isUsableCustomerLocation,
   submitBookingWithinServiceRadius,
@@ -287,7 +288,7 @@ function TherapistAvatar({ therapist, mode = 'wall' }) {
   );
 }
 
-function TherapistWallCard({ therapist, selected, onSelect, onRequireLocation }) {
+function TherapistWallCard({ therapist, selected, onSelect, onRequireLocation, customerLocated = false }) {
   // 超出 10km 或距离未知:卡片照常显示(墙不能空),但点不动。
   const distanceKm = therapistDistanceKm(therapist);
   const rangeBlockMessage = getTherapistServiceRadiusBlockMessage(therapist);
@@ -305,9 +306,10 @@ function TherapistWallCard({ therapist, selected, onSelect, onRequireLocation })
   const openDetail = () => {
     if (therapist.isMannequin) return;
     if (rangeBlocked) {
-      // 距离未知=客人还没给位置。老板 2026-07-20 拍板:不能让拒绝过浏览器定位的
-      // 客人无路可走,点卡片时顺手把墙上的定位入口打开让他补位置。
-      if (distanceKm === null && typeof onRequireLocation === 'function') onRequireLocation();
+      // 距离未知分两种:客人没给位置 → 开定位入口让他补(老板 2026-07-20 拍板,
+      // 拒绝过浏览器定位的客人不能无路可走);客人给了位置但这位技师仍算不出
+      // 距离 → 技师侧无坐标,只提示"暂不可约",别再弹定位框怪客人。
+      if (distanceKm === null && !customerLocated && typeof onRequireLocation === 'function') onRequireLocation();
       setShowRangeHint(true);
       return;
     }
@@ -336,7 +338,7 @@ function TherapistWallCard({ therapist, selected, onSelect, onRequireLocation })
           data-testid={`therapist-card-out-of-range-hint-${therapist.id}`}
           className="pointer-events-none absolute left-1/2 top-1/2 z-20 w-[86%] -translate-x-1/2 -translate-y-1/2 rounded-xl bg-black/85 px-4 py-3 text-center text-sm font-semibold leading-5 text-white shadow-lg"
         >
-          {distanceKm === null ? SERVICE_RADIUS_LOCATION_REQUIRED_MESSAGE : SERVICE_RADIUS_TOO_FAR_MESSAGE}
+          {distanceKm !== null ? SERVICE_RADIUS_TOO_FAR_MESSAGE : customerLocated ? THERAPIST_TEMPORARILY_UNAVAILABLE_MESSAGE : SERVICE_RADIUS_LOCATION_REQUIRED_MESSAGE}
         </span>
       ) : null}
       <div className="flex min-h-[112px] gap-3">
@@ -1224,7 +1226,7 @@ export default function BookingModal() {
                         <p className="mt-1">Checking the current public booking catalog.</p>
                       </div>
                     ) : null}
-                    {catalogStatus === 'ready' ? wallTherapists.map(therapist => <TherapistWallCard key={therapist.id} therapist={therapist} selected={formData.requestedTechnicianId === therapist.id} onSelect={openTherapistDetail} onRequireLocation={() => setShowWallLocationPicker(true)} />) : null}
+                    {catalogStatus === 'ready' ? wallTherapists.map(therapist => <TherapistWallCard key={therapist.id} therapist={therapist} selected={formData.requestedTechnicianId === therapist.id} onSelect={openTherapistDetail} onRequireLocation={() => setShowWallLocationPicker(true)} customerLocated={isUsableCustomerLocation(customerCoords)} />) : null}
                     {catalogUnavailable ? (
                       <div className="rounded-[1.5rem] border border-amber-200 bg-amber-50 p-5 text-sm text-amber-900" data-testid="booking-catalog-unavailable">
                         <p className="text-base font-bold">{catalogUnavailableNotice}</p>

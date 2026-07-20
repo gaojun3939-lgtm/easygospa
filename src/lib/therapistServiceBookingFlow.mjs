@@ -179,6 +179,9 @@ export const ALL_SERVICE_TYPES_VALUE = 'all_service_types';
 export const MAX_SERVICE_DISTANCE_KM = 10;
 export const SERVICE_RADIUS_LOCATION_REQUIRED_MESSAGE = 'Please confirm your location first';
 export const SERVICE_RADIUS_TOO_FAR_MESSAGE = `Please select a nearby therapist within ${MAX_SERVICE_DISTANCE_KM} km.`;
+// 客人已给位置但这位技师仍算不出距离 = 技师侧无坐标(定位过期又没设驻点):
+// 问题在技师,不能再让客人"确认位置"背锅。
+export const THERAPIST_TEMPORARILY_UNAVAILABLE_MESSAGE = 'This therapist is temporarily unavailable for booking.';
 
 export function therapistDistanceKm(therapist = {}) {
   const rawDistance = therapist?.distanceKm ?? therapist?.approxDistanceKm;
