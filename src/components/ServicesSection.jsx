@@ -106,7 +106,7 @@ export default function ServicesSection() {
             {/* 老板 2026-07-19:图标/字体加清晰,并做成可点按钮→直接打开技师墙。 */}
             <button
               type="button"
-              onClick={() => window.dispatchEvent(new CustomEvent('open-booking-modal'))}
+              data-open-booking="1"
               className="inline-flex items-center gap-2 bg-[#2db83d] rounded-full px-6 py-3 mb-6 shadow-md hover:bg-[#249c32] transition-colors"
             >
               <Sparkles className="w-5 h-5 text-white" strokeWidth={2.5} />
@@ -182,7 +182,7 @@ export default function ServicesSection() {
               {/* 老板 2026-07-19:原来是跳 /services 页,改成直接打开技师墙。 */}
               <button
                 type="button"
-                onClick={() => window.dispatchEvent(new CustomEvent('open-booking-modal'))}
+                data-open-booking="1"
                 className="bg-[#2db83d] text-white px-8 py-4 rounded-full font-medium hover:bg-[#45f248] transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
               >
                 Book Massage Now

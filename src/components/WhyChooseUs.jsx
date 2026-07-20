@@ -173,7 +173,7 @@ export default function WhyChooseUs() {
               <motion.button 
                 whileHover={{ scale: 1.1, boxShadow: "0 20px 40px rgba(200, 168, 130, 0.3)" }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => window.dispatchEvent(new CustomEvent('open-booking-modal'))}
+                data-open-booking="1"
                 className="bg-[#2db83d] text-white px-8 py-4 rounded-full font-sans font-medium hover:bg-[#45f248] transition-all duration-300 shadow-lg"
               >
                 Book Massage Now

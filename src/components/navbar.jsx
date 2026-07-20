@@ -48,6 +48,13 @@ export default function Navbar() {
     // Initial check in case user reloads mid-scroll
     handleScroll();
 
+    // 预热期(React 未接管前)点过 CTA 的,挂载后补开弹窗。
+    if (window.__egOpenBooking) {
+      window.__egOpenBooking = false;
+      setInitialService(null);
+      setIsBookingOpen(true);
+    }
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("open-booking-modal", openBookingModal);

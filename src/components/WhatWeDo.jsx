@@ -263,7 +263,7 @@ Fast booking, verified therapists, and reliable service make EasyGo Spa one of t
           <motion.button 
             whileHover={{ scale: 1.1, boxShadow: "0 20px 40px rgba(200, 168, 130, 0.3)" }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => window.dispatchEvent(new CustomEvent('open-booking-modal'))}
+            data-open-booking="1"
             className="bg-gradient-to-r from-[#2db83d] to-[#45f248] text-white px-8 py-4 rounded-full font-sans font-semibold hover:from-[#45f248] hover:to-[#2db83d] transition-all duration-300 shadow-lg text-lg"
           >
             Book Massage Now

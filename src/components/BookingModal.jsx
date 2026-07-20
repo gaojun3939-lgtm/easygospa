@@ -399,7 +399,7 @@ function defaultDurationOption(service) {
     || [...options].sort((a, b) => Number(a.durationMinutes) - Number(b.durationMinutes))[0];
 }
 
-function ServiceCard({ service, selected, selectedDuration, onSelectService, onSelectDuration }) {
+function ServiceCard({ service, selected, selectedDuration, onSelectService, onSelectDuration, onBook }) {
   // 档位药丸常驻卡面(老板 2026-07-21 参考打车式竞品):没选中的卡也能看到
   // 60/90/120 全档,点任意档 = 同时选中该服务和该档;价格大字实时跟着档位走。
   const selectedOption = selected
@@ -447,9 +447,22 @@ function ServiceCard({ service, selected, selectedDuration, onSelectService, onS
           })}
         </div>
         {priceOption ? (
-          <div className="mt-3 flex items-baseline gap-1.5" data-testid={`service-price-${service.id}`}>
-            <span className="text-2xl font-extrabold text-[#0F0F0F]">{money(priceOption.price)}</span>
-            <span className="text-xs font-semibold text-gray-500">/ {priceOption.durationMinutes} mins</span>
+          <div className="mt-3 flex items-center justify-between gap-3">
+            <div className="flex items-baseline gap-1.5" data-testid={`service-price-${service.id}`}>
+              <span className="text-2xl font-extrabold text-[#0F0F0F]">{money(priceOption.price)}</span>
+              <span className="text-xs font-semibold text-gray-500">/ {priceOption.durationMinutes} mins</span>
+            </div>
+            {/* Book 长在选中的卡片里(老板 2026-07-21:底部长条挡视野,不要了)。 */}
+            {selected && selectedOption ? (
+              <button
+                type="button"
+                onClick={event => { event.stopPropagation(); onBook?.(); }}
+                data-testid="detail-book"
+                className="inline-flex h-11 min-w-24 shrink-0 items-center justify-center rounded-full bg-[#4E8D43] px-6 font-bold text-white transition hover:bg-[#3F7838]"
+              >
+                Book
+              </button>
+            ) : null}
           </div>
         ) : null}
       </div>
@@ -466,7 +479,6 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
   const remainingServiceCount = Math.max(0, availableServices.length - visibleServiceTags.length);
   const detailImageUrl = resolveTherapistImageUrl(therapist, 'detail');
   const usesFallbackImage = detailImageUrl === DEFAULT_THERAPIST_IMAGE_URL;
-  const canBook = Boolean(selectedServiceName && selectedDuration && Number(totalAmount) > 0);
   // 老板 2026-07-19:主图 + 已批准生活照 合成一个可左右滑的相册放最顶部(不再分两块)。
   const heroPhotos = Array.from(new Set([
     ...(usesFallbackImage ? [] : [detailImageUrl]),
@@ -489,7 +501,7 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
   };
 
   return (
-    <div className="mx-auto max-w-4xl space-y-4 pb-32 sm:pb-8" data-testid="therapist-detail-view">
+    <div className="mx-auto max-w-4xl space-y-4 pb-8" data-testid="therapist-detail-view">
       <section className="overflow-hidden rounded-[1.75rem] bg-white shadow-sm" data-testid="therapist-detail-hero">
         <div className={`relative bg-[#11150f] ${usesFallbackImage && heroPhotos.length === 0 ? 'h-[152px] sm:h-[180px]' : 'h-[320px] sm:h-[440px]'}`}>
           {heroPhotos.length > 1 ? (
@@ -559,7 +571,7 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
         <h3 className="text-2xl font-bold text-[#0F0F0F]">My Services</h3>
         <p className="mt-1 text-sm text-gray-600">Real bookable services and prices from the public catalog.</p>
         <div className="mt-4 grid gap-4 lg:grid-cols-2">
-          {availableServices.map(service => <ServiceCard key={service.id} service={service} selected={selectedServiceName === service.name} selectedDuration={selectedServiceName === service.name ? Number(selectedDuration) : 0} onSelectService={onSelectService} onSelectDuration={onSelectDuration} />)}
+          {availableServices.map(service => <ServiceCard key={service.id} service={service} selected={selectedServiceName === service.name} selectedDuration={selectedServiceName === service.name ? Number(selectedDuration) : 0} onSelectService={onSelectService} onSelectDuration={onSelectDuration} onBook={onBook} />)}
         </div>
       </div>
       <section className="rounded-[1.5rem] border border-gray-200 bg-white p-5 shadow-sm">
@@ -571,19 +583,7 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
           <div className="mt-3 space-y-2">{therapist.verifiedReviews.map(review => <p key={review.id} className="text-sm text-gray-600">{review.text}</p>)}</div>
         ) : <p className="mt-3 text-sm text-gray-600">Reviews will appear after completed bookings.</p>}
       </section>
-      {canBook ? (
-        <div className="sticky bottom-0 z-20 -mx-2 border-t border-gray-200 bg-white/95 px-4 pt-4 shadow-[0_-8px_24px_rgba(15,15,15,0.08)] backdrop-blur [padding-bottom:calc(1rem+env(safe-area-inset-bottom))] sm:-mx-3 sm:rounded-t-2xl" data-testid="therapist-booking-summary">
-          <div className="mx-auto flex max-w-3xl items-end justify-between gap-3">
-            <div>
-              <p className="text-xs uppercase tracking-wide text-gray-500">Selected summary</p>
-              <p className="font-semibold text-[#0F0F0F]">{therapist.name}</p>
-              <p className="text-sm text-gray-600">{selectedServiceName}{selectedDuration ? ` / ${selectedDuration} mins` : ''}</p>
-              <p className="mt-1 text-lg font-bold text-[#3F7838]">{money(totalAmount)}</p>
-            </div>
-            <button type="button" onClick={onBook} data-testid="detail-book" className="inline-flex h-12 min-w-28 items-center justify-center rounded-2xl bg-[#4E8D43] px-6 font-bold text-white transition hover:bg-[#3F7838]">Book</button>
-          </div>
-        </div>
-      ) : null}
+      {/* 底部账单条已拆(老板 2026-07-21):Book 按钮直接长在选中的服务卡里。 */}
     </div>
   );
 }

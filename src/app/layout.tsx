@@ -16,6 +16,7 @@ import {Phone,
   Instagram,
   Facebook,
   Sparkles,
+  MessageCircle,
   MapPin,} from "lucide-react";
 
   import SubscribeForm from "@/components/subscribe-form"
@@ -95,6 +96,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        {/* 预热兜底:页面刚加载、React 还没接管时,带 data-open-booking 的按钮
+            也能被这条原生监听接住(先记 flag,Navbar 挂载后补开弹窗)。 */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "document.addEventListener('click',function(e){var t=e.target&&e.target.closest?e.target.closest('[data-open-booking]'):null;if(t){window.__egOpenBooking=true;try{window.dispatchEvent(new CustomEvent('open-booking-modal'))}catch(err){}}});"
+          }}
+        />
         <LoadingScreen/>
         <Suspense fallback={null}>
         <Navbar/>
@@ -260,7 +269,18 @@ export default function RootLayout({
                     href="tel:+63 964 857 0967"
                     className="text-gray-300 hover:text-[#2db83d] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 focus:ring-offset-[#0F0F0F] rounded"
                   >
-                    Phone / WhatsApp: +63 964 857 0967
+                    Phone: +63 964 857 0967
+                  </a>
+                </div>
+                <div className="flex items-center gap-3">
+                  <MessageCircle className="w-5 h-5 text-[#2db83d]" aria-hidden="true" />
+                  <a
+                    href="https://wa.me/639648570967?text=Hi%20EasyGoSpa%2C%20I%20would%20like%20to%20ask%20about%20a%20home%20massage%20booking."
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-gray-300 hover:text-[#2db83d] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 focus:ring-offset-[#0F0F0F] rounded"
+                  >
+                    WhatsApp: +63 964 857 0967
                   </a>
                 </div>
                 <div className="flex items-center gap-3">

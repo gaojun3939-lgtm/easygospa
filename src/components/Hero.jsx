@@ -157,7 +157,7 @@ export default function Hero() {
               {/* CTA Buttons - Super Responsive */}
               <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 pt-4 sm:pt-6">
                 <button
-                  onClick={() => window.dispatchEvent(new CustomEvent('open-booking-modal'))}
+                  data-open-booking="1"
                   className="group bg-gradient-to-r from-[#2db83d] to-[#45f248] text-white px-6 sm:px-8 lg:px-10 py-4 sm:py-5 rounded-full font-sans font-semibold text-sm sm:text-base lg:text-lg hover:from-[#45f248] hover:to-[#2db83d] transition-all duration-500 hover:scale-105 shadow-2xl hover:shadow-[#2db83d]/30 flex items-center justify-center gap-2 sm:gap-3 min-h-[48px] sm:min-h-[56px] lg:min-h-[60px] w-full sm:w-auto"
                 >
                   <span className="text-center leading-tight">
@@ -166,12 +166,7 @@ export default function Hero() {
                   <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-2 transition-transform duration-300 flex-shrink-0" />
                 </button>
                 
-                <button
-                  onClick={() => window.location.href = 'tel:+63 964 857 0967'}
-                  className="group bg-white/10 backdrop-blur-sm text-white border-2 border-white/30 px-6 sm:px-8 py-4 sm:py-5 rounded-full font-sans font-semibold text-sm sm:text-base lg:text-lg hover:bg-white hover:text-[#0F0F0F] transition-all duration-500 flex items-center justify-center gap-2 sm:gap-3 min-h-[48px] sm:min-h-[56px] lg:min-h-[60px] w-full sm:w-auto"
-                >
-                  <span className="whitespace-nowrap">Call Now: +63 964 857 0967</span>
-                </button>
+                {/* 老板 2026-07-21:首屏撤掉 Call Now,电话入口只留页脚(电话/WhatsApp 分两行)。 */}
               </div>
 
               {/* Urgency Element - Responsive */}
