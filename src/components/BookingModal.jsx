@@ -571,17 +571,19 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
           <div className="mt-3 space-y-2">{therapist.verifiedReviews.map(review => <p key={review.id} className="text-sm text-gray-600">{review.text}</p>)}</div>
         ) : <p className="mt-3 text-sm text-gray-600">Reviews will appear after completed bookings.</p>}
       </section>
-      <div className="sticky bottom-0 z-20 -mx-2 border-t border-gray-200 bg-white/95 px-4 pt-4 shadow-[0_-8px_24px_rgba(15,15,15,0.08)] backdrop-blur [padding-bottom:calc(1rem+env(safe-area-inset-bottom))] sm:-mx-3 sm:rounded-t-2xl" data-testid="therapist-booking-summary">
-        <div className="mx-auto flex max-w-3xl items-end justify-between gap-3">
-          <div>
-            <p className="text-xs uppercase tracking-wide text-gray-500">Selected summary</p>
-            <p className="font-semibold text-[#0F0F0F]">{therapist.name}</p>
-            <p className="text-sm text-gray-600">{selectedServiceName || 'Select a service'} {selectedServiceName ? (selectedDuration ? `/ ${selectedDuration} mins` : '/ Select a duration') : ''}</p>
-            <p className="mt-1 text-lg font-bold text-[#3F7838]">{canBook ? money(totalAmount) : '—'}</p>
+      {canBook ? (
+        <div className="sticky bottom-0 z-20 -mx-2 border-t border-gray-200 bg-white/95 px-4 pt-4 shadow-[0_-8px_24px_rgba(15,15,15,0.08)] backdrop-blur [padding-bottom:calc(1rem+env(safe-area-inset-bottom))] sm:-mx-3 sm:rounded-t-2xl" data-testid="therapist-booking-summary">
+          <div className="mx-auto flex max-w-3xl items-end justify-between gap-3">
+            <div>
+              <p className="text-xs uppercase tracking-wide text-gray-500">Selected summary</p>
+              <p className="font-semibold text-[#0F0F0F]">{therapist.name}</p>
+              <p className="text-sm text-gray-600">{selectedServiceName}{selectedDuration ? ` / ${selectedDuration} mins` : ''}</p>
+              <p className="mt-1 text-lg font-bold text-[#3F7838]">{money(totalAmount)}</p>
+            </div>
+            <button type="button" onClick={onBook} data-testid="detail-book" className="inline-flex h-12 min-w-28 items-center justify-center rounded-2xl bg-[#4E8D43] px-6 font-bold text-white transition hover:bg-[#3F7838]">Book</button>
           </div>
-          <button type="button" onClick={onBook} disabled={!canBook} data-testid="detail-book" className="inline-flex h-12 min-w-28 items-center justify-center rounded-2xl bg-[#4E8D43] px-6 font-bold text-white transition hover:bg-[#3F7838] disabled:cursor-not-allowed disabled:opacity-45">Book</button>
         </div>
-      </div>
+      ) : null}
     </div>
   );
 }
@@ -880,18 +882,15 @@ export default function BookingModal() {
       const currentService = findBookingServiceByName(current.service, catalogServices);
       const selectedServiceAllowed = currentService && therapistServices.some(service => service.id === currentService.id);
       const selectedOption = selectedServiceAllowed ? findExactDurationOption(currentService, current.durationMinutes) : null;
-      // 没带着已选服务进来 → 默认选中最便宜服务的 60 分钟档,像打车一样开门见价
-      // (排序口径与列表一致:按默认档价格从低到高)。
-      const cheapestFirst = [...therapistServices].sort((a, b) => (Number(defaultDurationOption(a)?.price) || Infinity) - (Number(defaultDurationOption(b)?.price) || Infinity));
-      const defaultService = selectedServiceAllowed ? currentService : (cheapestFirst[0] || null);
-      const defaultOption = selectedServiceAllowed ? selectedOption : defaultDurationOption(defaultService);
+      // 不预选服务(老板 2026-07-21 二改:卡片上有价就够了,客人点了哪个服务,
+      // 底部账单条才弹出来 —— 一直杵着挡内容)。
       return {
         ...current,
         requestedTechnicianId: therapist.id,
-        serviceId: defaultService?.id || '',
-        service: defaultService?.name || '',
-        durationMinutes: defaultOption?.durationMinutes || '',
-        totalAmount: defaultOption?.price || 0
+        serviceId: selectedServiceAllowed ? currentService.id : '',
+        service: selectedServiceAllowed ? currentService.name : '',
+        durationMinutes: selectedOption?.durationMinutes || '',
+        totalAmount: selectedOption?.price || 0
       };
     });
     setError('');
