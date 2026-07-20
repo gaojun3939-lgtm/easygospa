@@ -174,8 +174,10 @@ export function concreteTherapistsForWall(preferredService = '', therapists = we
 export const ALL_SERVICE_TYPES_VALUE = 'all_service_types';
 
 // 服务半径闸门(老板 2026-07-20 拍板 10 km):超出这个距离不接单——车费和路上时间
-// 吃掉利润,跑远单就是亏钱。已知距离且超限的技师:墙上不显示、也下不了单;
-// 距离未知(客人没给定位)不拦浏览,由下单那一步再校验(老板选的方案 C)。
+// 吃掉利润,跑远单就是亏钱。
+// ⚠️ 老板同日纠正:超距技师**照常显示、但点不动**,不许从墙上藏起来——
+// 新区域本来人就少,藏掉墙就空了,客人看见光秃秃的页面直接走人。
+// 距离未知(客人没给定位)不拦,由下单那一步再校验(老板选的方案 C)。
 export const MAX_SERVICE_DISTANCE_KM = 10;
 
 export function therapistDistanceKm(therapist = {}) {
@@ -197,8 +199,7 @@ export function filterTherapistsForWall({
   selectedService = '',
   matchSelectedService = false,
   serviceType = ALL_SERVICE_TYPES_VALUE,
-  sortBy = 'recommended',
-  maxDistanceKm = MAX_SERVICE_DISTANCE_KM
+  sortBy = 'recommended'
 } = {}) {
   const normalizedQuery = String(query || '').trim().toLowerCase();
   const normalizedArea = String(selectedArea || '');
@@ -207,8 +208,7 @@ export function filterTherapistsForWall({
     const therapistAreas = Array.isArray(therapist.serviceAreas) ? therapist.serviceAreas : [];
     const therapistServices = Array.isArray(therapist.availableServices) ? therapist.availableServices : [];
     const therapistSpecialties = Array.isArray(therapist.specialties) ? therapist.specialties : [];
-    // 距离闸门优先:超出服务半径的技师直接不进墙(老板 2026-07-20)。
-    if (!isTherapistWithinServiceRange(therapist, maxDistanceKm)) return false;
+    // 注意:这里**不做**距离过滤——超距技师要留在墙上撑场面,只是卡片上点不动。
     const areaMatches = normalizedArea === allAreasValue
       || therapistAreas.some(area => area.toLowerCase() === normalizedArea.toLowerCase());
     if (!areaMatches) return false;

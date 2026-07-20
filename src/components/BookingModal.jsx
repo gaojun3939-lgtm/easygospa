@@ -20,6 +20,7 @@ import {
   serviceTypeOptionsForWall,
   servicesForTherapist,
   MAX_SERVICE_DISTANCE_KM,
+  isTherapistWithinServiceRange,
   therapistDistanceKm
 } from '../lib/therapistServiceBookingFlow.mjs';
 import { getFallbackWebsiteBookingCatalog } from '../lib/bookingCatalogNormalizer.mjs';
@@ -301,8 +302,23 @@ function TherapistAvatar({ therapist, mode = 'wall' }) {
 }
 
 function TherapistWallCard({ therapist, selected, onSelect }) {
+  // 超出 10km 服务半径:卡片照常显示(墙不能空),但点不动,给一句提示(老板 2026-07-20)。
+  const distanceKm = therapistDistanceKm(therapist);
+  const outOfRange = !isTherapistWithinServiceRange(therapist);
+  const [showRangeHint, setShowRangeHint] = useState(false);
+
+  useEffect(() => {
+    if (!showRangeHint) return undefined;
+    const timer = setTimeout(() => setShowRangeHint(false), 2600);
+    return () => clearTimeout(timer);
+  }, [showRangeHint]);
+
   // 工具人只展示不可下单:点卡片不进详情(老板 2026-07-19)。
-  const openDetail = () => { if (therapist.isMannequin) return; onSelect(therapist.id); };
+  const openDetail = () => {
+    if (therapist.isMannequin) return;
+    if (outOfRange) { setShowRangeHint(true); return; }
+    onSelect(therapist.id);
+  };
   const handleKeyDown = event => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
@@ -320,6 +336,15 @@ function TherapistWallCard({ therapist, selected, onSelect }) {
       className={`relative w-full cursor-pointer overflow-hidden rounded-[1.5rem] border bg-white p-3 text-left shadow-sm transition-all ${selected ? 'border-[#4E8D43] shadow-md' : 'border-gray-100 hover:border-[#4E8D43]/60 hover:shadow-md'}`}
     >
       {therapist.isNew === true ? <span className="pointer-events-none absolute left-3 top-3 z-10 rounded-md bg-sky-600 px-2 py-1 text-[10px] font-extrabold leading-none tracking-[0.12em] text-white shadow-sm" data-testid="therapist-new-badge">NEW</span> : null}
+      {showRangeHint ? (
+        <span
+          role="status"
+          data-testid={`therapist-card-out-of-range-hint-${therapist.id}`}
+          className="pointer-events-none absolute left-1/2 top-1/2 z-20 w-[86%] -translate-x-1/2 -translate-y-1/2 rounded-xl bg-black/85 px-4 py-3 text-center text-sm font-semibold leading-5 text-white shadow-lg"
+        >
+          Please choose a therapist near you — this one is outside our {MAX_SERVICE_DISTANCE_KM} km service area.
+        </span>
+      ) : null}
       <div className="flex min-h-[112px] gap-3">
         <TherapistAvatar therapist={therapist} mode="wall" />
         <div className="min-w-0 flex-1">
@@ -336,10 +361,11 @@ function TherapistWallCard({ therapist, selected, onSelect }) {
           </div>
           <p className="text-sm font-medium text-gray-700">Massage Therapist</p>
           <p className="mt-1 line-clamp-2 text-xs leading-5 text-gray-500">{therapistAreaText(therapist)}</p>
-          {Number.isFinite(therapist.distanceKm) && therapist.distanceKm <= 100 ? (
-            <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-[#3F7838]" data-testid="therapist-distance">
+          {distanceKm !== null && distanceKm <= 100 ? (
+            <p className={`mt-1 flex items-center gap-1 text-xs font-semibold ${outOfRange ? 'text-gray-400' : 'text-[#3F7838]'}`} data-testid="therapist-distance">
               <MapPin className="h-3.5 w-3.5 shrink-0" />
-              {therapist.distanceKm < 10 ? therapist.distanceKm.toFixed(1) : Math.round(therapist.distanceKm)} km
+              {distanceKm < 10 ? distanceKm.toFixed(1) : Math.round(distanceKm)} km
+              {outOfRange ? <span data-testid="therapist-out-of-range-tag"> · Too far</span> : null}
             </p>
           ) : null}
           <div className="mt-1 text-xs font-medium text-gray-600"><TherapistRating therapist={therapist} /></div>
@@ -354,7 +380,8 @@ function TherapistWallCard({ therapist, selected, onSelect }) {
                 openDetail();
               }}
               data-testid={`therapist-card-book-${therapist.id}`}
-              className="ml-auto inline-flex h-11 min-w-20 shrink-0 items-center justify-center rounded-full bg-[#4E8D43] px-4 text-sm font-bold text-white transition hover:bg-[#3F7838]"
+              aria-disabled={outOfRange || undefined}
+              className={`ml-auto inline-flex h-11 min-w-20 shrink-0 items-center justify-center rounded-full px-4 text-sm font-bold transition ${outOfRange ? 'cursor-not-allowed bg-gray-200 text-gray-500' : 'bg-[#4E8D43] text-white hover:bg-[#3F7838]'}`}
             >
               Book
             </button>
