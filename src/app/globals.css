@@ -124,3 +124,9 @@ body.booking-modal-open * {
     padding: 1rem 1.5rem !important;
   }
 }
+
+/* 下单弹窗打开时隐藏 WhatsApp 悬浮球:别挡 Book 按钮,也别把要下单的人引去聊天
+   (老板 2026-07-21;body 的 booking-modal-open 标记由 BookingModal 维护)。 */
+body.booking-modal-open .eg-wa-float {
+  display: none;
+}
