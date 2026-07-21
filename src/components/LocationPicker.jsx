@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Crosshair, MapPin } from 'lucide-react';
 import { loadGoogleMaps, getGoogleMapsApiKey } from '../lib/googleMapsLoader.mjs';
+import { confirmedLocationAction, resetLocationConfirmation } from '../lib/locationConfirmation.mjs';
 
 // Metro Manila fallback center (used before the customer picks a point).
 const DEFAULT_CENTER = { lat: 14.5547, lng: 121.0244 };
@@ -20,6 +21,9 @@ export function LocationPicker({ value, onChange, onAddress }) {
   const onAddressRef = useRef(onAddress);
   const [mapState, setMapState] = useState('loading'); // loading | ready | unavailable
   const [locateState, setLocateState] = useState('idle'); // idle | locating | done | denied | unsupported
+  const [confirmedBy, setConfirmedBy] = useState(''); // '' | gps | pin
+  const [geocodeFailed, setGeocodeFailed] = useState(false);
+  const [finalizing, setFinalizing] = useState(false);
 
   useEffect(() => {
     onChangeRef.current = onChange;
@@ -43,19 +47,43 @@ export function LocationPicker({ value, onChange, onAddress }) {
       if (mapRef.current.getZoom() < 15) mapRef.current.setZoom(16);
     }
     onChangeRef.current?.({ latitude, longitude, source });
-    // 反查门牌(老板 2026-07-21):钉好位置就把地址查出来交给上层,
-    // 客人不用再手打;查不到就静默,不挡流程。
-    if (onAddressRef.current && geocoderRef.current) {
-      try {
-        geocoderRef.current.geocode({ location: position }, (results, status) => {
-          const formatted = status === 'OK' ? results?.[0]?.formatted_address : '';
-          if (formatted) onAddressRef.current?.(formatted, source);
-        });
-      } catch {
-        // 静默:地址反查失败不影响定位本身
-      }
-    }
   }, []);
+
+  const reviveLocationButtons = useCallback(() => {
+    setConfirmedBy(resetLocationConfirmation());
+    setGeocodeFailed(false);
+    setFinalizing(false);
+    setLocateState('idle');
+  }, []);
+
+  const finalizeLocation = useCallback((latitude, longitude, source, action) => {
+    const position = { lat: latitude, lng: longitude };
+    applyLocation(latitude, longitude, source);
+    setFinalizing(true);
+    setGeocodeFailed(false);
+
+    const complete = (formattedAddress = '') => {
+      const address = String(formattedAddress || '').trim();
+      const failed = !address;
+      setConfirmedBy(confirmedLocationAction(action));
+      setGeocodeFailed(failed);
+      setFinalizing(false);
+      if (action === 'gps') setLocateState('done');
+      onAddressRef.current?.(address, source, { ok: !failed, geocodeFailed: failed });
+    };
+
+    if (!geocoderRef.current) {
+      complete('');
+      return;
+    }
+    try {
+      geocoderRef.current.geocode({ location: position }, (results, status) => {
+        complete(status === 'OK' ? results?.[0]?.formatted_address : '');
+      });
+    } catch {
+      complete('');
+    }
+  }, [applyLocation]);
 
   useEffect(() => {
     if (!getGoogleMapsApiKey()) {
@@ -86,10 +114,16 @@ export function LocationPicker({ value, onChange, onAddress }) {
         const marker = new maps.Marker({ map, position: center, draggable: true });
         marker.addListener('dragend', () => {
           const position = marker.getPosition();
-          if (position) applyLocation(position.lat(), position.lng(), 'pin_drag');
+          if (position) {
+            reviveLocationButtons();
+            applyLocation(position.lat(), position.lng(), 'pin_drag');
+          }
         });
         map.addListener('click', event => {
-          if (event.latLng) applyLocation(event.latLng.lat(), event.latLng.lng(), 'map_tap');
+          if (event.latLng) {
+            reviveLocationButtons();
+            applyLocation(event.latLng.lat(), event.latLng.lng(), 'map_tap');
+          }
         });
         mapRef.current = map;
         markerRef.current = marker;
@@ -112,8 +146,7 @@ export function LocationPicker({ value, onChange, onAddress }) {
     setLocateState('locating');
     navigator.geolocation.getCurrentPosition(
       position => {
-        applyLocation(position.coords.latitude, position.coords.longitude, 'gps');
-        setLocateState('done');
+        finalizeLocation(position.coords.latitude, position.coords.longitude, 'gps', 'gps');
       },
       () => setLocateState('denied'),
       { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 }
@@ -128,14 +161,15 @@ export function LocationPicker({ value, onChange, onAddress }) {
     );
   }
 
-  // 一键确认:拿当前钉子位置(客人没动过就是默认市中心)直接定案,
-  // 不逼没开定位的客人再去点地图(老板 2026-07-21:少一步是一步)。
   function confirmPinLocation() {
     const position = markerRef.current?.getPosition?.();
     const latitude = position ? position.lat() : (value?.latitude ?? DEFAULT_CENTER.lat);
     const longitude = position ? position.lng() : (value?.longitude ?? DEFAULT_CENTER.lng);
-    applyLocation(latitude, longitude, 'pin_confirm');
+    finalizeLocation(latitude, longitude, 'pin_confirm', 'pin');
   }
+
+  const locationLocked = Boolean(confirmedBy) || finalizing;
+  const completedClassName = 'inline-flex h-11 items-center gap-2 rounded-2xl border border-gray-200 bg-gray-100 px-4 text-sm font-bold text-gray-500 disabled:cursor-default';
 
   return (
     <div className="space-y-3" data-testid="location-picker">
@@ -143,22 +177,23 @@ export function LocationPicker({ value, onChange, onAddress }) {
         <button
           type="button"
           onClick={confirmPinLocation}
-          className="inline-flex h-11 items-center gap-2 rounded-2xl bg-[#4E8D43] px-4 text-sm font-bold text-white hover:bg-[#3F7838]"
+          disabled={locationLocked}
+          className={locationLocked ? completedClassName : 'inline-flex h-11 items-center gap-2 rounded-2xl bg-[#4E8D43] px-4 text-sm font-bold text-white hover:bg-[#3F7838]'}
           data-testid="confirm-pin-button"
         >
           <MapPin className="h-4 w-4" />
-          Confirm this location
+          {confirmedBy === 'pin' ? '✓ Location confirmed' : finalizing ? 'Confirming...' : 'Confirm this location'}
         </button>
         {locateState !== 'denied' && locateState !== 'unsupported' ? (
           <button
             type="button"
             onClick={locateMe}
-            disabled={locateState === 'locating'}
-            className="inline-flex h-11 items-center gap-2 rounded-2xl border border-[#4E8D43]/40 bg-white px-4 text-sm font-bold text-[#3F7838] hover:border-[#4E8D43] disabled:opacity-60"
+            disabled={locateState === 'locating' || locationLocked}
+            className={locationLocked ? completedClassName : 'inline-flex h-11 items-center gap-2 rounded-2xl border border-[#4E8D43]/40 bg-white px-4 text-sm font-bold text-[#3F7838] hover:border-[#4E8D43] disabled:opacity-60'}
             data-testid="locate-me-button"
           >
             <Crosshair className="h-4 w-4" />
-            {locateState === 'locating' ? 'Locating...' : 'Use my location'}
+            {confirmedBy === 'gps' ? '✓ Using your location' : locateState === 'locating' ? 'Locating...' : 'Use my location'}
           </button>
         ) : null}
         {value?.latitude ? (
@@ -176,6 +211,7 @@ export function LocationPicker({ value, onChange, onAddress }) {
       {locateState === 'unsupported' ? (
         <p className="text-xs leading-5 text-amber-700">This browser does not support location. Tap the map or search your building below.</p>
       ) : null}
+      {geocodeFailed ? <p className="text-xs font-semibold leading-5 text-amber-700">Couldn't fetch the address - please type it in</p> : null}
       <div
         ref={mapContainerRef}
         style={{ height: '13rem' }}

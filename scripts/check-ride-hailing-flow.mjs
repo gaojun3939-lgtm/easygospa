@@ -11,6 +11,23 @@ import {
 import { cancelPublicBooking } from '../src/lib/publicBookingCancel.mjs';
 import { projectBookingCancelUpstream } from '../src/lib/bookingCancelProxy.mjs';
 import { forwardedClientIpHeaders } from '../src/lib/serverForwardedIp.mjs';
+import {
+  DEFAULT_BOOKING_PHONE_COUNTRY,
+  BOOKING_PHONE_COUNTRIES,
+  formatBookingPhoneE164,
+  isValidBookingPhone,
+  normalizeBookingPhoneInput
+} from '../src/lib/bookingPhone.mjs';
+import {
+  confirmedLocationAction,
+  resetLocationConfirmation,
+  resolvedAddressAfterConfirmation
+} from '../src/lib/locationConfirmation.mjs';
+import {
+  buildBookingUpdatesWhatsAppUrl,
+  isTherapistArrivalTransition,
+  shouldShowBookingUpdatesBanner
+} from '../src/lib/bookingStatus.mjs';
 
 function check(condition, label, actual) {
   assert.ok(condition, `${label}; actual=${JSON.stringify(actual)}`);
@@ -36,6 +53,25 @@ class MemoryStorage {
 }
 
 const storage = new MemoryStorage();
+
+check(DEFAULT_BOOKING_PHONE_COUNTRY === 'PH' && BOOKING_PHONE_COUNTRIES.length === 10, 'phone country selector defaults to PH and exposes exactly ten approved countries', { defaultCountry: DEFAULT_BOOKING_PHONE_COUNTRY, count: BOOKING_PHONE_COUNTRIES.length });
+const pastedPhilippinePhone = normalizeBookingPhoneInput('+63 908 123 4567', 'US');
+check(JSON.stringify(pastedPhilippinePhone) === JSON.stringify({ countryIso: 'PH', localNumber: '9081234567' }), 'pasting +63 selects PH and strips the calling code', pastedPhilippinePhone);
+const typedPhilippinePhone = normalizeBookingPhoneInput('0908-123-4567', 'PH');
+check(typedPhilippinePhone.localNumber === '9081234567', 'local phone input swallows one or more leading zeroes', typedPhilippinePhone);
+check(formatBookingPhoneE164('PH', typedPhilippinePhone.localNumber) === '+639081234567', 'booking phone payload is normalized to E.164', formatBookingPhoneE164('PH', typedPhilippinePhone.localNumber));
+check(isValidBookingPhone('PH', typedPhilippinePhone.localNumber) && isValidBookingPhone('US', '4155552671'), 'frontend phone validation accepts valid PH and non-PH E.164 numbers', null);
+
+check(confirmedLocationAction('gps') === 'gps' && confirmedLocationAction('pin') === 'pin', 'either location button reaches its own completed state', null);
+check(resetLocationConfirmation('gps') === '', 'dragging or tapping the map revives both location buttons', resetLocationConfirmation('gps'));
+check(resolvedAddressAfterConfirmation('Customer typed unit 18', '') === 'Customer typed unit 18', 'reverse-geocode failure preserves the existing address', resolvedAddressAfterConfirmation('Customer typed unit 18', ''));
+check(resolvedAddressAfterConfirmation('Customer typed unit 18', 'Resolved building') === 'Resolved building', 'explicit location confirmation overwrites the address once', resolvedAddressAfterConfirmation('Customer typed unit 18', 'Resolved building'));
+
+check(shouldShowBookingUpdatesBanner('waiting_acceptance') && shouldShowBookingUpdatesBanner('confirmed') && shouldShowBookingUpdatesBanner('on_the_way'), 'WhatsApp updates banner shows in the three approved active stages', null);
+check(!shouldShowBookingUpdatesBanner('completed') && !shouldShowBookingUpdatesBanner('cancelled'), 'WhatsApp updates banner hides after completion or cancellation', null);
+check(buildBookingUpdatesWhatsAppUrl('mbr-brand-a-test') === 'https://wa.me/639648570967?text=Hi%2C%20my%20booking%20is%20mbr-brand-a-test', 'WhatsApp updates banner uses the approved number and encoded copy', buildBookingUpdatesWhatsAppUrl('mbr-brand-a-test'));
+check(isTherapistArrivalTransition('on_the_way', 'arrived') && !isTherapistArrivalTransition('arrived', 'arrived') && !isTherapistArrivalTransition('waiting_acceptance', 'on_the_way'), 'arrival notification fires only on the transition into arrived', null);
+
 const reference = 'mbr-brand-a-sitewaiting21';
 const written = writeActiveBooking(reference, {
   storage,
@@ -144,6 +180,7 @@ check(
 console.log(`[ride-hailing-site] NEGATIVE cancel_proxy_rate_limit status=${limitedProjection.status} body=${JSON.stringify(limitedProjection.body)} retry_after=${limitedProjection.headers['retry-after']}`);
 
 const modalSource = fs.readFileSync('src/components/BookingModal.jsx', 'utf8');
+const locationPickerSource = fs.readFileSync('src/components/LocationPicker.jsx', 'utf8');
 const trackerSource = fs.readFileSync('src/components/BookingTrackingPage.jsx', 'utf8');
 const requestProxySource = fs.readFileSync('src/app/api/booking-request/route.js', 'utf8');
 const cancelProxySource = fs.readFileSync('src/app/api/booking-cancel/route.js', 'utf8');
@@ -177,6 +214,27 @@ for (const marker of [
 }
 check(!/(countdown|autoCancel|auto_cancel)/i.test(trackerSource), 'tracker has no countdown or auto-cancel implementation', null);
 check(!trackerSource.includes('writeActiveBooking'), 'opening a shared tracking link never creates a local active-booking marker', null);
+for (const marker of [
+  'Type or search your building',
+  'Or use GPS / drag the pin',
+  'scrollIntoView',
+  "Couldn't fetch the address - please type it in",
+  'data-location-address-feedback'
+]) {
+  check(modalSource.includes(marker), `booking modal includes location finalization marker ${marker}`, marker);
+}
+check(!modalSource.includes('lastAutoAddressRef'), 'obsolete lastAutoAddressRef protection is removed', null);
+for (const marker of [
+  '✓ Using your location',
+  '✓ Location confirmed',
+  'confirmedLocationAction',
+  'resetLocationConfirmation',
+  'geocodeFailed'
+]) {
+  check(locationPickerSource.includes(marker), `location picker includes one-tap finalization marker ${marker}`, marker);
+}
+check(trackerSource.indexOf('data-booking-updates-banner') > trackerSource.indexOf('data-booking-primary-status'), 'WhatsApp updates banner renders below the primary status card', null);
+check(trackerSource.includes('Get booking updates on WhatsApp') && trackerSource.includes('Your therapist has arrived'), 'tracker includes approved WhatsApp banner and arrival notification copy', null);
 check(requestProxySource.includes('projectPublicBookingError') && requestProxySource.includes('forwardedClientIpHeaders'), 'booking request proxy strictly projects activeReference and forwards client IP', null);
 check(cancelProxySource.includes('forwardedClientIpHeaders') && cancelProxySource.includes('retry-after'), 'cancel proxy forwards validated client IP and Retry-After', null);
 check(customerOrdersSource.includes('BOOKING_STATUS_STEPS.map'), 'customer orders reuses the one public status timeline', null);

@@ -16,7 +16,6 @@ import {
   getDefaultBookingSession,
   getDefaultDurationOption,
   isValidEmail,
-  isValidPhone,
   serviceTypeOptionsForWall,
   servicesForTherapist,
   MAX_SERVICE_DISTANCE_KM,
@@ -40,6 +39,15 @@ import {
 import { cancelPublicBooking } from '../lib/publicBookingCancel.mjs';
 import { LocationPicker } from './LocationPicker.jsx';
 import { AddressAutocompleteInput } from './AddressAutocompleteInput.jsx';
+import {
+  BOOKING_PHONE_COUNTRIES,
+  DEFAULT_BOOKING_PHONE_COUNTRY,
+  bookingPhoneCountry,
+  formatBookingPhoneE164,
+  isValidBookingPhone,
+  normalizeBookingPhoneInput
+} from '../lib/bookingPhone.mjs';
+import { resolvedAddressAfterConfirmation } from '../lib/locationConfirmation.mjs';
 
 // 名单会话缓存(60 秒):整页刷新后先把上次名单端上墙,真名单在背后静默刷新。
 // 技师上下班仍然实时反映——每次都照常重新拉取,缓存只负责"先有得看"。
@@ -83,7 +91,7 @@ const allServiceAreasValue = 'all_service_areas';
 const catalogUnavailableNotice = 'No specific therapist is available right now.';
 const catalogUnavailableFollowUp = 'Please try again in a few minutes, or message us on WhatsApp to book.';
 const missingProfileIntroduction = 'No profile introduction has been provided yet.';
-const phPhoneErrorMessage = 'Please enter a valid PH mobile number, e.g. 0917 123 4567.';
+const phoneErrorMessage = 'Please enter a valid phone number for the selected country.';
 const bookingInputClass = 'h-12 w-full rounded-2xl border border-gray-300 bg-white px-4 font-medium text-[#0F0F0F] caret-[#0F0F0F] placeholder:text-gray-500 focus:border-[#4E8D43] focus:outline-none';
 const bookingTextareaClass = `${bookingInputClass} min-h-28 resize-none py-3`;
 const bookingLabelClass = 'mb-2 block text-sm font-semibold text-slate-800';
@@ -126,15 +134,6 @@ function inferAreaFromAddress(text = '') {
   if (/pasig/.test(value)) return 'Pasig';
   if (/manila|马尼拉/.test(value)) return 'Manila';
   return 'Metro Manila';
-}
-
-function isValidPhilippineMobile(value = '') {
-  const compact = String(value).replace(/[\s\-()]/g, '');
-  return /^(?:09\d{9}|\+?639\d{9})$/.test(compact);
-}
-
-function cleanPhoneForPayload(value = '') {
-  return String(value).trim().replace(/[\s-]/g, '');
 }
 
 function money(value = 0) {
@@ -601,6 +600,8 @@ export default function BookingModal() {
   const [error, setError] = useState('');
   const [dateError, setDateError] = useState('');
   const [phoneError, setPhoneError] = useState('');
+  const [phoneCountry, setPhoneCountry] = useState(DEFAULT_BOOKING_PHONE_COUNTRY);
+  const [addressFeedback, setAddressFeedback] = useState('');
   const [customerCoords, setCustomerCoords] = useState(null);
   // 定位死锁修复(老板 2026-07-20 拍板通过):拒绝浏览器定位的客人从墙上补位置。
   const [showWallLocationPicker, setShowWallLocationPicker] = useState(false);
@@ -609,6 +610,8 @@ export default function BookingModal() {
   const [activeCancelConfirming, setActiveCancelConfirming] = useState(false);
   const [activeCancelPending, setActiveCancelPending] = useState(false);
   const [activeCancelError, setActiveCancelError] = useState('');
+  const addressFieldRef = useRef(null);
+  const addressFeedbackTimerRef = useRef(null);
 
   const catalogServices = Array.isArray(bookingCatalog.services) ? bookingCatalog.services : [];
   const catalogTherapists = Array.isArray(bookingCatalog.therapists) ? bookingCatalog.therapists : [];
@@ -722,6 +725,10 @@ export default function BookingModal() {
     bookingOpenRef.current = isOpen;
   }, [isOpen]);
 
+  useEffect(() => () => {
+    if (addressFeedbackTimerRef.current) window.clearTimeout(addressFeedbackTimerRef.current);
+  }, []);
+
   // 打开弹窗时轻声定位一次:拿到坐标 → 技师列表按距离显示,并预填下单定位。
   // 客人拒绝或不支持时静默跳过,一切照常。
   useEffect(() => {
@@ -784,9 +791,12 @@ export default function BookingModal() {
     const openModal = event => {
       const serviceName = serviceToCatalogName(event?.detail?.service);
       const stored = readStoredSession();
+      const storedPhone = normalizeBookingPhoneInput(stored?.phone || '', DEFAULT_BOOKING_PHONE_COUNTRY);
       setError('');
       setDateError('');
       setPhoneError('');
+      setPhoneCountry(storedPhone.countryIso);
+      setAddressFeedback('');
       setWallSearch('');
       setSelectedArea(allServiceAreasValue);
       setMatchSelectedService(false);
@@ -800,7 +810,7 @@ export default function BookingModal() {
       setEmailDraft(stored ? { email: stored.customerEmail, name: stored.customerName || '', phone: stored.phone || '' } : { email: '', name: '', phone: '' });
       setFormData(current => {
         const nextForm = createInitialForm(serviceName, catalogServices);
-        return stored ? { ...nextForm, customerEmail: stored.customerEmail, customerName: stored.customerName || current.customerName, phone: stored.phone || current.phone } : nextForm;
+        return stored ? { ...nextForm, customerEmail: stored.customerEmail, customerName: stored.customerName || current.customerName, phone: storedPhone.localNumber || current.phone } : nextForm;
       });
       setStep('wall');
       setIsOpen(true);
@@ -830,18 +840,17 @@ export default function BookingModal() {
     if (error) setError('');
   };
 
-  // 墙上定位入口:选点即刷新技师距离(customerCoords 触发目录重拉),并预填下单定位。
-  // 定位/确认钉子后反查到的门牌,自动填进地址栏;客人手打过的内容不覆盖
-  // (只覆盖空栏或上一次自动填的值,老板 2026-07-21:随便点哪个按钮都自动填,看不对再细改)。
-  const lastAutoAddressRef = useRef('');
-  const handleResolvedAddress = useCallback(address => {
-    const text = String(address || '').trim();
-    if (!text) return;
-    setFormData(current => {
-      const currentNote = String(current.addressNote || '').trim();
-      if (currentNote && currentNote !== lastAutoAddressRef.current) return current;
-      lastAutoAddressRef.current = text;
-      return { ...current, addressNote: text };
+  const handleResolvedAddress = useCallback((address, source, outcome = {}) => {
+    const failed = outcome.geocodeFailed === true || !String(address || '').trim();
+    setFormData(current => ({
+      ...current,
+      addressNote: resolvedAddressAfterConfirmation(current.addressNote, address)
+    }));
+    setAddressFeedback(failed ? 'error' : 'success');
+    if (addressFeedbackTimerRef.current) window.clearTimeout(addressFeedbackTimerRef.current);
+    addressFeedbackTimerRef.current = window.setTimeout(() => setAddressFeedback(''), 1200);
+    window.requestAnimationFrame(() => {
+      addressFieldRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'center' });
     });
   }, []);
 
@@ -850,17 +859,18 @@ export default function BookingModal() {
     const coords = { latitude: location.latitude, longitude: location.longitude };
     setCustomerCoords(coords);
     updateCustomerLocation(coords);
-    setShowWallLocationPicker(false);
   };
 
   const handlePhoneChange = value => {
-    updateField('phone', value);
+    const normalized = normalizeBookingPhoneInput(value, phoneCountry);
+    setPhoneCountry(normalized.countryIso);
+    updateField('phone', normalized.localNumber);
     if (phoneError) setPhoneError('');
   };
 
   const validatePhoneField = () => {
-    const valid = isValidPhilippineMobile(formData.phone);
-    setPhoneError(valid ? '' : phPhoneErrorMessage);
+    const valid = isValidBookingPhone(phoneCountry, formData.phone);
+    setPhoneError(valid ? '' : phoneErrorMessage);
     return valid;
   };
 
@@ -947,16 +957,22 @@ export default function BookingModal() {
   const handleEmailContinue = event => {
     event.preventDefault();
     const session = getDefaultBookingSession(emailDraft);
+    const sessionPhone = normalizeBookingPhoneInput(session.phone, phoneCountry);
+    const normalizedSession = {
+      ...session,
+      phone: session.phone ? formatBookingPhoneE164(sessionPhone.countryIso, sessionPhone.localNumber) : ''
+    };
     if (!isValidEmail(session.customerEmail)) {
       setError('Please enter a valid email address to continue.');
       return;
     }
-    if (session.phone && !isValidPhone(session.phone)) {
+    if (session.phone && !isValidBookingPhone(sessionPhone.countryIso, sessionPhone.localNumber)) {
       setError('Please enter a valid WhatsApp or phone number.');
       return;
     }
-    saveStoredSession(session);
-    setFormData(current => ({ ...current, customerEmail: session.customerEmail, customerName: session.customerName || current.customerName, phone: session.phone || current.phone }));
+    saveStoredSession(normalizedSession);
+    setPhoneCountry(sessionPhone.countryIso);
+    setFormData(current => ({ ...current, customerEmail: session.customerEmail, customerName: session.customerName || current.customerName, phone: sessionPhone.localNumber || current.phone }));
     setError('');
     setStep('details');
   };
@@ -967,12 +983,12 @@ export default function BookingModal() {
     if (!isValidEmail(formData.customerEmail)) return 'Please continue with a valid email first.';
     if (!formData.customerName.trim()) return 'Please enter your full name.';
     if (!formData.phone.trim()) {
-      setPhoneError(phPhoneErrorMessage);
+      setPhoneError(phoneErrorMessage);
       return 'Please enter your WhatsApp or phone number.';
     }
-    if (!isValidPhilippineMobile(formData.phone)) {
-      setPhoneError(phPhoneErrorMessage);
-      return phPhoneErrorMessage;
+    if (!isValidBookingPhone(phoneCountry, formData.phone)) {
+      setPhoneError(phoneErrorMessage);
+      return phoneErrorMessage;
     }
     setPhoneError('');
     // On-demand: no date/time/area pickers — schedule stamps and area are auto-derived.
@@ -1067,7 +1083,7 @@ export default function BookingModal() {
       source: 'website',
       customerName: formData.customerName,
       customerEmail: formData.customerEmail,
-      phone: cleanPhoneForPayload(formData.phone),
+      phone: formatBookingPhoneE164(phoneCountry, formData.phone),
       requestedTechnicianId: selectedTherapist.id,
       requestedTechnicianName: selectedTherapist.name,
       requestedTechnicianProfileId: selectedTherapist.profileId || selectedTherapist.id,
@@ -1223,26 +1239,25 @@ export default function BookingModal() {
 
               {step === 'wall' ? (
                 <div className="space-y-2">
-                  {!isUsableCustomerLocation(customerCoords) ? (
-                    <div className="mx-1 rounded-[1.5rem] border border-amber-200 bg-amber-50 p-4" data-testid="wall-location-entry">
+                  <div className="mx-1 rounded-[1.5rem] border border-amber-200 bg-amber-50 p-4" data-testid="wall-location-entry">
                       <div className="flex flex-wrap items-center justify-between gap-3">
-                        <p className="min-w-0 flex-1 text-sm font-semibold text-amber-900">Share your location to see distances and book a nearby therapist.</p>
+                        <p className="min-w-0 flex-1 text-sm font-semibold text-amber-900">{isUsableCustomerLocation(customerCoords) ? 'Location set. Adjust the pin if you need to.' : 'Share your location to see distances and book a nearby therapist.'}</p>
                         <button
                           type="button"
                           onClick={() => setShowWallLocationPicker(current => !current)}
                           data-testid="wall-location-entry-toggle"
                           className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-full bg-[#4E8D43] px-4 text-sm font-bold text-white transition hover:bg-[#3F7838]"
                         >
-                          <MapPin className="h-4 w-4" />Confirm my location
+                          <MapPin className="h-4 w-4" />{showWallLocationPicker ? 'Hide map' : isUsableCustomerLocation(customerCoords) ? 'Adjust location' : 'Confirm my location'}
                         </button>
                       </div>
                       {showWallLocationPicker ? (
                         <div className="mt-3" data-testid="wall-location-picker">
+                          <p className="mb-2 text-xs text-amber-800">Or use GPS / drag the pin</p>
                           <LocationPicker value={formData.customerLocation} onChange={handleWallLocationChange} onAddress={handleResolvedAddress} />
                         </div>
                       ) : null}
-                    </div>
-                  ) : null}
+                  </div>
                   {catalogStatus === 'ready' ? <p className="px-1 text-sm font-semibold text-gray-600" data-testid="therapist-result-count">{wallTherapists.length} {wallTherapists.length === 1 ? 'therapist' : 'therapists'} available</p> : null}
                   <div className="grid gap-3 px-1 pb-6 sm:grid-cols-2" data-testid="booking-therapist-list">
                     {catalogStatus === 'loading' ? (
@@ -1312,25 +1327,36 @@ export default function BookingModal() {
                     </div>
                     <div>
                       <label className={bookingLabelClass}><Phone className="mr-2 inline h-4 w-4" />WhatsApp / Phone *</label>
-                      <input className={bookingInputClass} value={formData.phone} onChange={event => handlePhoneChange(event.target.value)} onBlur={validatePhoneField} placeholder="+63 900 000 0000" data-readability-field="phone" required />
+                      <div className="flex gap-2">
+                        <select aria-label="Phone country" className="h-12 w-[8.25rem] shrink-0 rounded-2xl border border-gray-300 bg-white px-3 text-sm font-bold text-[#0F0F0F] focus:border-[#4E8D43] focus:outline-none" value={phoneCountry} onChange={event => { setPhoneCountry(event.target.value); setPhoneError(''); }}>
+                          {BOOKING_PHONE_COUNTRIES.map(country => <option key={country.iso} value={country.iso}>{country.flag} +{country.callingCode}</option>)}
+                        </select>
+                        <div className="relative min-w-0 flex-1">
+                          <span className="pointer-events-none absolute inset-y-0 left-4 flex items-center text-sm font-semibold text-gray-500">+{bookingPhoneCountry(phoneCountry).callingCode}</span>
+                          <input autoComplete="tel-national" className={`${bookingInputClass} pl-14`} inputMode="tel" value={formData.phone} onChange={event => handlePhoneChange(event.target.value)} onBlur={validatePhoneField} placeholder="908 123 4567" data-readability-field="phone" required />
+                        </div>
+                      </div>
                       {phoneError ? <p className="mt-2 text-sm font-medium text-red-600">{phoneError}</p> : null}
                     </div>
                   </div>
                   <div className="rounded-2xl bg-[#eaf1e7] px-4 py-3 text-sm font-medium text-[#3F7838]">
                     <Clock className="mr-2 inline h-4 w-4" />Your therapist departs as soon as the booking is accepted — no scheduling needed.
                   </div>
-                  <div>
+                  <div className={addressFeedback === 'success' ? 'rounded-2xl ring-4 ring-[#4E8D43]/20 transition' : 'transition'} data-location-address-feedback={addressFeedback || undefined} ref={addressFieldRef}>
                     <label className={bookingLabelClass}><MapPin className="mr-2 inline h-4 w-4" />Building, condo, hotel, or exact address *</label>
+                    <p className="mb-2 text-xs text-gray-500">Type or search your building</p>
                     <AddressAutocompleteInput
                       value={formData.addressNote}
-                      inputClassName={bookingInputClass}
+                      inputClassName={`${bookingInputClass} ${addressFeedback === 'success' ? 'border-[#4E8D43] bg-[#F1FBF3]' : ''}`}
                       placeholder="Start typing your building, condo, or hotel"
-                      onTextChange={text => updateField('addressNote', text)}
+                      onTextChange={text => { setAddressFeedback(''); updateField('addressNote', text); }}
                       onLocationResolved={updateCustomerLocation}
                     />
+                    {addressFeedback === 'error' ? <p className="mt-2 text-xs font-semibold text-amber-700">Couldn't fetch the address - please type it in</p> : null}
                   </div>
                   <div>
                     <label className={bookingLabelClass}><MapPin className="mr-2 inline h-4 w-4" />Pin your location on the map <span className="font-normal text-gray-500">(helps us send the nearest therapist)</span></label>
+                    <p className="mb-2 text-xs text-gray-500">Or use GPS / drag the pin</p>
                     <LocationPicker value={formData.customerLocation} onChange={updateCustomerLocation} onAddress={handleResolvedAddress} />
                   </div>
                   <div>

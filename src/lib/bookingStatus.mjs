@@ -54,6 +54,14 @@ export function isTherapistConfirmationTransition(previousStatus, nextStatus) {
   return previousStatus === 'waiting_acceptance' && THERAPIST_CONFIRMED_STATUSES.has(nextStatus);
 }
 
+export function isTherapistArrivalTransition(previousStatus, nextStatus) {
+  return Boolean(previousStatus) && previousStatus !== 'arrived' && nextStatus === 'arrived';
+}
+
+export function shouldShowBookingUpdatesBanner(status) {
+  return ['waiting_acceptance', 'confirmed', 'on_the_way'].includes(cleanString(status));
+}
+
 export function normalizeBookingStatusPayload(payload = {}) {
   const reference = cleanString(payload.reference);
   const status = cleanString(payload.status);
@@ -101,4 +109,9 @@ export function buildBookingWhatsAppUrl(whatsapp, reference) {
   const digits = (cleanString(whatsapp) || DEFAULT_PUBLIC_WHATSAPP).replace(/\D/g, '');
   const message = `Hi, I'd like to check my booking ${cleanString(reference)}`;
   return `https://wa.me/${digits}?text=${encodeURIComponent(message)}`;
+}
+
+export function buildBookingUpdatesWhatsAppUrl(reference) {
+  const message = `Hi, my booking is ${cleanString(reference)}`;
+  return `https://wa.me/639648570967?text=${encodeURIComponent(message)}`;
 }

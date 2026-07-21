@@ -16,11 +16,14 @@ import {
   BOOKING_STATUS_STEPS,
   DEFAULT_BOOKING_POLL_MS,
   WAITING_ACCEPTANCE_POLL_MS,
+  buildBookingUpdatesWhatsAppUrl,
   buildBookingWhatsAppUrl,
   formatManilaBookingDateTime,
   getBookingPollingIntervalMs,
   getBookingStatusStepIndex,
-  isTherapistConfirmationTransition
+  isTherapistArrivalTransition,
+  isTherapistConfirmationTransition,
+  shouldShowBookingUpdatesBanner
 } from '../lib/bookingStatus.mjs';
 import { apiUrl } from '../lib/apiUrl.js';
 import { clearActiveBooking } from '../lib/activeBooking.mjs';
@@ -33,6 +36,17 @@ function notifyTherapistConfirmed(therapistName) {
   try {
     if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
     const notification = new Notification('EasyGoSpa', { body: `${therapistName} confirmed your booking` });
+    notification.onclick = () => {
+      window.focus();
+      notification.close();
+    };
+  } catch {}
+}
+
+function notifyTherapistArrived() {
+  try {
+    if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
+    const notification = new Notification('EasyGoSpa', { body: 'Your therapist has arrived' });
     notification.onclick = () => {
       window.focus();
       notification.close();
@@ -154,6 +168,7 @@ export default function BookingTrackingPage({ reference }) {
   const lastTherapistNameRef = useRef('');
   const notificationPermissionRequestedRef = useRef(false);
   const confirmationNotifiedRef = useRef(false);
+  const arrivalNotifiedRef = useRef(false);
   const requestSequenceRef = useRef(0);
 
   const loadBooking = useCallback(async ({ silent = false } = {}) => {
@@ -185,6 +200,10 @@ export default function BookingTrackingPage({ reference }) {
         setConfirmationNotice(`✅ ${therapistName} confirmed your booking!`);
         notifyTherapistConfirmed(therapistName);
       }
+      if (isTherapistArrivalTransition(previousStatus, nextStatus) && !arrivalNotifiedRef.current) {
+        arrivalNotifiedRef.current = true;
+        notifyTherapistArrived();
+      }
       previousStatusRef.current = nextStatus;
       if (nextStatus !== 'waiting_acceptance') {
         clearActiveBooking({ reference });
@@ -202,6 +221,7 @@ export default function BookingTrackingPage({ reference }) {
     previousStatusRef.current = null;
     lastTherapistNameRef.current = '';
     confirmationNotifiedRef.current = false;
+    arrivalNotifiedRef.current = false;
     notificationPermissionRequestedRef.current = false;
     setConfirmationNotice('');
     loadBooking();
@@ -324,7 +344,7 @@ export default function BookingTrackingPage({ reference }) {
 
       {viewState === 'ready' && booking ? (
         <div className="mx-auto w-full max-w-3xl space-y-5" data-testid="booking-tracker-ready">
-          <section className="overflow-hidden rounded-[2rem] border border-[#e0a52b]/30 bg-[#211c46] p-6 text-white shadow-xl shadow-[#211c46]/10 sm:p-8">
+          <section data-booking-primary-status className="overflow-hidden rounded-[2rem] border border-[#e0a52b]/30 bg-[#211c46] p-6 text-white shadow-xl shadow-[#211c46]/10 sm:p-8">
             <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0">
                 <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#f6d27a]">My booking</p>
@@ -342,6 +362,18 @@ export default function BookingTrackingPage({ reference }) {
               <span className="w-fit rounded-full border border-[#f6d27a]/35 bg-[#f6d27a]/10 px-4 py-2 text-sm font-bold text-[#f6d27a]">{booking.statusLabel}</span>
             </div>
           </section>
+
+          {shouldShowBookingUpdatesBanner(booking.status) ? (
+            <a
+              data-booking-updates-banner
+              href={buildBookingUpdatesWhatsAppUrl(reference)}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center justify-center rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-3 text-center text-sm font-bold text-emerald-800 shadow-sm transition hover:bg-emerald-100"
+            >
+              📲 Get booking updates on WhatsApp
+            </a>
+          ) : null}
 
           <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm sm:p-7" aria-label="Booking summary">
             <div className="grid gap-5 sm:grid-cols-2">
