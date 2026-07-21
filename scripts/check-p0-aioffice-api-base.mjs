@@ -11,7 +11,9 @@ const endpointRoutes = {
   bookingRequest: 'src/app/api/booking-request/route.js',
   bookingStatus: 'src/app/api/booking-status/route.js',
   bookingCancel: 'src/app/api/booking-cancel/route.js',
-  myBookings: 'src/app/api/my-bookings/route.js'
+  myBookings: 'src/app/api/my-bookings/route.js',
+  bookingReview: 'src/app/api/booking-review/route.js',
+  myCoupons: 'src/app/api/my-coupons/route.js'
 };
 
 for (const endpoint of Object.keys(endpointRoutes)) {
@@ -51,7 +53,9 @@ for (const variable of [
   'AIOFFICE_BOOKING_CATALOG_API_URL',
   'AIOFFICE_BOOKING_STATUS_API_URL',
   'AIOFFICE_BOOKING_CANCEL_API_URL',
-  'AIOFFICE_MY_BOOKINGS_API_URL'
+  'AIOFFICE_MY_BOOKINGS_API_URL',
+  'AIOFFICE_BOOKING_REVIEW_API_URL',
+  'AIOFFICE_MY_COUPONS_API_URL'
 ]) {
   assert.match(envExample, new RegExp(`^${variable}=`, 'm'));
 }

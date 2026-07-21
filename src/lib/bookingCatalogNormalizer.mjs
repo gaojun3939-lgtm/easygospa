@@ -23,6 +23,45 @@ function numberValue(value, fallback = 0) {
   return Number.isFinite(next) ? next : fallback;
 }
 
+function limitedText(value = '', maxLength = 1000) {
+  return String(value ?? '').trim().replace(/\s+/g, ' ').slice(0, maxLength);
+}
+
+function safeIsoTimestamp(value) {
+  const parsed = new Date(String(value || ''));
+  return Number.isNaN(parsed.getTime()) ? '' : parsed.toISOString();
+}
+
+function safeMaskedCustomerName(value) {
+  const name = limitedText(value, 48);
+  if (!name || name.includes('@') || /\+?\d[\d\s().-]{6,}/.test(name)) return 'Verified customer';
+  return /[•*]/.test(name) || /^verified customer$/i.test(name) ? name : 'Verified customer';
+}
+
+function normalizeRatingDistribution(value = {}) {
+  const source = value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+  return Object.fromEntries([1, 2, 3, 4, 5].map(stars => [stars, Math.max(0, Math.round(numberValue(source[stars] ?? source[String(stars)], 0)))]));
+}
+
+function normalizeVerifiedReviews(value = []) {
+  return asArray(value).slice(0, 50).map(review => {
+    const id = limitedText(review?.id, 160);
+    const stars = Math.max(1, Math.min(5, Math.round(numberValue(review?.stars ?? review?.rating, 0))));
+    const replySource = review?.reply && typeof review.reply === 'object'
+      ? review.reply
+      : { text: review?.reply };
+    const replyText = limitedText(replySource?.text, 1000);
+    return {
+      id,
+      maskedCustomerName: safeMaskedCustomerName(review?.maskedCustomerName || review?.customerDisplayName || review?.reviewerDisplay),
+      stars,
+      text: limitedText(review?.text || review?.comment, 1000),
+      createdAt: safeIsoTimestamp(review?.createdAt || review?.created_at),
+      ...(replyText ? { reply: { text: replyText, createdAt: safeIsoTimestamp(replySource?.createdAt || replySource?.created_at) } } : {})
+    };
+  }).filter(review => review.id);
+}
+
 function listText(value = []) {
   if (Array.isArray(value)) return value.map(item => cleanText(item)).filter(Boolean);
   return String(value || '').split(',').map(item => cleanText(item)).filter(Boolean);
@@ -114,6 +153,10 @@ export function normalizePublicBookingCatalog(payload = {}) {
       const technicianAccountId = profileId === 'any_available' ? '' : cleanText(therapist.technicianAccountId || therapist.technician_account_id || metadata.technicianAccountId || metadata.technician_account_id);
       const technicianAccountName = profileId === 'any_available' ? '' : cleanText(therapist.technicianAccountName || therapist.technician_account_name || metadata.technicianAccountName || metadata.technician_account_name);
       const displayName = profileId === 'any_available' ? profileName : cleanText(technicianAccountName, profileName);
+      const reviewCount = Math.max(0, Math.round(numberValue(therapist.reviewCount ?? therapist.review_count, 0)));
+      const rawRating = numberValue(therapist.rating ?? therapist.averageRating ?? therapist.average_rating, 0);
+      const rating = reviewCount > 0 && rawRating > 0 ? Math.max(1, Math.min(5, Math.round(rawRating * 100) / 100)) : null;
+      const verifiedReviews = normalizeVerifiedReviews(therapist.verifiedReviews || therapist.verified_reviews);
       return {
         id: profileId,
         profileId,
@@ -145,10 +188,11 @@ export function normalizePublicBookingCatalog(payload = {}) {
         specialties,
         profileIntroduction: cleanText(therapist.description),
         specialtyDescription: cleanText(therapist.description),
-        rating: null,
-        reviewCount: 0,
-        reviewsLabel: 'No verified reviews yet',
-        verifiedReviews: [],
+        rating,
+        reviewCount,
+        ratingDistribution: normalizeRatingDistribution(therapist.ratingDistribution || therapist.rating_distribution),
+        reviewsLabel: reviewCount > 0 ? `${reviewCount} verified ${reviewCount === 1 ? 'review' : 'reviews'}` : 'No verified reviews yet',
+        verifiedReviews,
         // 工具人无真实服务绑定,用"展示服务"充填以便正常显示卡片(仅展示,下单被拦)。
         availableServices: availableServices.length ? availableServices : (isMannequinTherapist(therapist) ? specialties : availableServices),
         therapistPreference: therapist.therapistId === 'any_available' ? 'any_available' : 'specific_therapist',

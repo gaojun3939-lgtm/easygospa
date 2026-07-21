@@ -48,6 +48,7 @@ import {
   normalizeBookingPhoneInput
 } from '../lib/bookingPhone.mjs';
 import { resolvedAddressAfterConfirmation } from '../lib/locationConfirmation.mjs';
+import { getSupabaseClient } from '../lib/supabaseClient';
 
 // 名单会话缓存(60 秒):整页刷新后先把上次名单端上墙,真名单在背后静默刷新。
 // 技师上下班仍然实时反映——每次都照常重新拉取,缓存只负责"先有得看"。
@@ -138,6 +139,24 @@ function inferAreaFromAddress(text = '') {
 
 function money(value = 0) {
   return `PHP ${Number(value || 0).toLocaleString('en-US')}`;
+}
+
+function formatReviewDate(value) {
+  if (!value) return 'Recently';
+  try {
+    return new Intl.DateTimeFormat('en-PH', { timeZone: 'Asia/Manila', month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(value));
+  } catch {
+    return 'Recently';
+  }
+}
+
+function formatCouponExpiry(value) {
+  if (!value) return 'expiry pending';
+  try {
+    return new Intl.DateTimeFormat('en-PH', { timeZone: 'Asia/Manila', month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(value));
+  } catch {
+    return 'expiry pending';
+  }
 }
 
 // 评分 Glow 式:一颗金星 + 评分数(橙色)+(N reviews)。
@@ -461,6 +480,7 @@ function ServiceCard({ service, selected, selectedDuration, onSelectService, onS
 
 function TherapistDetail({ therapist, availableServices, selectedServiceName, selectedDuration, totalAmount, onSelectService, onSelectDuration, onBack, onBook }) {
   const [showFullAbout, setShowFullAbout] = useState(false);
+  const [showAllReviews, setShowAllReviews] = useState(false);
   const [lightboxUrl, setLightboxUrl] = useState('');
   const aboutText = String(therapist.profileIntroduction || '').trim() || missingProfileIntroduction;
   const shouldClampAbout = aboutText.length > 170;
@@ -473,6 +493,11 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
     ...((Array.isArray(therapist.lifePhotos) ? therapist.lifePhotos : []))
   ].filter(url => /^https?:\/\//i.test(String(url || '')))));
   const [photoIndex, setPhotoIndex] = useState(0);
+  const reviewCount = Math.max(0, Number(therapist.reviewCount) || 0);
+  const averageRating = reviewCount > 0 && Number(therapist.rating) > 0 ? Math.min(5, Number(therapist.rating)) : 5;
+  const reviewDistribution = therapist.ratingDistribution && typeof therapist.ratingDistribution === 'object' ? therapist.ratingDistribution : {};
+  const verifiedReviews = Array.isArray(therapist.verifiedReviews) ? therapist.verifiedReviews : [];
+  const visibleReviews = showAllReviews ? verifiedReviews : verifiedReviews.slice(0, 3);
   const heroScrollRef = React.useRef(null);
   const onHeroScroll = () => {
     const el = heroScrollRef.current;
@@ -548,6 +573,7 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
         </div>
       ) : null}
       <section className="rounded-[1.5rem] border border-gray-200 bg-white p-5 shadow-sm" data-testid="therapist-about">
+        <h3 className="mb-2 text-xl font-bold text-[#0F0F0F]">About {therapist.name}</h3>
         <p className={`text-sm leading-7 text-gray-700 ${shouldClampAbout && !showFullAbout ? 'line-clamp-4' : ''}`}>{aboutText}</p>
         {shouldClampAbout ? (
           <button type="button" onClick={() => setShowFullAbout(current => !current)} className="mt-2 text-sm font-bold text-[#3F7838]">
@@ -562,14 +588,58 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
           {availableServices.map(service => <ServiceCard key={service.id} service={service} selected={selectedServiceName === service.name} selectedDuration={selectedServiceName === service.name ? Number(selectedDuration) : 0} onSelectService={onSelectService} onSelectDuration={onSelectDuration} onBook={onBook} />)}
         </div>
       </div>
-      <section className="rounded-[1.5rem] border border-gray-200 bg-white p-5 shadow-sm">
-        <div className="flex items-center gap-2">
-          <Star className="h-5 w-5 text-gray-400" />
-          <h4 className="font-bold text-[#0F0F0F]">Reviews</h4>
+      <section className="rounded-[1.5rem] border border-gray-200 bg-white p-5 shadow-sm" data-testid="therapist-review-wall">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <Star className="h-5 w-5 fill-[#f0a41c] text-[#f0a41c]" />
+              <h4 className="font-bold text-[#0F0F0F]">Verified reviews</h4>
+            </div>
+            <div className="mt-3 flex items-baseline gap-2">
+              <strong className="text-4xl font-extrabold text-[#0F0F0F]">{averageRating.toFixed(1)}</strong>
+              <span className="text-sm font-semibold text-gray-500">({reviewCount} {reviewCount === 1 ? 'review' : 'reviews'})</span>
+              {reviewCount === 0 ? <span className="rounded-full bg-sky-50 px-2 py-1 text-[10px] font-extrabold tracking-wider text-sky-700">NEW</span> : null}
+            </div>
+          </div>
+          {verifiedReviews.length > 3 ? (
+            <button type="button" onClick={() => setShowAllReviews(current => !current)} className="text-sm font-bold text-[#3F7838]">
+              {showAllReviews ? 'Show recent' : 'View all'}
+            </button>
+          ) : null}
         </div>
-        {therapist.verifiedReviews?.length ? (
-          <div className="mt-3 space-y-2">{therapist.verifiedReviews.map(review => <p key={review.id} className="text-sm text-gray-600">{review.text}</p>)}</div>
-        ) : <p className="mt-3 text-sm text-gray-600">Reviews will appear after completed bookings.</p>}
+        <div className="mt-4 space-y-2" aria-label="Rating distribution">
+          {[5, 4, 3, 2, 1].map(stars => {
+            const count = Math.max(0, Number(reviewDistribution[stars]) || 0);
+            const percentage = reviewCount > 0 ? Math.min(100, (count / reviewCount) * 100) : 0;
+            return (
+              <div key={stars} className="grid grid-cols-[18px_1fr_34px] items-center gap-2 text-xs text-gray-500">
+                <span>{stars}</span>
+                <span className="h-2 overflow-hidden rounded-full bg-gray-100"><span className="block h-full rounded-full bg-[#f0a41c]" style={{ width: `${percentage}%` }} /></span>
+                <span className="text-right">{count}</span>
+              </div>
+            );
+          })}
+        </div>
+        {visibleReviews.length ? (
+          <div className="mt-5 divide-y divide-gray-100">
+            {visibleReviews.map(review => (
+              <article key={review.id} className="py-4 first:pt-0" data-testid="verified-review">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <strong className="text-sm text-[#0F0F0F]">{review.maskedCustomerName || 'Verified customer'}</strong>
+                  <span className="text-xs text-gray-400">{formatReviewDate(review.createdAt)}</span>
+                </div>
+                <p className="mt-1 text-sm tracking-[0.08em] text-[#e08700]" aria-label={`${review.stars} out of 5 stars`}>{'★'.repeat(review.stars)}{'☆'.repeat(5 - review.stars)}</p>
+                {review.text ? <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-gray-700">{review.text}</p> : <p className="mt-2 text-sm italic text-gray-400">Star rating only</p>}
+                {review.reply?.text ? (
+                  <div className="mt-3 rounded-xl bg-[#F1FBF3] p-3">
+                    <p className="text-xs font-bold uppercase tracking-wide text-[#3F7838]">EasyGoSpa reply</p>
+                    <p className="mt-1 text-sm leading-6 text-gray-700">{review.reply.text}</p>
+                  </div>
+                ) : null}
+              </article>
+            ))}
+          </div>
+        ) : <p className="mt-5 text-sm text-gray-600">No verified reviews yet.</p>}
       </section>
       {/* 底部账单条已拆(老板 2026-07-21):Book 按钮直接长在选中的服务卡里。 */}
     </div>
@@ -613,6 +683,11 @@ export default function BookingModal() {
   const [activeCancelConfirming, setActiveCancelConfirming] = useState(false);
   const [activeCancelPending, setActiveCancelPending] = useState(false);
   const [activeCancelError, setActiveCancelError] = useState('');
+  const [availableCoupons, setAvailableCoupons] = useState([]);
+  const [couponWalletState, setCouponWalletState] = useState('idle');
+  const [couponAccountEmail, setCouponAccountEmail] = useState('');
+  const [couponAccessToken, setCouponAccessToken] = useState('');
+  const [selectedCouponId, setSelectedCouponId] = useState('');
   const addressFieldRef = useRef(null);
   const addressFeedbackTimerRef = useRef(null);
 
@@ -655,6 +730,10 @@ export default function BookingModal() {
   const selectedDuration = useMemo(() => selectedService ? findExactDurationOption(selectedService, formData.durationMinutes) : null, [selectedService, formData.durationMinutes]);
   const selectedServiceOption = useMemo(() => resolveSelectedServiceOption(formData, catalogServices), [catalogServices, formData]);
   const selectedTotalAmount = selectedServiceOption?.price ?? 0;
+  const couponAccountMatchesBooking = Boolean(couponAccountEmail) && couponAccountEmail === String(formData.customerEmail || '').trim().toLowerCase();
+  const selectableCoupons = couponAccountMatchesBooking ? availableCoupons : [];
+  const selectedCoupon = useMemo(() => selectableCoupons.find(coupon => coupon.id === selectedCouponId && coupon.status === 'active') || null, [selectableCoupons, selectedCouponId]);
+  const estimatedCashAfterCoupon = Math.max(0, selectedTotalAmount - Number(selectedCoupon?.amount || 0));
   const availableTimeSlots = useMemo(() => (
     formData.preferredDate === manilaToday()
       ? timeSlots.filter(time => timeSlotMinutes(time) >= manilaNowMinutes() + BOOKING_LEAD_MINUTES)
@@ -726,6 +805,64 @@ export default function BookingModal() {
 
   useEffect(() => {
     bookingOpenRef.current = isOpen;
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return undefined;
+    let active = true;
+    async function loadAvailableCoupons() {
+      setCouponWalletState('loading');
+      setCouponAccessToken('');
+      const client = getSupabaseClient();
+      if (!client) {
+        if (active) {
+          setAvailableCoupons([]);
+          setCouponAccountEmail('');
+          setCouponAccessToken('');
+          setCouponWalletState('signed_out');
+        }
+        return;
+      }
+      const { data } = await client.auth.getSession();
+      const token = data?.session?.access_token;
+      if (!token) {
+        if (active) {
+          setAvailableCoupons([]);
+          setCouponAccountEmail('');
+          setCouponAccessToken('');
+          setCouponWalletState('signed_out');
+        }
+        return;
+      }
+      try {
+        const response = await fetch(apiUrl('/api/my-coupons'), {
+          headers: { Authorization: `Bearer ${token}` },
+          cache: 'no-store'
+        });
+        const payload = await response.json().catch(() => null);
+        if (!active) return;
+        if (!response.ok || payload?.ok !== true) {
+          setAvailableCoupons([]);
+          setCouponAccessToken('');
+          setCouponWalletState('error');
+          return;
+        }
+        const coupons = Array.isArray(payload.coupons) ? payload.coupons.filter(coupon => coupon.status === 'active') : [];
+        setAvailableCoupons(coupons);
+        setCouponAccountEmail(String(data?.session?.user?.email || '').trim().toLowerCase());
+        setCouponAccessToken(token);
+        setCouponWalletState('ready');
+        setSelectedCouponId(current => coupons.some(coupon => coupon.id === current) ? current : '');
+      } catch {
+        if (active) {
+          setAvailableCoupons([]);
+          setCouponAccessToken('');
+          setCouponWalletState('error');
+        }
+      }
+    }
+    void loadAvailableCoupons();
+    return () => { active = false; };
   }, [isOpen]);
 
   useEffect(() => () => {
@@ -810,6 +947,7 @@ export default function BookingModal() {
       setActiveBookingDialog(null);
       setActiveCancelConfirming(false);
       setActiveCancelError('');
+      setSelectedCouponId('');
       setEmailDraft(stored ? { email: stored.customerEmail, name: stored.customerName || '', phone: stored.phone || '' } : { email: '', name: '', phone: '' });
       setFormData(current => {
         const nextForm = createInitialForm(serviceName, catalogServices);
@@ -1116,6 +1254,7 @@ export default function BookingModal() {
       paymentMethod: 'cash_after_service',
       paymentStatus: 'pending_collection',
       paymentTiming: 'after_service',
+      ...(selectedCoupon ? { couponId: selectedCoupon.id } : {}),
       notes: formData.notes,
       metadata: {
         website: 'www.easygospa.com',
@@ -1138,7 +1277,10 @@ export default function BookingModal() {
         customerLocation: formData.customerLocation,
         submit: () => fetch(apiUrl('/api/booking-request'), {
           method: 'POST',
-          headers: { 'content-type': 'application/json' },
+          headers: {
+            'content-type': 'application/json',
+            ...(selectedCoupon && couponAccessToken ? { Authorization: `Bearer ${couponAccessToken}` } : {})
+          },
           body: JSON.stringify(requestPayload)
         })
       });
@@ -1382,7 +1524,7 @@ export default function BookingModal() {
                 <form onSubmit={handleSubmit} className="space-y-5" data-testid="confirm-step">
                   <div>
                     <h3 className="text-2xl font-bold text-[#0F0F0F]">Confirm Cash before service</h3>
-                    <p className="mt-2 text-sm text-gray-600">Payment will be collected after the massage service. No online payment is collected on this website.</p>
+                    <p className="mt-2 text-sm text-gray-600">Payment will be collected when the therapist arrives, before the massage starts. No online payment is collected on this website.</p>
                   </div>
                   <div className={summaryCardClass}>
                     <div className="grid gap-3">
@@ -1394,6 +1536,41 @@ export default function BookingModal() {
                       <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Payment</strong><span className={summaryValueClass}>Cash before service</span></div>
                     </div>
                   </div>
+                  <section className="rounded-[1.5rem] border border-gray-200 bg-white p-5" data-testid="booking-coupon-selector">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <h4 className="font-bold text-[#0F0F0F]">Use a coupon</h4>
+                        <p className="mt-1 text-xs leading-5 text-gray-500">The discount is checked by our booking service when you submit.</p>
+                      </div>
+                      {selectedCoupon ? (
+                        <button type="button" onClick={() => setSelectedCouponId('')} className="text-xs font-bold text-gray-500">Remove</button>
+                      ) : null}
+                    </div>
+                    {couponWalletState === 'loading' ? <p className="mt-4 text-sm text-gray-500">Checking your wallet…</p> : null}
+                    {selectableCoupons.length ? (
+                      <div className="mt-4 grid gap-2">
+                        {selectableCoupons.map(coupon => (
+                          <button
+                            key={coupon.id}
+                            type="button"
+                            aria-pressed={selectedCouponId === coupon.id}
+                            onClick={() => setSelectedCouponId(current => current === coupon.id ? '' : coupon.id)}
+                            className={`flex items-center justify-between gap-4 rounded-2xl border p-3 text-left transition ${selectedCouponId === coupon.id ? 'border-[#4E8D43] bg-[#F1FBF3]' : 'border-gray-200 hover:border-[#4E8D43]/50'}`}
+                          >
+                            <span><strong className="block text-lg text-[#0E6F1A]">₱{Number(coupon.amount).toLocaleString('en-US')}</strong><span className="text-xs text-gray-500">Expires {formatCouponExpiry(coupon.expiresAt)}</span></span>
+                            <span className={`flex h-6 w-6 items-center justify-center rounded-full border ${selectedCouponId === coupon.id ? 'border-[#4E8D43] bg-[#4E8D43] text-white' : 'border-gray-300 text-transparent'}`}><Check className="h-4 w-4" /></span>
+                          </button>
+                        ))}
+                      </div>
+                    ) : couponWalletState === 'ready' && availableCoupons.length > 0 && !couponAccountMatchesBooking ? <p className="mt-4 text-sm text-amber-700">Use the same email as your signed-in coupon wallet to apply a coupon.</p> : couponWalletState === 'ready' ? <p className="mt-4 text-sm text-gray-500">No active coupons in this account.</p> : null}
+                    {selectedCoupon ? (
+                      <div className="mt-4 space-y-2 rounded-2xl bg-[#F1FBF3] p-4 text-sm">
+                        <div className="flex justify-between gap-4 text-gray-600"><span>Coupon selected</span><strong>− ₱{Number(selectedCoupon.amount).toLocaleString('en-US')}</strong></div>
+                        <div className="flex justify-between gap-4 text-[#0F0F0F]"><span className="font-bold">Estimated cash after coupon</span><strong className="text-lg text-[#0E6F1A]">{money(estimatedCashAfterCoupon)}</strong></div>
+                        <p className="text-xs leading-5 text-gray-500">This is an estimate, not a confirmed redemption. If the coupon is no longer valid, your booking still goes through at the full catalog price.</p>
+                      </div>
+                    ) : null}
+                  </section>
                   <button type="submit" disabled={isSubmitting} className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-[#4E8D43] px-6 font-bold text-white hover:bg-[#3F7838] disabled:cursor-not-allowed disabled:opacity-60">
                     {isSubmitting ? <><span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />Submitting...</> : 'Submit booking request'}
                   </button>

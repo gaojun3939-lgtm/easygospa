@@ -98,8 +98,8 @@ test('email gate is after service and customer info is simplified', () => {
 
 test('cash confirmation is its own step and payment options stay cash-only', () => {
   assert.ok(modalSource.includes("step === 'confirm'"), 'confirm step missing');
-  assert.ok(modalSource.includes('Payment will be collected after the massage service.'));
-  assert.ok(modalSource.includes('Cash after service'));
+  assert.ok(modalSource.includes('Payment will be collected when the therapist arrives, before the massage starts.'));
+  assert.ok(modalSource.includes('Cash before service'));
   for (const forbidden of ['GCash', 'Maya', 'QR PH', 'Bank transfer', 'Payment link']) {
     assert.ok(!modalSource.includes(forbidden), `modal must not show ${forbidden}`);
   }

@@ -10,7 +10,8 @@ import {
   MapPin,
   MessageCircle,
   RefreshCw,
-  ShieldCheck
+  ShieldCheck,
+  Star
 } from 'lucide-react';
 import {
   BOOKING_STATUS_STEPS,
@@ -28,6 +29,125 @@ import {
 import { apiUrl } from '../lib/apiUrl.js';
 import { clearActiveBooking } from '../lib/activeBooking.mjs';
 import { cancelPublicBooking } from '../lib/publicBookingCancel.mjs';
+import { BOOKING_FLOW_STORAGE_KEY } from '../lib/therapistServiceBookingFlow.mjs';
+
+function readStoredBookingEmail() {
+  if (typeof window === 'undefined') return '';
+  try {
+    const session = JSON.parse(window.sessionStorage.getItem(BOOKING_FLOW_STORAGE_KEY) || 'null');
+    return String(session?.customerEmail || '').trim().toLowerCase();
+  } catch {
+    return '';
+  }
+}
+
+function reviewStorageKey(reference) {
+  return `egCompletedReview.v1.${String(reference || '').trim()}`;
+}
+
+function CompletedBookingReview({ reference, therapistName }) {
+  const [stars, setStars] = useState(0);
+  const [comment, setComment] = useState('');
+  const [email, setEmail] = useState('');
+  const [state, setState] = useState('ready');
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    setEmail(readStoredBookingEmail());
+    try {
+      const stored = JSON.parse(window.localStorage.getItem(reviewStorageKey(reference)) || 'null');
+      if (stored?.submitted === true) {
+        setStars(Math.max(1, Math.min(5, Math.round(Number(stored.stars) || 5))));
+        setState('submitted');
+      }
+    } catch {}
+  }, [reference]);
+
+  const submitReview = async event => {
+    event.preventDefault();
+    if (state === 'submitting' || state === 'submitted') return;
+    if (stars < 1 || stars > 5) {
+      setError('Choose a star rating first.');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      setError('Enter the email used for this booking.');
+      return;
+    }
+    setState('submitting');
+    setError('');
+    try {
+      const response = await fetch(apiUrl('/api/booking-review'), {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ reference, email: email.trim().toLowerCase(), rating: stars, comment: comment.trim() })
+      });
+      const payload = await response.json().catch(() => null);
+      const duplicateReviewCodes = new Set(['BOOKING_REVIEW_ALREADY_SUBMITTED', 'BOOKING_REVIEW_CONFLICT', 'REVIEW_ALREADY_EXISTS', 'DUPLICATE_REVIEW']);
+      if (response.status === 409 && duplicateReviewCodes.has(String(payload?.code || ''))) {
+        window.localStorage.setItem(reviewStorageKey(reference), JSON.stringify({ submitted: true, stars }));
+        setState('submitted');
+        return;
+      }
+      if (!response.ok || payload?.ok !== true || !payload?.coupon?.id) {
+        throw new Error(payload?.error || 'Your review could not be submitted. Please try again.');
+      }
+      window.localStorage.setItem(reviewStorageKey(reference), JSON.stringify({ submitted: true, stars }));
+      setState('submitted');
+    } catch (submitError) {
+      setState('ready');
+      setError(submitError instanceof Error ? submitError.message : 'Your review could not be submitted. Please try again.');
+    }
+  };
+
+  return (
+    <section className="rounded-[2rem] border border-[#e0a52b]/35 bg-[linear-gradient(135deg,#fffaf0,#ffffff)] p-5 shadow-sm sm:p-7" data-testid="completed-booking-review">
+      {state === 'submitted' ? (
+        <div className="text-center">
+          <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-700"><Check className="h-7 w-7" /></span>
+          <h2 className="mt-4 text-2xl font-bold text-[#17142f]">Thanks! {'★'.repeat(stars)}</h2>
+          <p className="mt-2 text-sm font-semibold text-emerald-700">A ₱50 coupon is now in your wallet.</p>
+          <p className="mt-2 text-xs text-slate-500">Each completed booking can be reviewed once.</p>
+        </div>
+      ) : (
+        <form onSubmit={submitReview}>
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#8a6518]">Review &amp; get a ₱50 coupon</p>
+          <h2 className="mt-2 text-2xl font-bold text-[#17142f]">How was {therapistName}?</h2>
+          <div className="mt-4 flex flex-wrap gap-1" role="radiogroup" aria-label="Star rating">
+            {[1, 2, 3, 4, 5].map(value => (
+              <button
+                key={value}
+                type="button"
+                role="radio"
+                aria-checked={stars === value}
+                aria-label={`${value} star${value === 1 ? '' : 's'}`}
+                onClick={() => { setStars(value); setError(''); }}
+                className="flex h-11 w-11 items-center justify-center rounded-xl transition hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-[#e0a52b]"
+              >
+                <Star className={`h-9 w-9 ${value <= stars ? 'fill-[#f0a41c] text-[#f0a41c]' : 'text-slate-300'}`} />
+              </button>
+            ))}
+          </div>
+          <div className={`grid overflow-hidden transition-[grid-template-rows,opacity] duration-300 ${stars ? 'mt-4 grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
+            <div className="min-h-0 space-y-4">
+              <div>
+                <label htmlFor="review-comment" className="mb-2 block text-sm font-semibold text-slate-800">Tell us more <span className="font-normal text-slate-400">(optional)</span></label>
+                <textarea id="review-comment" value={comment} onChange={event => setComment(event.target.value.slice(0, 1000))} rows={4} className="w-full resize-none rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-[#17142f] outline-none focus:border-[#e0a52b]" placeholder="What stood out about your massage?" />
+              </div>
+              <div>
+                <label htmlFor="review-email" className="mb-2 block text-sm font-semibold text-slate-800">Booking email</label>
+                <input id="review-email" type="email" autoComplete="email" value={email} onChange={event => setEmail(event.target.value)} className="h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm text-[#17142f] outline-none focus:border-[#e0a52b]" placeholder="you@example.com" required />
+                <p className="mt-1 text-xs text-slate-500">Used only to verify that this completed booking is yours.</p>
+              </div>
+              {error ? <p className="rounded-2xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</p> : null}
+              <button type="submit" disabled={state === 'submitting'} className="h-12 w-full rounded-2xl bg-[#211c46] px-6 font-bold text-white hover:bg-[#17142f] disabled:opacity-60">{state === 'submitting' ? 'Submitting…' : 'Submit review'}</button>
+            </div>
+          </div>
+        </form>
+      )}
+    </section>
+  );
+}
 
 function notifyTherapistConfirmed(therapistName) {
   try {
@@ -373,6 +493,10 @@ export default function BookingTrackingPage({ reference }) {
             >
               📲 Get booking updates on WhatsApp
             </a>
+          ) : null}
+
+          {booking.status === 'completed' ? (
+            <CompletedBookingReview reference={reference} therapistName={booking.therapist?.name || 'your therapist'} />
           ) : null}
 
           <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm sm:p-7" aria-label="Booking summary">

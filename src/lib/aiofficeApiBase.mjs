@@ -18,6 +18,14 @@ const ENDPOINTS = Object.freeze({
   myBookings: {
     envName: 'AIOFFICE_MY_BOOKINGS_API_URL',
     developmentUrl: 'https://staging.easygospa.com/api/public/my-bookings'
+  },
+  bookingReview: {
+    envName: 'AIOFFICE_BOOKING_REVIEW_API_URL',
+    developmentUrl: 'https://staging.easygospa.com/api/public/booking-review'
+  },
+  myCoupons: {
+    envName: 'AIOFFICE_MY_COUPONS_API_URL',
+    developmentUrl: 'https://staging.easygospa.com/api/public/my-coupons'
   }
 });
 

@@ -63,7 +63,7 @@ test('maps therapist-first website booking fields to AI Office public booking pa
   assert.equal(payload.metadata.customerEmail, 'guest@example.com');
   assert.equal(payload.metadata.paymentMethod, 'cash_after_service');
   assert.equal(payload.selectedServices[0].currency, 'PHP');
-  assert.match(payload.notes, /Payment: Cash after service/);
+  assert.match(payload.notes, /Payment: Cash before service/);
 });
 
 test('rejects missing required website booking fields before proxying', () => {

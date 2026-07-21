@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { AlertTriangle, Check, ChevronLeft, Clock, LogOut, Mail, MapPin, MessageCircle, X } from 'lucide-react';
+import { AlertTriangle, Check, ChevronLeft, Clock, LogOut, Mail, MapPin, MessageCircle, TicketPercent, X } from 'lucide-react';
 import { getSupabaseClient, isCustomerAuthConfigured } from '../lib/supabaseClient';
 import { BOOKING_STATUS_STEPS } from '../lib/bookingStatus.mjs';
 
@@ -62,6 +62,10 @@ export default function CustomerOrders() {
   const [orders, setOrders] = useState([]);
   const [ordersState, setOrdersState] = useState('idle'); // idle | loading | ready | error
   const [errorDetail, setErrorDetail] = useState('');
+  const [coupons, setCoupons] = useState([]);
+  const [couponsState, setCouponsState] = useState('idle');
+  const [couponError, setCouponError] = useState('');
+  const [accountTab, setAccountTab] = useState('orders');
   const [selected, setSelected] = useState(null);
   const timerRef = useRef(null);
   const onClose = useCallback(() => { setSelected(null); setOpen(false); }, []);
@@ -120,9 +124,38 @@ export default function CustomerOrders() {
     }
   }, [session?.access_token]);
 
+  const loadCoupons = useCallback(async () => {
+    const token = session?.access_token;
+    if (!token) return;
+    setCouponsState('loading');
+    setCouponError('');
+    try {
+      const response = await fetch('/api/my-coupons', {
+        headers: { Authorization: `Bearer ${token}` },
+        cache: 'no-store'
+      });
+      const payload = await response.json().catch(() => null);
+      if (!response.ok || payload?.ok !== true) {
+        setCoupons([]);
+        setCouponsState('error');
+        setCouponError(payload?.error || 'Could not load your coupons.');
+        return;
+      }
+      setCoupons(Array.isArray(payload.coupons) ? payload.coupons : []);
+      setCouponsState('ready');
+    } catch {
+      setCoupons([]);
+      setCouponsState('error');
+      setCouponError('Could not load your coupons.');
+    }
+  }, [session?.access_token]);
+
   useEffect(() => {
-    if (open && session?.access_token) loadOrders();
-  }, [open, session?.access_token, loadOrders]);
+    if (open && session?.access_token) {
+      loadOrders();
+      loadCoupons();
+    }
+  }, [open, session?.access_token, loadCoupons, loadOrders]);
 
   // Poll for live status while an order is open.
   useEffect(() => {
@@ -179,7 +212,7 @@ export default function CustomerOrders() {
   async function signOut() {
     const client = getSupabaseClient();
     if (client) await client.auth.signOut();
-    setOrders([]); setOrdersState('idle'); setSelected(null); setStep('email'); setEmail(''); setCode('');
+    setOrders([]); setOrdersState('idle'); setCoupons([]); setCouponsState('idle'); setSelected(null); setAccountTab('orders'); setStep('email'); setEmail(''); setCode('');
   }
 
   if (!open) return null;
@@ -194,7 +227,7 @@ export default function CustomerOrders() {
                 <ChevronLeft className="h-6 w-6" />
               </button>
             ) : null}
-            <h2 className="text-lg font-bold text-[#0F0F0F]">{selectedOrder ? 'Order status' : 'My orders'}</h2>
+            <h2 className="text-lg font-bold text-[#0F0F0F]">{selectedOrder ? 'Order status' : accountTab === 'coupons' ? 'My coupon wallet' : 'My orders'}</h2>
           </div>
           <div className="flex items-center gap-3">
             {session ? (
@@ -221,10 +254,73 @@ export default function CustomerOrders() {
           ) : selectedOrder ? (
             <OrderDetail order={selectedOrder} />
           ) : (
-            <OrdersList state={ordersState} orders={orders} errorDetail={errorDetail} onOpen={setSelected} onRetry={loadOrders} />
+            <>
+              <div className="mb-4 grid grid-cols-2 rounded-2xl bg-white p-1 shadow-sm" role="tablist" aria-label="Customer account">
+                <button type="button" role="tab" aria-selected={accountTab === 'orders'} onClick={() => setAccountTab('orders')} className={`h-10 rounded-xl text-sm font-bold ${accountTab === 'orders' ? 'bg-[#4E8D43] text-white' : 'text-gray-500'}`}>Bookings</button>
+                <button type="button" role="tab" aria-selected={accountTab === 'coupons'} onClick={() => setAccountTab('coupons')} className={`h-10 rounded-xl text-sm font-bold ${accountTab === 'coupons' ? 'bg-[#4E8D43] text-white' : 'text-gray-500'}`}>Coupons</button>
+              </div>
+              {accountTab === 'orders'
+                ? <OrdersList state={ordersState} orders={orders} errorDetail={errorDetail} onOpen={setSelected} onRetry={loadOrders} />
+                : <CouponWallet state={couponsState} coupons={coupons} error={couponError} onRetry={loadCoupons} />}
+            </>
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+function couponStatusLabel(status) {
+  if (status === 'active') return 'Available';
+  if (status === 'used') return 'Used';
+  return 'Expired';
+}
+
+function couponStatusTone(status) {
+  if (status === 'active') return 'text-[#0E6F1A]';
+  if (status === 'used') return 'text-gray-500';
+  return 'text-red-600';
+}
+
+function CouponWallet({ state, coupons, error, onRetry }) {
+  if (state === 'loading' || state === 'idle') return <p className="mt-10 text-center text-sm text-gray-500">Loading your coupon wallet…</p>;
+  if (state === 'error') {
+    return (
+      <div className="mt-10 text-center" data-testid="coupon-wallet">
+        <p className="text-sm text-gray-500">{error || 'Could not load your coupons.'}</p>
+        <button type="button" onClick={onRetry} className="mt-3 rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-[#4E8D43]">Try again</button>
+      </div>
+    );
+  }
+  if (!coupons.length) {
+    return (
+      <div className="mt-12 text-center" data-testid="coupon-wallet">
+        <TicketPercent className="mx-auto h-10 w-10 text-gray-300" />
+        <p className="mt-3 text-base font-semibold text-[#0F0F0F]">No coupons yet</p>
+        <p className="mt-1 text-sm leading-6 text-gray-500">Review a completed booking to receive a ₱50 coupon valid for 30 days.</p>
+      </div>
+    );
+  }
+  return (
+    <div className="space-y-3" data-testid="coupon-wallet">
+      {coupons.map(coupon => (
+        <article key={coupon.id} className={`flex min-h-28 overflow-hidden rounded-2xl border bg-white shadow-sm ${coupon.status === 'expired' ? 'border-red-100' : 'border-gray-100'}`}>
+          <div className={`flex w-28 shrink-0 flex-col items-center justify-center px-3 text-white ${coupon.status === 'active' ? 'bg-[#4E8D43]' : 'bg-gray-400'}`}>
+            <strong className="text-3xl">₱{Number(coupon.amount || 0).toLocaleString('en-US')}</strong>
+            <span className="mt-1 text-[10px] font-bold uppercase tracking-wider">Coupon</span>
+          </div>
+          <div className="min-w-0 flex-1 p-4">
+            <div className="flex items-center justify-between gap-2">
+              <strong className="text-sm text-[#0F0F0F]">EasyGoSpa reward</strong>
+              <span className={`text-xs font-bold ${couponStatusTone(coupon.status)}`}>{couponStatusLabel(coupon.status)}</span>
+            </div>
+            <p className="mt-2 text-xs text-gray-500">Valid on any booking · one coupon per booking</p>
+            <p className={`mt-2 text-xs font-semibold ${coupon.status === 'expired' ? 'text-red-600' : 'text-gray-500'}`}>
+              {coupon.status === 'used' && coupon.usedAt ? `Used ${formatSchedule(coupon.usedAt)}` : `Expires ${formatSchedule(coupon.expiresAt) || 'date pending'}`}
+            </p>
+          </div>
+        </article>
+      ))}
     </div>
   );
 }

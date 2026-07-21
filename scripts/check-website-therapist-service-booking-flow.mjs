@@ -97,7 +97,7 @@ test('payload contains therapist-first cash booking fields', () => {
 });
 
 test('payment UI and payload are cash-only and avoid external sends', () => {
-  assert.ok(modalSource.includes('Cash after service'));
+  assert.ok(modalSource.includes('Cash before service'));
   for (const forbidden of ['GCash', 'Maya', 'QR PH', 'Bank transfer', 'Payment link']) {
     assert.ok(!modalSource.includes(forbidden), `modal must not show ${forbidden}`);
   }

@@ -43,6 +43,10 @@ const projected = projectPublicBookingSuccess({
   serviceName: 'Swedish Massage',
   queued: true,
   queueMessage: 'Your booking is queued.',
+  couponApplied: true,
+  grossServiceAmount: 1000,
+  couponDiscount: 50,
+  cashToCollect: 950,
   customer: { phone: '+639000000000', email: 'secret@example.test', address: 'Secret address' },
   thread: { metadata: { remittance: { amount: 1 } } },
   workflowEvents: [{ type: 'internal' }],
@@ -61,7 +65,11 @@ assert.deepEqual(projected, {
   scheduledTime: '10:00',
   serviceName: 'Swedish Massage',
   queued: true,
-  queueMessage: 'Your booking is queued.'
+  queueMessage: 'Your booking is queued.',
+  couponApplied: true,
+  grossServiceAmount: 1000,
+  couponDiscount: 50,
+  cashToCollect: 950
 });
 assertNoForbiddenKeys(projected);
 assert.match(routeSource, /projectPublicBookingSuccess\(payload, reference\)/);

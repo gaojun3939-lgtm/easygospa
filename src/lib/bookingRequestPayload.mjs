@@ -125,6 +125,8 @@ export function normalizeWebsiteBookingRequest(input = {}) {
   const inputMetadata = input.metadata && typeof input.metadata === 'object' ? input.metadata : {};
   const catalogSource = cleanText(inputMetadata.catalogSource || input.catalogSource, 80);
   const customerLocation = normalizeCustomerLocation(input.customerLocation || inputMetadata.customerLocation);
+  const couponCandidate = cleanText(input.couponId, 160);
+  const couponId = /^[a-z0-9][a-z0-9_-]*$/i.test(couponCandidate) ? couponCandidate : '';
 
   const metadata = {
     website: 'www.easygospa.com',
@@ -159,7 +161,7 @@ export function normalizeWebsiteBookingRequest(input = {}) {
   const noteParts = [];
   if (notes) noteParts.push(notes);
   noteParts.push(`Selected therapist: ${requestedTechnicianName}`);
-  noteParts.push(`Payment: Cash after service`);
+  noteParts.push(`Payment: Cash before service`);
   noteParts.push(`Preferred date: ${preferredDate}`);
 
   return {
@@ -199,6 +201,7 @@ export function normalizeWebsiteBookingRequest(input = {}) {
     totalAmount,
     quotedPrice: totalAmount,
     currency: 'PHP',
+    ...(couponId ? { couponId } : {}),
     metadata
   };
 }

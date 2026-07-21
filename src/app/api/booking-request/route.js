@@ -49,11 +49,19 @@ export async function POST(request) {
   }
 
   const targetUrl = backend.url;
+  const authorization = String(request.headers.get('authorization') || '').trim();
+  const forwardAuthorization = /^Bearer\s+[^\s]+$/i.test(authorization) && authorization.length <= 4096
+    ? authorization
+    : '';
 
   try {
     const response = await fetch(targetUrl, {
       method: 'POST',
-      headers: { 'content-type': 'application/json', ...forwardedClientIpHeaders(request) },
+      headers: {
+        'content-type': 'application/json',
+        ...forwardedClientIpHeaders(request),
+        ...(forwardAuthorization ? { Authorization: forwardAuthorization } : {})
+      },
       body: JSON.stringify(aiOfficePayload),
       cache: 'no-store'
     });

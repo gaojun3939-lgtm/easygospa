@@ -6,6 +6,11 @@ function firstString(...values) {
   return '';
 }
 
+function finiteAmount(value) {
+  const amount = Number(value);
+  return Number.isFinite(amount) && amount >= 0 ? Math.round(amount * 100) / 100 : null;
+}
+
 export function projectPublicBookingSuccess(payload = {}, reference = '') {
   const response = {
     ok: true,
@@ -17,6 +22,12 @@ export function projectPublicBookingSuccess(payload = {}, reference = '') {
     queued: payload.queued === true,
     queueMessage: firstString(payload.queueMessage)
   };
+
+  if (typeof payload.couponApplied === 'boolean') response.couponApplied = payload.couponApplied;
+  for (const key of ['grossServiceAmount', 'couponDiscount', 'cashToCollect']) {
+    const amount = finiteAmount(payload[key]);
+    if (amount !== null) response[key] = amount;
+  }
 
   return Object.fromEntries(Object.entries(response).filter(([, value]) => value !== ''));
 }
