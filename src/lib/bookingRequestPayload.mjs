@@ -127,6 +127,15 @@ export function normalizeWebsiteBookingRequest(input = {}) {
   const customerLocation = normalizeCustomerLocation(input.customerLocation || inputMetadata.customerLocation);
   const couponCandidate = cleanText(input.couponId, 160);
   const couponId = /^[a-z0-9][a-z0-9_-]*$/i.test(couponCandidate) ? couponCandidate : '';
+  const skipCoupon = input.skipCoupon === true;
+  const previewOnly = input.previewOnly === true;
+  const expectedCouponApplied = typeof input.expectedCouponApplied === 'boolean' ? input.expectedCouponApplied : undefined;
+  const expectedGrossServiceAmount = typeof input.expectedGrossServiceAmount === 'number' && Number.isFinite(input.expectedGrossServiceAmount) && input.expectedGrossServiceAmount >= 0
+    ? Math.round(input.expectedGrossServiceAmount * 100) / 100
+    : undefined;
+  const expectedCashToCollect = typeof input.expectedCashToCollect === 'number' && Number.isFinite(input.expectedCashToCollect) && input.expectedCashToCollect >= 0
+    ? Math.round(input.expectedCashToCollect * 100) / 100
+    : undefined;
 
   const metadata = {
     website: 'www.easygospa.com',
@@ -202,6 +211,11 @@ export function normalizeWebsiteBookingRequest(input = {}) {
     quotedPrice: totalAmount,
     currency: 'PHP',
     ...(couponId ? { couponId } : {}),
+    skipCoupon,
+    previewOnly,
+    ...(expectedCouponApplied === undefined ? {} : { expectedCouponApplied }),
+    ...(expectedGrossServiceAmount === undefined ? {} : { expectedGrossServiceAmount }),
+    ...(expectedCashToCollect === undefined ? {} : { expectedCashToCollect }),
     metadata
   };
 }

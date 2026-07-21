@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AlertTriangle, Check, ChevronLeft, Clock, LogOut, Mail, MapPin, MessageCircle, TicketPercent, X } from 'lucide-react';
 import { getSupabaseClient, isCustomerAuthConfigured } from '../lib/supabaseClient';
 import { BOOKING_STATUS_STEPS } from '../lib/bookingStatus.mjs';
+import BookingReviewCard from './BookingReviewCard.jsx';
 
 const RESEND_SECONDS = 60;
 const WHATSAPP_FALLBACK = '+63 964 857 0967';
@@ -168,6 +169,13 @@ export default function CustomerOrders() {
     () => orders.find(order => order.reference === selected) || null,
     [orders, selected]
   );
+  const activeCouponCount = useMemo(
+    () => coupons.filter(coupon => coupon.status === 'active').length,
+    [coupons]
+  );
+  const onReviewSuccess = useCallback(async () => {
+    await Promise.all([loadOrders(), loadCoupons()]);
+  }, [loadCoupons, loadOrders]);
 
   async function continueWithGoogle() {
     const client = getSupabaseClient();
@@ -252,12 +260,14 @@ export default function CustomerOrders() {
               onResend={sendEmailCode} onBack={() => { setStep('email'); setError(''); setNotice(''); }}
             />
           ) : selectedOrder ? (
-            <OrderDetail order={selectedOrder} />
+            <OrderDetail order={selectedOrder} bookingEmail={session?.user?.email || ''} onReviewSuccess={onReviewSuccess} />
           ) : (
             <>
               <div className="mb-4 grid grid-cols-2 rounded-2xl bg-white p-1 shadow-sm" role="tablist" aria-label="Customer account">
                 <button type="button" role="tab" aria-selected={accountTab === 'orders'} onClick={() => setAccountTab('orders')} className={`h-10 rounded-xl text-sm font-bold ${accountTab === 'orders' ? 'bg-[#4E8D43] text-white' : 'text-gray-500'}`}>Bookings</button>
-                <button type="button" role="tab" aria-selected={accountTab === 'coupons'} onClick={() => setAccountTab('coupons')} className={`h-10 rounded-xl text-sm font-bold ${accountTab === 'coupons' ? 'bg-[#4E8D43] text-white' : 'text-gray-500'}`}>Coupons</button>
+                <button type="button" role="tab" aria-selected={accountTab === 'coupons'} onClick={() => setAccountTab('coupons')} className={`h-10 rounded-xl text-sm font-bold ${accountTab === 'coupons' ? 'bg-[#4E8D43] text-white' : 'text-gray-500'}`}>
+                  <CouponTabLabel activeCouponCount={activeCouponCount} />
+                </button>
               </div>
               {accountTab === 'orders'
                 ? <OrdersList state={ordersState} orders={orders} errorDetail={errorDetail} onOpen={setSelected} onRetry={loadOrders} />
@@ -282,7 +292,16 @@ function couponStatusTone(status) {
   return 'text-red-600';
 }
 
-function CouponWallet({ state, coupons, error, onRetry }) {
+export function CouponTabLabel({ activeCouponCount = 0 }) {
+  return (
+    <span className="relative inline-flex items-center">
+      Coupons
+      {activeCouponCount > 0 ? <span className="absolute -right-2 -top-1 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white" data-testid="coupon-active-indicator" aria-label="Active coupon available" /> : null}
+    </span>
+  );
+}
+
+export function CouponWallet({ state, coupons, error, onRetry }) {
   if (state === 'loading' || state === 'idle') return <p className="mt-10 text-center text-sm text-gray-500">Loading your coupon wallet…</p>;
   if (state === 'error') {
     return (
@@ -310,6 +329,7 @@ function CouponWallet({ state, coupons, error, onRetry }) {
             <span className="mt-1 text-[10px] font-bold uppercase tracking-wider">Coupon</span>
           </div>
           <div className="min-w-0 flex-1 p-4">
+            {coupon.status === 'active' ? <p className="mb-2 text-xs font-extrabold text-[#0E6F1A]">Auto-applied on your next booking</p> : null}
             <div className="flex items-center justify-between gap-2">
               <strong className="text-sm text-[#0F0F0F]">EasyGoSpa reward</strong>
               <span className={`text-xs font-bold ${couponStatusTone(coupon.status)}`}>{couponStatusLabel(coupon.status)}</span>
@@ -439,7 +459,7 @@ function OrdersList({ state, orders, errorDetail, onOpen, onRetry }) {
   );
 }
 
-function OrderDetail({ order }) {
+function OrderDetail({ order, bookingEmail, onReviewSuccess }) {
   const cancelled = order.status === 'cancelled';
   const current = statusIndex(order.status);
   const whatsapp = (order.whatsapp || WHATSAPP_FALLBACK).replace(/[^\d]/g, '');
@@ -487,6 +507,16 @@ function OrderDetail({ order }) {
         {order.areaName ? <p className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{order.areaName}</p> : null}
         {order.scheduledAt ? <p className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{formatSchedule(order.scheduledAt)}</p> : null}
       </div>
+
+      {order.status === 'completed' ? (
+        <BookingReviewCard
+          reference={order.reference}
+          therapistName={order.therapist?.name || 'your therapist'}
+          bookingEmail={bookingEmail}
+          reviewStatus={order.reviewStatus}
+          onReviewSuccess={onReviewSuccess}
+        />
+      ) : null}
 
       <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noreferrer"
         className="mt-6 flex h-11 w-full items-center justify-center gap-2 rounded-full bg-[#eaf1e7] text-sm font-semibold text-[#3F7838]">

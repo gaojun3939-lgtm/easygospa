@@ -30,6 +30,7 @@ import {
 import { getFallbackWebsiteBookingCatalog } from '../lib/bookingCatalogNormalizer.mjs';
 import { manilaNowMinutes, manilaToday } from '../lib/manilaTime.js';
 import { apiUrl } from '../lib/apiUrl.js';
+import { getSupabaseClient } from '../lib/supabaseClient.js';
 import {
   clearActiveBooking,
   isActiveBookingReference,
@@ -48,7 +49,6 @@ import {
   normalizeBookingPhoneInput
 } from '../lib/bookingPhone.mjs';
 import { resolvedAddressAfterConfirmation } from '../lib/locationConfirmation.mjs';
-import { getSupabaseClient } from '../lib/supabaseClient';
 
 // 名单会话缓存(60 秒):整页刷新后先把上次名单端上墙,真名单在背后静默刷新。
 // 技师上下班仍然实时反映——每次都照常重新拉取,缓存只负责"先有得看"。
@@ -141,21 +141,81 @@ function money(value = 0) {
   return `PHP ${Number(value || 0).toLocaleString('en-US')}`;
 }
 
+function peso(value = 0) {
+  return `₱${Number(value || 0).toLocaleString('en-US')}`;
+}
+
+async function customerAuthorizationHeaders() {
+  const client = getSupabaseClient();
+  if (!client) return {};
+  const { data } = await client.auth.getSession();
+  const token = String(data?.session?.access_token || '').trim();
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+export function BookingCouponAmounts({ couponPreview, selectedTotalAmount }) {
+  return (
+    <>
+      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Total</strong><span className={summaryMoneyClass}>{couponPreview ? peso(couponPreview.grossServiceAmount) : peso(selectedTotalAmount)}</span></div>
+      {couponPreview?.couponApplied === true ? (
+        <>
+          <div className="flex justify-between gap-4 text-[#0E6F1A]" data-testid="booking-coupon-discount"><strong>Coupon</strong><span className="font-bold">− {peso(couponPreview.couponDiscount)} (Automatically applied)</span></div>
+          <div className="flex items-baseline justify-between gap-4 border-t border-[#4E8D43]/20 pt-3" data-testid="booking-cash-to-collect"><strong className="text-base text-[#0F0F0F]">Cash payment</strong><span className="text-2xl font-extrabold text-[#0F0F0F]">{peso(couponPreview.cashToCollect)}</span></div>
+        </>
+      ) : null}
+    </>
+  );
+}
+
+export function BookingCouponSelector({
+  couponPreviewState,
+  couponPreview,
+  couponOptOut,
+  onRetry,
+  onOptOut,
+  onUseCoupon
+}) {
+  return (
+    <section className="rounded-[1.5rem] border border-gray-200 bg-white p-5" data-testid="booking-coupon-selector">
+      <h4 className="font-bold text-[#0F0F0F]">Coupon</h4>
+      <p className="mt-1 text-xs leading-5 text-gray-500">We securely match active coupons from the signed-in account for this booking email.</p>
+      <div className="mt-4" aria-live="polite">
+        {couponPreviewState === 'loading' ? <p className="text-sm text-gray-500">Checking for an active coupon…</p> : null}
+        {couponPreviewState === 'error' ? (
+          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
+            <p className="text-sm text-amber-800">We could not confirm your coupon and cash total.</p>
+            <button type="button" onClick={onRetry} className="mt-2 text-sm font-bold text-[#3F7838]">Try again</button>
+          </div>
+        ) : null}
+        {couponPreviewState === 'ready' && couponPreview?.couponApplied === true ? (
+          <div className="rounded-2xl bg-[#F1FBF3] p-4">
+            <p className="text-sm font-bold text-[#0E6F1A]">Automatically applied</p>
+            <p className="mt-1 text-xs leading-5 text-gray-600">One active coupon will be rechecked and used when you submit.</p>
+            <button type="button" onClick={onOptOut} className="mt-3 text-xs font-bold text-gray-500 underline decoration-gray-300 underline-offset-4">Don't use coupon</button>
+          </div>
+        ) : null}
+        {couponPreviewState === 'ready' && couponPreview?.couponApplied !== true && couponOptOut ? (
+          <div className="rounded-2xl bg-gray-50 p-4">
+            <p className="text-sm font-semibold text-gray-600">Coupon not applied. You will pay the full amount.</p>
+            <button type="button" onClick={onUseCoupon} className="mt-3 text-xs font-bold text-[#3F7838] underline decoration-[#4E8D43]/40 underline-offset-4">Use coupon automatically</button>
+          </div>
+        ) : null}
+        {couponPreviewState === 'ready' && couponPreview?.couponApplied !== true && !couponOptOut ? (
+          couponPreview?.customerIdentityVerified === true
+            ? <p className="text-sm text-gray-500">No active coupon was found. This booking stays at the full amount.</p>
+            : <p className="text-sm text-gray-500">Sign in to My orders with this booking email to use account coupons.</p>
+        ) : null}
+      </div>
+    </section>
+  );
+}
+
 function formatReviewDate(value) {
   if (!value) return 'Recently';
   try {
     return new Intl.DateTimeFormat('en-PH', { timeZone: 'Asia/Manila', month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(value));
   } catch {
     return 'Recently';
-  }
-}
-
-function formatCouponExpiry(value) {
-  if (!value) return 'expiry pending';
-  try {
-    return new Intl.DateTimeFormat('en-PH', { timeZone: 'Asia/Manila', month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(value));
-  } catch {
-    return 'expiry pending';
   }
 }
 
@@ -683,11 +743,10 @@ export default function BookingModal() {
   const [activeCancelConfirming, setActiveCancelConfirming] = useState(false);
   const [activeCancelPending, setActiveCancelPending] = useState(false);
   const [activeCancelError, setActiveCancelError] = useState('');
-  const [availableCoupons, setAvailableCoupons] = useState([]);
-  const [couponWalletState, setCouponWalletState] = useState('idle');
-  const [couponAccountEmail, setCouponAccountEmail] = useState('');
-  const [couponAccessToken, setCouponAccessToken] = useState('');
-  const [selectedCouponId, setSelectedCouponId] = useState('');
+  const [couponOptOut, setCouponOptOut] = useState(false);
+  const [couponPreviewState, setCouponPreviewState] = useState('idle');
+  const [couponPreview, setCouponPreview] = useState(null);
+  const couponPreviewSequenceRef = useRef(0);
   const addressFieldRef = useRef(null);
   const addressFeedbackTimerRef = useRef(null);
 
@@ -730,10 +789,6 @@ export default function BookingModal() {
   const selectedDuration = useMemo(() => selectedService ? findExactDurationOption(selectedService, formData.durationMinutes) : null, [selectedService, formData.durationMinutes]);
   const selectedServiceOption = useMemo(() => resolveSelectedServiceOption(formData, catalogServices), [catalogServices, formData]);
   const selectedTotalAmount = selectedServiceOption?.price ?? 0;
-  const couponAccountMatchesBooking = Boolean(couponAccountEmail) && couponAccountEmail === String(formData.customerEmail || '').trim().toLowerCase();
-  const selectableCoupons = couponAccountMatchesBooking ? availableCoupons : [];
-  const selectedCoupon = useMemo(() => selectableCoupons.find(coupon => coupon.id === selectedCouponId && coupon.status === 'active') || null, [selectableCoupons, selectedCouponId]);
-  const estimatedCashAfterCoupon = Math.max(0, selectedTotalAmount - Number(selectedCoupon?.amount || 0));
   const availableTimeSlots = useMemo(() => (
     formData.preferredDate === manilaToday()
       ? timeSlots.filter(time => timeSlotMinutes(time) >= manilaNowMinutes() + BOOKING_LEAD_MINUTES)
@@ -805,64 +860,6 @@ export default function BookingModal() {
 
   useEffect(() => {
     bookingOpenRef.current = isOpen;
-  }, [isOpen]);
-
-  useEffect(() => {
-    if (!isOpen) return undefined;
-    let active = true;
-    async function loadAvailableCoupons() {
-      setCouponWalletState('loading');
-      setCouponAccessToken('');
-      const client = getSupabaseClient();
-      if (!client) {
-        if (active) {
-          setAvailableCoupons([]);
-          setCouponAccountEmail('');
-          setCouponAccessToken('');
-          setCouponWalletState('signed_out');
-        }
-        return;
-      }
-      const { data } = await client.auth.getSession();
-      const token = data?.session?.access_token;
-      if (!token) {
-        if (active) {
-          setAvailableCoupons([]);
-          setCouponAccountEmail('');
-          setCouponAccessToken('');
-          setCouponWalletState('signed_out');
-        }
-        return;
-      }
-      try {
-        const response = await fetch(apiUrl('/api/my-coupons'), {
-          headers: { Authorization: `Bearer ${token}` },
-          cache: 'no-store'
-        });
-        const payload = await response.json().catch(() => null);
-        if (!active) return;
-        if (!response.ok || payload?.ok !== true) {
-          setAvailableCoupons([]);
-          setCouponAccessToken('');
-          setCouponWalletState('error');
-          return;
-        }
-        const coupons = Array.isArray(payload.coupons) ? payload.coupons.filter(coupon => coupon.status === 'active') : [];
-        setAvailableCoupons(coupons);
-        setCouponAccountEmail(String(data?.session?.user?.email || '').trim().toLowerCase());
-        setCouponAccessToken(token);
-        setCouponWalletState('ready');
-        setSelectedCouponId(current => coupons.some(coupon => coupon.id === current) ? current : '');
-      } catch {
-        if (active) {
-          setAvailableCoupons([]);
-          setCouponAccessToken('');
-          setCouponWalletState('error');
-        }
-      }
-    }
-    void loadAvailableCoupons();
-    return () => { active = false; };
   }, [isOpen]);
 
   useEffect(() => () => {
@@ -947,7 +944,10 @@ export default function BookingModal() {
       setActiveBookingDialog(null);
       setActiveCancelConfirming(false);
       setActiveCancelError('');
-      setSelectedCouponId('');
+      couponPreviewSequenceRef.current += 1;
+      setCouponOptOut(false);
+      setCouponPreviewState('idle');
+      setCouponPreview(null);
       setEmailDraft(stored ? { email: stored.customerEmail, name: stored.customerName || '', phone: stored.phone || '' } : { email: '', name: '', phone: '' });
       setFormData(current => {
         const nextForm = createInitialForm(serviceName, catalogServices);
@@ -1137,12 +1137,121 @@ export default function BookingModal() {
     return null;
   };
 
+  const buildBookingRequestPayload = ({ previewOnly = false, skipCoupon = couponOptOut } = {}) => {
+    const selectedOption = selectedServiceOption;
+    if (!selectedOption || !selectedTherapist) return null;
+    const selectedServices = [{
+      serviceId: selectedOption.service.id,
+      serviceName: selectedOption.service.name,
+      durationMinutes: selectedOption.durationMinutes,
+      price: selectedOption.price,
+      currency: selectedOption.currency || bookingCatalog.currency || 'PHP'
+    }];
+    const dispatchDate = manilaToday();
+    const dispatchTime = manilaAsapTime();
+    const derivedArea = inferAreaFromAddress(formData.addressNote);
+    const couponExpectation = !previewOnly && couponPreviewState === 'ready' && couponPreview
+      ? {
+          expectedCouponApplied: couponPreview.couponApplied === true,
+          expectedGrossServiceAmount: couponPreview.grossServiceAmount,
+          expectedCashToCollect: couponPreview.cashToCollect
+        }
+      : {};
+
+    return {
+      source: 'website',
+      customerName: formData.customerName,
+      customerEmail: formData.customerEmail,
+      phone: formatBookingPhoneE164(phoneCountry, formData.phone),
+      requestedTechnicianId: selectedTherapist.id,
+      requestedTechnicianName: selectedTherapist.name,
+      requestedTechnicianProfileId: selectedTherapist.profileId || selectedTherapist.id,
+      requestedTechnicianProfileName: selectedTherapist.profileName || selectedTherapist.name,
+      requestedTechnicianAccountId: selectedTherapist.id === 'any_available' ? '' : (selectedTherapist.technicianAccountId || ''),
+      requestedTechnicianAccountName: selectedTherapist.id === 'any_available' ? '' : (selectedTherapist.technicianAccountName || ''),
+      therapistPreference: selectedTherapist.id === 'any_available' ? 'any_available' : 'specific_therapist',
+      therapistGenderPreference: selectedTherapist.therapistPreference === 'female_preferred' ? 'female' : selectedTherapist.therapistPreference === 'male_preferred' ? 'male' : '',
+      selectedTherapistSpecialties: selectedTherapist.specialties,
+      selectedServices,
+      serviceId: selectedOption.service.id,
+      service: selectedOption.service.name,
+      durationMinutes: selectedOption.durationMinutes,
+      totalAmount: selectedOption.price,
+      currency: selectedOption.currency || bookingCatalog.currency || 'PHP',
+      preferredDate: dispatchDate,
+      preferredTime: dispatchTime,
+      area: derivedArea,
+      addressNote: formData.addressNote,
+      ...(isUsableCustomerLocation(formData.customerLocation) ? {
+        customerLocation: {
+          latitude: formData.customerLocation.latitude,
+          longitude: formData.customerLocation.longitude
+        }
+      } : {}),
+      peopleCount: 1,
+      paymentMethod: 'cash_after_service',
+      paymentStatus: 'pending_collection',
+      paymentTiming: 'after_service',
+      skipCoupon: skipCoupon === true,
+      previewOnly: previewOnly === true,
+      ...couponExpectation,
+      notes: formData.notes,
+      metadata: {
+        website: 'www.easygospa.com',
+        form: 'BookingModal',
+        submittedFrom: 'public_website',
+        bookingFlow: 'therapist_wall_detail_service_cash',
+        catalogSource: bookingCatalog.catalogSource || 'catalog_unavailable_safe_fallback',
+        requestedTechnicianProfileId: selectedTherapist.profileId || selectedTherapist.id,
+        requestedTechnicianProfileName: selectedTherapist.profileName || selectedTherapist.name,
+        serviceId: selectedOption.service.id,
+        ...(selectedTherapist.id !== 'any_available' && selectedTherapist.technicianAccountId ? { requestedTechnicianAccountId: selectedTherapist.technicianAccountId } : {}),
+        ...(selectedTherapist.id !== 'any_available' && selectedTherapist.technicianAccountName ? { requestedTechnicianAccountName: selectedTherapist.technicianAccountName } : {})
+      }
+    };
+  };
+
+  const requestCouponPreview = async (skipCoupon = false) => {
+    const sequence = ++couponPreviewSequenceRef.current;
+    const previewPayload = buildBookingRequestPayload({ previewOnly: true, skipCoupon });
+    setCouponPreview(null);
+    setCouponPreviewState('loading');
+    if (!previewPayload) {
+      setCouponPreviewState('error');
+      return;
+    }
+    try {
+      const authorizationHeaders = await customerAuthorizationHeaders();
+      const response = await fetch(apiUrl('/api/booking-request'), {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', ...authorizationHeaders },
+        body: JSON.stringify(previewPayload)
+      });
+      const payload = await response.json().catch(() => null);
+      if (sequence !== couponPreviewSequenceRef.current) return;
+      if (!response.ok || payload?.ok !== true || payload?.preview !== true) {
+        throw new Error(payload?.error || 'Coupon availability could not be confirmed.');
+      }
+      setCouponPreview(payload);
+      setCouponPreviewState('ready');
+    } catch {
+      if (sequence !== couponPreviewSequenceRef.current) return;
+      setCouponPreview(null);
+      setCouponPreviewState('error');
+    }
+  };
+
   const goBack = () => {
     setError('');
     if (step === 'detail') setStep('wall');
     else if (step === 'email') setStep('detail');
     else if (step === 'details') setStep('email');
-    else if (step === 'confirm') setStep('details');
+    else if (step === 'confirm') {
+      couponPreviewSequenceRef.current += 1;
+      setCouponPreviewState('idle');
+      setCouponPreview(null);
+      setStep('details');
+    }
   };
 
   const handleDetailsContinue = event => {
@@ -1153,7 +1262,10 @@ export default function BookingModal() {
       return;
     }
     setError('');
+    setCouponOptOut(false);
+    setCouponPreview(null);
     setStep('confirm');
+    void requestCouponPreview(false);
   };
 
   const handleActiveBookingCancellation = async event => {
@@ -1196,97 +1308,46 @@ export default function BookingModal() {
       setError(validationError);
       return;
     }
+    if (couponPreviewState !== 'ready') {
+      setError('Please wait while we confirm your coupon and cash total.');
+      return;
+    }
 
     setIsSubmitting(true);
     setError('');
 
-    const selectedOption = selectedServiceOption;
-    if (!selectedOption) {
+    const requestPayload = buildBookingRequestPayload({ skipCoupon: couponOptOut });
+    if (!requestPayload) {
       setIsSubmitting(false);
       setError('Please select a valid service duration and price before submitting.');
       return;
     }
 
-    const selectedServices = [{
-      serviceId: selectedOption.service.id,
-      serviceName: selectedOption.service.name,
-      durationMinutes: selectedOption.durationMinutes,
-      price: selectedOption.price,
-      currency: selectedOption.currency || bookingCatalog.currency || 'PHP'
-    }];
-
-    // On-demand: schedule + area are derived automatically (no pickers in the form).
-    const dispatchDate = manilaToday();
-    const dispatchTime = manilaAsapTime();
-    const derivedArea = inferAreaFromAddress(formData.addressNote);
-
-    const requestPayload = {
-      source: 'website',
-      customerName: formData.customerName,
-      customerEmail: formData.customerEmail,
-      phone: formatBookingPhoneE164(phoneCountry, formData.phone),
-      requestedTechnicianId: selectedTherapist.id,
-      requestedTechnicianName: selectedTherapist.name,
-      requestedTechnicianProfileId: selectedTherapist.profileId || selectedTherapist.id,
-      requestedTechnicianProfileName: selectedTherapist.profileName || selectedTherapist.name,
-      requestedTechnicianAccountId: selectedTherapist.id === 'any_available' ? '' : (selectedTherapist.technicianAccountId || ''),
-      requestedTechnicianAccountName: selectedTherapist.id === 'any_available' ? '' : (selectedTherapist.technicianAccountName || ''),
-      therapistPreference: selectedTherapist.id === 'any_available' ? 'any_available' : 'specific_therapist',
-      therapistGenderPreference: selectedTherapist.therapistPreference === 'female_preferred' ? 'female' : selectedTherapist.therapistPreference === 'male_preferred' ? 'male' : '',
-      selectedTherapistSpecialties: selectedTherapist.specialties,
-      selectedServices,
-      serviceId: selectedOption.service.id,
-      service: selectedOption.service.name,
-      durationMinutes: selectedOption.durationMinutes,
-      totalAmount: selectedOption.price,
-      currency: selectedOption.currency || bookingCatalog.currency || 'PHP',
-      preferredDate: dispatchDate,
-      preferredTime: dispatchTime,
-      area: derivedArea,
-      addressNote: formData.addressNote,
-      ...(isUsableCustomerLocation(formData.customerLocation) ? {
-        customerLocation: {
-          latitude: formData.customerLocation.latitude,
-          longitude: formData.customerLocation.longitude
-        }
-      } : {}),
-      peopleCount: 1,
-      paymentMethod: 'cash_after_service',
-      paymentStatus: 'pending_collection',
-      paymentTiming: 'after_service',
-      ...(selectedCoupon ? { couponId: selectedCoupon.id } : {}),
-      notes: formData.notes,
-      metadata: {
-        website: 'www.easygospa.com',
-        form: 'BookingModal',
-        submittedFrom: 'public_website',
-        bookingFlow: 'therapist_wall_detail_service_cash',
-        catalogSource: bookingCatalog.catalogSource || 'catalog_unavailable_safe_fallback',
-        requestedTechnicianProfileId: selectedTherapist.profileId || selectedTherapist.id,
-        requestedTechnicianProfileName: selectedTherapist.profileName || selectedTherapist.name,
-        serviceId: selectedOption.service.id,
-        ...(selectedTherapist.id !== 'any_available' && selectedTherapist.technicianAccountId ? { requestedTechnicianAccountId: selectedTherapist.technicianAccountId } : {}),
-        ...(selectedTherapist.id !== 'any_available' && selectedTherapist.technicianAccountName ? { requestedTechnicianAccountName: selectedTherapist.technicianAccountName } : {})
-      }
-    };
-
     try {
+      const authorizationHeaders = await customerAuthorizationHeaders();
       // 提交紧贴网络请求再校验一次:缺坐标、距离未知、或 >10 km 都不会调用 fetch。
       const guardedSubmission = await submitBookingWithinServiceRadius({
         therapist: selectedTherapist,
         customerLocation: formData.customerLocation,
         submit: () => fetch(apiUrl('/api/booking-request'), {
           method: 'POST',
-          headers: {
-            'content-type': 'application/json',
-            ...(selectedCoupon && couponAccessToken ? { Authorization: `Bearer ${couponAccessToken}` } : {})
-          },
+          headers: { 'content-type': 'application/json', ...authorizationHeaders },
           body: JSON.stringify(requestPayload)
         })
       });
       if (!guardedSubmission.ok) throw new Error(guardedSubmission.error);
       const response = guardedSubmission.response;
       const payload = await response.json().catch(() => null);
+      if (
+        response.status === 409
+        && (payload?.code === 'COUPON_PREVIEW_CHANGED' || payload?.code === 'COUPON_PREVIEW_REQUIRED')
+      ) {
+        setError('Your coupon or cash total changed. Please review the refreshed amount before submitting again.');
+        setCouponPreview(null);
+        setCouponPreviewState('loading');
+        await requestCouponPreview(couponOptOut);
+        return;
+      }
       if (
         response.status === 409
         && payload?.code === 'ACTIVE_BOOKING_EXISTS'
@@ -1532,46 +1593,25 @@ export default function BookingModal() {
                       <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Service</strong><span className={summaryValueClass}>{formData.service} / {formData.durationMinutes} mins</span></div>
                       <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Schedule</strong><span className={summaryValueClass}>ASAP — therapist departs after accepting</span></div>
                       <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Address</strong><span className={summaryValueClass}>{inferAreaFromAddress(formData.addressNote)} - {formData.addressNote}</span></div>
-                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Total</strong><span className={summaryMoneyClass}>{money(selectedTotalAmount)}</span></div>
+                      <BookingCouponAmounts couponPreview={couponPreview} selectedTotalAmount={selectedTotalAmount} />
                       <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Payment</strong><span className={summaryValueClass}>Cash before service</span></div>
                     </div>
                   </div>
-                  <section className="rounded-[1.5rem] border border-gray-200 bg-white p-5" data-testid="booking-coupon-selector">
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <h4 className="font-bold text-[#0F0F0F]">Use a coupon</h4>
-                        <p className="mt-1 text-xs leading-5 text-gray-500">The discount is checked by our booking service when you submit.</p>
-                      </div>
-                      {selectedCoupon ? (
-                        <button type="button" onClick={() => setSelectedCouponId('')} className="text-xs font-bold text-gray-500">Remove</button>
-                      ) : null}
-                    </div>
-                    {couponWalletState === 'loading' ? <p className="mt-4 text-sm text-gray-500">Checking your wallet…</p> : null}
-                    {selectableCoupons.length ? (
-                      <div className="mt-4 grid gap-2">
-                        {selectableCoupons.map(coupon => (
-                          <button
-                            key={coupon.id}
-                            type="button"
-                            aria-pressed={selectedCouponId === coupon.id}
-                            onClick={() => setSelectedCouponId(current => current === coupon.id ? '' : coupon.id)}
-                            className={`flex items-center justify-between gap-4 rounded-2xl border p-3 text-left transition ${selectedCouponId === coupon.id ? 'border-[#4E8D43] bg-[#F1FBF3]' : 'border-gray-200 hover:border-[#4E8D43]/50'}`}
-                          >
-                            <span><strong className="block text-lg text-[#0E6F1A]">₱{Number(coupon.amount).toLocaleString('en-US')}</strong><span className="text-xs text-gray-500">Expires {formatCouponExpiry(coupon.expiresAt)}</span></span>
-                            <span className={`flex h-6 w-6 items-center justify-center rounded-full border ${selectedCouponId === coupon.id ? 'border-[#4E8D43] bg-[#4E8D43] text-white' : 'border-gray-300 text-transparent'}`}><Check className="h-4 w-4" /></span>
-                          </button>
-                        ))}
-                      </div>
-                    ) : couponWalletState === 'ready' && availableCoupons.length > 0 && !couponAccountMatchesBooking ? <p className="mt-4 text-sm text-amber-700">Use the same email as your signed-in coupon wallet to apply a coupon.</p> : couponWalletState === 'ready' ? <p className="mt-4 text-sm text-gray-500">No active coupons in this account.</p> : null}
-                    {selectedCoupon ? (
-                      <div className="mt-4 space-y-2 rounded-2xl bg-[#F1FBF3] p-4 text-sm">
-                        <div className="flex justify-between gap-4 text-gray-600"><span>Coupon selected</span><strong>− ₱{Number(selectedCoupon.amount).toLocaleString('en-US')}</strong></div>
-                        <div className="flex justify-between gap-4 text-[#0F0F0F]"><span className="font-bold">Estimated cash after coupon</span><strong className="text-lg text-[#0E6F1A]">{money(estimatedCashAfterCoupon)}</strong></div>
-                        <p className="text-xs leading-5 text-gray-500">This is an estimate, not a confirmed redemption. If the coupon is no longer valid, your booking still goes through at the full catalog price.</p>
-                      </div>
-                    ) : null}
-                  </section>
-                  <button type="submit" disabled={isSubmitting} className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-[#4E8D43] px-6 font-bold text-white hover:bg-[#3F7838] disabled:cursor-not-allowed disabled:opacity-60">
+                  <BookingCouponSelector
+                    couponPreviewState={couponPreviewState}
+                    couponPreview={couponPreview}
+                    couponOptOut={couponOptOut}
+                    onRetry={() => void requestCouponPreview(couponOptOut)}
+                    onOptOut={() => {
+                      setCouponOptOut(true);
+                      void requestCouponPreview(true);
+                    }}
+                    onUseCoupon={() => {
+                      setCouponOptOut(false);
+                      void requestCouponPreview(false);
+                    }}
+                  />
+                  <button type="submit" disabled={isSubmitting || couponPreviewState !== 'ready'} className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-[#4E8D43] px-6 font-bold text-white hover:bg-[#3F7838] disabled:cursor-not-allowed disabled:opacity-60">
                     {isSubmitting ? <><span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />Submitting...</> : 'Submit booking request'}
                   </button>
                 </form>

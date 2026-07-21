@@ -1,7 +1,7 @@
 ﻿import { NextResponse } from 'next/server';
 import { BookingRequestValidationError, normalizeWebsiteBookingRequest } from '../../../lib/bookingRequestPayload.mjs';
 import { resolveAiOfficeApiUrl } from '../../../lib/aiofficeApiBase.mjs';
-import { projectPublicBookingError, projectPublicBookingSuccess } from '../../../lib/publicBookingResponse.mjs';
+import { projectPublicBookingError, projectPublicBookingPreview, projectPublicBookingSuccess } from '../../../lib/publicBookingResponse.mjs';
 import { forwardedClientIpHeaders } from '../../../lib/serverForwardedIp.mjs';
 
 function json(payload, status = 200, headers = {}) {
@@ -75,6 +75,23 @@ export async function POST(request) {
         response.ok ? 502 : response.status,
         retryAfter ? { 'retry-after': retryAfter } : {}
       );
+    }
+
+    if (aiOfficePayload.previewOnly === true) {
+      const preview = projectPublicBookingPreview(payload);
+      const complete = preview.ok === true
+        && preview.preview === true
+        && Number.isFinite(preview.grossServiceAmount)
+        && Number.isFinite(preview.couponDiscount)
+        && Number.isFinite(preview.cashToCollect);
+      if (!complete) {
+        return json({
+          ok: false,
+          code: 'AIOFFICE_COUPON_PREVIEW_INVALID',
+          error: 'Coupon availability could not be confirmed. Please try again.'
+        }, 502);
+      }
+      return json(preview);
     }
 
     const reference = extractBookingReference(payload);

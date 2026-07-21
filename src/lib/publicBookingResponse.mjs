@@ -32,6 +32,20 @@ export function projectPublicBookingSuccess(payload = {}, reference = '') {
   return Object.fromEntries(Object.entries(response).filter(([, value]) => value !== ''));
 }
 
+export function projectPublicBookingPreview(payload = {}) {
+  const response = {
+    ok: payload?.ok === true,
+    preview: payload?.preview === true,
+    couponApplied: payload?.couponApplied === true,
+    customerIdentityVerified: payload?.customerIdentityVerified === true
+  };
+  for (const key of ['grossServiceAmount', 'couponDiscount', 'cashToCollect']) {
+    const amount = finiteAmount(payload?.[key]);
+    if (amount !== null) response[key] = amount;
+  }
+  return response;
+}
+
 export function projectPublicBookingError(payload = {}) {
   const source = payload && typeof payload === 'object' && !Array.isArray(payload) ? payload : {};
   const code = firstString(source.code, 'AIOFFICE_BOOKING_REQUEST_FAILED');

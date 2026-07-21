@@ -3,6 +3,7 @@ import fs from 'node:fs';
 
 import { normalizePublicBookingCatalog } from '../src/lib/bookingCatalogNormalizer.mjs';
 import { normalizeWebsiteBookingRequest } from '../src/lib/bookingRequestPayload.mjs';
+import * as publicBookingResponse from '../src/lib/publicBookingResponse.mjs';
 import {
   normalizeCouponWalletPayload,
   projectPublicReviewResponse
@@ -24,8 +25,11 @@ const ordersSource = fs.readFileSync('src/components/CustomerOrders.jsx', 'utf8'
 const reviewProxySource = fs.readFileSync('src/app/api/booking-review/route.js', 'utf8');
 const couponProxySource = fs.readFileSync('src/app/api/my-coupons/route.js', 'utf8');
 const bookingProxySource = fs.readFileSync('src/app/api/booking-request/route.js', 'utf8');
+const reviewCardSource = fs.existsSync('src/components/BookingReviewCard.jsx')
+  ? fs.readFileSync('src/components/BookingReviewCard.jsx', 'utf8')
+  : '';
 
-test('booking request carries only the selected coupon id while retaining full catalog total', () => {
+test('booking request keeps full catalog total and only strict coupon-control inputs', () => {
   const payload = normalizeWebsiteBookingRequest({
     customerName: 'Coupon Guest',
     customerEmail: 'coupon@example.test',
@@ -40,14 +44,66 @@ test('booking request carries only the selected coupon id while retaining full c
     addressNote: 'Test building',
     totalAmount: 1,
     couponId: 'coupon-safe-001',
-    metadata: { couponId: 'coupon-forged', couponDiscount: 999 }
+    skipCoupon: true,
+    previewOnly: true,
+    expectedCouponApplied: true,
+    expectedGrossServiceAmount: 1000,
+    expectedCashToCollect: 950,
+    couponDiscount: 999,
+    cashToCollect: 1,
+    metadata: { couponId: 'coupon-forged', couponDiscount: 999, cashToCollect: 1 }
   });
 
   assert.equal(payload.totalAmount, 1000);
   assert.equal(payload.quotedPrice, 1000);
   assert.equal(payload.couponId, 'coupon-safe-001');
+  assert.equal(payload.skipCoupon, true);
+  assert.equal(payload.previewOnly, true);
+  assert.equal(payload.expectedCouponApplied, true);
+  assert.equal(payload.expectedGrossServiceAmount, 1000);
+  assert.equal(payload.expectedCashToCollect, 950);
+  assert.equal(payload.couponDiscount, undefined);
+  assert.equal(payload.cashToCollect, undefined);
   assert.equal(payload.metadata.couponId, undefined);
   assert.equal(payload.metadata.couponDiscount, undefined);
+  assert.equal(payload.metadata.cashToCollect, undefined);
+
+  const stringFlags = normalizeWebsiteBookingRequest({
+    customerName: 'Coupon Guest', customerEmail: 'coupon@example.test', phone: '+639000000001',
+    requestedTechnicianId: 'therapist-real', requestedTechnicianName: 'Grace', therapistPreference: 'specific_therapist',
+    selectedServices: [{ serviceId: 'swedish', serviceName: 'Swedish Massage', durationMinutes: 60, price: 1000, currency: 'PHP' }],
+    preferredDate: '2026-07-25', preferredTime: '10:00', area: 'Makati', addressNote: 'Test building',
+    skipCoupon: 'true', previewOnly: 1, expectedCouponApplied: 'true', expectedGrossServiceAmount: '1000', expectedCashToCollect: -1
+  });
+  assert.equal(stringFlags.skipCoupon, false);
+  assert.equal(stringFlags.previewOnly, false);
+  assert.equal(stringFlags.expectedCouponApplied, undefined);
+  assert.equal(stringFlags.expectedGrossServiceAmount, undefined);
+  assert.equal(stringFlags.expectedCashToCollect, undefined);
+});
+
+test('website preview projector allowlists only authoritative coupon amounts', () => {
+  assert.equal(typeof publicBookingResponse.projectPublicBookingPreview, 'function');
+  const preview = publicBookingResponse.projectPublicBookingPreview({
+    ok: true,
+    preview: true,
+    couponApplied: true,
+    customerIdentityVerified: true,
+    grossServiceAmount: 1000,
+    couponDiscount: 50,
+    cashToCollect: 950,
+    couponId: 'private-coupon-id',
+    customerKey: 'private-customer-key'
+  });
+  assert.deepEqual(preview, {
+    ok: true,
+    preview: true,
+    couponApplied: true,
+    customerIdentityVerified: true,
+    grossServiceAmount: 1000,
+    couponDiscount: 50,
+    cashToCollect: 950
+  });
 });
 
 test('catalog preserves only safe aggregate and masked review fields', () => {
@@ -124,7 +180,7 @@ test('coupon wallet and public review response are explicit safe projections', (
   assert.equal(JSON.stringify(review).includes('customerKey'), false);
 });
 
-test('website renders completed review card, coupon wallet, and pending-verification coupon selection', () => {
+test('website renders completed-order review CTA and backend-authoritative coupon UX', () => {
   assert.match(trackingSource, /data-testid="completed-booking-review"/);
   assert.match(trackingSource, /How was \{therapistName\}\?/);
   assert.match(trackingSource, /A ₱50 coupon is now in your wallet/);
@@ -132,12 +188,35 @@ test('website renders completed review card, coupon wallet, and pending-verifica
   assert.doesNotMatch(trackingSource, /if \(response\.status === 409\) \{/);
   assert.match(ordersSource, /data-testid="coupon-wallet"/);
   assert.match(ordersSource, /Available|Expired|Used/);
+  assert.match(ordersSource, /data-testid="coupon-active-indicator"/);
+  assert.match(ordersSource, /status === 'active'/);
+  assert.match(ordersSource, /Auto-applied on your next booking/);
+  assert.match(ordersSource, /onReviewSuccess/);
+  assert.match(reviewCardSource, /Rate your massage · Get ₱50 coupon/);
+  assert.match(reviewCardSource, /★★★★★ Reviewed · ₱50 coupon sent/);
+  assert.match(reviewCardSource, /Thanks! ₱50 coupon added to your wallet/);
+  assert.match(reviewCardSource, /reviewStatus === 'unreviewed'/);
+  assert.match(reviewCardSource, /duplicateReviewCodes\.has/);
   assert.match(bookingModalSource, /data-testid="booking-coupon-selector"/);
-  assert.match(bookingModalSource, /Estimated cash after coupon/);
-  assert.match(bookingModalSource, /checked by our booking service/);
-  assert.match(bookingModalSource, /couponId:/);
-  assert.match(bookingModalSource, /selectedCoupon && couponAccessToken/);
-  assert.match(bookingModalSource, /Authorization: `Bearer \$\{couponAccessToken\}`/);
+  assert.match(bookingModalSource, /previewOnly: true/);
+  assert.match(bookingModalSource, /getSupabaseClient/);
+  assert.match(bookingModalSource, /auth\.getSession\(\)/);
+  assert.match(bookingModalSource, /Authorization:\s*`Bearer \$\{token\}`/);
+  assert.match(bookingModalSource, /expectedCouponApplied/);
+  assert.match(bookingModalSource, /expectedGrossServiceAmount/);
+  assert.match(bookingModalSource, /expectedCashToCollect/);
+  assert.match(bookingModalSource, /COUPON_PREVIEW_CHANGED/);
+  assert.match(bookingModalSource, /Sign in to My orders with this booking email to use account coupons\./);
+  assert.match(bookingModalSource, /skipCoupon: couponOptOut/);
+  assert.match(bookingModalSource, /Automatically applied/);
+  assert.match(bookingModalSource, /Don't use coupon/);
+  assert.match(bookingModalSource, /couponPreview\.grossServiceAmount/);
+  assert.match(bookingModalSource, /couponPreview\.couponDiscount/);
+  assert.match(bookingModalSource, /couponPreview\.cashToCollect/);
+  assert.doesNotMatch(bookingModalSource, /Estimated cash after coupon/);
+  assert.doesNotMatch(bookingModalSource, /selectedTotalAmount\s*-\s*Number\(selectedCoupon/);
+  assert.doesNotMatch(bookingModalSource, /couponDiscount\s*:/);
+  assert.doesNotMatch(bookingModalSource, /cashToCollect\s*:/);
   assert.match(bookingModalSource, /Confirm Cash before service/);
   assert.match(bookingModalSource, /Payment will be collected when the therapist arrives, before the massage starts\./);
   assert.doesNotMatch(bookingModalSource, /Cash after service|after the massage service/);
@@ -154,6 +233,8 @@ test('same-origin proxies forward minimal inputs and never pass upstream JSON th
   assert.match(bookingProxySource, /\^Bearer\\s\+\[\^\\s\]\+\$/);
   assert.match(bookingProxySource, /authorization\.length <= 4096/);
   assert.match(bookingProxySource, /Authorization: forwardAuthorization/);
+  assert.match(bookingProxySource, /projectPublicBookingPreview/);
+  assert.match(bookingProxySource, /aiOfficePayload\.previewOnly/);
   assert.doesNotMatch(bookingProxySource, /body[\s\S]*access_token|body[\s\S]*couponAccessToken/);
 });
 
