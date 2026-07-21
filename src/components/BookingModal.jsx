@@ -140,12 +140,15 @@ function money(value = 0) {
   return `PHP ${Number(value || 0).toLocaleString('en-US')}`;
 }
 
-// 评分统一 Glow 式:一颗金星 + 评分数(橙色)+(N reviews);没评价 = ★ 0.0 (0 reviews)。
+// 评分 Glow 式:一颗金星 + 评分数(橙色)+(N reviews)。
+// 新技师 5.0 起步(冷启动:0 分会吓跑客人、新人永远接不到第一单);
+// 但配合 NEW 标 + 明写(0 reviews),拿起步分的商业好处又不算骗人。
+// 攒够真评价后 rating/reviewCount 有值,自动切成真实平均分。
 function TherapistRating({ therapist = {} }) {
   const ratingRaw = Number(therapist.rating);
   const countRaw = Number(therapist.reviewCount);
   const hasReviews = Number.isFinite(ratingRaw) && ratingRaw > 0 && Number.isFinite(countRaw) && countRaw > 0;
-  const rating = hasReviews ? Math.min(5, ratingRaw) : 0;
+  const rating = hasReviews ? Math.min(5, ratingRaw) : 5;
   const reviewCount = hasReviews ? countRaw : 0;
 
   return (

@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Check, ChevronLeft, Clock, LogOut, Mail, MapPin, MessageCircle, X } from 'lucide-react';
+import { AlertTriangle, Check, ChevronLeft, Clock, LogOut, Mail, MapPin, MessageCircle, X } from 'lucide-react';
 import { getSupabaseClient, isCustomerAuthConfigured } from '../lib/supabaseClient';
 import { BOOKING_STATUS_STEPS } from '../lib/bookingStatus.mjs';
 
@@ -395,6 +395,11 @@ function OrderDetail({ order }) {
       <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noreferrer"
         className="mt-6 flex h-11 w-full items-center justify-center gap-2 rounded-full bg-[#eaf1e7] text-sm font-semibold text-[#3F7838]">
         <MessageCircle className="h-4 w-4" />Message us on WhatsApp
+      </a>
+      {/* 老板 2026-07-22 对标 Glow:客户订单页加独立投诉入口(现走 WhatsApp 带单号,将来接 AI 客服)。 */}
+      <a href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(`I'd like to report a problem with my booking ${order.reference}: `)}`} target="_blank" rel="noreferrer"
+        className="mt-2 flex h-11 w-full items-center justify-center gap-2 rounded-full border border-red-200 text-sm font-semibold text-red-600 transition hover:bg-red-50">
+        <AlertTriangle className="h-4 w-4" />Report a problem
       </a>
     </div>
   );
