@@ -478,8 +478,6 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
   const [lightboxUrl, setLightboxUrl] = useState('');
   const aboutText = String(therapist.profileIntroduction || '').trim() || missingProfileIntroduction;
   const shouldClampAbout = aboutText.length > 170;
-  const visibleServiceTags = availableServices.slice(0, 3).map(service => service.name);
-  const remainingServiceCount = Math.max(0, availableServices.length - visibleServiceTags.length);
   const detailImageUrl = resolveTherapistImageUrl(therapist, 'detail');
   const usesFallbackImage = detailImageUrl === DEFAULT_THERAPIST_IMAGE_URL;
   const detailDistanceKm = therapistDistanceKm(therapist);
@@ -534,19 +532,27 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
           <h3 className="text-3xl font-bold tracking-normal text-[#0F0F0F]">{therapist.name}</h3>
           <p className="mt-1 text-sm font-semibold text-gray-700">Massage Therapist</p>
           <p className="mt-2 text-sm leading-6 text-gray-600">{therapistAreaText(therapist)}</p>
-          <div className="mt-4 flex flex-wrap gap-2 text-xs">
-            <span className="rounded-full bg-[#E8F5E9] px-3 py-1.5 font-bold text-[#3F7838]">Available after confirmation</span>
-            <span className="rounded-full bg-gray-100 px-3 py-1.5 font-semibold text-gray-700"><TherapistRating therapist={therapist} /></span>
+          {/* 老板 2026-07-21 对标 Glow:名字下一行"距离 · 金星评分(评价数)",
+              撤掉 Available after confirmation / 项目标签等杂物(项目下面 My Services 有)。 */}
+          <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-semibold text-gray-700">
             {detailDistanceKm !== null ? (
-              <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1.5 font-semibold text-gray-700" data-testid="therapist-detail-distance">
-                <MapPin className="h-3.5 w-3.5" />
+              <span className="inline-flex items-center gap-1" data-testid="therapist-detail-distance">
+                <MapPin className="h-4 w-4 text-gray-500" />
                 {detailDistanceKm < 10 ? detailDistanceKm.toFixed(1) : Math.round(detailDistanceKm)} km
               </span>
             ) : null}
+            {detailDistanceKm !== null ? <span className="text-gray-300">|</span> : null}
+            <TherapistRating therapist={therapist} />
           </div>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {visibleServiceTags.map(item => <span key={item} className="rounded-full bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-700">{item}</span>)}
-            {remainingServiceCount ? <span className="rounded-full bg-gray-100 px-3 py-1.5 text-xs font-bold text-[#3F7838]">+{remainingServiceCount} more</span> : null}
+          <div className="mt-4 flex items-center gap-4 rounded-2xl border border-[#4E8D43]/35 bg-[#F7FCF8] px-4 py-3" data-testid="therapist-care">
+            <span className="flex flex-col items-center gap-1 text-[#3F7838]">
+              <ShieldCheck className="h-7 w-7" />
+              <span className="text-[11px] font-bold leading-none">EasyGoSpa Care</span>
+            </span>
+            <span className="grid gap-1.5 text-sm text-gray-800">
+              <span className="inline-flex items-center gap-2"><Check className="h-4 w-4 shrink-0 text-[#3F7838]" />No tip, no travel fee</span>
+              <span className="inline-flex items-center gap-2"><Check className="h-4 w-4 shrink-0 text-[#3F7838]" />No sensitive information required</span>
+            </span>
           </div>
         </div>
       </section>
@@ -557,17 +563,6 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
           <img src={lightboxUrl} alt={`${therapist.name} photo`} className="max-h-[85vh] max-w-full rounded-2xl object-contain" onClick={event => event.stopPropagation()} />
         </div>
       ) : null}
-      <section className="rounded-[1.5rem] border border-[#4E8D43]/20 bg-[#F1FBF3] p-5" data-testid="therapist-care">
-        <div className="flex items-center gap-2">
-          <ShieldCheck className="h-5 w-5 text-[#3F7838]" />
-          <h3 className="text-lg font-bold text-[#0F0F0F]">EasyGoSpa Care</h3>
-        </div>
-        <ul className="mt-4 grid gap-3 text-sm text-gray-700 sm:grid-cols-3">
-          <li><strong className="block text-[#0F0F0F]">Clear booking details</strong><span className="mt-1 block leading-5">Service, duration, and price are shown before you continue.</span></li>
-          <li><strong className="block text-[#0F0F0F]">Confirmation before dispatch</strong><span className="mt-1 block leading-5">A therapist is dispatched only after the booking is confirmed.</span></li>
-          <li><strong className="block text-[#0F0F0F]">Privacy-aware booking</strong><span className="mt-1 block leading-5">Only the details needed to arrange the booking are requested.</span></li>
-        </ul>
-      </section>
       <section className="rounded-[1.5rem] border border-gray-200 bg-white p-5 shadow-sm" data-testid="therapist-about">
         <h3 className="text-xl font-bold text-[#0F0F0F]">About {therapist.name}</h3>
         <p className={`mt-2 text-sm leading-6 text-gray-700 ${shouldClampAbout && !showFullAbout ? 'line-clamp-4' : ''}`}>{aboutText}</p>
