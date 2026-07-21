@@ -1358,8 +1358,8 @@ export default function BookingModal() {
                     <LocationPicker value={formData.customerLocation} onChange={updateCustomerLocation} onAddress={handleResolvedAddress} />
                   </div>
                   <div>
-                    <label className={bookingLabelClass}><MessageSquare className="mr-2 inline h-4 w-4" />Notes optional</label>
-                    <textarea className={bookingTextareaClass} rows={3} value={formData.notes} onChange={event => updateField('notes', event.target.value)} placeholder="Any special request" data-readability-field="notes" />
+                    <label className={bookingLabelClass}><MessageSquare className="mr-2 inline h-4 w-4" />Arrival notes (optional)</label>
+                    <textarea className={bookingTextareaClass} rows={3} value={formData.notes} onChange={event => updateField('notes', event.target.value)} placeholder="Building entrance, parking, gate code, or how to find you" data-readability-field="notes" />
                   </div>
                   <button type="submit" data-testid="review-cash-booking" className="h-12 w-full rounded-2xl bg-[#4E8D43] px-6 font-bold text-white hover:bg-[#3F7838]">Review cash booking</button>
                 </form>
