@@ -1307,7 +1307,15 @@ export default function BookingModal() {
                     </div>
                     <div>
                       <label className={bookingLabelClass}>Phone optional</label>
-                      <input className={bookingInputClass} value={emailDraft.phone} onChange={event => setEmailDraft(current => ({ ...current, phone: event.target.value }))} placeholder="WhatsApp number" data-readability-field="phone" />
+                      <div className="flex gap-2">
+                        <select aria-label="Phone country" className="h-12 w-[8.25rem] shrink-0 rounded-2xl border border-gray-300 bg-white px-3 text-sm font-bold text-[#0F0F0F] focus:border-[#4E8D43] focus:outline-none" value={phoneCountry} onChange={event => setPhoneCountry(event.target.value)}>
+                          {BOOKING_PHONE_COUNTRIES.map(country => <option key={country.iso} value={country.iso}>{country.flag} +{country.callingCode}</option>)}
+                        </select>
+                        <div className="relative min-w-0 flex-1">
+                          <span className="pointer-events-none absolute inset-y-0 left-4 flex items-center text-sm font-semibold text-gray-500">+{bookingPhoneCountry(phoneCountry).callingCode}</span>
+                          <input autoComplete="tel-national" className={`${bookingInputClass} pl-14`} inputMode="tel" value={emailDraft.phone} onChange={event => setEmailDraft(current => ({ ...current, phone: event.target.value }))} placeholder="908 123 4567" data-readability-field="phone" />
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <button type="submit" className="h-12 w-full rounded-2xl bg-[#4E8D43] px-6 font-bold text-white hover:bg-[#3F7838]">Continue with email</button>
