@@ -367,6 +367,9 @@ function TherapistWallCard({ therapist, selected, onSelect, onRequireLocation, c
             </p>
           ) : null}
           <div className="mt-1 text-xs font-medium text-gray-600"><TherapistRating therapist={therapist} /></div>
+          {String(therapist.profileIntroduction || '').trim() ? (
+            <p className="mt-1.5 line-clamp-2 text-xs leading-5 text-gray-600" data-testid="therapist-card-intro">&ldquo;{therapist.profileIntroduction}&rdquo;</p>
+          ) : null}
           <div className="mt-3 flex min-h-11 items-center justify-end gap-3">
             {therapist.isMannequin ? (
               <span className="ml-auto inline-flex h-11 shrink-0 items-center justify-center rounded-full bg-gray-100 px-4 text-sm font-bold text-gray-500" data-testid={`therapist-card-resting-${therapist.id}`}>Resting</span>
@@ -479,6 +482,7 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
   const remainingServiceCount = Math.max(0, availableServices.length - visibleServiceTags.length);
   const detailImageUrl = resolveTherapistImageUrl(therapist, 'detail');
   const usesFallbackImage = detailImageUrl === DEFAULT_THERAPIST_IMAGE_URL;
+  const detailDistanceKm = therapistDistanceKm(therapist);
   // 老板 2026-07-19:主图 + 已批准生活照 合成一个可左右滑的相册放最顶部(不再分两块)。
   const heroPhotos = Array.from(new Set([
     ...(usesFallbackImage ? [] : [detailImageUrl]),
@@ -533,6 +537,12 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
           <div className="mt-4 flex flex-wrap gap-2 text-xs">
             <span className="rounded-full bg-[#E8F5E9] px-3 py-1.5 font-bold text-[#3F7838]">Available after confirmation</span>
             <span className="rounded-full bg-gray-100 px-3 py-1.5 font-semibold text-gray-700"><TherapistRating therapist={therapist} /></span>
+            {detailDistanceKm !== null ? (
+              <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1.5 font-semibold text-gray-700" data-testid="therapist-detail-distance">
+                <MapPin className="h-3.5 w-3.5" />
+                {detailDistanceKm < 10 ? detailDistanceKm.toFixed(1) : Math.round(detailDistanceKm)} km
+              </span>
+            ) : null}
           </div>
           <div className="mt-4 flex flex-wrap gap-2">
             {visibleServiceTags.map(item => <span key={item} className="rounded-full bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-700">{item}</span>)}
@@ -845,6 +855,20 @@ export default function BookingModal() {
   };
 
   // 墙上定位入口:选点即刷新技师距离(customerCoords 触发目录重拉),并预填下单定位。
+  // 定位/确认钉子后反查到的门牌,自动填进地址栏;客人手打过的内容不覆盖
+  // (只覆盖空栏或上一次自动填的值,老板 2026-07-21:随便点哪个按钮都自动填,看不对再细改)。
+  const lastAutoAddressRef = useRef('');
+  const handleResolvedAddress = useCallback(address => {
+    const text = String(address || '').trim();
+    if (!text) return;
+    setFormData(current => {
+      const currentNote = String(current.addressNote || '').trim();
+      if (currentNote && currentNote !== lastAutoAddressRef.current) return current;
+      lastAutoAddressRef.current = text;
+      return { ...current, addressNote: text };
+    });
+  }, []);
+
   const handleWallLocationChange = location => {
     if (!isUsableCustomerLocation(location)) return;
     const coords = { latitude: location.latitude, longitude: location.longitude };
@@ -1238,7 +1262,7 @@ export default function BookingModal() {
                       </div>
                       {showWallLocationPicker ? (
                         <div className="mt-3" data-testid="wall-location-picker">
-                          <LocationPicker value={formData.customerLocation} onChange={handleWallLocationChange} />
+                          <LocationPicker value={formData.customerLocation} onChange={handleWallLocationChange} onAddress={handleResolvedAddress} />
                         </div>
                       ) : null}
                     </div>
@@ -1331,7 +1355,7 @@ export default function BookingModal() {
                   </div>
                   <div>
                     <label className={bookingLabelClass}><MapPin className="mr-2 inline h-4 w-4" />Pin your location on the map <span className="font-normal text-gray-500">(helps us send the nearest therapist)</span></label>
-                    <LocationPicker value={formData.customerLocation} onChange={updateCustomerLocation} />
+                    <LocationPicker value={formData.customerLocation} onChange={updateCustomerLocation} onAddress={handleResolvedAddress} />
                   </div>
                   <div>
                     <label className={bookingLabelClass}><MessageSquare className="mr-2 inline h-4 w-4" />Notes optional</label>

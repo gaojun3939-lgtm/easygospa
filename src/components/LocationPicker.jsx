@@ -11,17 +11,20 @@ const DEFAULT_CENTER = { lat: 14.5547, lng: 121.0244 };
 // Sources (all optional, all set the same value): GPS locate button,
 // dragging the pin, tapping the map, or Places autocomplete.
 // Degrades gracefully: if Maps fails to load, booking continues without a pin.
-export function LocationPicker({ value, onChange }) {
+export function LocationPicker({ value, onChange, onAddress }) {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const markerRef = useRef(null);
+  const geocoderRef = useRef(null);
   const onChangeRef = useRef(onChange);
+  const onAddressRef = useRef(onAddress);
   const [mapState, setMapState] = useState('loading'); // loading | ready | unavailable
   const [locateState, setLocateState] = useState('idle'); // idle | locating | done | denied | unsupported
 
   useEffect(() => {
     onChangeRef.current = onChange;
-  }, [onChange]);
+    onAddressRef.current = onAddress;
+  }, [onChange, onAddress]);
 
   // When the address field (or GPS) resolves a location elsewhere, move the pin here too.
   useEffect(() => {
@@ -40,6 +43,18 @@ export function LocationPicker({ value, onChange }) {
       if (mapRef.current.getZoom() < 15) mapRef.current.setZoom(16);
     }
     onChangeRef.current?.({ latitude, longitude, source });
+    // 反查门牌(老板 2026-07-21):钉好位置就把地址查出来交给上层,
+    // 客人不用再手打;查不到就静默,不挡流程。
+    if (onAddressRef.current && geocoderRef.current) {
+      try {
+        geocoderRef.current.geocode({ location: position }, (results, status) => {
+          const formatted = status === 'OK' ? results?.[0]?.formatted_address : '';
+          if (formatted) onAddressRef.current?.(formatted, source);
+        });
+      } catch {
+        // 静默:地址反查失败不影响定位本身
+      }
+    }
   }, []);
 
   useEffect(() => {
@@ -53,6 +68,12 @@ export function LocationPicker({ value, onChange }) {
         if (cancelled || !mapContainerRef.current) return;
         await maps.importLibrary('maps');
         await maps.importLibrary('marker');
+        try {
+          const { Geocoder } = await maps.importLibrary('geocoding');
+          geocoderRef.current = new Geocoder();
+        } catch {
+          geocoderRef.current = null; // 反查地址属增强,失败不影响选点
+        }
         const center = value?.latitude ? { lat: value.latitude, lng: value.longitude } : DEFAULT_CENTER;
         const map = new maps.Map(mapContainerRef.current, {
           center,
