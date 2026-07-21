@@ -141,39 +141,23 @@ function money(value = 0) {
   return `PHP ${Number(value || 0).toLocaleString('en-US')}`;
 }
 
+// 评分统一 Glow 式:一颗金星 + 评分数(橙色)+(N reviews);没评价 = ★ 0.0 (0 reviews)。
 function TherapistRating({ therapist = {} }) {
-  const rating = Number(therapist.rating);
-  const reviewCount = Number(therapist.reviewCount);
-
-  if (!Number.isFinite(rating) || rating <= 0 || !Number.isFinite(reviewCount) || reviewCount <= 0) {
-    return <span>No verified reviews yet</span>;
-  }
-
-  const displayedRating = Math.min(5, Math.max(0, Math.round(rating * 2) / 2));
+  const ratingRaw = Number(therapist.rating);
+  const countRaw = Number(therapist.reviewCount);
+  const hasReviews = Number.isFinite(ratingRaw) && ratingRaw > 0 && Number.isFinite(countRaw) && countRaw > 0;
+  const rating = hasReviews ? Math.min(5, ratingRaw) : 0;
+  const reviewCount = hasReviews ? countRaw : 0;
 
   return (
     <span
-      className="inline-flex items-center gap-1.5"
+      className="inline-flex items-center gap-1"
       role="img"
       aria-label={`${rating.toFixed(1)} out of 5 stars from ${reviewCount} verified reviews`}
     >
-      <span className="inline-flex items-center gap-0.5" aria-hidden="true">
-        {[0, 1, 2, 3, 4].map(index => {
-          const fillPercent = displayedRating >= index + 1 ? 100 : displayedRating >= index + 0.5 ? 50 : 0;
-
-          return (
-            <span key={index} className="relative h-3.5 w-3.5 shrink-0">
-              <Star className="absolute inset-0 h-3.5 w-3.5 text-[#f0b429]" />
-              {fillPercent > 0 ? (
-                <span className="absolute inset-y-0 left-0 overflow-hidden" style={{ width: `${fillPercent}%` }}>
-                  <Star className="h-3.5 w-3.5 fill-[#f0b429] text-[#f0b429]" />
-                </span>
-              ) : null}
-            </span>
-          );
-        })}
-      </span>
-      <span className="font-semibold text-gray-700">{rating.toFixed(1)} ({reviewCount})</span>
+      <Star className="h-4 w-4 shrink-0 fill-[#f0a41c] text-[#f0a41c]" aria-hidden="true" />
+      <span className="font-bold text-[#e08700]">{rating.toFixed(1)}</span>
+      <span className="font-medium text-gray-500">({reviewCount} {reviewCount === 1 ? 'review' : 'reviews'})</span>
     </span>
   );
 }
@@ -530,8 +514,6 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
         </div>
         <div className="p-5">
           <h3 className="text-3xl font-bold tracking-normal text-[#0F0F0F]">{therapist.name}</h3>
-          <p className="mt-1 text-sm font-semibold text-gray-700">Massage Therapist</p>
-          <p className="mt-2 text-sm leading-6 text-gray-600">{therapistAreaText(therapist)}</p>
           {/* 老板 2026-07-21 对标 Glow:名字下一行"距离 · 金星评分(评价数)",
               撤掉 Available after confirmation / 项目标签等杂物(项目下面 My Services 有)。 */}
           <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-semibold text-gray-700">
@@ -564,8 +546,7 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
         </div>
       ) : null}
       <section className="rounded-[1.5rem] border border-gray-200 bg-white p-5 shadow-sm" data-testid="therapist-about">
-        <h3 className="text-xl font-bold text-[#0F0F0F]">About {therapist.name}</h3>
-        <p className={`mt-2 text-sm leading-6 text-gray-700 ${shouldClampAbout && !showFullAbout ? 'line-clamp-4' : ''}`}>{aboutText}</p>
+        <p className={`text-sm leading-7 text-gray-700 ${shouldClampAbout && !showFullAbout ? 'line-clamp-4' : ''}`}>{aboutText}</p>
         {shouldClampAbout ? (
           <button type="button" onClick={() => setShowFullAbout(current => !current)} className="mt-2 text-sm font-bold text-[#3F7838]">
             {showFullAbout ? 'Show less' : 'Show more'}
