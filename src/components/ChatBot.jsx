@@ -91,7 +91,7 @@ export default function ChatBot() {
 EasyGo Spa Information:
 - Location: P-145, Sector A, Metropolitan Co-Operative Housing Society Limited,  Metro Manila, Metro Manila 1229
 - Phone: +63 964 857 0967
-- Email: easygospa@gmail.com
+- Email: services@easygospa.com
 - Hours: 
   * Available 24/7
   * Service Hours: 24 Hours Daily  

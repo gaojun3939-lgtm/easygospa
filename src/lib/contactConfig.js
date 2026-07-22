@@ -4,7 +4,7 @@ export const COMPANY_PHONE = '+63 964 857 0967';
 export const WHATSAPP_NUMBER = '639648570967'; // wa.me 用的纯数字(去空格去+号)
 export const FACEBOOK_URL = 'https://web.facebook.com/easygospa';
 export const INSTAGRAM_URL = 'https://www.instagram.com/easygospa_services';
-export const CONTACT_EMAIL = 'easygospa@gmail.com';
+export const CONTACT_EMAIL = 'services@easygospa.com';
 
 export function whatsappLink(text = '') {
   return `https://wa.me/${WHATSAPP_NUMBER}${text ? `?text=${encodeURIComponent(text)}` : ''}`;

@@ -207,10 +207,10 @@ export default function Contact() {
                     <h3 className="font-serif text-xl font-bold text-[#0F0F0F] mb-2">Email Support</h3>
                     <div className="leading-[1.618] text-gray-600">
                       <a 
-                        href="mailto:easygospa@gmail.com"
+                        href="mailto:services@easygospa.com"
                         className="text-[#2db83d] hover:text-[#45f248] transition-colors duration-300 font-medium"
                       >
-                        easygospa@gmail.com
+                        services@easygospa.com
                       </a>
                       <br />
                       <a
