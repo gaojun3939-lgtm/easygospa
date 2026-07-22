@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { resolveAiOfficeApiUrl } from '../../../lib/aiofficeApiBase.mjs';
-import { isActiveBookingReference } from '../../../lib/activeBooking.mjs';
+import { isActiveBookingReference, isPublicBookingCancelToken } from '../../../lib/activeBooking.mjs';
 import { projectBookingCancelUpstream } from '../../../lib/bookingCancelProxy.mjs';
 import { forwardedClientIpHeaders } from '../../../lib/serverForwardedIp.mjs';
 
@@ -21,11 +21,21 @@ function opaqueNotFound() {
   return json({ ok: false, reason: 'not_found' }, 404);
 }
 
+function cancelAuthRequired() {
+  return json({
+    ok: false,
+    code: 'CANCEL_AUTH_REQUIRED',
+    error: 'For security, log in to view your booking or contact us on WhatsApp for help.'
+  }, 401);
+}
+
 export async function POST(request) {
   const body = await request.json().catch(() => null);
   const reference = String(body?.reference || '').trim();
   const contact = String(body?.contact || '').trim();
+  const cancelToken = String(body?.cancelToken || '').trim();
   if (!isActiveBookingReference(reference) || !contact) return opaqueNotFound();
+  if (!isPublicBookingCancelToken(cancelToken)) return cancelAuthRequired();
 
   const backend = resolveAiOfficeApiUrl('bookingCancel');
   if (!backend.ok) return json({ ok: false, code: backend.code, error: backend.error }, backend.status);
@@ -34,7 +44,7 @@ export async function POST(request) {
     const response = await fetch(backend.url, {
       method: 'POST',
       headers: { 'content-type': 'application/json', ...forwardedClientIpHeaders(request) },
-      body: JSON.stringify({ reference, contact }),
+      body: JSON.stringify({ reference, contact, cancelToken }),
       cache: 'no-store'
     });
     const payload = parseJson(await response.text());

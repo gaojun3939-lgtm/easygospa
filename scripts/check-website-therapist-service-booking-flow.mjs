@@ -32,6 +32,10 @@ test('email account gate validates email and supplies customerEmail', () => {
   assert.equal(session.phone, '+639000001234');
   assert.ok(modalSource.includes('Continue with email'));
   assert.ok(!modalSource.includes('verified email'));
+  const emailInputIndex = modalSource.indexOf('data-testid="booking-email"');
+  const loginHintIndex = modalSource.indexOf('Use this email to log in and track your booking anytime after you order.');
+  const optionalNameIndex = modalSource.indexOf('Name optional');
+  assert.ok(emailInputIndex >= 0 && loginHintIndex > emailInputIndex && optionalNameIndex > loginHintIndex, 'login tracking hint must sit directly after the booking email input');
 });
 
 test('therapist cards support a concrete therapist and any available without fake reviews or GPS distance', () => {
@@ -114,7 +118,7 @@ test('payment UI and payload are cash-only and avoid external sends', () => {
 test('successful proxy response stores the active reference and redirects to tracking', () => {
   assert.ok(modalSource.includes("fetch(apiUrl('/api/booking-request')"));
   assert.ok(modalSource.includes("payload?.ok !== true"));
-  assert.ok(modalSource.includes('writeActiveBooking(reference)'));
+  assert.ok(modalSource.includes('writeActiveBooking(reference, { cancelToken: payload.cancelToken })'));
   assert.ok(modalSource.includes("router.push(`/track/${encodeURIComponent(reference)}`)"));
   assert.ok(!modalSource.includes("setStep('success')"));
   assert.ok(!modalSource.includes('window.location.href = \'https://staging.easygospa.com'));

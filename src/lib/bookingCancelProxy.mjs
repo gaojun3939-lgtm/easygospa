@@ -2,9 +2,18 @@ function cleanText(value = '') {
   return String(value || '').trim();
 }
 
+const CANCEL_AUTH_REQUIRED_ERROR = 'For security, log in to view your booking or contact us on WhatsApp for help.';
+
 export function projectBookingCancelUpstream({ httpStatus = 502, payload = null, reference = '', retryAfter = '' } = {}) {
   if (httpStatus === 404 || payload?.reason === 'not_found') {
     return { status: 404, body: { ok: false, reason: 'not_found' }, headers: {} };
+  }
+  if ((httpStatus === 401 || httpStatus === 403) && payload?.code === 'CANCEL_AUTH_REQUIRED') {
+    return {
+      status: httpStatus,
+      body: { ok: false, code: 'CANCEL_AUTH_REQUIRED', error: CANCEL_AUTH_REQUIRED_ERROR },
+      headers: {}
+    };
   }
   if (httpStatus === 409 && payload?.code === 'CANCEL_NOT_ALLOWED') {
     return {

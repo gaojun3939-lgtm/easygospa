@@ -73,31 +73,46 @@ check(buildBookingUpdatesWhatsAppUrl('mbr-brand-a-test') === 'https://wa.me/6396
 check(isTherapistArrivalTransition('on_the_way', 'arrived') && !isTherapistArrivalTransition('arrived', 'arrived') && !isTherapistArrivalTransition('waiting_acceptance', 'on_the_way'), 'arrival notification fires only on the transition into arrived', null);
 
 const reference = 'mbr-brand-a-sitewaiting21';
+const cancelToken = 'egc1_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 const written = writeActiveBooking(reference, {
+  cancelToken,
   storage,
   now: () => '2026-07-21T09:00:00.000Z'
 });
 check(
-  JSON.stringify(written) === JSON.stringify({ reference, createdAt: '2026-07-21T09:00:00.000Z' })
+  JSON.stringify(written) === JSON.stringify({ reference, cancelToken, createdAt: '2026-07-21T09:00:00.000Z' })
     && JSON.stringify(readActiveBooking({ storage })) === JSON.stringify(written)
-    && Object.keys(JSON.parse(storage.getItem(ACTIVE_BOOKING_STORAGE_KEY))).sort().join(',') === 'createdAt,reference',
-  'active marker stores exactly reference and createdAt',
+    && Object.keys(JSON.parse(storage.getItem(ACTIVE_BOOKING_STORAGE_KEY))).sort().join(',') === 'cancelToken,createdAt,reference',
+  'active marker stores exactly reference, cancellation token, and createdAt',
   JSON.parse(storage.getItem(ACTIVE_BOOKING_STORAGE_KEY))
 );
-storage.setItem(ACTIVE_BOOKING_STORAGE_KEY, JSON.stringify({ reference: 'invalid', createdAt: written.createdAt, contact: 'secret@example.test' }));
+storage.setItem(ACTIVE_BOOKING_STORAGE_KEY, JSON.stringify({ reference, createdAt: written.createdAt }));
+check(readActiveBooking({ storage }) === null && storage.getItem(ACTIVE_BOOKING_STORAGE_KEY) === null, 'legacy tokenless marker is rejected and cleared', storage.getItem(ACTIVE_BOOKING_STORAGE_KEY));
+storage.setItem(ACTIVE_BOOKING_STORAGE_KEY, JSON.stringify({ reference: 'invalid', cancelToken, createdAt: written.createdAt, contact: 'secret@example.test' }));
 check(readActiveBooking({ storage }) === null && storage.getItem(ACTIVE_BOOKING_STORAGE_KEY) === null, 'invalid or expanded marker is rejected and cleared', storage.getItem(ACTIVE_BOOKING_STORAGE_KEY));
-writeActiveBooking(reference, { storage, now: () => written.createdAt });
+check(
+  writeActiveBooking(reference, { cancelToken: 'invalid-token', storage, now: () => written.createdAt }) === null
+    && storage.getItem(ACTIVE_BOOKING_STORAGE_KEY) === null,
+  'malformed cancellation token cannot be persisted',
+  storage.getItem(ACTIVE_BOOKING_STORAGE_KEY)
+);
+writeActiveBooking(reference, { cancelToken, storage, now: () => written.createdAt });
 check(clearActiveBooking({ storage, reference: 'mbr-brand-a-other21' }) === false && readActiveBooking({ storage })?.reference === reference, 'one tracking page cannot clear another active reference', readActiveBooking({ storage }));
 check(clearActiveBooking({ storage, reference }) === true && readActiveBooking({ storage }) === null, 'matching active marker clears', readActiveBooking({ storage }));
 
-writeActiveBooking(reference, { storage, now: () => written.createdAt });
+writeActiveBooking(reference, { cancelToken, storage, now: () => written.createdAt });
 const failedLookupGate = await resolveActiveBookingGate({
   storage,
   loadStatus: async () => { throw new Error('synthetic network failure'); }
 });
-check(failedLookupGate === null && readActiveBooking({ storage }) === null, 'active-marker status lookup failure clears the marker and fails open', failedLookupGate);
-console.log(`[ride-hailing-site] NEGATIVE active_marker_lookup_failure gate=${JSON.stringify(failedLookupGate)} marker=${JSON.stringify(readActiveBooking({ storage }))}`);
-writeActiveBooking(reference, { storage, now: () => written.createdAt });
+check(
+  failedLookupGate?.reference === reference
+    && failedLookupGate?.cancelToken === cancelToken
+    && readActiveBooking({ storage })?.cancelToken === cancelToken,
+  'indeterminate status lookup preserves and returns the only local cancellation credential',
+  { failedLookupGate, marker: readActiveBooking({ storage }) }
+);
+console.log(`[ride-hailing-site] FAIL_CLOSED active_marker_lookup_failure marker_preserved=${Boolean(readActiveBooking({ storage })?.cancelToken)}`);
 const waitingGate = await resolveActiveBookingGate({
   storage,
   loadStatus: async () => ({ ok: true, status: 'waiting_acceptance' })
@@ -121,9 +136,51 @@ check(
 );
 
 let clientRequest = null;
+let missingTokenFetches = 0;
+const missingTokenResult = await cancelPublicBooking({
+  reference,
+  contact: 'guest@example.test',
+  fetchImpl: async () => {
+    missingTokenFetches += 1;
+    throw new Error('missing token must not reach fetch');
+  }
+});
+check(
+  missingTokenFetches === 0
+    && missingTokenResult.httpStatus === 401
+    && missingTokenResult.code === 'CANCEL_AUTH_REQUIRED'
+    && /log in/i.test(missingTokenResult.error)
+    && /WhatsApp/i.test(missingTokenResult.error),
+  'cancellation without the locally issued token fails before fetch with honest login and WhatsApp guidance',
+  { missingTokenFetches, missingTokenResult }
+);
+console.log(`[ride-hailing-site] NEGATIVE cancel_missing_token fetches=${missingTokenFetches} code=${missingTokenResult.code}`);
+
+let successfulCancelRequest = null;
+const successfulCancelResult = await cancelPublicBooking({
+  reference,
+  contact: 'guest@example.test',
+  cancelToken,
+  fetchImpl: async (url, init) => {
+    successfulCancelRequest = { url, init };
+    return new Response(JSON.stringify({ ok: true, reference, status: 'cancelled', cancelToken, internal: 'strip-me' }), {
+      status: 200,
+      headers: { 'content-type': 'application/json' }
+    });
+  }
+});
+check(
+  JSON.stringify(successfulCancelResult) === JSON.stringify({ ok: true, reference, status: 'cancelled' })
+    && JSON.parse(successfulCancelRequest.init.body).cancelToken === cancelToken
+    && !JSON.stringify(successfulCancelResult).includes(cancelToken),
+  'cancellation client sends the matching token and never reflects it after a confirmed success',
+  successfulCancelResult
+);
+
 const opaqueClientResult = await cancelPublicBooking({
   reference,
   contact: 'wrong@example.test',
+  cancelToken,
   fetchImpl: async (url, init) => {
     clientRequest = { url, init };
     return new Response(JSON.stringify({ ok: false, reason: 'not_found', internal: 'strip-me' }), {
@@ -136,6 +193,7 @@ check(
   clientRequest.url === '/api/booking-cancel'
     && JSON.parse(clientRequest.init.body).reference === reference
     && JSON.parse(clientRequest.init.body).contact === 'wrong@example.test'
+    && JSON.parse(clientRequest.init.body).cancelToken === cancelToken
     && JSON.stringify(opaqueClientResult) === JSON.stringify({ ok: false, httpStatus: 404, reason: 'not_found' }),
   'cancellation client returns one opaque not-found result',
   opaqueClientResult
@@ -161,6 +219,26 @@ check(
   opaqueProjection
 );
 console.log(`[ride-hailing-site] NEGATIVE cancel_proxy_opaque status=${opaqueProjection.status} body=${JSON.stringify(opaqueProjection.body)} forwarded_ip=${forwardedHeaders['x-forwarded-for']}`);
+
+const authRequiredProjection = projectBookingCancelUpstream({
+  httpStatus: 403,
+  payload: { ok: false, code: 'CANCEL_AUTH_REQUIRED', cancelToken, tokenHash: 'strip-me', secret: 'strip-me' },
+  reference
+});
+check(
+  JSON.stringify(authRequiredProjection) === JSON.stringify({
+    status: 403,
+    body: {
+      ok: false,
+      code: 'CANCEL_AUTH_REQUIRED',
+      error: 'For security, log in to view your booking or contact us on WhatsApp for help.'
+    },
+    headers: {}
+  }) && !JSON.stringify(authRequiredProjection).includes(cancelToken),
+  'cancel proxy keeps token failures generic and never reflects the raw token or upstream internals',
+  authRequiredProjection
+);
+console.log(`[ride-hailing-site] NEGATIVE cancel_wrong_token status=${authRequiredProjection.status} body=${JSON.stringify(authRequiredProjection.body)}`);
 
 const limitedProjection = projectBookingCancelUpstream({
   httpStatus: 429,
@@ -193,7 +271,7 @@ for (const marker of [
   'resolveActiveBookingGate',
   'activeBookingInspectionSequenceRef',
   "payload?.code === 'ACTIVE_BOOKING_EXISTS'",
-  'writeActiveBooking(reference)',
+  'writeActiveBooking(reference, { cancelToken: payload.cancelToken })',
   "router.push(`/track/${encodeURIComponent(reference)}`)"
 ]) {
   check(modalSource.includes(marker), `modal includes ${marker}`, marker);
@@ -214,6 +292,7 @@ for (const marker of [
 }
 check(!/(countdown|autoCancel|auto_cancel)/i.test(trackerSource), 'tracker has no countdown or auto-cancel implementation', null);
 check(!trackerSource.includes('writeActiveBooking'), 'opening a shared tracking link never creates a local active-booking marker', null);
+check(trackerSource.includes('readActiveBooking') && trackerSource.includes('cancelToken: activeMarker?.cancelToken'), 'tracking cancellation uses only a matching local cancellation token', null);
 for (const marker of [
   'Type or search your building',
   'Or use GPS / drag the pin',
@@ -235,8 +314,9 @@ for (const marker of [
 }
 check(trackerSource.indexOf('data-booking-updates-banner') > trackerSource.indexOf('data-booking-primary-status'), 'WhatsApp updates banner renders below the primary status card', null);
 check(trackerSource.includes('Get booking updates on WhatsApp') && trackerSource.includes('Your therapist has arrived'), 'tracker includes approved WhatsApp banner and arrival notification copy', null);
-check(requestProxySource.includes('projectPublicBookingError') && requestProxySource.includes('forwardedClientIpHeaders'), 'booking request proxy strictly projects activeReference and forwards client IP', null);
-check(cancelProxySource.includes('forwardedClientIpHeaders') && cancelProxySource.includes('retry-after'), 'cancel proxy forwards validated client IP and Retry-After', null);
+check(requestProxySource.includes('projectPublicBookingError') && requestProxySource.includes('forwardedClientIpHeaders') && !requestProxySource.includes('payload.activeReference'), 'booking request proxy strips duplicate references and forwards client IP', null);
+check(requestProxySource.includes('isPublicBookingCancelToken') && requestProxySource.includes('AIOFFICE_BOOKING_CANCEL_TOKEN_MISSING'), 'booking request proxy rejects non-preview success without a valid cancellation token', null);
+check(cancelProxySource.includes('isPublicBookingCancelToken(cancelToken)') && cancelProxySource.includes('forwardedClientIpHeaders') && cancelProxySource.includes('retry-after') && cancelProxySource.includes('JSON.stringify({ reference, contact, cancelToken })'), 'cancel proxy validates and forwards the one-time cancellation token plus validated client IP and Retry-After', null);
 check(customerOrdersSource.includes('BOOKING_STATUS_STEPS.map'), 'customer orders reuses the one public status timeline', null);
 check(nextConfigSource.includes('Access-Control-Expose-Headers') && nextConfigSource.includes('Retry-After'), 'cross-origin API responses expose Retry-After', null);
 

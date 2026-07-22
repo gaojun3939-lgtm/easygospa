@@ -1,3 +1,7 @@
+import { isPublicBookingCancelToken } from './activeBooking.mjs';
+
+export const PUBLIC_BOOKING_CREATED_RECOVERY_CODE = 'BOOKING_CREATED_RECONCILE_PENDING';
+
 function firstString(...values) {
   for (const value of values) {
     const normalized = String(value || '').trim();
@@ -23,6 +27,9 @@ export function projectPublicBookingSuccess(payload = {}, reference = '') {
     queueMessage: firstString(payload.queueMessage)
   };
 
+  const cancelToken = firstString(payload.cancelToken);
+  if (isPublicBookingCancelToken(cancelToken)) response.cancelToken = cancelToken;
+
   if (typeof payload.couponApplied === 'boolean') response.couponApplied = payload.couponApplied;
   for (const key of ['grossServiceAmount', 'couponDiscount', 'cashToCollect']) {
     const amount = finiteAmount(payload[key]);
@@ -30,6 +37,18 @@ export function projectPublicBookingSuccess(payload = {}, reference = '') {
   }
 
   return Object.fromEntries(Object.entries(response).filter(([, value]) => value !== ''));
+}
+
+export function projectPublicBookingCreatedRecovery(payload = {}, reference = '') {
+  const cancelToken = firstString(payload.cancelToken);
+  return {
+    ok: false,
+    created: true,
+    code: PUBLIC_BOOKING_CREATED_RECOVERY_CODE,
+    error: 'Your booking was received, but its schedule needs assistance. Do not submit again; contact us on WhatsApp.',
+    reference: firstString(reference, payload.reference),
+    ...(isPublicBookingCancelToken(cancelToken) ? { cancelToken } : {})
+  };
 }
 
 export function projectPublicBookingPreview(payload = {}) {
@@ -54,9 +73,5 @@ export function projectPublicBookingError(payload = {}) {
     code,
     error: firstString(source.error, 'Booking request could not be submitted.')
   };
-  const activeReference = firstString(source.activeReference);
-  if (code === 'ACTIVE_BOOKING_EXISTS' && /^mbr-brand-a-[a-z0-9]+$/i.test(activeReference)) {
-    response.activeReference = activeReference;
-  }
   return response;
 }

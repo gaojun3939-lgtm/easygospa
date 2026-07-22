@@ -29,32 +29,45 @@ test('booking modal no longer contains old in-spa confirmation copy', () => {
   }
 });
 
-test('success requires proxy ok, stores the opaque reference, and redirects immediately', () => {
+test('success requires proxy ok, stores the opaque reference with its cancellation token, and redirects immediately', () => {
   assert.ok(modalSource.includes("fetch(apiUrl('/api/booking-request')"));
   assert.ok(modalSource.includes("payload?.ok !== true"));
   assert.ok(modalSource.includes('mbr-brand-a-'));
-  assert.ok(modalSource.includes('writeActiveBooking(reference)'));
+  assert.ok(modalSource.includes('writeActiveBooking(reference, { cancelToken: payload.cancelToken })'));
+  assert.ok(modalSource.includes('if (!activeBookingMarker)'));
+  assert.ok(modalSource.includes('showActiveBookingDialog(reference'));
+  assert.ok(modalSource.includes('persisted: false'));
+  assert.ok(modalSource.includes('activeBookingDialog.persisted ?'));
   assert.ok(modalSource.includes("router.push(`/track/${encodeURIComponent(reference)}`)"));
   assert.ok(!modalSource.includes("setStep('success')"));
   assert.ok(!modalSource.includes('Booking request submitted'));
   assert.ok(!modalSource.includes("createdAppointment?.id || 'Pending'"));
 });
 
-test('duplicate response uses only validated activeReference and opens the same active-booking dialog', () => {
+test('unauthenticated duplicate response never exposes or persists an active booking reference', () => {
   assert.ok(proxySource.includes('projectPublicBookingError(payload)'));
-  assert.ok(publicResponseSource.includes("code === 'ACTIVE_BOOKING_EXISTS'"));
-  assert.ok(publicResponseSource.includes('/^mbr-brand-a-'));
+  assert.ok(!publicResponseSource.includes('response.activeReference'));
   assert.ok(modalSource.includes("payload?.code === 'ACTIVE_BOOKING_EXISTS'"));
-  assert.ok(modalSource.includes('showActiveBookingDialog(payload.activeReference'));
+  assert.ok(!modalSource.includes('payload.activeReference'));
   assert.ok(modalSource.includes('data-testid="active-booking-dialog"'));
 });
 
 test('server proxy rejects successful upstream responses without a real reference', () => {
   assert.ok(proxySource.includes('extractBookingReference'));
   assert.ok(proxySource.includes('AIOFFICE_BOOKING_REFERENCE_MISSING'));
+  assert.ok(proxySource.includes('isPublicBookingCancelToken'));
+  assert.ok(proxySource.includes('AIOFFICE_BOOKING_CANCEL_TOKEN_MISSING'));
   assert.ok(proxySource.includes('mbr-brand-a-'));
   assert.ok(proxySource.includes("resolveAiOfficeApiUrl('bookingRequest')"));
   assert.ok(apiBaseSource.includes('AIOFFICE_BOOKING_API_URL'));
+});
+
+test('post-create schedule failure preserves the token without changing the non-success response', () => {
+  assert.ok(proxySource.includes('PUBLIC_BOOKING_CREATED_RECOVERY_CODE'));
+  assert.ok(proxySource.includes('projectPublicBookingCreatedRecovery(payload, reference)'));
+  assert.ok(modalSource.includes("payload?.code === 'BOOKING_CREATED_RECONCILE_PENDING'"));
+  assert.ok(modalSource.includes('payload?.created === true'));
+  assert.ok(modalSource.includes('showActiveBookingDialog(recoveryReference'));
 });
 
 test('therapist wall payload preserves specific therapist booking fields', () => {

@@ -1,5 +1,5 @@
 import { apiUrl } from './apiUrl.js';
-import { isActiveBookingReference } from './activeBooking.mjs';
+import { isActiveBookingReference, isPublicBookingCancelToken } from './activeBooking.mjs';
 
 function cleanText(value = '') {
   return String(value || '').trim();
@@ -13,18 +13,24 @@ async function readJson(response) {
   }
 }
 
-export async function cancelPublicBooking({ reference = '', contact = '', fetchImpl = fetch } = {}) {
+const CANCEL_AUTH_REQUIRED_ERROR = 'For security, log in to view your booking or contact us on WhatsApp for help.';
+
+export async function cancelPublicBooking({ reference = '', contact = '', cancelToken = '', fetchImpl = fetch } = {}) {
   const normalizedReference = cleanText(reference);
   const normalizedContact = cleanText(contact);
+  const normalizedCancelToken = cleanText(cancelToken);
   if (!isActiveBookingReference(normalizedReference) || !normalizedContact) {
     return { ok: false, httpStatus: 400, code: 'INVALID_CANCELLATION', error: 'Enter the booking email or phone to continue.' };
+  }
+  if (!isPublicBookingCancelToken(normalizedCancelToken)) {
+    return { ok: false, httpStatus: 401, code: 'CANCEL_AUTH_REQUIRED', error: CANCEL_AUTH_REQUIRED_ERROR };
   }
 
   try {
     const response = await fetchImpl(apiUrl('/api/booking-cancel'), {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ reference: normalizedReference, contact: normalizedContact }),
+      body: JSON.stringify({ reference: normalizedReference, contact: normalizedContact, cancelToken: normalizedCancelToken }),
       cache: 'no-store'
     });
     const payload = await readJson(response);
@@ -33,6 +39,9 @@ export async function cancelPublicBooking({ reference = '', contact = '', fetchI
     }
     if (response.status === 404 || payload?.reason === 'not_found') {
       return { ok: false, httpStatus: 404, reason: 'not_found' };
+    }
+    if ((response.status === 401 || response.status === 403) && payload?.code === 'CANCEL_AUTH_REQUIRED') {
+      return { ok: false, httpStatus: response.status, code: 'CANCEL_AUTH_REQUIRED', error: CANCEL_AUTH_REQUIRED_ERROR };
     }
     if (response.status === 409 && payload?.code === 'CANCEL_NOT_ALLOWED') {
       return {

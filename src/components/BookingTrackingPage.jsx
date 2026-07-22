@@ -27,7 +27,7 @@ import {
   shouldShowBookingUpdatesBanner
 } from '../lib/bookingStatus.mjs';
 import { apiUrl } from '../lib/apiUrl.js';
-import { clearActiveBooking } from '../lib/activeBooking.mjs';
+import { clearActiveBooking, readActiveBooking } from '../lib/activeBooking.mjs';
 import { cancelPublicBooking } from '../lib/publicBookingCancel.mjs';
 import { BOOKING_FLOW_STORAGE_KEY } from '../lib/therapistServiceBookingFlow.mjs';
 
@@ -407,7 +407,13 @@ export default function BookingTrackingPage({ reference }) {
     }
     setCancelPending(true);
     setCancelError('');
-    const result = await cancelPublicBooking({ reference, contact: cancelContact });
+    const localMarker = readActiveBooking();
+    const activeMarker = localMarker?.reference === reference ? localMarker : null;
+    const result = await cancelPublicBooking({
+      reference,
+      contact: cancelContact,
+      cancelToken: activeMarker?.cancelToken
+    });
     setCancelPending(false);
     if (result.ok) {
       clearActiveBooking({ reference });

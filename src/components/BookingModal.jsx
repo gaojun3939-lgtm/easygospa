@@ -34,6 +34,7 @@ import { getSupabaseClient } from '../lib/supabaseClient.js';
 import {
   clearActiveBooking,
   isActiveBookingReference,
+  isPublicBookingCancelToken,
   resolveActiveBookingGate,
   writeActiveBooking
 } from '../lib/activeBooking.mjs';
@@ -893,12 +894,11 @@ export default function BookingModal() {
     };
   }, [isOpen]);
 
-  const showActiveBookingDialog = useCallback((reference, { contactHint = '', persist = false } = {}) => {
+  const showActiveBookingDialog = useCallback((reference, { contactHint = '', cancelToken = '', persisted = true, notice = '' } = {}) => {
     if (!isActiveBookingReference(reference)) return false;
     activeBookingInspectionSequenceRef.current += 1;
-    if (persist) writeActiveBooking(reference);
     const stored = readStoredSession();
-    setActiveBookingDialog({ reference });
+    setActiveBookingDialog({ reference, cancelToken, persisted, notice });
     setActiveCancelContact(String(contactHint || stored?.customerEmail || stored?.phone || '').trim());
     setActiveCancelConfirming(false);
     setActiveCancelPending(false);
@@ -921,7 +921,7 @@ export default function BookingModal() {
       setActiveBookingDialog(null);
       return;
     }
-    showActiveBookingDialog(marker.reference);
+    showActiveBookingDialog(marker.reference, { cancelToken: marker.cancelToken });
   }, [showActiveBookingDialog]);
 
   useEffect(() => {
@@ -1284,7 +1284,8 @@ export default function BookingModal() {
     setActiveCancelError('');
     const result = await cancelPublicBooking({
       reference: activeBookingDialog.reference,
-      contact: activeCancelContact
+      contact: activeCancelContact,
+      cancelToken: activeBookingDialog.cancelToken
     });
     setActiveCancelPending(false);
     if (result.ok) {
@@ -1339,6 +1340,26 @@ export default function BookingModal() {
       const response = guardedSubmission.response;
       const payload = await response.json().catch(() => null);
       if (
+        payload?.created === true
+        && payload?.code === 'BOOKING_CREATED_RECONCILE_PENDING'
+      ) {
+        const recoveryReference = String(payload.reference || '').trim();
+        if (
+          /^mbr-brand-a-[a-z0-9]+$/i.test(recoveryReference)
+          && isPublicBookingCancelToken(payload.cancelToken)
+        ) {
+          const recoveryMarker = writeActiveBooking(recoveryReference, { cancelToken: payload.cancelToken });
+          setError(payload.error || 'Your booking was received, but its schedule needs assistance. Do not submit again; contact us on WhatsApp.');
+          showActiveBookingDialog(recoveryReference, {
+            contactHint: formData.customerEmail || formData.phone,
+            cancelToken: payload.cancelToken,
+            persisted: Boolean(recoveryMarker),
+            notice: payload.error
+          });
+          return;
+        }
+      }
+      if (
         response.status === 409
         && (payload?.code === 'COUPON_PREVIEW_CHANGED' || payload?.code === 'COUPON_PREVIEW_REQUIRED')
       ) {
@@ -1351,13 +1372,8 @@ export default function BookingModal() {
       if (
         response.status === 409
         && payload?.code === 'ACTIVE_BOOKING_EXISTS'
-        && isActiveBookingReference(payload?.activeReference)
       ) {
-        setError('');
-        showActiveBookingDialog(payload.activeReference, {
-          contactHint: formData.customerEmail || formData.phone,
-          persist: true
-        });
+        setError('A booking already exists for these details. Log in to My Orders to view it or contact us on WhatsApp.');
         return;
       }
       if (!response.ok || payload?.ok !== true) throw new Error(payload?.error || 'Booking request could not be submitted.');
@@ -1366,7 +1382,16 @@ export default function BookingModal() {
         throw new Error('Booking request was not confirmed by the intake service. Please try again or contact us on WhatsApp.');
       }
 
-      writeActiveBooking(reference);
+      const activeBookingMarker = writeActiveBooking(reference, { cancelToken: payload.cancelToken });
+      if (!activeBookingMarker) {
+        setError('Your booking was created, but this browser could not save its cancellation credential. Keep this page open and contact us on WhatsApp if you need help.');
+        showActiveBookingDialog(reference, {
+          contactHint: formData.customerEmail || formData.phone,
+          cancelToken: payload.cancelToken,
+          persisted: false
+        });
+        return;
+      }
       activeBookingInspectionSequenceRef.current += 1;
       setIsOpen(false);
       router.push(`/track/${encodeURIComponent(reference)}`);
@@ -1506,6 +1531,7 @@ export default function BookingModal() {
                   </div>
                   <label className={bookingLabelClass}><Mail className="mr-2 inline h-4 w-4" />Email *</label>
                   <input className={bookingInputClass} type="email" value={emailDraft.email} onChange={event => setEmailDraft(current => ({ ...current, email: event.target.value }))} placeholder="you@example.com" data-testid="booking-email" data-readability-field="booking-email" required />
+                  <p className="-mt-3 text-xs font-medium leading-5 text-[#4E8D43]">Use this email to log in and track your booking anytime after you order.</p>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
                       <label className={bookingLabelClass}>Name optional</label>
@@ -1644,20 +1670,29 @@ export default function BookingModal() {
                 </div>
                 <h2 id="active-booking-dialog-title" className="mt-4 text-2xl font-bold text-[#0F0F0F]">You already have a booking waiting for confirmation</h2>
                 <p className="mt-3 break-all font-mono text-xs text-gray-500">{activeBookingDialog.reference}</p>
+                {activeBookingDialog.notice ? (
+                  <p className="mt-3 rounded-2xl border border-amber-200 bg-amber-50 p-3 text-sm leading-6 text-amber-900">{activeBookingDialog.notice}</p>
+                ) : null}
                 {!activeCancelConfirming ? (
                   <div className="mt-6 grid gap-3">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        activeBookingInspectionSequenceRef.current += 1;
-                        setActiveBookingDialog(null);
-                        setIsOpen(false);
-                        router.push(`/track/${encodeURIComponent(activeBookingDialog.reference)}`);
-                      }}
-                      className="h-12 rounded-2xl bg-[#4E8D43] px-4 font-bold text-white transition hover:bg-[#3F7838]"
-                    >
-                      View my booking
-                    </button>
+                    {activeBookingDialog.persisted ? (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          activeBookingInspectionSequenceRef.current += 1;
+                          setActiveBookingDialog(null);
+                          setIsOpen(false);
+                          router.push(`/track/${encodeURIComponent(activeBookingDialog.reference)}`);
+                        }}
+                        className="h-12 rounded-2xl bg-[#4E8D43] px-4 font-bold text-white transition hover:bg-[#3F7838]"
+                      >
+                        View my booking
+                      </button>
+                    ) : (
+                      <p className="rounded-2xl border border-amber-200 bg-amber-50 p-3 text-sm leading-6 text-amber-900">
+                        This browser could not save your cancellation credential. Keep this page open to cancel, or contact us on WhatsApp.
+                      </p>
+                    )}
                     <button type="submit" className="h-12 rounded-2xl border border-red-200 bg-white px-4 font-bold text-red-700 transition hover:bg-red-50">
                       Cancel that booking
                     </button>

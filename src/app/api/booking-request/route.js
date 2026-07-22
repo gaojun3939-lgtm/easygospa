@@ -1,7 +1,14 @@
 ﻿import { NextResponse } from 'next/server';
 import { BookingRequestValidationError, normalizeWebsiteBookingRequest } from '../../../lib/bookingRequestPayload.mjs';
 import { resolveAiOfficeApiUrl } from '../../../lib/aiofficeApiBase.mjs';
-import { projectPublicBookingError, projectPublicBookingPreview, projectPublicBookingSuccess } from '../../../lib/publicBookingResponse.mjs';
+import {
+  PUBLIC_BOOKING_CREATED_RECOVERY_CODE,
+  projectPublicBookingCreatedRecovery,
+  projectPublicBookingError,
+  projectPublicBookingPreview,
+  projectPublicBookingSuccess
+} from '../../../lib/publicBookingResponse.mjs';
+import { isPublicBookingCancelToken } from '../../../lib/activeBooking.mjs';
 import { forwardedClientIpHeaders } from '../../../lib/serverForwardedIp.mjs';
 
 function json(payload, status = 200, headers = {}) {
@@ -68,6 +75,23 @@ export async function POST(request) {
     const text = await response.text();
     const payload = parseJson(text);
 
+    if (
+      !response.ok
+      && payload?.ok === false
+      && payload?.created === true
+      && payload?.code === PUBLIC_BOOKING_CREATED_RECOVERY_CODE
+    ) {
+      const reference = extractBookingReference(payload);
+      if (isValidBookingReference(reference) && isPublicBookingCancelToken(payload?.cancelToken)) {
+        return json(projectPublicBookingCreatedRecovery(payload, reference), response.status);
+      }
+      return json({
+        ok: false,
+        code: 'AIOFFICE_BOOKING_RECOVERY_CREDENTIAL_MISSING',
+        error: 'Your booking may have been created, but its cancellation credential was not returned. Do not submit again; contact us on WhatsApp.'
+      }, 502);
+    }
+
     if (!response.ok || payload?.ok === false) {
       const retryAfter = response.headers.get('retry-after');
       return json(
@@ -100,6 +124,14 @@ export async function POST(request) {
         ok: false,
         code: 'AIOFFICE_BOOKING_REFERENCE_MISSING',
         error: 'Booking request was not confirmed by the intake service. Please try again or contact us on WhatsApp.'
+      }, 502);
+    }
+
+    if (!isPublicBookingCancelToken(payload?.cancelToken)) {
+      return json({
+        ok: false,
+        code: 'AIOFFICE_BOOKING_CANCEL_TOKEN_MISSING',
+        error: 'Your booking may have been created, but its cancellation credential was not returned. Do not submit again; contact us on WhatsApp.'
       }, 502);
     }
 
