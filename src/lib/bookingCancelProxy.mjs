@@ -1,8 +1,11 @@
+import { validatedPublicRequestId } from './publicRequestId.mjs';
+
 function cleanText(value = '') {
   return String(value || '').trim();
 }
 
 const CANCEL_AUTH_REQUIRED_ERROR = 'For security, log in to view your booking or contact us on WhatsApp for help.';
+const CANCEL_NOT_ALLOWED_ERROR = 'This booking can no longer be cancelled online. Please contact us on WhatsApp.';
 
 export function projectBookingCancelUpstream({ httpStatus = 502, payload = null, reference = '', retryAfter = '' } = {}) {
   if (httpStatus === 404 || payload?.reason === 'not_found') {
@@ -16,12 +19,14 @@ export function projectBookingCancelUpstream({ httpStatus = 502, payload = null,
     };
   }
   if (httpStatus === 409 && payload?.code === 'CANCEL_NOT_ALLOWED') {
+    const requestId = validatedPublicRequestId(payload?.requestId);
     return {
       status: 409,
       body: {
         ok: false,
         code: 'CANCEL_NOT_ALLOWED',
-        error: cleanText(payload.error) || 'This booking can no longer be cancelled online. Please contact us on WhatsApp.'
+        error: CANCEL_NOT_ALLOWED_ERROR,
+        ...(requestId ? { requestId } : {})
       },
       headers: {}
     };

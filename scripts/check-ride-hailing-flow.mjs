@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 
 import {
@@ -200,12 +201,46 @@ check(
 );
 console.log(`[ride-hailing-site] NEGATIVE cancel_client_opaque status=${opaqueClientResult.httpStatus} body=${JSON.stringify(opaqueClientResult)}`);
 
-const forwardedHeaders = forwardedClientIpHeaders(new Request('https://www.easygospa.com/api/booking-cancel', {
-  headers: { 'x-forwarded-for': '203.0.113.44, 10.0.0.7' }
-}));
+const cancelRequestId = '018f0000-0000-4000-8000-000000000003';
+const notAllowedClientResult = await cancelPublicBooking({
+  reference,
+  contact: 'guest@example.test',
+  cancelToken,
+  fetchImpl: async () => new Response(JSON.stringify({
+    ok: false,
+    code: 'CANCEL_NOT_ALLOWED',
+    error: 'postgres secret@example.test at /srv/private.js:42',
+    requestId: cancelRequestId
+  }), { status: 409, headers: { 'content-type': 'application/json' } })
+});
 check(
-  JSON.stringify(forwardedHeaders) === JSON.stringify({ 'x-forwarded-for': '203.0.113.44' }),
-  'proxy IP helper forwards one validated address rather than the chain',
+  JSON.stringify(notAllowedClientResult) === JSON.stringify({
+    ok: false,
+    httpStatus: 409,
+    code: 'CANCEL_NOT_ALLOWED',
+    error: 'This booking can no longer be cancelled online. Please contact us on WhatsApp.',
+    requestId: cancelRequestId
+  }) && !JSON.stringify(notAllowedClientResult).includes('secret@example.test'),
+  'cancellation client maps CANCEL_NOT_ALLOWED to fixed copy and keeps only a valid request id',
+  notAllowedClientResult
+);
+
+const proxySecret = 'p1-proxy-secret-at-least-32-characters';
+const proxyNow = new Date('2026-07-22T00:00:00.000Z');
+const forwardedHeaders = forwardedClientIpHeaders(new Request('https://www.easygospa.com/api/booking-cancel', {
+  headers: {
+    'x-vercel-forwarded-for': '203.0.113.44, 10.0.0.7',
+    'x-forwarded-for': '198.51.100.99'
+  }
+}), { env: { AIOFFICE_PROXY_IP_SECRET: proxySecret }, now: proxyNow });
+const forwardedTimestamp = String(Math.floor(proxyNow.getTime() / 1000));
+check(
+  forwardedHeaders['x-forwarded-for'] === '203.0.113.44'
+    && forwardedHeaders['x-easygospa-client-ip'] === '203.0.113.44'
+    && forwardedHeaders['x-easygospa-client-ip-timestamp'] === forwardedTimestamp
+    && forwardedHeaders['x-easygospa-client-ip-signature'] === crypto.createHmac('sha256', proxySecret).update(`${forwardedTimestamp}\n203.0.113.44`).digest('hex')
+    && Object.keys(forwardedHeaders).length === 4,
+  'proxy IP helper signs the Vercel-supplied address and ignores spoofable forwarded headers',
   forwardedHeaders
 );
 const opaqueProjection = projectBookingCancelUpstream({
@@ -239,6 +274,31 @@ check(
   authRequiredProjection
 );
 console.log(`[ride-hailing-site] NEGATIVE cancel_wrong_token status=${authRequiredProjection.status} body=${JSON.stringify(authRequiredProjection.body)}`);
+
+const notAllowedProjection = projectBookingCancelUpstream({
+  httpStatus: 409,
+  payload: {
+    ok: false,
+    code: 'CANCEL_NOT_ALLOWED',
+    error: 'postgres secret@example.test at /srv/private.js:42',
+    requestId: cancelRequestId
+  },
+  reference
+});
+check(
+  JSON.stringify(notAllowedProjection) === JSON.stringify({
+    status: 409,
+    body: {
+      ok: false,
+      code: 'CANCEL_NOT_ALLOWED',
+      error: 'This booking can no longer be cancelled online. Please contact us on WhatsApp.',
+      requestId: cancelRequestId
+    },
+    headers: {}
+  }) && !JSON.stringify(notAllowedProjection).includes('secret@example.test'),
+  'cancel proxy maps CANCEL_NOT_ALLOWED to fixed copy and keeps only a valid request id',
+  notAllowedProjection
+);
 
 const limitedProjection = projectBookingCancelUpstream({
   httpStatus: 429,

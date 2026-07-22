@@ -1,6 +1,27 @@
 import { isPublicBookingCancelToken } from './activeBooking.mjs';
+import { ensurePublicRequestId } from './publicRequestId.mjs';
 
 export const PUBLIC_BOOKING_CREATED_RECOVERY_CODE = 'BOOKING_CREATED_RECONCILE_PENDING';
+
+const PUBLIC_BOOKING_ERROR_MESSAGES = Object.freeze({
+  ACTIVE_BOOKING_EXISTS: 'A booking is already waiting for confirmation.',
+  OUTSIDE_SERVICE_AREA: 'The selected location is outside our service area.',
+  AREA_REQUIRED: 'Please select a service area.',
+  SERVICE_REQUIRED: 'Please select a service.',
+  PHONE_REQUIRED: 'Please enter a phone number.',
+  CUSTOMER_NAME_REQUIRED: 'Please enter your name.',
+  PREFERRED_TIME_REQUIRED: 'Please select a preferred time.',
+  PEOPLE_COUNT_INVALID: 'Please enter a valid number of people.',
+  THERAPIST_PREFERENCE_INVALID: 'Please select a valid therapist preference.',
+  PUBLIC_BOOKING_CURRENCY_CONFLICT: 'The selected service currency is unavailable.',
+  PUBLIC_BOOKING_OPTION_NOT_AVAILABLE: 'The selected booking option is unavailable.',
+  PUBLIC_BOOKING_PRICE_INVALID: 'The selected service price could not be confirmed.',
+  PUBLIC_BOOKING_SERVICE_NOT_AVAILABLE: 'The selected service is unavailable.',
+  COUPON_PREVIEW_REQUIRED: 'Please confirm the updated coupon and cash total.',
+  COUPON_PREVIEW_CHANGED: 'Your coupon or cash total changed. Please review it again.',
+  RATE_LIMITED: 'Too many requests, please try again later.',
+  RATE_LIMITER_UNAVAILABLE: 'Request protection is temporarily unavailable. Please try again.'
+});
 
 function firstString(...values) {
   for (const value of values) {
@@ -67,11 +88,14 @@ export function projectPublicBookingPreview(payload = {}) {
 
 export function projectPublicBookingError(payload = {}) {
   const source = payload && typeof payload === 'object' && !Array.isArray(payload) ? payload : {};
-  const code = firstString(source.code, 'AIOFFICE_BOOKING_REQUEST_FAILED');
+  const upstreamCode = firstString(source.code);
+  const allowedMessage = PUBLIC_BOOKING_ERROR_MESSAGES[upstreamCode];
+  const code = allowedMessage ? upstreamCode : 'AIOFFICE_BOOKING_REQUEST_FAILED';
   const response = {
     ok: false,
     code,
-    error: firstString(source.error, 'Booking request could not be submitted.')
+    error: allowedMessage || 'Booking request could not be submitted.',
+    requestId: ensurePublicRequestId(source.requestId)
   };
   return response;
 }

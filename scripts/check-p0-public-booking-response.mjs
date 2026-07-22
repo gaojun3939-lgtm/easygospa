@@ -109,28 +109,35 @@ assert.deepEqual(projectPublicBookingError({
   ok: false,
   code: 'ACTIVE_BOOKING_EXISTS',
   error: 'A booking is already waiting for confirmation.',
+  requestId: '018f0000-0000-4000-8000-000000000001',
   activeReference: 'mbr-brand-a-active123',
   customerEmail: 'secret@example.test',
   metadata: { secret: true }
 }), {
   ok: false,
   code: 'ACTIVE_BOOKING_EXISTS',
-  error: 'A booking is already waiting for confirmation.'
+  error: 'A booking is already waiting for confirmation.',
+  requestId: '018f0000-0000-4000-8000-000000000001'
 });
 assert.deepEqual(projectPublicBookingError({
   code: 'ACTIVE_BOOKING_EXISTS',
   error: 'A booking is already waiting for confirmation.',
+  requestId: '018f0000-0000-4000-8000-000000000002',
   activeReference: 'invalid-reference'
 }), {
   ok: false,
   code: 'ACTIVE_BOOKING_EXISTS',
-  error: 'A booking is already waiting for confirmation.'
+  error: 'A booking is already waiting for confirmation.',
+  requestId: '018f0000-0000-4000-8000-000000000002'
 });
-assert.deepEqual(projectPublicBookingError(null), {
+const generatedFailure = projectPublicBookingError(null);
+assert.deepEqual({ ...generatedFailure, requestId: undefined }, {
   ok: false,
   code: 'AIOFFICE_BOOKING_REQUEST_FAILED',
-  error: 'Booking request could not be submitted.'
+  error: 'Booking request could not be submitted.',
+  requestId: undefined
 });
+assert.match(generatedFailure.requestId, /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
 assert.match(routeSource, /projectPublicBookingError\(payload\)/);
 assert.match(routeSource, /isPublicBookingCancelToken/);
 assert.match(routeSource, /AIOFFICE_BOOKING_CANCEL_TOKEN_MISSING/);

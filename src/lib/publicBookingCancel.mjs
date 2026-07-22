@@ -1,5 +1,6 @@
 import { apiUrl } from './apiUrl.js';
 import { isActiveBookingReference, isPublicBookingCancelToken } from './activeBooking.mjs';
+import { validatedPublicRequestId } from './publicRequestId.mjs';
 
 function cleanText(value = '') {
   return String(value || '').trim();
@@ -14,6 +15,7 @@ async function readJson(response) {
 }
 
 const CANCEL_AUTH_REQUIRED_ERROR = 'For security, log in to view your booking or contact us on WhatsApp for help.';
+const CANCEL_NOT_ALLOWED_ERROR = 'This booking can no longer be cancelled online. Please contact us on WhatsApp.';
 
 export async function cancelPublicBooking({ reference = '', contact = '', cancelToken = '', fetchImpl = fetch } = {}) {
   const normalizedReference = cleanText(reference);
@@ -44,11 +46,13 @@ export async function cancelPublicBooking({ reference = '', contact = '', cancel
       return { ok: false, httpStatus: response.status, code: 'CANCEL_AUTH_REQUIRED', error: CANCEL_AUTH_REQUIRED_ERROR };
     }
     if (response.status === 409 && payload?.code === 'CANCEL_NOT_ALLOWED') {
+      const requestId = validatedPublicRequestId(payload?.requestId);
       return {
         ok: false,
         httpStatus: 409,
         code: 'CANCEL_NOT_ALLOWED',
-        error: cleanText(payload.error) || 'This booking can no longer be cancelled online. Please contact us on WhatsApp.'
+        error: CANCEL_NOT_ALLOWED_ERROR,
+        ...(requestId ? { requestId } : {})
       };
     }
     if (response.status === 429 || payload?.code === 'RATE_LIMITED') {

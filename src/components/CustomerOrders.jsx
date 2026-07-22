@@ -112,7 +112,7 @@ export default function CustomerOrders() {
       let payload = null;
       try { payload = await response.json(); } catch { payload = null; }
       if (!response.ok || !payload || payload.ok === false) {
-        const bits = [`HTTP ${response.status}`, payload?.code, payload?.debug].filter(Boolean);
+        const bits = [`HTTP ${response.status}`, payload?.code, payload?.requestId].filter(Boolean);
         setErrorDetail(bits.join(' · '));
         setOrdersState('error');
         return;
