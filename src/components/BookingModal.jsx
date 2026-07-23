@@ -344,7 +344,7 @@ function TherapistAvatar({ therapist, mode = 'wall' }) {
   // letterboxed on the dark backdrop — same treatment as the multi-photo carousel.
   const fitClass = isFallback
     ? `${mode === 'wall' ? 'p-2' : 'p-6'} object-contain`
-    : 'object-cover object-center';
+    : 'object-cover object-top';
 
   return (
     <img
@@ -584,7 +584,7 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
               <div ref={heroScrollRef} onScroll={onHeroScroll} className="flex h-full w-full snap-x snap-mandatory overflow-x-auto scroll-smooth" data-testid="therapist-hero-carousel" style={{ scrollbarWidth: 'none' }}>
                 {heroPhotos.map((url, index) => (
                   <button key={url} type="button" onClick={() => setLightboxUrl(url)} className="flex h-full w-full shrink-0 snap-center items-center justify-center">
-                    <img src={url} alt={`${therapist.name} photo ${index + 1}`} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" className="h-full w-full object-cover object-center" />
+                    <img src={url} alt={`${therapist.name} photo ${index + 1}`} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" className="h-full w-full object-cover object-top" />
                   </button>
                 ))}
               </div>
@@ -751,6 +751,7 @@ export default function BookingModal() {
   const couponPreviewSequenceRef = useRef(0);
   const addressFieldRef = useRef(null);
   const addressFeedbackTimerRef = useRef(null);
+  const modalScrollRef = useRef(null); // 老板 2026-07-24:进详情页要滚回顶部,别停在价格中间
 
   const catalogServices = Array.isArray(bookingCatalog.services) ? bookingCatalog.services : [];
   const catalogTherapists = Array.isArray(bookingCatalog.therapists) ? bookingCatalog.therapists : [];
@@ -1050,6 +1051,11 @@ export default function BookingModal() {
     setError('');
     setStep('detail');
   };
+
+  // 老板 2026-07-24:进详情页时滚回顶部——之前从列表滚下去点技师,详情会停在中间(价格)。
+  useEffect(() => {
+    if (step === 'detail') modalScrollRef.current?.scrollTo({ top: 0 });
+  }, [step]);
 
   const openTherapistDetail = therapistId => {
     const therapist = findWebsiteTherapist(therapistId, bookingTherapists);
@@ -1467,7 +1473,7 @@ export default function BookingModal() {
               </div>
             ) : null}
 
-            <div className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-5" data-testid="booking-modal">
+            <div ref={modalScrollRef} className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-5" data-testid="booking-modal">
 
               {error ? <div className="mb-5 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</div> : null}
 
