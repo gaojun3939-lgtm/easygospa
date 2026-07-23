@@ -336,7 +336,7 @@ function TherapistAvatar({ therapist, mode = 'wall' }) {
   const isFallback = imageUrl === DEFAULT_THERAPIST_IMAGE_URL;
   // 老板 2026-07-24:88px 小方块把竖构图人像裁得看不全、挤。改大的竖版(4:5),
   // 让技师看得全、舒服(对标对手)。
-  const sizeClass = mode === 'wall' ? 'h-[152px] w-[122px]' : 'h-full w-full';
+  const sizeClass = mode === 'wall' ? 'h-[152px] w-[114px]' : 'h-full w-full';
   const radiusClass = mode === 'wall' ? 'rounded-[1.25rem]' : 'rounded-none';
   // Owner report (2026-07-19): full-body detail photos were cropped to the torso;
   // top-anchored crop then scalped centered portraits (2026-07-21). Fixed-anchor
@@ -578,7 +578,7 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
       <section className="overflow-hidden rounded-[1.75rem] bg-white shadow-sm" data-testid="therapist-detail-hero">
         {/* 老板 2026-07-24:大图容器定成 4:5 竖版 + 填满,不再两边黑边(对标对手)。
             配合上传自动裁 4:5,新照片刚好铺满不裁;老照片重传即正。 */}
-        <div className={`relative mx-auto bg-[#11150f] ${usesFallbackImage && heroPhotos.length === 0 ? 'h-[152px] sm:h-[180px]' : 'aspect-[4/5] max-h-[72vh] w-full max-w-[440px] sm:rounded-[1.25rem]'}`}>
+        <div className={`relative mx-auto bg-[#11150f] ${usesFallbackImage && heroPhotos.length === 0 ? 'h-[152px] sm:h-[180px]' : 'aspect-[3/4] max-h-[72vh] w-full max-w-[440px] sm:rounded-[1.25rem]'}`}>
           {heroPhotos.length > 1 ? (
             <>
               <div ref={heroScrollRef} onScroll={onHeroScroll} className="flex h-full w-full snap-x snap-mandatory overflow-x-auto scroll-smooth" data-testid="therapist-hero-carousel" style={{ scrollbarWidth: 'none' }}>
