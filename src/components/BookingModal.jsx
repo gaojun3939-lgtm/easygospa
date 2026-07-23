@@ -344,7 +344,7 @@ function TherapistAvatar({ therapist, mode = 'wall' }) {
   // letterboxed on the dark backdrop — same treatment as the multi-photo carousel.
   const fitClass = isFallback
     ? `${mode === 'wall' ? 'p-2' : 'p-6'} object-contain`
-    : mode === 'detail' ? 'object-contain' : 'object-cover object-center';
+    : 'object-cover object-center';
 
   return (
     <img
@@ -576,13 +576,15 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
   return (
     <div className="mx-auto max-w-4xl space-y-4 pb-8" data-testid="therapist-detail-view">
       <section className="overflow-hidden rounded-[1.75rem] bg-white shadow-sm" data-testid="therapist-detail-hero">
-        <div className={`relative bg-[#11150f] ${usesFallbackImage && heroPhotos.length === 0 ? 'h-[152px] sm:h-[180px]' : 'h-[320px] sm:h-[440px]'}`}>
+        {/* 老板 2026-07-24:大图容器定成 4:5 竖版 + 填满,不再两边黑边(对标对手)。
+            配合上传自动裁 4:5,新照片刚好铺满不裁;老照片重传即正。 */}
+        <div className={`relative bg-[#11150f] ${usesFallbackImage && heroPhotos.length === 0 ? 'h-[152px] sm:h-[180px]' : 'aspect-[4/5] max-h-[76vh]'}`}>
           {heroPhotos.length > 1 ? (
             <>
               <div ref={heroScrollRef} onScroll={onHeroScroll} className="flex h-full w-full snap-x snap-mandatory overflow-x-auto scroll-smooth" data-testid="therapist-hero-carousel" style={{ scrollbarWidth: 'none' }}>
                 {heroPhotos.map((url, index) => (
                   <button key={url} type="button" onClick={() => setLightboxUrl(url)} className="flex h-full w-full shrink-0 snap-center items-center justify-center">
-                    <img src={url} alt={`${therapist.name} photo ${index + 1}`} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" className="max-h-full max-w-full object-contain" />
+                    <img src={url} alt={`${therapist.name} photo ${index + 1}`} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" className="h-full w-full object-cover object-center" />
                   </button>
                 ))}
               </div>
