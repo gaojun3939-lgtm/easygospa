@@ -336,7 +336,7 @@ function TherapistAvatar({ therapist, mode = 'wall' }) {
   const isFallback = imageUrl === DEFAULT_THERAPIST_IMAGE_URL;
   // 老板 2026-07-24:88px 小方块把竖构图人像裁得看不全、挤。改大的竖版(4:5),
   // 让技师看得全、舒服(对标对手)。
-  const sizeClass = mode === 'wall' ? 'h-[132px] w-[106px]' : 'h-full w-full';
+  const sizeClass = mode === 'wall' ? 'h-[152px] w-[122px]' : 'h-full w-full';
   const radiusClass = mode === 'wall' ? 'rounded-[1.25rem]' : 'rounded-none';
   // Owner report (2026-07-19): full-body detail photos were cropped to the torso;
   // top-anchored crop then scalped centered portraits (2026-07-21). Fixed-anchor
@@ -411,9 +411,9 @@ function TherapistWallCard({ therapist, selected, onSelect, onRequireLocation, c
           {distanceKm !== null ? SERVICE_RADIUS_TOO_FAR_MESSAGE : customerLocated ? THERAPIST_TEMPORARILY_UNAVAILABLE_MESSAGE : SERVICE_RADIUS_LOCATION_REQUIRED_MESSAGE}
         </span>
       ) : null}
-      <div className="flex min-h-[132px] gap-3.5">
+      <div className="flex min-h-[152px] gap-4">
         <TherapistAvatar therapist={therapist} mode="wall" />
-        <div className="min-w-0 flex-1">
+        <div className="flex min-w-0 flex-1 flex-col">
           <div className="flex items-center gap-2">
             <h3 className="min-w-0 flex-1 truncate text-[17px] font-bold leading-6 text-[#0F0F0F]">{therapist.name}</h3>
             {/* Owner call (2026-07-18): show the earliest slot even off-shift —
@@ -425,20 +425,17 @@ function TherapistWallCard({ therapist, selected, onSelect, onRequireLocation, c
             ) : null}
             {selected ? <Check className="h-4 w-4 shrink-0 text-[#4E8D43]" /> : null}
           </div>
-          <p className="text-sm font-medium text-gray-700">Massage Therapist</p>
-          <p className="mt-1 line-clamp-2 text-xs leading-5 text-gray-500">{therapistAreaText(therapist)}</p>
+          {/* 老板 2026-07-24:卡片只留精华(名字/评分/距离/Book),对标对手一屏 6 个。
+              删掉 Massage Therapist、覆盖区一长串、自我介绍——都挪到点进去的详情页。 */}
+          <div className="mt-1.5 text-sm font-bold text-gray-700"><TherapistRating therapist={therapist} /></div>
           {distanceKm !== null && distanceKm <= 100 ? (
-            <p className={`mt-1 flex items-center gap-1 text-xs font-semibold ${outOfRange ? 'text-gray-400' : 'text-[#3F7838]'}`} data-testid="therapist-distance">
+            <p className={`mt-2 flex items-center gap-1 text-xs font-semibold ${outOfRange ? 'text-gray-400' : 'text-[#3F7838]'}`} data-testid="therapist-distance">
               <MapPin className="h-3.5 w-3.5 shrink-0" />
               {distanceKm < 10 ? distanceKm.toFixed(1) : Math.round(distanceKm)} km
               {outOfRange ? <span data-testid="therapist-out-of-range-tag"> · Too far</span> : null}
             </p>
           ) : null}
-          <div className="mt-1 text-xs font-medium text-gray-600"><TherapistRating therapist={therapist} /></div>
-          {String(therapist.profileIntroduction || '').trim() ? (
-            <p className="mt-1.5 line-clamp-2 text-xs leading-5 text-gray-600" data-testid="therapist-card-intro">&ldquo;{therapist.profileIntroduction}&rdquo;</p>
-          ) : null}
-          <div className="mt-3 flex min-h-11 items-center justify-end gap-3">
+          <div className="mt-auto flex min-h-11 items-center justify-end gap-3 pt-2">
             {therapist.isMannequin ? (
               <span className="ml-auto inline-flex h-11 shrink-0 items-center justify-center rounded-full bg-gray-100 px-4 text-sm font-bold text-gray-500" data-testid={`therapist-card-resting-${therapist.id}`}>Resting</span>
             ) : (
@@ -1429,28 +1426,28 @@ export default function BookingModal() {
                   </div>
                   <button type="button" onClick={handleClose} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200" aria-label="Close booking modal"><X className="h-5 w-5 text-gray-700" /></button>
                 </div>
-                <div className="mt-4 flex items-center gap-2">
-                  <div className="flex h-12 min-w-0 flex-1 items-center gap-2 rounded-2xl bg-gray-100 px-3">
+                <div className="mt-3 flex items-center gap-2">
+                  <div className="flex h-11 min-w-0 flex-1 items-center gap-2 rounded-2xl bg-gray-100 px-3">
                     <Search className="h-4 w-4 shrink-0 text-gray-400" />
                     <input value={wallSearch} onChange={event => setWallSearch(event.target.value)} className="w-full bg-transparent text-sm font-medium outline-none placeholder:text-gray-500" placeholder="Search therapist..." />
                   </div>
                 </div>
                 {/* 老板 2026-07-20:删掉区域下拉——我们只服务 10km 内,按区域名筛选没意义还会误导;
                     Service type 顶上原来的位置,排序保留 Nearby / Most booked。 */}
-                <div className="mt-3 flex flex-wrap items-center gap-2" data-testid="booking-wall-filters">
+                <div className="mt-2.5 flex flex-nowrap items-center gap-2 overflow-x-auto" data-testid="booking-wall-filters">
                   <label className="sr-only" htmlFor="therapist-servicetype-filter">Filter therapists by service type</label>
                   <select
                     id="therapist-servicetype-filter"
                     value={serviceTypeFilter}
                     onChange={event => setServiceTypeFilter(event.target.value)}
                     data-testid="therapist-servicetype-filter"
-                    className="h-11 max-w-full rounded-full border border-gray-200 bg-white px-4 text-sm font-bold text-gray-700 outline-none focus:border-[#4E8D43]"
+                    className="h-10 shrink-0 rounded-full border border-gray-200 bg-white px-3.5 text-sm font-bold text-gray-700 outline-none focus:border-[#4E8D43]"
                   >
                     <option value={ALL_SERVICE_TYPES_VALUE}>Service type</option>
                     {serviceTypeOptions.map(name => <option key={name} value={name}>{name}</option>)}
                   </select>
-                  <button type="button" onClick={() => setWallSort('nearby')} aria-pressed={wallSort === 'nearby'} data-testid="wall-sort-nearby" className={`h-11 rounded-full border px-4 text-sm font-bold ${wallSort === 'nearby' ? 'border-[#4E8D43] bg-[#4E8D43] text-white' : 'border-gray-200 bg-white text-gray-700'}`}>Nearby</button>
-                  <button type="button" onClick={() => setWallSort('recommended')} aria-pressed={wallSort === 'recommended'} data-testid="wall-sort-popular" className={`h-11 rounded-full border px-4 text-sm font-bold ${wallSort === 'recommended' ? 'border-[#4E8D43] bg-[#4E8D43] text-white' : 'border-gray-200 bg-white text-gray-700'}`}>Most booked</button>
+                  <button type="button" onClick={() => setWallSort('nearby')} aria-pressed={wallSort === 'nearby'} data-testid="wall-sort-nearby" className={`h-10 shrink-0 rounded-full border px-3.5 text-sm font-bold ${wallSort === 'nearby' ? 'border-[#4E8D43] bg-[#4E8D43] text-white' : 'border-gray-200 bg-white text-gray-700'}`}>Nearby</button>
+                  <button type="button" onClick={() => setWallSort('recommended')} aria-pressed={wallSort === 'recommended'} data-testid="wall-sort-popular" className={`h-10 shrink-0 rounded-full border px-3.5 text-sm font-bold ${wallSort === 'recommended' ? 'border-[#4E8D43] bg-[#4E8D43] text-white' : 'border-gray-200 bg-white text-gray-700'}`}>Most booked</button>
                 </div>
               </div>
             ) : step !== 'detail' ? (
