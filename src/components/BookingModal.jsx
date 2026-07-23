@@ -999,6 +999,8 @@ export default function BookingModal() {
     const coords = { latitude: location.latitude, longitude: location.longitude };
     setCustomerCoords(coords);
     updateCustomerLocation(coords);
+    // 老板 2026-07-24:确认定位后自动收起大地图,别霸屏挡技师。
+    setShowWallLocationPicker(false);
   };
 
   const handlePhoneChange = value => {
@@ -1469,25 +1471,33 @@ export default function BookingModal() {
 
               {step === 'wall' ? (
                 <div className="space-y-2">
-                  <div className="mx-1 rounded-[1.5rem] border border-amber-200 bg-amber-50 p-4" data-testid="wall-location-entry">
+                  {/* 老板 2026-07-24:定位确认后收成一条细条(大地图默认藏),别霸屏挡技师;
+                      点"Adjust"才展开地图改 pin。未设定位时才给完整提示面板。 */}
+                  {isUsableCustomerLocation(customerCoords) && !showWallLocationPicker ? (
+                    <div className="mx-1 flex items-center justify-between gap-3 rounded-full border border-green-200 bg-green-50 px-4 py-2" data-testid="wall-location-entry">
+                      <p className="flex min-w-0 items-center gap-1.5 truncate text-sm font-semibold text-[#3F7838]"><MapPin className="h-4 w-4 shrink-0" />Location confirmed</p>
+                      <button type="button" onClick={() => setShowWallLocationPicker(true)} data-testid="wall-location-entry-toggle" className="shrink-0 text-sm font-bold text-[#3F7838] underline underline-offset-2">Adjust</button>
+                    </div>
+                  ) : (
+                    <div className="mx-1 rounded-[1.5rem] border border-amber-200 bg-amber-50 p-4" data-testid="wall-location-entry">
                       <div className="flex flex-wrap items-center justify-between gap-3">
-                        <p className="min-w-0 flex-1 text-sm font-semibold text-amber-900">{isUsableCustomerLocation(customerCoords) ? 'Location set. Adjust the pin if you need to.' : 'Share your location to see distances and book a nearby therapist.'}</p>
+                        <p className="min-w-0 flex-1 text-sm font-semibold text-amber-900">{isUsableCustomerLocation(customerCoords) ? 'Adjust your pin, then tap Confirm.' : 'Share your location to see nearby therapists.'}</p>
                         <button
                           type="button"
                           onClick={() => setShowWallLocationPicker(current => !current)}
                           data-testid="wall-location-entry-toggle"
-                          className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-full bg-[#4E8D43] px-4 text-sm font-bold text-white transition hover:bg-[#3F7838]"
+                          className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full bg-[#4E8D43] px-4 text-sm font-bold text-white transition hover:bg-[#3F7838]"
                         >
-                          <MapPin className="h-4 w-4" />{showWallLocationPicker ? 'Hide map' : isUsableCustomerLocation(customerCoords) ? 'Adjust location' : 'Confirm my location'}
+                          <MapPin className="h-4 w-4" />{showWallLocationPicker ? 'Hide map' : 'Set location'}
                         </button>
                       </div>
                       {showWallLocationPicker ? (
                         <div className="mt-3" data-testid="wall-location-picker">
-                          <p className="mb-2 text-xs text-amber-800">Or use GPS / drag the pin</p>
                           <LocationPicker value={formData.customerLocation} onChange={handleWallLocationChange} onAddress={handleResolvedAddress} />
                         </div>
                       ) : null}
-                  </div>
+                    </div>
+                  )}
                   {catalogStatus === 'ready' ? <p className="px-1 text-sm font-semibold text-gray-600" data-testid="therapist-result-count">{wallTherapists.length} {wallTherapists.length === 1 ? 'therapist' : 'therapists'} available</p> : null}
                   <div className="grid gap-3 px-1 pb-6 sm:grid-cols-2" data-testid="booking-therapist-list">
                     {catalogStatus === 'loading' ? (
