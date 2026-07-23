@@ -578,7 +578,7 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
       <section className="overflow-hidden rounded-[1.75rem] bg-white shadow-sm" data-testid="therapist-detail-hero">
         {/* 老板 2026-07-24:大图容器定成 4:5 竖版 + 填满,不再两边黑边(对标对手)。
             配合上传自动裁 4:5,新照片刚好铺满不裁;老照片重传即正。 */}
-        <div className={`relative bg-[#11150f] ${usesFallbackImage && heroPhotos.length === 0 ? 'h-[152px] sm:h-[180px]' : 'aspect-[4/5] max-h-[76vh]'}`}>
+        <div className={`relative mx-auto bg-[#11150f] ${usesFallbackImage && heroPhotos.length === 0 ? 'h-[152px] sm:h-[180px]' : 'aspect-[4/5] max-h-[72vh] w-full max-w-[440px] sm:rounded-[1.25rem]'}`}>
           {heroPhotos.length > 1 ? (
             <>
               <div ref={heroScrollRef} onScroll={onHeroScroll} className="flex h-full w-full snap-x snap-mandatory overflow-x-auto scroll-smooth" data-testid="therapist-hero-carousel" style={{ scrollbarWidth: 'none' }}>
