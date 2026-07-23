@@ -334,7 +334,9 @@ function resolveTherapistImageUrl(therapist = {}, mode = 'wall') {
 function TherapistAvatar({ therapist, mode = 'wall' }) {
   const imageUrl = resolveTherapistImageUrl(therapist, mode);
   const isFallback = imageUrl === DEFAULT_THERAPIST_IMAGE_URL;
-  const sizeClass = mode === 'wall' ? 'h-[88px] w-[88px]' : 'h-full w-full';
+  // 老板 2026-07-24:88px 小方块把竖构图人像裁得看不全、挤。改大的竖版(4:5),
+  // 让技师看得全、舒服(对标对手)。
+  const sizeClass = mode === 'wall' ? 'h-[132px] w-[106px]' : 'h-full w-full';
   const radiusClass = mode === 'wall' ? 'rounded-[1.25rem]' : 'rounded-none';
   // Owner report (2026-07-19): full-body detail photos were cropped to the torso;
   // top-anchored crop then scalped centered portraits (2026-07-21). Fixed-anchor
@@ -409,7 +411,7 @@ function TherapistWallCard({ therapist, selected, onSelect, onRequireLocation, c
           {distanceKm !== null ? SERVICE_RADIUS_TOO_FAR_MESSAGE : customerLocated ? THERAPIST_TEMPORARILY_UNAVAILABLE_MESSAGE : SERVICE_RADIUS_LOCATION_REQUIRED_MESSAGE}
         </span>
       ) : null}
-      <div className="flex min-h-[112px] gap-3">
+      <div className="flex min-h-[132px] gap-3.5">
         <TherapistAvatar therapist={therapist} mode="wall" />
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
