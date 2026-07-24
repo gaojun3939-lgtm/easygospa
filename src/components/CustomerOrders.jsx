@@ -7,6 +7,10 @@ import { BOOKING_STATUS_STEPS } from '../lib/bookingStatus.mjs';
 import BookingReviewCard from './BookingReviewCard.jsx';
 
 const RESEND_SECONDS = 60;
+// 验证码长度不写死:Supabase Auth 后台可把邮箱验证码配成 6 位或 8 位,
+// 前端两种都收(之前砍死 6 位,8 位的码根本填不进去,客人永远验不过)。
+const OTP_MIN_LENGTH = 6;
+const OTP_MAX_LENGTH = 8;
 const WHATSAPP_FALLBACK = '+63 964 857 0967';
 
 const TIMELINE = BOOKING_STATUS_STEPS.map(step => ({ key: step.status, label: step.label }));
@@ -202,14 +206,14 @@ export default function CustomerOrders() {
     if (otpError) { setError('Could not send the code. Please try again in a moment.'); return; }
     setStep('code');
     setResendIn(RESEND_SECONDS);
-    setNotice(`We sent a 6-digit code to ${target}`);
+    setNotice(`We sent a code to ${target}`);
   }
 
   async function verifyEmailCode() {
     const client = getSupabaseClient();
     const target = email.trim().toLowerCase();
     const token = code.trim();
-    if (!client || token.length < 6) { setError('Enter the 6-digit code from your email.'); return; }
+    if (!client || token.length < OTP_MIN_LENGTH) { setError('Enter the code from your email.'); return; }
     setError(''); setBusy(true);
     const { error: verifyError } = await client.auth.verifyOtp({ email: target, token, type: 'email' });
     setBusy(false);
@@ -359,12 +363,12 @@ function LoginView({ step, email, code, busy, error, notice, resendIn, onEmail, 
         {notice ? <p className="mt-1 text-center text-sm text-gray-500">{notice}</p> : null}
         <input
           value={code}
-          onChange={event => onCode(event.target.value.replace(/\D/g, '').slice(0, 6))}
+          onChange={event => onCode(event.target.value.replace(/\D/g, '').slice(0, OTP_MAX_LENGTH))}
           inputMode="numeric" autoComplete="one-time-code" placeholder="••••••"
-          className="mt-5 w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-center text-2xl font-bold tracking-[0.4em] text-[#0F0F0F] outline-none focus:border-[#4E8D43]"
+          className="mt-5 w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-center text-2xl font-bold tracking-[0.25em] text-[#0F0F0F] outline-none focus:border-[#4E8D43]"
         />
         {error ? <p className="mt-3 text-center text-sm text-red-600">{error}</p> : null}
-        <button type="button" disabled={busy || code.length < 6} onClick={onVerify}
+        <button type="button" disabled={busy || code.length < OTP_MIN_LENGTH} onClick={onVerify}
           className="mt-4 flex h-12 w-full items-center justify-center rounded-full bg-[#4E8D43] text-base font-bold text-white disabled:opacity-50">
           {busy ? 'Verifying…' : 'Verify'}
         </button>
