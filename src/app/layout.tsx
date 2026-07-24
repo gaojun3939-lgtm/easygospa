@@ -6,6 +6,7 @@ import BookingModal from "@/components/BookingModal"
 import CustomerOrders from "@/components/CustomerOrders"
 import ReviewWidget from "@/components/ReviewWidget"
 import LoadingScreen from "@/components/LoadingScreen"
+import MetaPixel from "@/components/MetaPixel"
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import React from "react";
@@ -104,6 +105,7 @@ export default function RootLayout({
               "document.addEventListener('click',function(e){var t=e.target&&e.target.closest?e.target.closest('[data-open-booking]'):null;if(t){window.__egOpenBooking=true;try{window.dispatchEvent(new CustomEvent('open-booking-modal'))}catch(err){}}});"
           }}
         />
+        <MetaPixel/>
         <LoadingScreen/>
         <Suspense fallback={null}>
         <Navbar/>

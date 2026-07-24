@@ -40,6 +40,7 @@ import {
 } from '../lib/activeBooking.mjs';
 import { cancelPublicBooking } from '../lib/publicBookingCancel.mjs';
 import { LocationPicker } from './LocationPicker.jsx';
+import { trackMetaEvent } from './MetaPixel.jsx';
 import { AddressAutocompleteInput } from './AddressAutocompleteInput.jsx';
 import {
   BOOKING_PHONE_COUNTRIES,
@@ -1402,6 +1403,7 @@ export default function BookingModal() {
         return;
       }
       activeBookingInspectionSequenceRef.current += 1;
+      trackMetaEvent('Schedule'); // 像素旁路:官网下单成功打一个信号给 Meta(没配像素时静默)
       setIsOpen(false);
       router.push(`/track/${encodeURIComponent(reference)}`);
     } catch (submitError) {
