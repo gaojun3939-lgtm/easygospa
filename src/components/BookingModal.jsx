@@ -614,7 +614,15 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
               </span>
             ) : null}
             {detailDistanceKm !== null ? <span className="text-gray-300">|</span> : null}
-            <TherapistRating therapist={therapist} />
+            {/* 评分可点:跳到下方 Verified reviews 区(老板 2026-07-26:1 review 点不进去=没实装) */}
+            <button
+              type="button"
+              data-testid="therapist-rating-link"
+              className="inline-flex items-center gap-1 underline decoration-[#e08700]/40 underline-offset-4"
+              onClick={() => document.getElementById('therapist-reviews-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+            >
+              <TherapistRating therapist={therapist} />
+            </button>
           </div>
           <div className="mt-4 flex items-center gap-4 rounded-2xl border border-[#4E8D43]/35 bg-[#F7FCF8] px-4 py-3" data-testid="therapist-care">
             <span className="flex flex-col items-center gap-1 text-[#3F7838]">
@@ -651,7 +659,7 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
           {availableServices.map(service => <ServiceCard key={service.id} service={service} selected={selectedServiceName === service.name} selectedDuration={selectedServiceName === service.name ? Number(selectedDuration) : 0} onSelectService={onSelectService} onSelectDuration={onSelectDuration} onBook={onBook} />)}
         </div>
       </div>
-      <section className="rounded-[1.5rem] border border-gray-200 bg-white p-5 shadow-sm" data-testid="therapist-review-wall">
+      <section className="rounded-[1.5rem] border border-gray-200 bg-white p-5 shadow-sm" data-testid="therapist-review-wall" id="therapist-reviews-section">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
