@@ -505,6 +505,19 @@ export default function BookingTrackingPage({ reference }) {
             </a>
           ) : null}
 
+          {/* 技师专线(双号分工):有技师且单子活着才显示;点开即给技师发第一句话 */}
+          {booking.therapistLine ? (
+            <a
+              data-therapist-line
+              href={`https://wa.me/${booking.therapistLine}?text=${encodeURIComponent(`Hi! Booking ${reference} — I'd like to chat with my therapist${booking.therapist?.name ? ` ${booking.therapist.name}` : ''}.`)}`}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center justify-center gap-3 rounded-2xl border-2 border-[#25D366] bg-white px-6 py-4 text-center shadow-sm transition hover:bg-emerald-50 active:scale-[0.99]"
+            >
+              <span className="text-base font-extrabold text-[#128C4B] sm:text-lg">💬 Chat with your therapist{booking.therapist?.name ? ` ${booking.therapist.name}` : ''} on WhatsApp</span>
+            </a>
+          ) : null}
+
           {booking.status === 'completed' ? (
             <CompletedBookingReview reference={reference} therapistName={booking.therapist?.name || 'your therapist'} />
           ) : null}
