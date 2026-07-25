@@ -495,9 +495,13 @@ export default function BookingTrackingPage({ reference }) {
               href={buildBookingUpdatesWhatsAppUrl(reference)}
               target="_blank"
               rel="noreferrer"
-              className="flex items-center justify-center rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-3 text-center text-sm font-bold text-emerald-800 shadow-sm transition hover:bg-emerald-100"
+              className="flex items-center justify-center gap-3 rounded-2xl bg-[#25D366] px-6 py-4 text-center shadow-lg shadow-emerald-500/30 ring-2 ring-emerald-300/60 transition hover:bg-[#1fbd5a] hover:shadow-emerald-500/40 active:scale-[0.99]"
             >
-              📲 Get booking updates on WhatsApp
+              <span className="relative flex h-3 w-3 shrink-0">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
+                <span className="relative inline-flex h-3 w-3 rounded-full bg-white" />
+              </span>
+              <span className="text-base font-extrabold text-white sm:text-lg">📲 Get booking updates on WhatsApp</span>
             </a>
           ) : null}
 
