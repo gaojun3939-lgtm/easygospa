@@ -90,6 +90,9 @@ export function normalizeBookingStatusPayload(payload = {}) {
     therapist,
     etaMinutes: cleanNullableNumber(payload.etaMinutes),
     whatsapp: cleanString(payload.whatsapp),
+    // 技师专线(双号分工):这层是白名单安检,漏了这行后端给的号码会被丢掉,
+    // 客人点"联系技师"照样开到客服号(2026-07-26 实测)。只留纯数字。
+    therapistLine: cleanString(payload.therapistLine).replace(/\D/g, ''),
     updatedAt: cleanNullableString(payload.updatedAt)
   };
 }
