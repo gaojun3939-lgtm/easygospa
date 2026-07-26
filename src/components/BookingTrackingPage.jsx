@@ -489,32 +489,36 @@ export default function BookingTrackingPage({ reference }) {
             </div>
           </section>
 
-          {shouldShowBookingUpdatesBanner(booking.status) ? (
-            <a
-              data-booking-updates-banner
-              href={buildBookingUpdatesWhatsAppUrl(reference)}
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center justify-center gap-3 rounded-2xl bg-[#25D366] px-6 py-4 text-center shadow-lg shadow-emerald-500/30 ring-2 ring-emerald-300/60 transition hover:bg-[#1fbd5a] hover:shadow-emerald-500/40 active:scale-[0.99]"
-            >
-              <span className="relative flex h-3 w-3 shrink-0">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
-                <span className="relative inline-flex h-3 w-3 rounded-full bg-white" />
-              </span>
-              <span className="text-base font-extrabold text-white sm:text-lg">📲 Get booking updates on WhatsApp</span>
-            </a>
-          ) : null}
-
-          {/* 技师专线(双号分工):有技师且单子活着才显示;点开即给技师发第一句话 */}
+          {/* 页面顶部只留一个绿按钮(老板 2026-07-26:三个入口太多余)。
+              派了技师 → 直通技师专线(路上沟通、拍门牌);还没派 → 客服号问进度。
+              底部「Need an update?」卡片始终有客服号入口,不必在这里再放一个。 */}
           {booking.therapistLine ? (
             <a
               data-therapist-line
               href={`https://wa.me/${booking.therapistLine}?text=${encodeURIComponent(`Hi! Booking ${reference} — I'd like to chat with my therapist${booking.therapist?.name ? ` ${booking.therapist.name}` : ''}.`)}`}
               target="_blank"
               rel="noreferrer"
-              className="flex items-center justify-center gap-3 rounded-2xl border-2 border-[#25D366] bg-white px-6 py-4 text-center shadow-sm transition hover:bg-emerald-50 active:scale-[0.99]"
+              className="flex items-center justify-center gap-3 rounded-2xl bg-[#25D366] px-6 py-4 text-center shadow-lg shadow-emerald-500/30 ring-2 ring-emerald-300/60 transition hover:bg-[#1fbd5a] active:scale-[0.99]"
             >
-              <span className="text-base font-extrabold text-[#128C4B] sm:text-lg">💬 Chat with your therapist{booking.therapist?.name ? ` ${booking.therapist.name}` : ''} on WhatsApp</span>
+              <span className="relative flex h-3 w-3 shrink-0">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
+                <span className="relative inline-flex h-3 w-3 rounded-full bg-white" />
+              </span>
+              <span className="text-base font-extrabold text-white sm:text-lg">💬 Message your therapist{booking.therapist?.name ? ` ${booking.therapist.name}` : ''}</span>
+            </a>
+          ) : shouldShowBookingUpdatesBanner(booking.status) ? (
+            <a
+              data-booking-updates-banner
+              href={buildBookingUpdatesWhatsAppUrl(reference)}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center justify-center gap-3 rounded-2xl bg-[#25D366] px-6 py-4 text-center shadow-lg shadow-emerald-500/30 ring-2 ring-emerald-300/60 transition hover:bg-[#1fbd5a] active:scale-[0.99]"
+            >
+              <span className="relative flex h-3 w-3 shrink-0">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
+                <span className="relative inline-flex h-3 w-3 rounded-full bg-white" />
+              </span>
+              <span className="text-base font-extrabold text-white sm:text-lg">📲 Get booking updates on WhatsApp</span>
             </a>
           ) : null}
 
