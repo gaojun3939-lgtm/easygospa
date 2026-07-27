@@ -69,14 +69,14 @@ export async function cancelPublicBooking({ reference = '', contact = '', cancel
       ok: false,
       httpStatus: response.status || 502,
       code: 'BOOKING_CANCEL_FAILED',
-      error: 'Booking cancellation is temporarily unavailable. Please try again.'
+      error: "We couldn't cancel it just now. Message us on WhatsApp with your booking reference and we'll cancel it for you."
     };
   } catch {
     return {
       ok: false,
       httpStatus: 0,
       code: 'BOOKING_CANCEL_UNAVAILABLE',
-      error: 'Booking cancellation is temporarily unavailable. Please check your connection and try again.'
+      error: "We couldn't reach us just now. Check your connection, or message us on WhatsApp with your booking reference."
     };
   }
 }

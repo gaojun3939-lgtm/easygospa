@@ -425,7 +425,8 @@ export default function BookingTrackingPage({ reference }) {
       setCancelError("We couldn't verify that booking with those details.");
       return;
     }
-    setCancelError(result.error || 'Booking cancellation is temporarily unavailable. Please try again.');
+    // 兜底文案也要给出路(老板 2026-07-28:客人不该对着一句'暂时不可用'干瞪眼)
+    setCancelError(result.error || "We couldn't cancel it just now. Message us on WhatsApp with your booking reference and we'll cancel it for you.");
   };
 
   const copyReference = async () => {
