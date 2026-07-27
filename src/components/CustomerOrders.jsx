@@ -522,8 +522,22 @@ function OrderDetail({ order, bookingEmail, onReviewSuccess }) {
         />
       ) : null}
 
+      {/* 取消入口(老板 2026-07-28:官网下单发现不能取消——按钮原来只藏在追踪页,这里补上)。
+          规矩不变(老板 7/15 定):技师接单前可自己取消;接单后技师可能已出门,走 WhatsApp 人工处理。 */}
+      {order.status === 'waiting_acceptance' ? (
+        <a href={`/track/${encodeURIComponent(order.reference)}`}
+          className="mt-6 flex h-11 w-full items-center justify-center rounded-full border border-red-200 bg-white text-sm font-semibold text-red-600">
+          Cancel this booking
+        </a>
+      ) : !cancelled && order.status !== 'completed' ? (
+        <a href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(`I need to cancel my booking ${order.reference}. Reason: `)}`} target="_blank" rel="noreferrer"
+          className="mt-6 flex h-11 w-full items-center justify-center rounded-full border border-gray-200 bg-white text-sm font-semibold text-gray-500">
+          Need to cancel? Message us
+        </a>
+      ) : null}
+
       <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noreferrer"
-        className="mt-6 flex h-11 w-full items-center justify-center gap-2 rounded-full bg-[#eaf1e7] text-sm font-semibold text-[#3F7838]">
+        className={`${order.status === 'waiting_acceptance' || (!cancelled && order.status !== 'completed') ? 'mt-3' : 'mt-6'} flex h-11 w-full items-center justify-center gap-2 rounded-full bg-[#eaf1e7] text-sm font-semibold text-[#3F7838]`}>
         <MessageCircle className="h-4 w-4" />Message us on WhatsApp
       </a>
       {/* 老板 2026-07-22 对标 Glow:客户订单页加独立投诉入口(现走 WhatsApp 带单号,将来接 AI 客服)。 */}

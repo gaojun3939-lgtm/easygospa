@@ -568,6 +568,13 @@ export default function BookingTrackingPage({ reference }) {
               <button type="button" onClick={openCancellationDialog} className="mt-7 h-12 w-full rounded-2xl border border-red-200 bg-white px-5 font-bold text-red-700 transition hover:bg-red-50">
                 Cancel booking
               </button>
+            ) : booking.status !== 'cancelled' && booking.status !== 'completed' ? (
+              // 老板 2026-07-28:客人找不到取消入口会以为是 bug。接单后不能自助取消是规矩
+              // (技师可能已在路上),但必须说清楚 + 给出口,不能空着。
+              <p className="mt-7 rounded-2xl bg-slate-50 px-5 py-4 text-sm leading-6 text-slate-500">
+                Your therapist has already confirmed this booking, so it can no longer be cancelled here.
+                Need to cancel or reschedule? Message us on WhatsApp below — we&apos;ll take care of it.
+              </p>
             ) : null}
           </section>
 
