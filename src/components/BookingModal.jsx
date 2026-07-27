@@ -27,6 +27,7 @@ import {
   submitBookingWithinServiceRadius,
   therapistDistanceKm
 } from '../lib/therapistServiceBookingFlow.mjs';
+import { adAttributionMetadata } from '../lib/adAttribution.mjs';
 import { getFallbackWebsiteBookingCatalog } from '../lib/bookingCatalogNormalizer.mjs';
 import { manilaNowMinutes, manilaToday } from '../lib/manilaTime.js';
 import { apiUrl } from '../lib/apiUrl.js';
@@ -1224,7 +1225,10 @@ export default function BookingModal() {
         requestedTechnicianProfileName: selectedTherapist.profileName || selectedTherapist.name,
         serviceId: selectedOption.service.id,
         ...(selectedTherapist.id !== 'any_available' && selectedTherapist.technicianAccountId ? { requestedTechnicianAccountId: selectedTherapist.technicianAccountId } : {}),
-        ...(selectedTherapist.id !== 'any_available' && selectedTherapist.technicianAccountName ? { requestedTechnicianAccountName: selectedTherapist.technicianAccountName } : {})
+        ...(selectedTherapist.id !== 'any_available' && selectedTherapist.technicianAccountName ? { requestedTechnicianAccountName: selectedTherapist.technicianAccountName } : {}),
+        // 这单从哪来(2026-07-28 归因链):进站抓到的 fbclid/utm 原样随单带走,
+        // 后台才算得清"广告到底带来几单",不再靠猜。
+        ...adAttributionMetadata()
       }
     };
   };

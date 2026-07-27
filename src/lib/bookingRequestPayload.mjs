@@ -137,11 +137,28 @@ export function normalizeWebsiteBookingRequest(input = {}) {
     ? Math.round(input.expectedCashToCollect * 100) / 100
     : undefined;
 
+  // 归因(2026-07-28):前端进站抓的 fbclid/utm 原样透传,这里只做长度和类型消毒,
+  // 不加工——后台靠它算清"这单是不是广告带来的"。不认识的字段一律丢弃。
+  const rawAttribution = inputMetadata.adAttribution && typeof inputMetadata.adAttribution === 'object' ? inputMetadata.adAttribution : null;
+  const adAttribution = rawAttribution
+    ? {
+      channel: cleanText(rawAttribution.channel, 20) || 'organic',
+      ...(rawAttribution.fbclid ? { fbclid: cleanText(rawAttribution.fbclid, 500) } : {}),
+      ...(rawAttribution.utmSource ? { utmSource: cleanText(rawAttribution.utmSource, 80) } : {}),
+      ...(rawAttribution.utmMedium ? { utmMedium: cleanText(rawAttribution.utmMedium, 80) } : {}),
+      ...(rawAttribution.utmCampaign ? { utmCampaign: cleanText(rawAttribution.utmCampaign, 120) } : {}),
+      ...(rawAttribution.utmContent ? { utmContent: cleanText(rawAttribution.utmContent, 120) } : {}),
+      ...(rawAttribution.referrer ? { referrer: cleanText(rawAttribution.referrer, 300) } : {}),
+      ...(rawAttribution.landedAt ? { landedAt: cleanText(rawAttribution.landedAt, 40) } : {})
+    }
+    : null;
+
   const metadata = {
     website: 'www.easygospa.com',
     form: 'BookingModal',
     submittedFrom: 'public_website',
     bookingFlow: 'therapist_wall_detail_service_cash',
+    ...(adAttribution ? { adAttribution } : {}),
     customerEmail,
     requestedTechnicianId,
     requestedTechnicianName,
