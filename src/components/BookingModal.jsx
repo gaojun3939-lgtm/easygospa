@@ -1060,6 +1060,8 @@ export default function BookingModal() {
     });
     setError('');
     setStep('detail');
+    // 漏斗眼睛(2026-07-28:169 进站 0 单,死在哪一步没人知道)——看了技师详情
+    trackMetaEvent('ViewContent');
   };
 
   // 老板 2026-07-24:进详情页时滚回顶部——之前从列表滚下去点技师,详情会停在中间(价格)。
@@ -1112,6 +1114,8 @@ export default function BookingModal() {
     if (!selectedServiceOption) return;
     setError('');
     setStep('email');
+    // 漏斗眼睛——选好服务,进入邮箱步
+    trackMetaEvent('AddToCart');
   };
 
   const handleEmailContinue = event => {
@@ -1287,6 +1291,8 @@ export default function BookingModal() {
     setCouponOptOut(false);
     setCouponPreview(null);
     setStep('confirm');
+    // 漏斗眼睛——资料填完,到了最后确认页
+    trackMetaEvent('InitiateCheckout');
     void requestCouponPreview(false);
   };
 
