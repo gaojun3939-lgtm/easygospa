@@ -210,6 +210,58 @@ function StateCard({ icon, title, body, action }) {
   );
 }
 
+// 订单页是给客人看的:他只想知道"人什么时候到",不想看我们内部的排班档位。
+// 大字说人在哪一步,小字说下一步会发生什么。技师有名字就直呼其名,更像真人服务。
+function therapistArrivalHeadline(booking = {}) {
+  const name = booking.therapist?.name?.trim();
+  const who = name || 'Your therapist';
+  switch (booking.status) {
+    case 'submitted':
+    case 'confirmed':
+      return 'Matching your therapist';
+    case 'waiting_acceptance':
+      return `${who} is confirming`;
+    case 'preparing':
+      return `${who} is getting ready`;
+    case 'on_the_way':
+      return Number.isFinite(booking.etaMinutes) ? `${who} is on the way · ~${booking.etaMinutes} min` : `${who} is on the way`;
+    case 'arrived':
+      return `${who} has arrived`;
+    case 'in_service':
+      return 'Your massage is in progress';
+    case 'completed':
+      return 'Service completed';
+    case 'cancelled':
+      return 'Booking cancelled';
+    default:
+      return `${who} is on the way`;
+  }
+}
+
+function therapistArrivalNote(booking = {}) {
+  switch (booking.status) {
+    case 'submitted':
+    case 'confirmed':
+      return 'We are finding the therapist nearest to you.';
+    case 'waiting_acceptance':
+      return 'Hang tight — confirming your booking now.';
+    case 'preparing':
+      return 'She will head to your address shortly.';
+    case 'on_the_way':
+      return 'Please keep your phone nearby.';
+    case 'arrived':
+      return 'Cash payment is collected at the door, before the massage starts.';
+    case 'in_service':
+      return 'Enjoy — relax and unwind.';
+    case 'completed':
+      return 'Leave a review and get a ₱50 cash coupon.';
+    case 'cancelled':
+      return 'Message us on WhatsApp if you need help.';
+    default:
+      return 'Please keep your phone nearby.';
+  }
+}
+
 function TherapistBadge({ therapist }) {
   if (!therapist) return null;
   const initial = therapist.name?.charAt(0)?.toUpperCase() || 'T';
@@ -534,9 +586,12 @@ export default function BookingTrackingPage({ reference }) {
                 <p className="mt-1 font-bold text-[#17142f]">{booking.serviceName || 'Service pending'}</p>
                 <p className="mt-1 text-sm text-slate-600">{Number.isFinite(booking.durationMinutes) ? `${booking.durationMinutes} minutes` : 'Duration pending'}</p>
               </div>
+              {/* 客人只关心"技师什么时候到",不关心内部排班(2026-07-28 老板拍板)。
+                  原来这里印内部排期时间戳,技师 20 分钟就到门口了,页面却写着明天凌晨,把客人看懵。 */}
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500"><CalendarClock className="mr-1 inline h-4 w-4" />Scheduled in Manila</p>
-                <p className="mt-1 font-bold text-[#17142f]">{formatManilaBookingDateTime(booking.scheduledAt)}</p>
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500"><CalendarClock className="mr-1 inline h-4 w-4" />Your therapist</p>
+                <p className="mt-1 font-bold text-[#17142f]">{therapistArrivalHeadline(booking)}</p>
+                <p className="mt-1 text-sm text-slate-600">{therapistArrivalNote(booking)}</p>
               </div>
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500"><MapPin className="mr-1 inline h-4 w-4" />Area</p>
