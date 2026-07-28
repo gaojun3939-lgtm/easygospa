@@ -972,6 +972,11 @@ export default function BookingModal() {
 
     window.addEventListener('open-booking-modal', openModal);
     window.addEventListener('open-booking-modal-with-service', openModal);
+    // 技师墙直达链接:带 ?book=1 进站直接弹预约墙(2026-07-28 老板拍板——
+    // AI 客服/真人发给客人的标准链接,省掉"自己找 Book Now"那一步)
+    if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('book')) {
+      openModal();
+    }
     return () => {
       window.removeEventListener('open-booking-modal', openModal);
       window.removeEventListener('open-booking-modal-with-service', openModal);
