@@ -7,6 +7,13 @@ const ENDPOINTS = Object.freeze({
     envName: 'AIOFFICE_BOOKING_API_URL',
     developmentUrl: 'https://staging.easygospa.com/api/bookings/public-request'
   },
+  // 「约稍后」查空档 / 按时间筛技师(2026-07-29)。跟券接口一个道理走 deriveFrom:
+  // 后台本来就在同一个域名下,不必为它再让老板多填一个环境变量。
+  bookingAvailability: {
+    envName: 'AIOFFICE_BOOKING_AVAILABILITY_API_URL',
+    developmentUrl: 'https://staging.easygospa.com/api/public/booking-availability',
+    deriveFrom: { endpoint: 'bookingCatalog', path: '/api/public/booking-availability' }
+  },
   bookingStatus: {
     envName: 'AIOFFICE_BOOKING_STATUS_API_URL',
     developmentUrl: 'https://staging.easygospa.com/api/public/booking-status'

@@ -123,6 +123,31 @@ function manilaAsapTime() {
   return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
 }
 
+// Owner call (2026-07-29): "book for later" is back, but it may only ever offer
+// slots the therapist can genuinely serve — the pre-2026-07-16 picker listed all 48
+// half-hours regardless of her shift, which is how customers booked times nobody
+// could work. Every time shown here comes from the backend availability check.
+const MANILA_WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+function manilaDayLabel(dateKey = '', dayOffset = 0) {
+  if (dayOffset === 0) return 'Today';
+  if (dayOffset === 1) return 'Tomorrow';
+  const parsed = new Date(`${dateKey}T00:00:00+08:00`);
+  if (!Number.isFinite(parsed.getTime())) return dateKey;
+  return `${MANILA_WEEKDAYS[parsed.getUTCDay()]} ${dateKey.slice(8, 10)}`;
+}
+
+function formatScheduleLabel(dateKey = '', time = '') {
+  if (!dateKey || !time) return '';
+  const today = manilaToday();
+  if (dateKey === today) return `Today ${time}`;
+  const parsed = new Date(`${dateKey}T00:00:00+08:00`);
+  const tomorrow = new Date(`${today}T00:00:00+08:00`);
+  tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
+  if (parsed.toISOString().slice(0, 10) === tomorrow.toISOString().slice(0, 10)) return `Tomorrow ${time}`;
+  return `${dateKey} ${time}`;
+}
+
 // Area is inferred from the typed address / map pin instead of a manual dropdown.
 function inferAreaFromAddress(text = '') {
   const value = String(text || '').toLowerCase();
@@ -271,6 +296,86 @@ export function BookingCouponSelector({
         ) : null}
       </div>
     </section>
+  );
+}
+
+// ⚡ now vs 🕘 later. "Now" stays the default and stays one tap — the ride-hailing
+// flow is what most customers want and it must not get slower. "Later" is the second
+// door, for the guest who is out and gets home at 22:30.
+function ScheduleChooser({ mode, onModeChange, slot, onSlotChange, days, loading, loadFailed, earliestLabel, therapistName }) {
+  const activeDate = slot?.date || days[0]?.date || '';
+  const activeDay = days.find(day => day.date === activeDate) || days[0] || null;
+  const optionClass = active => `flex-1 rounded-2xl border-2 px-4 py-3 text-center transition ${active
+    ? 'border-[#4E8D43] bg-[#F1FBF3] text-[#3F7838]'
+    : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'}`;
+
+  return (
+    <div className="space-y-3" data-testid="schedule-chooser">
+      <label className={bookingLabelClass}><Clock className="mr-2 inline h-4 w-4" />When would you like your massage?</label>
+      <div className="flex gap-3">
+        <button type="button" className={optionClass(mode === 'asap')} onClick={() => onModeChange('asap')} data-testid="schedule-mode-asap">
+          <span className="block text-sm font-bold">As soon as possible</span>
+          <span className="mt-0.5 block text-xs font-medium opacity-80">Therapist departs after accepting</span>
+        </button>
+        <button type="button" className={optionClass(mode === 'scheduled')} onClick={() => onModeChange('scheduled')} data-testid="schedule-mode-later">
+          <span className="block text-sm font-bold">Book for later</span>
+          <span className="mt-0.5 block text-xs font-medium opacity-80">Pick a time that suits you</span>
+        </button>
+      </div>
+
+      {mode === 'asap' ? (
+        <div className="rounded-2xl bg-[#eaf1e7] px-4 py-3 text-sm font-medium text-[#3F7838]">
+          <Clock className="mr-2 inline h-4 w-4" />Your therapist departs as soon as the booking is accepted — no scheduling needed.
+        </div>
+      ) : loading ? (
+        <div className="rounded-2xl border border-gray-200 px-4 py-3 text-sm font-medium text-gray-600">Checking {therapistName || 'her'} schedule…</div>
+      ) : loadFailed ? (
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-900" data-testid="schedule-load-failed">
+          We could not load her free times just now. Choose <strong>As soon as possible</strong>, or message us on WhatsApp and we will book the time you want.
+        </div>
+      ) : !days.length ? (
+        // Fail loudly rather than showing an empty list — an empty picker is exactly
+        // what sent the 2026-07-29 guest to WhatsApp asking "is there any time?".
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-900" data-testid="schedule-no-slots">
+          {therapistName || 'This therapist'} has no open times in the next three days
+          {earliestLabel ? <> — her next opening is <strong>{earliestLabel}</strong></> : null}.
+          Pick <strong>As soon as possible</strong>, choose another therapist, or message us on WhatsApp and we will arrange it.
+        </div>
+      ) : (
+        <div className="space-y-3">
+          <div className="flex flex-wrap gap-2">
+            {days.map(day => (
+              <button
+                key={day.date}
+                type="button"
+                onClick={() => onSlotChange({ date: day.date, time: '' })}
+                className={`rounded-full border px-4 py-2 text-xs font-bold transition ${day.date === activeDate
+                  ? 'border-[#4E8D43] bg-[#4E8D43] text-white'
+                  : 'border-gray-300 bg-white text-gray-700 hover:border-[#4E8D43]'}`}
+              >
+                {manilaDayLabel(day.date, day.dayOffset)}
+              </button>
+            ))}
+          </div>
+          <div className="grid grid-cols-3 gap-2 sm:grid-cols-4" data-testid="schedule-time-grid">
+            {(activeDay?.times || []).map(time => (
+              <button
+                key={`${activeDate}-${time}`}
+                type="button"
+                onClick={() => onSlotChange({ date: activeDate, time })}
+                className={`rounded-xl border px-2 py-2.5 text-sm font-bold transition ${slot?.date === activeDate && slot?.time === time
+                  ? 'border-[#4E8D43] bg-[#F1FBF3] text-[#3F7838]'
+                  : 'border-gray-300 bg-white text-gray-700 hover:border-[#4E8D43]'}`}
+                data-testid={`schedule-time-${time}`}
+              >
+                {time}
+              </button>
+            ))}
+          </div>
+          <p className="text-xs text-gray-500">Only times {therapistName || 'she'} can actually take are shown.</p>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -815,6 +920,13 @@ export default function BookingModal() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [dateError, setDateError] = useState('');
+  // 「约稍后」(2026-07-29 老板拍板恢复):默认仍是"马上来",一步都没多。
+  const [scheduleMode, setScheduleMode] = useState('asap');
+  const [scheduleSlot, setScheduleSlot] = useState(null);
+  const [availability, setAvailability] = useState({ status: 'idle', days: [], earliest: null });
+  // 手动重拉计数:客人被"这个点刚被抢走"拦下时,得重新去后台拿一份真列表,
+  // 光改状态不会触发重查(依赖项没变)。
+  const [availabilityNonce, setAvailabilityNonce] = useState(0);
   const [phoneError, setPhoneError] = useState('');
   const [phoneCountry, setPhoneCountry] = useState(DEFAULT_BOOKING_PHONE_COUNTRY);
   const [addressFeedback, setAddressFeedback] = useState('');
@@ -873,11 +985,43 @@ export default function BookingModal() {
   const selectedDuration = useMemo(() => selectedService ? findExactDurationOption(selectedService, formData.durationMinutes) : null, [selectedService, formData.durationMinutes]);
   const selectedServiceOption = useMemo(() => resolveSelectedServiceOption(formData, catalogServices), [catalogServices, formData]);
   const selectedTotalAmount = selectedServiceOption?.price ?? 0;
-  const availableTimeSlots = useMemo(() => (
-    formData.preferredDate === manilaToday()
-      ? timeSlots.filter(time => timeSlotMinutes(time) >= manilaNowMinutes() + BOOKING_LEAD_MINUTES)
-      : timeSlots
-  ), [formData.preferredDate]);
+  // 「约稍后」的时间表只能来自后台——后台知道她排了哪些班、手上有哪些单、
+  // 这个时长塞不塞得下。前端自己造一份 00:00–23:30 的列表,就是 7/16 之前那个
+  // "客人能约一个没人上班的凌晨三点"的老毛病。
+  const scheduleTherapistAccountId = selectedTherapist?.id === 'any_available' ? '' : (selectedTherapist?.id || '');
+  const scheduleDurationMinutes = selectedServiceOption?.durationMinutes || 0;
+  useEffect(() => {
+    if (scheduleMode !== 'scheduled' || !scheduleTherapistAccountId || !scheduleDurationMinutes) return undefined;
+    let active = true;
+    setAvailability(current => ({ ...current, status: 'loading' }));
+    (async () => {
+      try {
+        const query = `therapistId=${encodeURIComponent(scheduleTherapistAccountId)}&durationMinutes=${encodeURIComponent(scheduleDurationMinutes)}`;
+        const response = await fetch(apiUrl(`/api/booking-availability?${query}`), { cache: 'no-store' });
+        const payload = await response.json().catch(() => null);
+        if (!active) return;
+        if (!response.ok || !payload?.ok) {
+          setAvailability({ status: 'failed', days: [], earliest: null });
+          return;
+        }
+        setAvailability({
+          status: 'ready',
+          days: Array.isArray(payload.days) ? payload.days.filter(day => Array.isArray(day.times) && day.times.length) : [],
+          earliest: payload.earliest || null
+        });
+      } catch {
+        if (active) setAvailability({ status: 'failed', days: [], earliest: null });
+      }
+    })();
+    return () => { active = false; };
+  }, [scheduleMode, scheduleTherapistAccountId, scheduleDurationMinutes, availabilityNonce]);
+
+  // A slot only survives while it is still on the freshly loaded list.
+  useEffect(() => {
+    if (availability.status !== 'ready' || !scheduleSlot?.time) return;
+    const stillOpen = availability.days.some(day => day.date === scheduleSlot.date && day.times.includes(scheduleSlot.time));
+    if (!stillOpen) setScheduleSlot(null);
+  }, [availability, scheduleSlot]);
 
   useEffect(() => {
     let active = true;
@@ -1097,6 +1241,10 @@ export default function BookingModal() {
           ? { ...nextForm, customerEmail: stored.customerEmail, customerName: stored.customerName || current.customerName, phone: storedPhone.localNumber || current.phone }
           : { ...nextForm, phone: promoPhone || nextForm.phone };
       });
+      // 重开弹窗要回到"马上来":上一次挑的那个时间点早就过期了。
+      setScheduleMode('asap');
+      setScheduleSlot(null);
+      setAvailability({ status: 'idle', days: [], earliest: null });
       setStep('wall');
       setIsOpen(true);
       void inspectStoredActiveBooking();
@@ -1204,6 +1352,9 @@ export default function BookingModal() {
         totalAmount: selectedOption?.price || 0
       };
     });
+    // 换了技师,上一个技师的空档一律作废——别让客人带着 Ana 的 22:30 去约 Mia。
+    setScheduleSlot(null);
+    setAvailability({ status: 'idle', days: [], earliest: null });
     setError('');
     setStep('detail');
     // 漏斗眼睛(2026-07-28:169 进站 0 单,死在哪一步没人知道)——看了技师详情
@@ -1301,7 +1452,13 @@ export default function BookingModal() {
       return phoneErrorMessage;
     }
     setPhoneError('');
-    // On-demand: no date/time/area pickers — schedule stamps and area are auto-derived.
+    // Area is still auto-derived from the address. The schedule is auto-stamped for
+    // "as soon as possible" and explicitly chosen for "book for later".
+    if (scheduleMode === 'scheduled' && !scheduleSlot?.time) {
+      return availability.status === 'ready' && !availability.days.length
+        ? 'She has no open times in the next three days — please choose "As soon as possible" or another therapist.'
+        : 'Please pick a time for your booking.';
+    }
     if (!formData.addressNote.trim()) return 'Please enter your building, condo, hotel, or exact address details.';
     return null;
   };
@@ -1316,8 +1473,12 @@ export default function BookingModal() {
       price: selectedOption.price,
       currency: selectedOption.currency || bookingCatalog.currency || 'PHP'
     }];
-    const dispatchDate = manilaToday();
-    const dispatchTime = manilaAsapTime();
+    // "Book for later" sends the customer's own choice and tells the backend to
+    // honour it. "As soon as possible" keeps stamping now + lead buffer, which the
+    // backend is still free to slide to the therapist's real earliest slot.
+    const bookingIsScheduled = scheduleMode === 'scheduled' && Boolean(scheduleSlot?.date && scheduleSlot?.time);
+    const dispatchDate = bookingIsScheduled ? scheduleSlot.date : manilaToday();
+    const dispatchTime = bookingIsScheduled ? scheduleSlot.time : manilaAsapTime();
     const derivedArea = inferAreaFromAddress(formData.addressNote);
     const couponExpectation = !previewOnly && couponPreviewState === 'ready' && couponPreview
       ? {
@@ -1349,6 +1510,7 @@ export default function BookingModal() {
       currency: selectedOption.currency || bookingCatalog.currency || 'PHP',
       preferredDate: dispatchDate,
       preferredTime: dispatchTime,
+      scheduleMode: bookingIsScheduled ? 'scheduled' : 'asap',
       area: derivedArea,
       addressNote: formData.addressNote,
       ...(isUsableCustomerLocation(formData.customerLocation) ? {
@@ -1548,6 +1710,23 @@ export default function BookingModal() {
         && payload?.code === 'ACTIVE_BOOKING_EXISTS'
       ) {
         setError('A booking already exists for these details. Log in to My Orders to view it or contact us on WhatsApp.');
+        return;
+      }
+      // 老板 2026-07-29 定的规矩:她接不了这个点,就当面说清楚 + 给下一步,
+      // 绝不能像以前那样悄悄把订单改成别的时间(客人页面写 22:30、技师 19:30 敲门)。
+      if (response.status === 409 && payload?.code === 'SCHEDULED_SLOT_UNAVAILABLE') {
+        const therapistName = selectedTherapist?.name || 'This therapist';
+        const earliest = payload.earliestDate && payload.earliestTime
+          ? formatScheduleLabel(payload.earliestDate, payload.earliestTime)
+          : '';
+        const wanted = scheduleSlot?.time ? formatScheduleLabel(scheduleSlot.date, scheduleSlot.time) : 'that time';
+        setError(payload.reason === 'OFF_SHIFT'
+          ? `${therapistName} is not working at ${wanted}.${earliest ? ` Her next opening is ${earliest}.` : ''} Pick another time below, or choose a therapist who is free then.`
+          : `${therapistName} was just booked for ${wanted}.${earliest ? ` Her earliest is now ${earliest}.` : ''} Pick another time below, or choose a therapist who is free then.`);
+        // Someone took the slot while this customer was typing — reload the real list.
+        setScheduleSlot(null);
+        setAvailabilityNonce(value => value + 1);
+        setStep('details');
         return;
       }
       if (!response.ok || payload?.ok !== true) throw new Error(payload?.error || 'Booking request could not be submitted.');
@@ -1812,9 +1991,17 @@ export default function BookingModal() {
                       {phoneError ? <p className="mt-2 text-sm font-medium text-red-600">{phoneError}</p> : null}
                     </div>
                   </div>
-                  <div className="rounded-2xl bg-[#eaf1e7] px-4 py-3 text-sm font-medium text-[#3F7838]">
-                    <Clock className="mr-2 inline h-4 w-4" />Your therapist departs as soon as the booking is accepted — no scheduling needed.
-                  </div>
+                  <ScheduleChooser
+                    mode={scheduleMode}
+                    onModeChange={mode => { setScheduleMode(mode); setScheduleSlot(null); if (error) setError(''); }}
+                    slot={scheduleSlot}
+                    onSlotChange={slot => { setScheduleSlot(slot.time ? slot : { date: slot.date, time: '' }); if (error) setError(''); }}
+                    days={availability.days}
+                    loading={availability.status === 'loading'}
+                    loadFailed={availability.status === 'failed'}
+                    earliestLabel={availability.earliest ? formatScheduleLabel(availability.earliest.dateKey, availability.earliest.time) : ''}
+                    therapistName={selectedTherapist?.name || ''}
+                  />
                   <div className={addressFeedback === 'success' ? 'rounded-2xl ring-4 ring-[#4E8D43]/20 transition' : 'transition'} data-location-address-feedback={addressFeedback || undefined} ref={addressFieldRef}>
                     <label className={bookingLabelClass}><MapPin className="mr-2 inline h-4 w-4" />Building, condo, hotel, or exact address *</label>
                     <p className="mb-2 text-xs text-gray-500">Type or search your building</p>
@@ -1850,7 +2037,9 @@ export default function BookingModal() {
                     <div className="grid gap-3">
                       <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Therapist</strong><span className={summaryValueClass}>{selectedTherapist.name}</span></div>
                       <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Service</strong><span className={summaryValueClass}>{formData.service} / {formData.durationMinutes} mins</span></div>
-                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Schedule</strong><span className={summaryValueClass}>ASAP — therapist departs after accepting</span></div>
+                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Schedule</strong><span className={summaryValueClass} data-testid="confirm-schedule">{scheduleMode === 'scheduled' && scheduleSlot?.time
+                        ? formatScheduleLabel(scheduleSlot.date, scheduleSlot.time)
+                        : 'ASAP — therapist departs after accepting'}</span></div>
                       <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Address</strong><span className={summaryValueClass}>{inferAreaFromAddress(formData.addressNote)} - {formData.addressNote}</span></div>
                       <BookingCouponAmounts couponPreview={couponPreview} selectedTotalAmount={selectedTotalAmount} promoDiscount={promoState.discount} />
                       <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Payment</strong><span className={summaryValueClass}>Cash before service</span></div>
