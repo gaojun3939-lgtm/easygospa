@@ -148,6 +148,22 @@ function peso(value = 0) {
   return `₱${Number(value || 0).toLocaleString('en-US')}`;
 }
 
+// 客人在 /welcome 领 ₱150 时填的手机号(WelcomeGift 存的)。
+// 券绑在手机号上,下单时这一格必须是同一个号,否则匹配不到。
+// 返回本地格式(去掉 0 或 63 前缀),跟表单那一格的写法一致。
+function readPromoClaimPhone() {
+  try {
+    const saved = JSON.parse(window.localStorage.getItem('egPromoCoupon.v1') || 'null');
+    if (!saved?.expiresAt || Date.parse(saved.expiresAt) <= Date.now()) return '';
+    let digits = String(saved.phone || '').replace(/\D/g, '');
+    if (digits.startsWith('63')) digits = digits.slice(2);
+    else if (digits.startsWith('0')) digits = digits.slice(1);
+    return digits.length === 10 ? digits : '';
+  } catch {
+    return '';
+  }
+}
+
 async function customerAuthorizationHeaders() {
   const client = getSupabaseClient();
   if (!client) return {};
@@ -156,13 +172,29 @@ async function customerAuthorizationHeaders() {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
+// ⚠ 2026-07-29 修:这里原来只在 couponApplied === true 时才显示优惠,
+// 而那个标志只代表"账号券(评价送的 ₱50)"命中。新客活动券(/welcome 领的 ₱150)
+// 走的是另一条路,couponApplied 永远是 false —— 结果服务器明明减到了 ₱850,
+// 界面从头到尾显示 ₱1,000,客人以为券没生效(老板测试时当场发现)。
+// 改成看**实际减了多少钱**,哪种券都认;原价加删除线,让客人看得见自己省了钱。
+export function couponDiscountAmount(couponPreview) {
+  const discount = Number(couponPreview?.couponDiscount);
+  return Number.isFinite(discount) && discount > 0 ? discount : 0;
+}
+
 export function BookingCouponAmounts({ couponPreview, selectedTotalAmount }) {
+  const discount = couponDiscountAmount(couponPreview);
   return (
     <>
-      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Total</strong><span className={summaryMoneyClass}>{couponPreview ? peso(couponPreview.grossServiceAmount) : peso(selectedTotalAmount)}</span></div>
-      {couponPreview?.couponApplied === true ? (
+      <div className="flex justify-between gap-4">
+        <strong className={summaryLabelClass}>Total</strong>
+        <span className={discount > 0 ? 'text-base font-semibold text-gray-400 line-through' : summaryMoneyClass}>
+          {couponPreview ? peso(couponPreview.grossServiceAmount) : peso(selectedTotalAmount)}
+        </span>
+      </div>
+      {discount > 0 ? (
         <>
-          <div className="flex justify-between gap-4 text-[#0E6F1A]" data-testid="booking-coupon-discount"><strong>Coupon</strong><span className="font-bold">− {peso(couponPreview.couponDiscount)} (Automatically applied)</span></div>
+          <div className="flex justify-between gap-4 text-[#0E6F1A]" data-testid="booking-coupon-discount"><strong>Discount</strong><span className="font-bold">− {peso(discount)} (Automatically applied)</span></div>
           <div className="flex items-baseline justify-between gap-4 border-t border-[#4E8D43]/20 pt-3" data-testid="booking-cash-to-collect"><strong className="text-base text-[#0F0F0F]">Cash payment</strong><span className="text-2xl font-extrabold text-[#0F0F0F]">{peso(couponPreview.cashToCollect)}</span></div>
         </>
       ) : null}
@@ -190,23 +222,29 @@ export function BookingCouponSelector({
             <button type="button" onClick={onRetry} className="mt-2 text-sm font-bold text-[#3F7838]">Try again</button>
           </div>
         ) : null}
-        {couponPreviewState === 'ready' && couponPreview?.couponApplied === true ? (
+        {/* ⚠ 2026-07-29:下面几条原来全按 couponApplied 分支,而新客活动券那个标志永远是 false,
+            于是刚领了 ₱150 的客人会看到「Sign in to My orders 才能用券」—— 完全误导。
+            现在统一按"实际减了多少钱"判断:减了就说减了,是哪种券客人不需要知道。
+            「不用券」那个开关只对账号券有意义,活动券不给这个选项(它是广告给的,没人想退掉)。 */}
+        {couponPreviewState === 'ready' && couponDiscountAmount(couponPreview) > 0 ? (
           <div className="rounded-2xl bg-[#F1FBF3] p-4">
-            <p className="text-sm font-bold text-[#0E6F1A]">Automatically applied</p>
-            <p className="mt-1 text-xs leading-5 text-gray-600">One active coupon will be rechecked and used when you submit.</p>
-            <button type="button" onClick={onOptOut} className="mt-3 text-xs font-bold text-gray-500 underline decoration-gray-300 underline-offset-4">Don't use coupon</button>
+            <p className="text-sm font-bold text-[#0E6F1A]">{peso(couponDiscountAmount(couponPreview))} off — automatically applied</p>
+            <p className="mt-1 text-xs leading-5 text-gray-600">Your discount is already in the cash total below. Nothing else to do.</p>
+            {couponPreview?.couponApplied === true ? (
+              <button type="button" onClick={onOptOut} className="mt-3 text-xs font-bold text-gray-500 underline decoration-gray-300 underline-offset-4">Don&apos;t use coupon</button>
+            ) : null}
           </div>
         ) : null}
-        {couponPreviewState === 'ready' && couponPreview?.couponApplied !== true && couponOptOut ? (
+        {couponPreviewState === 'ready' && couponDiscountAmount(couponPreview) === 0 && couponOptOut ? (
           <div className="rounded-2xl bg-gray-50 p-4">
             <p className="text-sm font-semibold text-gray-600">Coupon not applied. You will pay the full amount.</p>
             <button type="button" onClick={onUseCoupon} className="mt-3 text-xs font-bold text-[#3F7838] underline decoration-[#4E8D43]/40 underline-offset-4">Use coupon automatically</button>
           </div>
         ) : null}
-        {couponPreviewState === 'ready' && couponPreview?.couponApplied !== true && !couponOptOut ? (
+        {couponPreviewState === 'ready' && couponDiscountAmount(couponPreview) === 0 && !couponOptOut ? (
           couponPreview?.customerIdentityVerified === true
             ? <p className="text-sm text-gray-500">No active coupon was found. This booking stays at the full amount.</p>
-            : <p className="text-sm text-gray-500">Sign in to My orders with this booking email to use account coupons.</p>
+            : <p className="text-sm text-gray-500">No discount on this booking. If you claimed a welcome gift, use the same mobile number below.</p>
         ) : null}
       </div>
     </section>
@@ -960,10 +998,19 @@ export default function BookingModal() {
       setCouponOptOut(false);
       setCouponPreviewState('idle');
       setCouponPreview(null);
-      setEmailDraft(stored ? { email: stored.customerEmail, name: stored.customerName || '', phone: stored.phone || '' } : { email: '', name: '', phone: '' });
+      // ⚠ 2026-07-29:手机号原来只从"以前下过单"的记录预填。
+      // 而刚从 /welcome 领完 ₱150 的**新客**没有那条记录,手机号那格是空的
+      // ——券绑的是手机号,不填就永远匹配不上,客人以为券是假的。
+      // 所以:没有历史记录时,用他领券时填的那个号码。
+      const promoPhone = readPromoClaimPhone();
+      setEmailDraft(stored
+        ? { email: stored.customerEmail, name: stored.customerName || '', phone: stored.phone || '' }
+        : { email: '', name: '', phone: promoPhone });
       setFormData(current => {
         const nextForm = createInitialForm(serviceName, catalogServices);
-        return stored ? { ...nextForm, customerEmail: stored.customerEmail, customerName: stored.customerName || current.customerName, phone: storedPhone.localNumber || current.phone } : nextForm;
+        return stored
+          ? { ...nextForm, customerEmail: stored.customerEmail, customerName: stored.customerName || current.customerName, phone: storedPhone.localNumber || current.phone }
+          : { ...nextForm, phone: promoPhone || nextForm.phone };
       });
       setStep('wall');
       setIsOpen(true);
