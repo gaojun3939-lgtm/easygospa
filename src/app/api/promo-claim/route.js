@@ -44,19 +44,27 @@ export async function POST(request) {
   }
 }
 
+// 带 phone = 查这个号的券还剩多久;不带 phone = 问"现在有没有活动、减多少"
+// (技师墙要用它显示 First booking ₱850,金额不写死在前端)。
 export async function GET(request) {
   const backend = resolveAiOfficeApiUrl('promoClaim');
-  if (!backend.ok) return json({ ok: true, coupon: null });
+  const off = { ok: true, enabled: false, amount: 0, coupon: null };
+  if (!backend.ok) return json(off);
   const phone = cleanPhone(new URL(request.url).searchParams.get('phone') || '');
-  if (phone.length < 10) return json({ ok: true, coupon: null });
   try {
-    const response = await fetch(`${backend.url}?phone=${encodeURIComponent(phone)}`, {
+    const target = phone.length >= 10 ? `${backend.url}?phone=${encodeURIComponent(phone)}` : backend.url;
+    const response = await fetch(target, {
       headers: forwardedClientIpHeaders(request),
       cache: 'no-store'
     });
     const payload = await response.json().catch(() => null);
-    return json({ ok: true, coupon: payload?.coupon || null });
+    return json({
+      ok: true,
+      enabled: payload?.enabled === true,
+      amount: Number(payload?.amount) || 0,
+      coupon: payload?.coupon || null
+    });
   } catch {
-    return json({ ok: true, coupon: null });
+    return json(off);
   }
 }

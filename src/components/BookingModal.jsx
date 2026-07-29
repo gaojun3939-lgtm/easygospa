@@ -507,7 +507,7 @@ function defaultDurationOption(service) {
     || [...options].sort((a, b) => Number(a.durationMinutes) - Number(b.durationMinutes))[0];
 }
 
-function ServiceCard({ service, selected, selectedDuration, onSelectService, onSelectDuration, onBook }) {
+function ServiceCard({ service, selected, selectedDuration, onSelectService, onSelectDuration, onBook, promoDiscount = 0 }) {
   // 档位药丸常驻卡面(老板 2026-07-21 参考打车式竞品):没选中的卡也能看到
   // 60/90/120 全档,点任意档 = 同时选中该服务和该档;价格大字实时跟着档位走。
   const selectedOption = selected
@@ -556,8 +556,18 @@ function ServiceCard({ service, selected, selectedDuration, onSelectService, onS
         </div>
         {priceOption ? (
           <div className="mt-3 flex items-center justify-between gap-3">
+            {/* 折扣拿到之后,这里直接显示折后价 + 划掉的原价。
+                老板 2026-07-29:"点 book 的时候就应该能看到 850" —— 客人得在挑服务
+                这一刻就看见自己省了多少,不能等到最后一步才揭晓。 */}
             <div className="flex items-baseline gap-1.5" data-testid={`service-price-${service.id}`}>
-              <span className="text-2xl font-extrabold text-[#0F0F0F]">{money(priceOption.price)}</span>
+              {promoDiscount > 0 ? (
+                <>
+                  <span className="text-2xl font-extrabold text-[#0F0F0F]">{money(Math.max(0, priceOption.price - promoDiscount))}</span>
+                  <span className="text-sm font-semibold text-gray-400 line-through">{money(priceOption.price)}</span>
+                </>
+              ) : (
+                <span className="text-2xl font-extrabold text-[#0F0F0F]">{money(priceOption.price)}</span>
+              )}
               <span className="text-xs font-semibold text-gray-500">/ {priceOption.durationMinutes} mins</span>
             </div>
             {/* Book 长在选中的卡片里(老板 2026-07-21:底部长条挡视野,不要了)。 */}
@@ -578,7 +588,7 @@ function ServiceCard({ service, selected, selectedDuration, onSelectService, onS
   );
 }
 
-function TherapistDetail({ therapist, availableServices, selectedServiceName, selectedDuration, totalAmount, onSelectService, onSelectDuration, onBack, onBook }) {
+function TherapistDetail({ therapist, availableServices, selectedServiceName, selectedDuration, totalAmount, onSelectService, onSelectDuration, onBack, onBook, promoDiscount = 0 }) {
   const [showFullAbout, setShowFullAbout] = useState(false);
   const [showAllReviews, setShowAllReviews] = useState(false);
   const [lightboxUrl, setLightboxUrl] = useState('');
@@ -695,7 +705,7 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
         <h3 className="text-2xl font-bold text-[#0F0F0F]">My Services</h3>
         <p className="mt-1 text-sm text-gray-600">Real bookable services and prices from the public catalog.</p>
         <div className="mt-4 grid gap-4 lg:grid-cols-2">
-          {availableServices.map(service => <ServiceCard key={service.id} service={service} selected={selectedServiceName === service.name} selectedDuration={selectedServiceName === service.name ? Number(selectedDuration) : 0} onSelectService={onSelectService} onSelectDuration={onSelectDuration} onBook={onBook} />)}
+          {availableServices.map(service => <ServiceCard key={service.id} service={service} selected={selectedServiceName === service.name} selectedDuration={selectedServiceName === service.name ? Number(selectedDuration) : 0} onSelectService={onSelectService} onSelectDuration={onSelectDuration} onBook={onBook} promoDiscount={promoDiscount} />)}
         </div>
       </div>
       <section className="rounded-[1.5rem] border border-gray-200 bg-white p-5 shadow-sm" data-testid="therapist-review-wall" id="therapist-reviews-section">
@@ -766,6 +776,10 @@ export default function BookingModal() {
   // ?book=1 自动弹窗只允许触发一次:目录每 12 秒刷新会让所在的 effect 重跑,
   // 不加这道闸,客人每 12 秒被打回技师墙一次(2026-07-29 老板实测发现)。
   const bookDeepLinkHandledRef = useRef(false);
+  // 技师墙上的手机号 → 折扣。老板 2026-07-29:进墙就问号码,拿到就全场显示折后价。
+  const [wallPromoPhone, setWallPromoPhone] = useState('');
+  const [promoCampaign, setPromoCampaign] = useState({ enabled: false, amount: 0 });
+  const [promoState, setPromoState] = useState({ discount: 0, phone: '', loading: false, error: '' });
   const activeBookingInspectionSequenceRef = useRef(0);
 
   useEffect(() => {
@@ -915,6 +929,57 @@ export default function BookingModal() {
   useEffect(() => {
     bookingOpenRef.current = isOpen;
   }, [isOpen]);
+
+  // 弹窗一开就问后台"现在有没有活动、减多少"(金额不写死在前端,后台改了这里跟着变)。
+  // 顺便:如果客人之前在 /welcome 领过券,直接把号码和折扣带进来,不用再填一次。
+  useEffect(() => {
+    if (!isOpen || promoCampaign.enabled) return;
+    let alive = true;
+    (async () => {
+      try {
+        const saved = readPromoClaimPhone();
+        const query = saved ? `?phone=${encodeURIComponent(saved)}` : '';
+        const payload = await fetch(`/api/promo-claim${query}`, { cache: 'no-store' }).then(r => r.json());
+        if (!alive || payload?.enabled !== true) return;
+        setPromoCampaign({ enabled: true, amount: Number(payload.amount) || 0 });
+        if (payload.coupon?.amount > 0 && saved) {
+          setPromoState({ discount: Number(payload.coupon.amount), phone: saved, loading: false, error: '' });
+          setWallPromoPhone(saved);
+        }
+      } catch { /* 活动查不到就当没有,绝不挡住下单 */ }
+    })();
+    return () => { alive = false; };
+  }, [isOpen, promoCampaign.enabled]);
+
+  const submitWallPromoPhone = async event => {
+    event.preventDefault();
+    const digits = wallPromoPhone.replace(/\D/g, '');
+    if (digits.length < 10) {
+      setPromoState(current => ({ ...current, error: 'Please enter your mobile number.' }));
+      return;
+    }
+    setPromoState(current => ({ ...current, loading: true, error: '' }));
+    try {
+      const payload = await fetch('/api/promo-claim', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ phone: digits })
+      }).then(r => r.json());
+      const amount = Number(payload?.coupon?.amount) || 0;
+      if (!payload?.ok || amount <= 0) {
+        // 已经用过券的老客人也走这里 —— 不报错,只是没有折扣,别让他觉得系统坏了
+        setPromoState({ discount: 0, phone: digits, loading: false, error: 'No first-booking discount on this number.' });
+        return;
+      }
+      setPromoState({ discount: amount, phone: digits, loading: false, error: '' });
+      // 号码带进下单表单,客人不用再填一遍
+      const local = digits.startsWith('63') ? digits.slice(2) : digits.replace(/^0/, '');
+      setEmailDraft(current => ({ ...current, phone: local }));
+      setFormData(current => ({ ...current, phone: local }));
+    } catch {
+      setPromoState(current => ({ ...current, loading: false, error: 'Could not apply. Please try again.' }));
+    }
+  };
 
 
   useEffect(() => () => {
@@ -1564,6 +1629,50 @@ export default function BookingModal() {
 
               {step === 'wall' ? (
                 <div className="space-y-2">
+                  {/* ⚠ 2026-07-29 老板拍板:进技师墙就先要手机号,填完全场直接显示折后价。
+                      原来要走到"填邮箱"那一步才知道减多少,客人从广告进来看到原价就走了。
+                      号码在这里拿到之后:①当场查/发券 ②所有价格立刻变成折后价
+                      ③下单表单自动带过去,不用再填一遍。 */}
+                  {promoCampaign.enabled && !promoState.discount ? (
+                    <form
+                      className="mx-1 rounded-[1.5rem] border border-[#4E8D43]/30 bg-[#F1FBF3] p-4"
+                      data-testid="wall-promo-phone"
+                      onSubmit={submitWallPromoPhone}
+                    >
+                      <p className="text-sm font-bold text-[#0E6F1A]">
+                        First booking? Get {money(promoCampaign.amount)} off
+                      </p>
+                      <p className="mt-1 text-xs leading-5 text-gray-600">
+                        Enter your mobile number to see your price. No transport fee, no tips.
+                      </p>
+                      <div className="mt-3 flex gap-2">
+                        <input
+                          autoComplete="tel"
+                          className="h-11 min-w-0 flex-1 rounded-xl border border-gray-300 bg-white px-3 font-medium text-[#0F0F0F] focus:border-[#4E8D43] focus:outline-none"
+                          inputMode="tel"
+                          onChange={event => setWallPromoPhone(event.target.value)}
+                          placeholder="09XX XXX XXXX"
+                          type="tel"
+                          value={wallPromoPhone}
+                        />
+                        <button
+                          className="h-11 shrink-0 rounded-xl bg-[#4E8D43] px-5 text-sm font-bold text-white disabled:opacity-60"
+                          disabled={promoState.loading}
+                          type="submit"
+                        >
+                          {promoState.loading ? '...' : 'Apply'}
+                        </button>
+                      </div>
+                      {promoState.error ? <p className="mt-2 text-xs font-semibold text-[#B4463C]">{promoState.error}</p> : null}
+                    </form>
+                  ) : null}
+                  {promoState.discount > 0 ? (
+                    <div className="mx-1 flex items-center justify-between gap-3 rounded-full border border-[#4E8D43]/30 bg-[#F1FBF3] px-4 py-2" data-testid="wall-promo-applied">
+                      <p className="truncate text-sm font-bold text-[#0E6F1A]">
+                        {money(promoState.discount)} off applied — prices below are yours
+                      </p>
+                    </div>
+                  ) : null}
                   {/* 老板 2026-07-24:定位确认后收成一条细条(大地图默认藏),别霸屏挡技师;
                       点"Adjust"才展开地图改 pin。未设定位时才给完整提示面板。 */}
                   {isUsableCustomerLocation(customerCoords) && !showWallLocationPicker ? (
@@ -1618,7 +1727,7 @@ export default function BookingModal() {
                 </div>
               ) : null}
 
-              {step === 'detail' && selectedTherapist ? <TherapistDetail therapist={selectedTherapist} availableServices={availableServices} selectedServiceName={formData.service} selectedDuration={Number(formData.durationMinutes)} totalAmount={selectedTotalAmount} onSelectService={handleSelectService} onSelectDuration={handleSelectDuration} onBack={() => setStep('wall')} onBook={handleBookSelection} /> : null}
+              {step === 'detail' && selectedTherapist ? <TherapistDetail therapist={selectedTherapist} availableServices={availableServices} selectedServiceName={formData.service} selectedDuration={Number(formData.durationMinutes)} totalAmount={selectedTotalAmount} onSelectService={handleSelectService} onSelectDuration={handleSelectDuration} onBack={() => setStep('wall')} onBook={handleBookSelection} promoDiscount={promoState.discount} /> : null}
 
               {step === 'email' ? (
                 <form onSubmit={handleEmailContinue} className="space-y-5">
