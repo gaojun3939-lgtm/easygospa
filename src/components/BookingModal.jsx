@@ -127,14 +127,16 @@ function manilaAsapTime() {
 // slots the therapist can genuinely serve — the pre-2026-07-16 picker listed all 48
 // half-hours regardless of her shift, which is how customers booked times nobody
 // could work. Every time shown here comes from the backend availability check.
-const MANILA_WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 function manilaDayLabel(dateKey = '', dayOffset = 0) {
   if (dayOffset === 0) return 'Today';
   if (dayOffset === 1) return 'Tomorrow';
-  const parsed = new Date(`${dateKey}T00:00:00+08:00`);
+  // 老板 2026-07-30 抓的 BUG:原来用 getUTCDay() 算星期,马尼拉+8 被倒推成前一天,
+  // 8月1号(周六)显示成 "Fri 01"。星期必须按马尼拉时区取。
+  const parsed = new Date(`${dateKey}T12:00:00+08:00`);
   if (!Number.isFinite(parsed.getTime())) return dateKey;
-  return `${MANILA_WEEKDAYS[parsed.getUTCDay()]} ${dateKey.slice(8, 10)}`;
+  const weekday = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Manila', weekday: 'short' }).format(parsed);
+  return `${weekday} ${dateKey.slice(8, 10)}`;
 }
 
 // 技师墙"约稍后"要给客人挑今天/明天/后天——后台档期扫描也只看 3 天。
@@ -309,33 +311,27 @@ export function BookingCouponSelector({
   );
 }
 
-// ⚡ now vs 🕘 later. "Now" stays the default and stays one tap — the ride-hailing
-// flow is what most customers want and it must not get slower. "Later" is the second
-// door, for the guest who is out and gets home at 22:30.
-function ScheduleChooser({ mode, onModeChange, slot, onSlotChange, days, loading, loadFailed, earliestLabel, therapistName }) {
+// 2026-07-30 老板拍板:"现在 / 约稍后"的选择上了技师墙,表单里不再重复问一遍。
+// 这里只做两件事:①把墙上选好的时间念回来给客人确认 ②万一这位技师接不了那个点
+// (墙上按 60 分钟估的,她的真档期在这里才知道),就地给她的真实空档重选,不用回墙。
+function ScheduleChooser({ mode, slot, onSlotChange, days, loading, loadFailed, earliestLabel, therapistName, onChangeOnWall }) {
   const activeDate = slot?.date || days[0]?.date || '';
   const activeDay = days.find(day => day.date === activeDate) || days[0] || null;
-  const optionClass = active => `flex-1 rounded-2xl border-2 px-4 py-3 text-center transition ${active
-    ? 'border-[#4E8D43] bg-[#F1FBF3] text-[#3F7838]'
-    : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'}`;
+  const slotConfirmed = Boolean(slot?.time) && days.some(day => day.date === slot.date && day.times.includes(slot.time));
 
   return (
     <div className="space-y-3" data-testid="schedule-chooser">
       <label className={bookingLabelClass}><Clock className="mr-2 inline h-4 w-4" />When would you like your massage?</label>
-      <div className="flex gap-3">
-        <button type="button" className={optionClass(mode === 'asap')} onClick={() => onModeChange('asap')} data-testid="schedule-mode-asap">
-          <span className="block text-sm font-bold">As soon as possible</span>
-          <span className="mt-0.5 block text-xs font-medium opacity-80">Therapist departs after accepting</span>
-        </button>
-        <button type="button" className={optionClass(mode === 'scheduled')} onClick={() => onModeChange('scheduled')} data-testid="schedule-mode-later">
-          <span className="block text-sm font-bold">Book for later</span>
-          <span className="mt-0.5 block text-xs font-medium opacity-80">Pick a time that suits you</span>
-        </button>
-      </div>
 
       {mode === 'asap' ? (
-        <div className="rounded-2xl bg-[#eaf1e7] px-4 py-3 text-sm font-medium text-[#3F7838]">
-          <Clock className="mr-2 inline h-4 w-4" />Your therapist departs as soon as the booking is accepted — no scheduling needed.
+        <div className="flex items-center justify-between gap-3 rounded-2xl bg-[#eaf1e7] px-4 py-3 text-sm font-medium text-[#3F7838]">
+          <span><Clock className="mr-2 inline h-4 w-4" />⚡ As soon as possible — your therapist departs right after accepting.</span>
+          <button type="button" onClick={onChangeOnWall} data-testid="schedule-change-on-wall" className="shrink-0 text-sm font-bold underline underline-offset-2">Change</button>
+        </div>
+      ) : slotConfirmed ? (
+        <div className="flex items-center justify-between gap-3 rounded-2xl bg-[#eaf1e7] px-4 py-3 text-sm font-medium text-[#3F7838]" data-testid="schedule-summary">
+          <span><Clock className="mr-2 inline h-4 w-4" />🕘 Your appointment: <strong>{formatScheduleLabel(slot.date, slot.time)}</strong>{therapistName ? ` with ${therapistName}` : ''}</span>
+          <button type="button" onClick={onChangeOnWall} data-testid="schedule-change-on-wall" className="shrink-0 text-sm font-bold underline underline-offset-2">Change</button>
         </div>
       ) : loading ? (
         <div className="rounded-2xl border border-gray-200 px-4 py-3 text-sm font-medium text-gray-600">Checking {therapistName || 'her'} schedule…</div>
@@ -353,6 +349,12 @@ function ScheduleChooser({ mode, onModeChange, slot, onSlotChange, days, loading
         </div>
       ) : (
         <div className="space-y-3">
+          {/* 走到这里 = 还没有落定的时间:要么墙上只选了"约稍后"没挑点,要么挑的点
+              这位技师这个时长接不了(墙按60分钟估,她的真档期这里才知道)。
+              就地用她的真实空档选,不逼客人回墙从头来。 */}
+          <p className="text-sm font-medium text-gray-600" data-testid="schedule-repick-note">
+            Pick one of {therapistName || 'her'}&rsquo;s open times:
+          </p>
           <div className="flex flex-wrap gap-2">
             {days.map(day => (
               <button
@@ -2112,7 +2114,7 @@ export default function BookingModal() {
                   </div>
                   <ScheduleChooser
                     mode={scheduleMode}
-                    onModeChange={mode => { setScheduleMode(mode); setScheduleSlot(null); if (error) setError(''); }}
+                    onChangeOnWall={() => { if (error) setError(''); setStep('wall'); }}
                     slot={scheduleSlot}
                     onSlotChange={slot => { setScheduleSlot(slot.time ? slot : { date: slot.date, time: '' }); if (error) setError(''); }}
                     days={availability.days}
