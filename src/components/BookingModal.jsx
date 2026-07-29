@@ -118,9 +118,15 @@ function isSelectableManilaTime(preferredDate, preferredTime) {
 // On-demand booking: no schedule picker — the therapist departs right after
 // accepting. We still stamp a Manila date/time (now + lead buffer) because the
 // intake service and technician app expect one.
-function manilaAsapTime() {
-  const total = Math.min(23 * 60 + 55, manilaNowMinutes() + BOOKING_LEAD_MINUTES);
-  return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
+// 2026-07-30 修:原来用 Math.min 封顶在 23:55 不跨日——23:25 之后点"尽快上门",
+// 时间被钉成"今天 23:55"(实际应是明天 00:xx),日期和时间双错。现在整点跨日。
+function manilaAsapSlot() {
+  const total = manilaNowMinutes() + BOOKING_LEAD_MINUTES;
+  const minutes = ((total % 1440) + 1440) % 1440;
+  return {
+    date: total >= 1440 ? manilaDateKeyWithOffset(1) : manilaToday(),
+    time: `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`
+  };
 }
 
 // Owner call (2026-07-29): "book for later" is back, but it may only ever offer
@@ -1530,8 +1536,9 @@ export default function BookingModal() {
     // honour it. "As soon as possible" keeps stamping now + lead buffer, which the
     // backend is still free to slide to the therapist's real earliest slot.
     const bookingIsScheduled = scheduleMode === 'scheduled' && Boolean(scheduleSlot?.date && scheduleSlot?.time);
-    const dispatchDate = bookingIsScheduled ? scheduleSlot.date : manilaToday();
-    const dispatchTime = bookingIsScheduled ? scheduleSlot.time : manilaAsapTime();
+    const asapSlot = bookingIsScheduled ? null : manilaAsapSlot();
+    const dispatchDate = bookingIsScheduled ? scheduleSlot.date : asapSlot.date;
+    const dispatchTime = bookingIsScheduled ? scheduleSlot.time : asapSlot.time;
     const derivedArea = inferAreaFromAddress(formData.addressNote);
     const couponExpectation = !previewOnly && couponPreviewState === 'ready' && couponPreview
       ? {

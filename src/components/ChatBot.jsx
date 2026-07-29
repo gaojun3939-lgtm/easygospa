@@ -2,6 +2,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, X, Send, Sparkles, Bot, User } from "lucide-react";
+// 2026-07-30 修:原来这里的"今天"用 UTC 日期(凌晨0-8点差一天),时区名还拼错成
+// Asia/Metro Manila(不是合法时区,直接抛错,把整个机器人打哑)。
+import { manilaToday } from "@/lib/manilaTime";
 // import { Appointment } from "@/entities/Appointment";
 // import { InvokeLLM } from "@/integrations/Core";
 
@@ -185,8 +188,8 @@ Guidelines:
 - Suggest service combinations when appropriate (e.g., Hair Spa + Hair Cut, Manicure + Pedicure)
 - Explain the benefits of regular treatments for best results
 
-Current date: ${new Date().toISOString().split('T')[0]}
-Current time: ${new Date().toLocaleTimeString('en-US', { timeZone: 'Asia/Metro Manila' })}
+Current date: ${manilaToday()}
+Current time: ${new Date().toLocaleTimeString('en-US', { timeZone: 'Asia/Manila' })}
 
 Remember: You represent a luxury spa brand, so maintain that premium, caring, and knowledgeable tone throughout all interactions.`;
   };
