@@ -763,6 +763,9 @@ export default function BookingModal() {
   const catalogStatusRef = useRef('loading');
   const catalogHydratedRef = useRef(false);
   const bookingOpenRef = useRef(false);
+  // ?book=1 自动弹窗只允许触发一次:目录每 12 秒刷新会让所在的 effect 重跑,
+  // 不加这道闸,客人每 12 秒被打回技师墙一次(2026-07-29 老板实测发现)。
+  const bookDeepLinkHandledRef = useRef(false);
   const activeBookingInspectionSequenceRef = useRef(0);
 
   useEffect(() => {
@@ -913,6 +916,7 @@ export default function BookingModal() {
     bookingOpenRef.current = isOpen;
   }, [isOpen]);
 
+
   useEffect(() => () => {
     if (addressFeedbackTimerRef.current) window.clearTimeout(addressFeedbackTimerRef.current);
   }, []);
@@ -1021,7 +1025,16 @@ export default function BookingModal() {
     window.addEventListener('open-booking-modal-with-service', openModal);
     // 技师墙直达链接:带 ?book=1 进站直接弹预约墙(2026-07-28 老板拍板——
     // AI 客服/真人发给客人的标准链接,省掉"自己找 Book Now"那一步)
-    if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('book')) {
+    // ⚠ 2026-07-29 修(老板实测发现):这个 effect 的依赖里有 catalogServices,
+    // 而技师墙每 12 秒静默重拉一次目录 —— 目录一换,这段就重跑,openModal() 里的
+    // setStep('wall') 把正在看技师详情/正在填表的客人**直接打回技师墙**,每 12 秒一次,
+    // 根本走不完下单。而 ?book=1 正是广告和 AI 客服发出去的那个链接,所有从广告
+    // 进来的人全中招。
+    // 改法:整个页面生命周期内只自动弹一次。
+    if (typeof window !== 'undefined'
+      && !bookDeepLinkHandledRef.current
+      && new URLSearchParams(window.location.search).get('book')) {
+      bookDeepLinkHandledRef.current = true;
       openModal();
     }
     return () => {
