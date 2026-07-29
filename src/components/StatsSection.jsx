@@ -1,12 +1,17 @@
 "use client"
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Users, Award, Clock } from "lucide-react";
+import { Users, Car, Coins, Moon } from "lucide-react";
 
+// ⚠ 2026-07-29 老板拍板拿掉:这里原来写着 "5000+ Happy Customers"、"24/7"。
+// 真实成交是个位数、营业到凌晨 2 点不是 24 小时——而客人往下滑一屏,
+// 技师墙上每个技师都是 "5.0 ★ (0 reviews) NEW"。
+// 5000 个满意客户却一条评价都没有,一屏之内就自相矛盾,客人一眼看穿就再不信任何一句。
+// 换成三条**经得起当场核对**的真话,也正好是我们跟普通上门按摩的区别。
 const stats = [
-  { icon: Users, label: "Happy Customers", value: 5000, suffix: "+" },
-  { icon: Award, label: "Verified Therapists", value: 50, suffix: "+" },
-  { icon: Clock, label: "Service Hours", value: 24, suffix: "/7" },
+  { icon: Car, label: "Transport Fee", value: 0, prefix: "₱" },
+  { icon: Coins, label: "Tips Expected", value: 0, prefix: "₱" },
+  { icon: Moon, label: "Open Until", value: 2, suffix: " AM" },
 ];
 
 const StatsSection = () => {
@@ -19,8 +24,19 @@ const StatsSection = () => {
           stats.forEach((stat, index) => {
             let start = 0;
             const end = stat.value;
+            // ⚠ 数值是 0 的那两条(免车费/免小费)不能走计数动画:
+            // duration/0 = 无穷,setInterval 拿到无穷不会停,而且 start 永远等不到 0,
+            // 计数器会一直往上爬。0 直接落定,不动。
+            if (end <= 0) {
+              setAnimatedValues((prev) => {
+                const newValues = [...prev];
+                newValues[index] = 0;
+                return newValues;
+              });
+              return;
+            }
             const duration = 2000;
-            const stepTime = Math.abs(Math.floor(duration / end));
+            const stepTime = Math.max(16, Math.abs(Math.floor(duration / end)));
             let timer;
 
             timer = setInterval(() => {
