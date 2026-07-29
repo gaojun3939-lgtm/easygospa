@@ -197,22 +197,28 @@ export function PriceWithDiscount({ amount = 0, discount = 0, mainClassName = ''
 }
 
 export function BookingCouponAmounts({ couponPreview, selectedTotalAmount, promoDiscount = 0 }) {
-  // 服务器预览还没回来时,先用技师墙上拿到的折扣顶着,免得中间闪回原价
+  // ⚠ 2026-07-29 这里炸过一次,整站白屏:
+  // 我加了"服务器预览还没回来时先用技师墙的折扣顶着",于是 discount 可能 > 0
+  // 而 couponPreview 还是 null —— 下面直接读 couponPreview.cashToCollect 就抛
+  // 「Cannot read properties of null」,整个页面挂掉,客人连单都下不了。
+  // 现在所有数都先算好、都有兜底,这一段里不再出现任何直接读 couponPreview 字段的写法。
   const discount = couponDiscountAmount(couponPreview) || Math.max(0, Number(promoDiscount) || 0);
+  const gross = Number(couponPreview?.grossServiceAmount ?? selectedTotalAmount) || 0;
+  const cashToCollect = Number.isFinite(Number(couponPreview?.cashToCollect))
+    ? Number(couponPreview.cashToCollect)
+    : Math.max(0, gross - discount);
   return (
     <>
       <div className="flex justify-between gap-4">
         <strong className={summaryLabelClass}>Total</strong>
         <span className={discount > 0 ? 'text-base font-semibold text-gray-400 line-through' : summaryMoneyClass}>
-          {couponPreview ? peso(couponPreview.grossServiceAmount) : peso(selectedTotalAmount)}
+          {peso(gross)}
         </span>
       </div>
-      {/* 服务器还没回预览时,先按技师墙上拿到的折扣显示,免得中间闪回原价
-          (客人刚看到 ₱850,这里闪一下 ₱1,000 就会以为券掉了) */}
       {discount > 0 ? (
         <>
           <div className="flex justify-between gap-4 text-[#0E6F1A]" data-testid="booking-coupon-discount"><strong>Discount</strong><span className="font-bold">− {peso(discount)} (Automatically applied)</span></div>
-          <div className="flex items-baseline justify-between gap-4 border-t border-[#4E8D43]/20 pt-3" data-testid="booking-cash-to-collect"><strong className="text-base text-[#0F0F0F]">Cash payment</strong><span className="text-2xl font-extrabold text-[#0F0F0F]">{peso(couponPreview.cashToCollect)}</span></div>
+          <div className="flex items-baseline justify-between gap-4 border-t border-[#4E8D43]/20 pt-3" data-testid="booking-cash-to-collect"><strong className="text-base text-[#0F0F0F]">Cash payment</strong><span className="text-2xl font-extrabold text-[#0F0F0F]">{peso(cashToCollect)}</span></div>
         </>
       ) : null}
     </>
