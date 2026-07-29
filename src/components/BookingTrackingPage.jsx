@@ -377,7 +377,12 @@ export default function BookingTrackingPage({ reference }) {
         notifyTherapistArrived();
       }
       previousStatusRef.current = nextStatus;
-      if (nextStatus !== 'waiting_acceptance') {
+      // ⚠ 2026-07-29 改:原来只要不是"等接单"就把指针删掉,结果客人一关标签页,
+      // 就再也回不到这一页——而评价卡只在这一页上。这是我们只有 1 条评价的原因之一。
+      // 现在保留到服务完成为止:做完了正是要他评价的时候,路不能断。
+      // 已经评过了才清(评过就没必要再回来)。
+      const alreadyReviewed = Boolean(payload?.review || payload?.hasReview);
+      if (nextStatus !== 'waiting_acceptance' && (nextStatus !== 'completed' || alreadyReviewed)) {
         clearActiveBooking({ reference });
       }
       setBooking(payload);
