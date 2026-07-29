@@ -947,6 +947,8 @@ export default function BookingModal() {
   const [availabilityNonce, setAvailabilityNonce] = useState(0);
   // 墙级"约稍后"过滤(2026-07-30 老板拍板):客人先挑时间,墙只显示那个点能来的技师。
   const [wallTimeMatch, setWallTimeMatch] = useState({ status: 'idle', availableIds: [], requested: null });
+  // 约稍后没选时间就点 Book → 高亮时间条提示先选(选完自动熄灭)。
+  const [wallScheduleNudge, setWallScheduleNudge] = useState(false);
   const [phoneError, setPhoneError] = useState('');
   const [phoneCountry, setPhoneCountry] = useState(DEFAULT_BOOKING_PHONE_COUNTRY);
   const [addressFeedback, setAddressFeedback] = useState('');
@@ -1426,6 +1428,13 @@ export default function BookingModal() {
   }, [step]);
 
   const openTherapistDetail = therapistId => {
+    // 约稍后必须先落定时间再选人(2026-07-30 老板拍板):不然走到表单还得再问一遍
+    // "什么时候",客人觉得约了两次。没选时间就点 Book → 拉回顶部提示先选时间。
+    if (scheduleMode === 'scheduled' && !scheduleSlot?.time) {
+      setWallScheduleNudge(true);
+      modalScrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
     const therapist = findWebsiteTherapist(therapistId, bookingTherapists);
     if (!therapist) {
       setError('Current service profiles are temporarily unavailable. Please try again later.');
@@ -1886,11 +1895,11 @@ export default function BookingModal() {
                 <div className="space-y-2">
                   {/* 2026-07-30 老板拍板:预约入口上墙,第一眼可见。默认仍是"马上来"零打扰;
                       选"约稍后"才展开时间条,选了时间就按排班过滤墙上的技师。 */}
-                  <div className="mx-1 rounded-[1.5rem] border border-gray-200 bg-white p-3" data-testid="wall-schedule-bar">
+                  <div className={`mx-1 rounded-[1.5rem] border bg-white p-3 ${wallScheduleNudge ? 'border-amber-400 ring-4 ring-amber-200/60' : 'border-gray-200'}`} data-testid="wall-schedule-bar">
                     <div className="flex gap-2">
                       <button
                         type="button"
-                        onClick={() => { setScheduleMode('asap'); setScheduleSlot(null); }}
+                        onClick={() => { setScheduleMode('asap'); setScheduleSlot(null); setWallScheduleNudge(false); }}
                         aria-pressed={scheduleMode === 'asap'}
                         data-testid="wall-schedule-now"
                         className={`h-10 flex-1 rounded-full border text-sm font-bold transition ${scheduleMode === 'asap' ? 'border-[#4E8D43] bg-[#4E8D43] text-white' : 'border-gray-200 bg-white text-gray-700 hover:border-[#4E8D43]'}`}
@@ -1920,7 +1929,7 @@ export default function BookingModal() {
                           })}
                           <select
                             value={scheduleSlot?.time || ''}
-                            onChange={event => setScheduleSlot({ date: scheduleSlot?.date || manilaToday(), time: event.target.value })}
+                            onChange={event => { setScheduleSlot({ date: scheduleSlot?.date || manilaToday(), time: event.target.value }); if (event.target.value) setWallScheduleNudge(false); }}
                             data-testid="wall-schedule-time"
                             aria-label="Pick a time"
                             className="h-9 rounded-full border border-gray-300 bg-white px-3 text-sm font-bold text-gray-700 outline-none focus:border-[#4E8D43]"
@@ -1932,7 +1941,9 @@ export default function BookingModal() {
                           </select>
                         </div>
                         {!scheduleSlot?.time ? (
-                          <p className="text-xs font-medium text-gray-500">Pick a day and time — we’ll show only the therapists free at that time.</p>
+                          <p className={wallScheduleNudge ? 'text-xs font-bold text-amber-700' : 'text-xs font-medium text-gray-500'} data-testid="wall-schedule-hint">
+                            {wallScheduleNudge ? 'Pick a time first — then choose your therapist.' : 'Pick a day and time — we’ll show only the therapists free at that time.'}
+                          </p>
                         ) : wallTimeMatch.status === 'loading' ? (
                           <p className="text-xs font-medium text-gray-500">Checking who is free at {formatScheduleLabel(scheduleSlot.date, scheduleSlot.time)}…</p>
                         ) : wallTimeMatch.status === 'failed' ? (
