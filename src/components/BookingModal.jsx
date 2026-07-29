@@ -1413,8 +1413,9 @@ export default function BookingModal() {
         totalAmount: selectedOption?.price || 0
       };
     });
-    // 换了技师,上一个技师的空档一律作废——别让客人带着 Ana 的 22:30 去约 Mia。
-    setScheduleSlot(null);
+    // 2026-07-30 修:时间现在是在墙上、选技师之前定的,进详情不能清——清了客人
+    // 就得选第二遍(老板实测抓到)。旧担心"带着 Ana 的 22:30 去约 Mia"仍有三道闸:
+    // 墙只显示该时间能来的人 / 表单按新技师档期校验不合就地重选 / 后端下单硬校验。
     setAvailability({ status: 'idle', days: [], earliest: null });
     setError('');
     setStep('detail');
