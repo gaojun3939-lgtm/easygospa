@@ -182,8 +182,23 @@ export function couponDiscountAmount(couponPreview) {
   return Number.isFinite(discount) && discount > 0 ? discount : 0;
 }
 
-export function BookingCouponAmounts({ couponPreview, selectedTotalAmount }) {
-  const discount = couponDiscountAmount(couponPreview);
+// 价格显示的**唯一写法**。2026-07-29 老板连续两次抓到"这一屏 ₱850、下一屏 ₱1,000"
+// —— 病根是每一屏各画各的。现在全站只有这一个组件负责画价格,不可能再各说各话。
+export function PriceWithDiscount({ amount = 0, discount = 0, mainClassName = '', struckClassName = 'text-sm font-semibold text-gray-400 line-through' }) {
+  const gross = Number(amount) || 0;
+  const off = Math.max(0, Number(discount) || 0);
+  if (off <= 0) return <strong className={mainClassName}>{money(gross)}</strong>;
+  return (
+    <span className="inline-flex items-baseline gap-1.5">
+      <strong className={mainClassName}>{money(Math.max(0, gross - off))}</strong>
+      <span className={struckClassName}>{money(gross)}</span>
+    </span>
+  );
+}
+
+export function BookingCouponAmounts({ couponPreview, selectedTotalAmount, promoDiscount = 0 }) {
+  // 服务器预览还没回来时,先用技师墙上拿到的折扣顶着,免得中间闪回原价
+  const discount = couponDiscountAmount(couponPreview) || Math.max(0, Number(promoDiscount) || 0);
   return (
     <>
       <div className="flex justify-between gap-4">
@@ -192,6 +207,8 @@ export function BookingCouponAmounts({ couponPreview, selectedTotalAmount }) {
           {couponPreview ? peso(couponPreview.grossServiceAmount) : peso(selectedTotalAmount)}
         </span>
       </div>
+      {/* 服务器还没回预览时,先按技师墙上拿到的折扣显示,免得中间闪回原价
+          (客人刚看到 ₱850,这里闪一下 ₱1,000 就会以为券掉了) */}
       {discount > 0 ? (
         <>
           <div className="flex justify-between gap-4 text-[#0E6F1A]" data-testid="booking-coupon-discount"><strong>Discount</strong><span className="font-bold">− {peso(discount)} (Automatically applied)</span></div>
@@ -560,14 +577,7 @@ function ServiceCard({ service, selected, selectedDuration, onSelectService, onS
                 老板 2026-07-29:"点 book 的时候就应该能看到 850" —— 客人得在挑服务
                 这一刻就看见自己省了多少,不能等到最后一步才揭晓。 */}
             <div className="flex items-baseline gap-1.5" data-testid={`service-price-${service.id}`}>
-              {promoDiscount > 0 ? (
-                <>
-                  <span className="text-2xl font-extrabold text-[#0F0F0F]">{money(Math.max(0, priceOption.price - promoDiscount))}</span>
-                  <span className="text-sm font-semibold text-gray-400 line-through">{money(priceOption.price)}</span>
-                </>
-              ) : (
-                <span className="text-2xl font-extrabold text-[#0F0F0F]">{money(priceOption.price)}</span>
-              )}
+              <PriceWithDiscount amount={priceOption.price} discount={promoDiscount} mainClassName="text-2xl font-extrabold text-[#0F0F0F]" />
               <span className="text-xs font-semibold text-gray-500">/ {priceOption.durationMinutes} mins</span>
             </div>
             {/* Book 长在选中的卡片里(老板 2026-07-21:底部长条挡视野,不要了)。 */}
@@ -1738,7 +1748,7 @@ export default function BookingModal() {
                   <div className={summaryCardClass}>
                     <div className="flex justify-between gap-4"><span className={summaryLabelClass}>Therapist</span><strong className={summaryValueClass}>{selectedTherapist.name}</strong></div>
                     <div className="mt-2 flex justify-between gap-4"><span className={summaryLabelClass}>Service</span><strong className={summaryValueClass}>{formData.service} / {formData.durationMinutes} mins</strong></div>
-                    <div className="mt-2 flex justify-between gap-4"><span className={summaryLabelClass}>Total</span><strong className={summaryMoneyClass}>{money(selectedTotalAmount)}</strong></div>
+                    <div className="mt-2 flex justify-between gap-4"><span className={summaryLabelClass}>Total</span><PriceWithDiscount amount={selectedTotalAmount} discount={promoState.discount} mainClassName={summaryMoneyClass} /></div>
                   </div>
                   <label className={bookingLabelClass}><Mail className="mr-2 inline h-4 w-4" />Email *</label>
                   <input className={bookingInputClass} type="email" value={emailDraft.email} onChange={event => setEmailDraft(current => ({ ...current, email: event.target.value }))} placeholder="you@example.com" data-testid="booking-email" data-readability-field="booking-email" required />
@@ -1836,7 +1846,7 @@ export default function BookingModal() {
                       <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Service</strong><span className={summaryValueClass}>{formData.service} / {formData.durationMinutes} mins</span></div>
                       <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Schedule</strong><span className={summaryValueClass}>ASAP — therapist departs after accepting</span></div>
                       <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Address</strong><span className={summaryValueClass}>{inferAreaFromAddress(formData.addressNote)} - {formData.addressNote}</span></div>
-                      <BookingCouponAmounts couponPreview={couponPreview} selectedTotalAmount={selectedTotalAmount} />
+                      <BookingCouponAmounts couponPreview={couponPreview} selectedTotalAmount={selectedTotalAmount} promoDiscount={promoState.discount} />
                       <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Payment</strong><span className={summaryValueClass}>Cash before service</span></div>
                     </div>
                   </div>
