@@ -137,6 +137,16 @@ function manilaDayLabel(dateKey = '', dayOffset = 0) {
   return `${MANILA_WEEKDAYS[parsed.getUTCDay()]} ${dateKey.slice(8, 10)}`;
 }
 
+// 技师墙"约稍后"要给客人挑今天/明天/后天——后台档期扫描也只看 3 天。
+function manilaDateKeyWithOffset(offset = 0) {
+  const ms = Date.parse(`${manilaToday()}T12:00:00+08:00`) + offset * 86400000;
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Manila' }).format(new Date(ms));
+}
+
+// 墙上还没选服务,不知道时长;先按最常见的 60 分钟问"这个点谁能来"。
+// 真正的档期校验在选完技师和服务后(表单的按人时段表 + 后端 verifyScheduledSlot)还会各把一道关。
+const WALL_TIME_MATCH_DURATION_MINUTES = 60;
+
 function formatScheduleLabel(dateKey = '', time = '') {
   if (!dateKey || !time) return '';
   const today = manilaToday();
@@ -927,6 +937,8 @@ export default function BookingModal() {
   // 手动重拉计数:客人被"这个点刚被抢走"拦下时,得重新去后台拿一份真列表,
   // 光改状态不会触发重查(依赖项没变)。
   const [availabilityNonce, setAvailabilityNonce] = useState(0);
+  // 墙级"约稍后"过滤(2026-07-30 老板拍板):客人先挑时间,墙只显示那个点能来的技师。
+  const [wallTimeMatch, setWallTimeMatch] = useState({ status: 'idle', availableIds: [], requested: null });
   const [phoneError, setPhoneError] = useState('');
   const [phoneCountry, setPhoneCountry] = useState(DEFAULT_BOOKING_PHONE_COUNTRY);
   const [addressFeedback, setAddressFeedback] = useState('');
@@ -976,6 +988,12 @@ export default function BookingModal() {
     serviceType: serviceTypeFilter,
     sortBy: wallSort
   }), [catalogTherapists, matchSelectedService, selectedArea, serviceFilterName, serviceTypeFilter, wallSearch, wallSort]);
+  // 「约稍后」选了时间且后台已回话 → 墙上只留那个点能来的技师;其余情形保持全名单。
+  const wallTherapistsForTime = useMemo(() => {
+    if (scheduleMode !== 'scheduled' || wallTimeMatch.status !== 'ready') return wallTherapists;
+    const availableIds = new Set(wallTimeMatch.availableIds);
+    return wallTherapists.filter(therapist => availableIds.has(String(therapist.id)));
+  }, [scheduleMode, wallTherapists, wallTimeMatch]);
   // 服务列表按默认档(60 分钟)价格从低到高排(老板 2026-07-21:最便宜的放最前面)。
   const availableServices = useMemo(() => {
     const list = servicesForTherapist(formData.requestedTechnicianId || 'any_available', bookingTherapists, catalogServices);
@@ -1022,6 +1040,39 @@ export default function BookingModal() {
     const stillOpen = availability.days.some(day => day.date === scheduleSlot.date && day.times.includes(scheduleSlot.time));
     if (!stillOpen) setScheduleSlot(null);
   }, [availability, scheduleSlot]);
+
+  // 墙级时间过滤:选了"约稍后 + 具体时间"就问后台"这个点谁能来",墙上只留能来的。
+  // 查询失败不装作"全都能来"也不清空墙——保留全名单并明说没核到,后端下单时还有档期硬校验兜底。
+  const wallSlotDate = scheduleMode === 'scheduled' ? (scheduleSlot?.date || '') : '';
+  const wallSlotTime = scheduleMode === 'scheduled' ? (scheduleSlot?.time || '') : '';
+  useEffect(() => {
+    if (!wallSlotDate || !wallSlotTime) {
+      setWallTimeMatch({ status: 'idle', availableIds: [], requested: null });
+      return undefined;
+    }
+    let active = true;
+    setWallTimeMatch(current => ({ ...current, status: 'loading', requested: { date: wallSlotDate, time: wallSlotTime } }));
+    (async () => {
+      try {
+        const query = `date=${encodeURIComponent(wallSlotDate)}&time=${encodeURIComponent(wallSlotTime)}&durationMinutes=${WALL_TIME_MATCH_DURATION_MINUTES}`;
+        const response = await fetch(apiUrl(`/api/booking-availability?${query}`), { cache: 'no-store' });
+        const payload = await response.json().catch(() => null);
+        if (!active) return;
+        if (!response.ok || !payload?.ok) {
+          setWallTimeMatch({ status: 'failed', availableIds: [], requested: { date: wallSlotDate, time: wallSlotTime } });
+          return;
+        }
+        setWallTimeMatch({
+          status: 'ready',
+          availableIds: (Array.isArray(payload.available) ? payload.available : []).map(item => String(item?.therapistId || '')).filter(Boolean),
+          requested: { date: wallSlotDate, time: wallSlotTime }
+        });
+      } catch {
+        if (active) setWallTimeMatch({ status: 'failed', availableIds: [], requested: { date: wallSlotDate, time: wallSlotTime } });
+      }
+    })();
+    return () => { active = false; };
+  }, [wallSlotDate, wallSlotTime]);
 
   useEffect(() => {
     let active = true;
@@ -1824,6 +1875,65 @@ export default function BookingModal() {
 
               {step === 'wall' ? (
                 <div className="space-y-2">
+                  {/* 2026-07-30 老板拍板:预约入口上墙,第一眼可见。默认仍是"马上来"零打扰;
+                      选"约稍后"才展开时间条,选了时间就按排班过滤墙上的技师。 */}
+                  <div className="mx-1 rounded-[1.5rem] border border-gray-200 bg-white p-3" data-testid="wall-schedule-bar">
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => { setScheduleMode('asap'); setScheduleSlot(null); }}
+                        aria-pressed={scheduleMode === 'asap'}
+                        data-testid="wall-schedule-now"
+                        className={`h-10 flex-1 rounded-full border text-sm font-bold transition ${scheduleMode === 'asap' ? 'border-[#4E8D43] bg-[#4E8D43] text-white' : 'border-gray-200 bg-white text-gray-700 hover:border-[#4E8D43]'}`}
+                      >⚡ Now</button>
+                      <button
+                        type="button"
+                        onClick={() => setScheduleMode('scheduled')}
+                        aria-pressed={scheduleMode === 'scheduled'}
+                        data-testid="wall-schedule-later"
+                        className={`h-10 flex-1 rounded-full border text-sm font-bold transition ${scheduleMode === 'scheduled' ? 'border-[#4E8D43] bg-[#4E8D43] text-white' : 'border-gray-200 bg-white text-gray-700 hover:border-[#4E8D43]'}`}
+                      >🕘 Book for later</button>
+                    </div>
+                    {scheduleMode === 'scheduled' ? (
+                      <div className="mt-3 space-y-2" data-testid="wall-schedule-picker">
+                        <div className="flex flex-wrap items-center gap-2">
+                          {[0, 1, 2].map(offset => {
+                            const dateKey = manilaDateKeyWithOffset(offset);
+                            const active = (scheduleSlot?.date || manilaToday()) === dateKey;
+                            return (
+                              <button
+                                key={dateKey}
+                                type="button"
+                                onClick={() => setScheduleSlot({ date: dateKey, time: '' })}
+                                className={`rounded-full border px-3.5 py-1.5 text-xs font-bold transition ${active ? 'border-[#4E8D43] bg-[#F1FBF3] text-[#3F7838]' : 'border-gray-300 bg-white text-gray-700 hover:border-[#4E8D43]'}`}
+                              >{manilaDayLabel(dateKey, offset)}</button>
+                            );
+                          })}
+                          <select
+                            value={scheduleSlot?.time || ''}
+                            onChange={event => setScheduleSlot({ date: scheduleSlot?.date || manilaToday(), time: event.target.value })}
+                            data-testid="wall-schedule-time"
+                            aria-label="Pick a time"
+                            className="h-9 rounded-full border border-gray-300 bg-white px-3 text-sm font-bold text-gray-700 outline-none focus:border-[#4E8D43]"
+                          >
+                            <option value="">Pick a time…</option>
+                            {timeSlots.filter(time => isSelectableManilaTime(scheduleSlot?.date || manilaToday(), time)).map(time => (
+                              <option key={time} value={time}>{time}</option>
+                            ))}
+                          </select>
+                        </div>
+                        {!scheduleSlot?.time ? (
+                          <p className="text-xs font-medium text-gray-500">Pick a day and time — we’ll show only the therapists free at that time.</p>
+                        ) : wallTimeMatch.status === 'loading' ? (
+                          <p className="text-xs font-medium text-gray-500">Checking who is free at {formatScheduleLabel(scheduleSlot.date, scheduleSlot.time)}…</p>
+                        ) : wallTimeMatch.status === 'failed' ? (
+                          <p className="text-xs font-semibold text-amber-700" data-testid="wall-schedule-check-failed">We could not verify schedules just now — showing everyone. Your time is re-checked when you book.</p>
+                        ) : wallTimeMatch.status === 'ready' ? (
+                          <p className="text-xs font-semibold text-[#3F7838]" data-testid="wall-schedule-match-note">Showing therapists free at {formatScheduleLabel(scheduleSlot.date, scheduleSlot.time)}.</p>
+                        ) : null}
+                      </div>
+                    ) : null}
+                  </div>
                   {/* ⚠ 2026-07-29 老板拍板:进技师墙就先要手机号,填完全场直接显示折后价。
                       原来要走到"填邮箱"那一步才知道减多少,客人从广告进来看到原价就走了。
                       号码在这里拿到之后:①当场查/发券 ②所有价格立刻变成折后价
@@ -1895,7 +2005,7 @@ export default function BookingModal() {
                       ) : null}
                     </div>
                   )}
-                  {catalogStatus === 'ready' ? <p className="px-1 text-sm font-semibold text-gray-600" data-testid="therapist-result-count">{wallTherapists.length} {wallTherapists.length === 1 ? 'therapist' : 'therapists'} available</p> : null}
+                  {catalogStatus === 'ready' ? <p className="px-1 text-sm font-semibold text-gray-600" data-testid="therapist-result-count">{wallTherapistsForTime.length} {wallTherapistsForTime.length === 1 ? 'therapist' : 'therapists'} available{scheduleMode === 'scheduled' && wallTimeMatch.status === 'ready' && wallTimeMatch.requested ? ` at ${formatScheduleLabel(wallTimeMatch.requested.date, wallTimeMatch.requested.time)}` : ''}</p> : null}
                   <div className="grid gap-3 px-1 pb-6 sm:grid-cols-2" data-testid="booking-therapist-list">
                     {catalogStatus === 'loading' ? (
                       <div className="rounded-[1.5rem] border border-gray-200 bg-white p-5 text-sm text-gray-700" data-testid="booking-catalog-loading">
@@ -1903,7 +2013,7 @@ export default function BookingModal() {
                         <p className="mt-1">Checking the current public booking catalog.</p>
                       </div>
                     ) : null}
-                    {catalogStatus === 'ready' ? wallTherapists.map(therapist => <TherapistWallCard key={therapist.id} therapist={therapist} selected={formData.requestedTechnicianId === therapist.id} onSelect={openTherapistDetail} onRequireLocation={() => setShowWallLocationPicker(true)} customerLocated={isUsableCustomerLocation(customerCoords)} />) : null}
+                    {catalogStatus === 'ready' ? wallTherapistsForTime.map(therapist => <TherapistWallCard key={therapist.id} therapist={therapist} selected={formData.requestedTechnicianId === therapist.id} onSelect={openTherapistDetail} onRequireLocation={() => setShowWallLocationPicker(true)} customerLocated={isUsableCustomerLocation(customerCoords)} />) : null}
                     {catalogUnavailable ? (
                       <div className="rounded-[1.5rem] border border-amber-200 bg-amber-50 p-5 text-sm text-amber-900" data-testid="booking-catalog-unavailable">
                         <p className="text-base font-bold">{catalogUnavailableNotice}</p>
@@ -1917,7 +2027,16 @@ export default function BookingModal() {
                         
                       </div>
                     ) : null}
-                    {catalogStatus === 'ready' && hasSpecificTherapists && wallTherapists.length === 0 ? <div className="rounded-[1.5rem] border border-gray-200 bg-white p-5 text-sm text-gray-600" data-testid="booking-search-no-results"><p className="font-bold text-[#0F0F0F]">No therapists match your search.</p><p className="mt-1">Try a different name, area, or service filter.</p></div> : null}
+                    {catalogStatus === 'ready' && hasSpecificTherapists && wallTherapistsForTime.length === 0 ? (
+                      scheduleMode === 'scheduled' && wallTimeMatch.status === 'ready' && wallTherapists.length > 0 ? (
+                        <div className="rounded-[1.5rem] border border-amber-200 bg-amber-50 p-5 text-sm text-amber-900" data-testid="booking-time-no-results">
+                          <p className="font-bold">No therapist is free at {wallTimeMatch.requested ? formatScheduleLabel(wallTimeMatch.requested.date, wallTimeMatch.requested.time) : 'that time'}.</p>
+                          <p className="mt-1">Try another time, or switch to <strong>⚡ Now</strong> to see who can come soonest.</p>
+                        </div>
+                      ) : (
+                        <div className="rounded-[1.5rem] border border-gray-200 bg-white p-5 text-sm text-gray-600" data-testid="booking-search-no-results"><p className="font-bold text-[#0F0F0F]">No therapists match your search.</p><p className="mt-1">Try a different name, area, or service filter.</p></div>
+                      )
+                    ) : null}
                   </div>
                 </div>
               ) : null}

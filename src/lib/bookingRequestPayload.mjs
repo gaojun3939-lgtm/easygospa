@@ -125,6 +125,10 @@ export function normalizeWebsiteBookingRequest(input = {}) {
   const inputMetadata = input.metadata && typeof input.metadata === 'object' ? input.metadata : {};
   const catalogSource = cleanText(inputMetadata.catalogSource || input.catalogSource, 80);
   const customerLocation = normalizeCustomerLocation(input.customerLocation || inputMetadata.customerLocation);
+  // "Book for later" vs ride-hailing ASAP. Without this flag the backend treats every
+  // website order as ASAP: it never verifies the customer's chosen slot, and the
+  // therapist portal fires the instant accept-countdown for a reservation.
+  const scheduleMode = cleanText(input.scheduleMode, 16) === 'scheduled' ? 'scheduled' : 'asap';
   const couponCandidate = cleanText(input.couponId, 160);
   const couponId = /^[a-z0-9][a-z0-9_-]*$/i.test(couponCandidate) ? couponCandidate : '';
   const skipCoupon = input.skipCoupon === true;
@@ -214,6 +218,7 @@ export function normalizeWebsiteBookingRequest(input = {}) {
     serviceDurationMinutes: durationMinutes,
     preferredDate,
     preferredTime,
+    scheduleMode,
     scheduledDate: preferredDate,
     scheduledTime: toScheduledTime(preferredTime),
     area,

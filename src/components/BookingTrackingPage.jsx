@@ -246,7 +246,10 @@ function therapistArrivalNote(booking = {}) {
     case 'waiting_acceptance':
       return 'Hang tight — confirming your booking now.';
     case 'preparing':
-      return 'She will head to your address shortly.';
+      // 预约单:技师接了单,但要等约的时间才出发,别让客人以为马上有人敲门。
+      return booking.scheduleMode === 'scheduled'
+        ? 'She will head to your address in time for your appointment.'
+        : 'She will head to your address shortly.';
     case 'on_the_way':
       return 'Please keep your phone nearby.';
     case 'arrived':
@@ -592,7 +595,16 @@ export default function BookingTrackingPage({ reference }) {
                 <p className="mt-1 text-sm text-slate-600">{Number.isFinite(booking.durationMinutes) ? `${booking.durationMinutes} minutes` : 'Duration pending'}</p>
               </div>
               {/* 客人只关心"技师什么时候到",不关心内部排班(2026-07-28 老板拍板)。
-                  原来这里印内部排期时间戳,技师 20 分钟就到门口了,页面却写着明天凌晨,把客人看懵。 */}
+                  原来这里印内部排期时间戳,技师 20 分钟就到门口了,页面却写着明天凌晨,把客人看懵。
+                  例外(2026-07-30 老板拍板):客人自己约的时间(Book for later)必须显示——
+                  那是他亲手选的,不是内部排班。scheduleMode 区分这两种单。 */}
+              {booking.scheduleMode === 'scheduled' && booking.scheduledAt ? (
+                <div data-booking-appointment-time>
+                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500"><CalendarClock className="mr-1 inline h-4 w-4" />Your appointment</p>
+                  <p className="mt-1 font-bold text-[#17142f]">{formatManilaBookingDateTime(booking.scheduledAt)}</p>
+                  <p className="mt-1 text-sm text-slate-600">Booked for later — your therapist arrives for this time.</p>
+                </div>
+              ) : null}
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500"><CalendarClock className="mr-1 inline h-4 w-4" />Your therapist</p>
                 <p className="mt-1 font-bold text-[#17142f]">{therapistArrivalHeadline(booking)}</p>

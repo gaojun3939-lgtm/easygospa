@@ -84,6 +84,8 @@ export function normalizeBookingStatusPayload(payload = {}) {
     statusLabel: cleanString(payload.statusLabel) || fallbackStatusLabel,
     placedAt: cleanNullableString(payload.placedAt),
     scheduledAt: cleanNullableString(payload.scheduledAt),
+    // 'scheduled' = the customer picked this time on purpose; the page shows it back.
+    scheduleMode: cleanString(payload.scheduleMode) === 'scheduled' ? 'scheduled' : 'asap',
     serviceName: cleanString(payload.serviceName),
     durationMinutes: cleanNullableNumber(payload.durationMinutes),
     areaName: cleanString(payload.areaName),
