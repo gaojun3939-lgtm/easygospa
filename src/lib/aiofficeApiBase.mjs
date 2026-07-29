@@ -26,6 +26,11 @@ const ENDPOINTS = Object.freeze({
   myCoupons: {
     envName: 'AIOFFICE_MY_COUPONS_API_URL',
     developmentUrl: 'https://staging.easygospa.com/api/public/my-coupons'
+  },
+  // 新客活动券(2026-07-29):/welcome 落地页用手机号领 ₱150,24 小时有效、免登录
+  promoClaim: {
+    envName: 'AIOFFICE_PROMO_CLAIM_API_URL',
+    developmentUrl: 'https://staging.easygospa.com/api/public/promo-claim'
   }
 });
 
