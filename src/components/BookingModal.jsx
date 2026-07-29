@@ -1627,7 +1627,13 @@ export default function BookingModal() {
                       <input className={bookingInputClass} value={emailDraft.name} onChange={event => setEmailDraft(current => ({ ...current, name: event.target.value }))} placeholder="Your name" data-readability-field="customerName" />
                     </div>
                     <div>
-                      <label className={bookingLabelClass}>Phone optional</label>
+                      {/* ⚠ 2026-07-29 老板拍板:优惠直接挂在手机号这一格。
+                          客人不知道为什么要填手机号,给他一个理由 —— 而且这句话
+                          就是广告承诺的兑现点,必须出现在他填号码的那一刻。 */}
+                      <label className={bookingLabelClass}>Phone</label>
+                      <p className="-mt-2 mb-2 text-xs font-bold leading-5 text-[#0E6F1A]">
+                        First booking? Enter your mobile to get ₱150 off — applied automatically.
+                      </p>
                       <div className="flex gap-2">
                         <select aria-label="Phone country" className="h-12 w-[8.25rem] shrink-0 rounded-2xl border border-gray-300 bg-white px-3 text-sm font-bold text-[#0F0F0F] focus:border-[#4E8D43] focus:outline-none" value={phoneCountry} onChange={event => setPhoneCountry(event.target.value)}>
                           {BOOKING_PHONE_COUNTRIES.map(country => <option key={country.iso} value={country.iso}>{country.flag} +{country.callingCode}</option>)}
