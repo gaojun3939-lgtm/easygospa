@@ -59,8 +59,15 @@ export default function WelcomeGift() {
     return () => { alive = false; };
   }, []);
 
-  // 一条道:点技师、点大按钮,全部进主站技师墙下单流程(₱150 下单时自动生效)
-  const goBook = () => router.push('/?book=1');
+  // 一条道:点技师、点大按钮,全部进主站技师墙下单流程(₱150 下单时自动生效)。
+  // ⚠ 2026-08-02 老板实测:光 router.push('/?book=1') 客人会先看到首页——
+  // BookingModal 的 ?book=1 自动弹窗只在整页加载时检查一次,站内跳转不重查,
+  // 要等最多 12 秒的目录刷新才弹墙。修法:先发全局"开墙"事件(墙挂在 layout,
+  // /welcome 上也在,瞬间就开),再把地址换成 /?book=1 保持链接口径一致。
+  const goBook = () => {
+    try { window.dispatchEvent(new CustomEvent('open-booking-modal')); } catch { /* 事件不可用就靠跳转兜底 */ }
+    router.push('/?book=1');
+  };
 
   return (
     // pt-32 给顶部固定导航让位(LOGO 压标题的重叠 bug 就是原来 py-10 不够高;
