@@ -31,11 +31,12 @@ import { clearActiveBooking, readActiveBooking } from '../lib/activeBooking.mjs'
 import { cancelPublicBooking } from '../lib/publicBookingCancel.mjs';
 import { BOOKING_FLOW_STORAGE_KEY } from '../lib/therapistServiceBookingFlow.mjs';
 
-function readStoredBookingEmail() {
+// 2026-08-01 去邮箱:身份主键改手机号。优先取 session 里的手机号,老 session 只有邮箱的也认。
+function readStoredBookingContact() {
   if (typeof window === 'undefined') return '';
   try {
     const session = JSON.parse(window.sessionStorage.getItem(BOOKING_FLOW_STORAGE_KEY) || 'null');
-    return String(session?.customerEmail || '').trim().toLowerCase();
+    return String(session?.phone || session?.customerEmail || '').trim();
   } catch {
     return '';
   }
@@ -53,7 +54,7 @@ function CompletedBookingReview({ reference, therapistName }) {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    setEmail(readStoredBookingEmail());
+    setEmail(readStoredBookingContact());
     try {
       const stored = JSON.parse(window.localStorage.getItem(reviewStorageKey(reference)) || 'null');
       if (stored?.submitted === true) {
@@ -70,8 +71,12 @@ function CompletedBookingReview({ reference, therapistName }) {
       setError('Choose a star rating first.');
       return;
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      setError('Enter the email used for this booking.');
+    // 2026-08-01 去邮箱:一个框收"手机号或邮箱"——含 @ 当邮箱发,否则当手机号发。
+    // 后端两条路都验(bookingReview 邮箱/手机号任一匹配即放行),新老客人都评得了。
+    const contact = email.trim();
+    const isEmailContact = contact.includes('@');
+    if (isEmailContact ? !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact) : contact.replace(/\D/g, '').length < 7) {
+      setError('Enter the phone number or email used for this booking.');
       return;
     }
     setState('submitting');
@@ -80,7 +85,12 @@ function CompletedBookingReview({ reference, therapistName }) {
       const response = await fetch(apiUrl('/api/booking-review'), {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ reference, email: email.trim().toLowerCase(), rating: stars, comment: comment.trim() })
+        body: JSON.stringify({
+          reference,
+          ...(isEmailContact ? { email: contact.toLowerCase() } : { phone: contact }),
+          rating: stars,
+          comment: comment.trim()
+        })
       });
       const payload = await response.json().catch(() => null);
       const duplicateReviewCodes = new Set(['BOOKING_REVIEW_ALREADY_SUBMITTED', 'BOOKING_REVIEW_CONFLICT', 'REVIEW_ALREADY_EXISTS', 'DUPLICATE_REVIEW']);
@@ -135,8 +145,8 @@ function CompletedBookingReview({ reference, therapistName }) {
                 <textarea id="review-comment" value={comment} onChange={event => setComment(event.target.value.slice(0, 1000))} rows={4} className="w-full resize-none rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-[#17142f] outline-none focus:border-[#e0a52b]" placeholder="What stood out about your massage?" />
               </div>
               <div>
-                <label htmlFor="review-email" className="mb-2 block text-sm font-semibold text-slate-800">Booking email</label>
-                <input id="review-email" type="email" autoComplete="email" value={email} onChange={event => setEmail(event.target.value)} className="h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm text-[#17142f] outline-none focus:border-[#e0a52b]" placeholder="you@example.com" required />
+                <label htmlFor="review-email" className="mb-2 block text-sm font-semibold text-slate-800">Booking phone or email</label>
+                <input id="review-email" type="text" autoComplete="tel" value={email} onChange={event => setEmail(event.target.value)} className="h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm text-[#17142f] outline-none focus:border-[#e0a52b]" placeholder="09XX XXX XXXX" required />
                 <p className="mt-1 text-xs text-slate-500">Used only to verify that this completed booking is yours.</p>
               </div>
               {error ? <p className="rounded-2xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</p> : null}

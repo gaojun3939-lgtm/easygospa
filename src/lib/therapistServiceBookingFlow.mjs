@@ -176,6 +176,13 @@ export const ALL_SERVICE_TYPES_VALUE = 'all_service_types';
 // 服务半径闸门(老板 2026-07-20 拍板 10 km):超出这个距离不接单——车费和路上时间
 // 吃掉利润,跑远单就是亏钱。超距技师仍留在墙上,但不得进入下单流程。
 // P0 图纸同日收紧:距离算不出来也不得进入下单流程。
+//
+// 🔴 2026-08-01 老板拍板:浏览闸门关闭(先亮货、后设卡)。
+// 实测证明这道闸是头号拦客点:客人拒绝浏览器定位 → 21 张卡全点不动,
+// 83% 进站的人没点开过任何技师。改成:看,全放开;卡上保留 " · Too far"
+// 小灰标当软提醒;下单时地址照填(地址补全/拖 pin 都不需要浏览器权限)。
+// ⚠ 代码不删,开关留着——App 要恢复闸门就把这个改回 true。
+export const SERVICE_RADIUS_BROWSE_GATE_ENABLED = false;
 export const MAX_SERVICE_DISTANCE_KM = 10;
 export const SERVICE_RADIUS_LOCATION_REQUIRED_MESSAGE = 'Please confirm your location first';
 export const SERVICE_RADIUS_TOO_FAR_MESSAGE = `Please select a nearby therapist within ${MAX_SERVICE_DISTANCE_KM} km.`;
@@ -196,6 +203,9 @@ export function isTherapistWithinServiceRange(therapist = {}, maxKm = MAX_SERVIC
 }
 
 export function getTherapistServiceRadiusBlockMessage(therapist = {}, maxKm = MAX_SERVICE_DISTANCE_KM) {
+  // 浏览闸门关闭(2026-08-01):看谁都行,不再因"没定位/超距"锁卡挡下单。
+  // 超距的丑话由卡上的 " · Too far" 标签说;派单端的距离规则由后台权威校验管。
+  if (!SERVICE_RADIUS_BROWSE_GATE_ENABLED) return '';
   const distance = therapistDistanceKm(therapist);
   if (distance === null) return SERVICE_RADIUS_LOCATION_REQUIRED_MESSAGE;
   return distance <= maxKm ? '' : SERVICE_RADIUS_TOO_FAR_MESSAGE;

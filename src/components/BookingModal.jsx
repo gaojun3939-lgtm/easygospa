@@ -406,9 +406,9 @@ function formatReviewDate(value) {
   }
 }
 
-// 评分 Glow 式:一颗金星 + 评分数(橙色)+(N reviews)。
-// 新技师 5.0 起步(冷启动:0 分会吓跑客人、新人永远接不到第一单);
-// 但配合 NEW 标 + 明写(0 reviews),拿起步分的商业好处又不算骗人。
+// 评分显示(老板 2026-08-01 拍板):初始 5 分扣分制不变(Uber/Grab 同款,新人无罪推定),
+// 但星级要带"分母"才立得住——有评价:★4.8 (12 reviews);没评价:★5.0 + NEW 徽章。
+// 不再显示 "(0 reviews)":裸 5.0 配零条数,在精明客人眼里反而像假的。
 // 攒够真评价后 rating/reviewCount 有值,自动切成真实平均分。
 function TherapistRating({ therapist = {} }) {
   const ratingRaw = Number(therapist.rating);
@@ -421,11 +421,13 @@ function TherapistRating({ therapist = {} }) {
     <span
       className="inline-flex items-center gap-1"
       role="img"
-      aria-label={`${rating.toFixed(1)} out of 5 stars from ${reviewCount} verified reviews`}
+      aria-label={hasReviews ? `${rating.toFixed(1)} out of 5 stars from ${reviewCount} verified reviews` : 'New therapist, 5.0 starting rating'}
     >
       <Star className="h-4 w-4 shrink-0 fill-[#f0a41c] text-[#f0a41c]" aria-hidden="true" />
       <span className="font-bold text-[#e08700]">{rating.toFixed(1)}</span>
-      <span className="font-medium text-gray-500">({reviewCount} {reviewCount === 1 ? 'review' : 'reviews'})</span>
+      {hasReviews
+        ? <span className="font-medium text-gray-500">({reviewCount} {reviewCount === 1 ? 'review' : 'reviews'})</span>
+        : <span className="rounded-full bg-sky-50 px-1.5 py-0.5 text-[10px] font-extrabold tracking-wider text-sky-700">NEW</span>}
     </span>
   );
 }
@@ -485,7 +487,9 @@ function readStoredSession() {
     const raw = window.sessionStorage.getItem(BOOKING_FLOW_STORAGE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw);
-    return isValidEmail(parsed.customerEmail) ? parsed : null;
+    // 2026-08-01 去邮箱:身份主键改手机号;老 session 只有邮箱的也认(平滑过渡)
+    const hasPhone = String(parsed.phone || '').replace(/\D/g, '').length >= 7;
+    return hasPhone || isValidEmail(parsed.customerEmail) ? parsed : null;
   } catch {
     return null;
   }
@@ -802,15 +806,21 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
               </span>
             ) : null}
             {detailDistanceKm !== null ? <span className="text-gray-300">|</span> : null}
-            {/* 评分可点:跳到下方 Verified reviews 区(老板 2026-07-26:1 review 点不进去=没实装) */}
-            <button
-              type="button"
-              data-testid="therapist-rating-link"
-              className="inline-flex items-center gap-1 underline decoration-[#e08700]/40 underline-offset-4"
-              onClick={() => document.getElementById('therapist-reviews-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-            >
-              <TherapistRating therapist={therapist} />
-            </button>
+            {/* 评分可点:跳到下方 Verified reviews 区(老板 2026-07-26:1 review 点不进去=没实装)。
+                0 评价时下方整个评价区都藏了(老板 2026-08-01:空列表=当面承认没人用过),
+                这时评分不做成跳转按钮——点了滚到不存在的地方比不能点更糟。 */}
+            {reviewCount > 0 ? (
+              <button
+                type="button"
+                data-testid="therapist-rating-link"
+                className="inline-flex items-center gap-1 underline decoration-[#e08700]/40 underline-offset-4"
+                onClick={() => document.getElementById('therapist-reviews-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+              >
+                <TherapistRating therapist={therapist} />
+              </button>
+            ) : (
+              <span data-testid="therapist-rating-static"><TherapistRating therapist={therapist} /></span>
+            )}
           </div>
           <div className="mt-4 flex items-center gap-4 rounded-2xl border border-[#4E8D43]/35 bg-[#F7FCF8] px-4 py-3" data-testid="therapist-care">
             <span className="flex flex-col items-center gap-1 text-[#3F7838]">
@@ -847,6 +857,9 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
           {availableServices.map(service => <ServiceCard key={service.id} service={service} selected={selectedServiceName === service.name} selectedDuration={selectedServiceName === service.name ? Number(selectedDuration) : 0} onSelectService={onSelectService} onSelectDuration={onSelectDuration} onBook={onBook} promoDiscount={promoDiscount} />)}
         </div>
       </div>
+      {/* 评价区空则整块藏(老板 2026-08-01 拍板):0 条还摆出"5.0 大字 + 全 0 分布条 +
+          No verified reviews yet",等于当面承认没人用过。攒到第一条真评价它自己回来。 */}
+      {reviewCount > 0 ? (
       <section className="rounded-[1.5rem] border border-gray-200 bg-white p-5 shadow-sm" data-testid="therapist-review-wall" id="therapist-reviews-section">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
@@ -857,7 +870,6 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
             <div className="mt-3 flex items-baseline gap-2">
               <strong className="text-4xl font-extrabold text-[#0F0F0F]">{averageRating.toFixed(1)}</strong>
               <span className="text-sm font-semibold text-gray-500">({reviewCount} {reviewCount === 1 ? 'review' : 'reviews'})</span>
-              {reviewCount === 0 ? <span className="rounded-full bg-sky-50 px-2 py-1 text-[10px] font-extrabold tracking-wider text-sky-700">NEW</span> : null}
             </div>
           </div>
           {verifiedReviews.length > 3 ? (
@@ -900,6 +912,7 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
           </div>
         ) : <p className="mt-5 text-sm text-gray-600">No verified reviews yet.</p>}
       </section>
+      ) : null}
       {/* 底部账单条已拆(老板 2026-07-21):Book 按钮直接长在选中的服务卡里。 */}
     </div>
   );
@@ -1484,6 +1497,8 @@ export default function BookingModal() {
     trackMetaEvent('AddToCart');
   };
 
+  // 2026-08-01 去邮箱:这一步只认手机号(必填有效),邮箱变成可有可无的历史字段。
+  // 老客 session 里存过邮箱的照样带上,不白丢;新客一个邮箱都不用填。
   const handleEmailContinue = event => {
     event.preventDefault();
     const session = getDefaultBookingSession(emailDraft);
@@ -1492,11 +1507,7 @@ export default function BookingModal() {
       ...session,
       phone: session.phone ? formatBookingPhoneE164(sessionPhone.countryIso, sessionPhone.localNumber) : ''
     };
-    if (!isValidEmail(session.customerEmail)) {
-      setError('Please enter a valid email address to continue.');
-      return;
-    }
-    if (session.phone && !isValidBookingPhone(sessionPhone.countryIso, sessionPhone.localNumber)) {
+    if (!session.phone || !isValidBookingPhone(sessionPhone.countryIso, sessionPhone.localNumber)) {
       setError('Please enter a valid WhatsApp or phone number.');
       return;
     }
@@ -1510,7 +1521,7 @@ export default function BookingModal() {
   const validateDetails = () => {
     if (!selectedTherapist) return 'Current service profiles are temporarily unavailable. Please try again later.';
     if (!formData.service || !selectedServiceOption) return 'Please select a valid service duration and price before continuing.';
-    if (!isValidEmail(formData.customerEmail)) return 'Please continue with a valid email first.';
+    // 2026-08-01 去邮箱:身份=手机号,邮箱不再是必填(下面的手机号校验才是身份闸)
     if (!formData.customerName.trim()) return 'Please enter your full name.';
     if (!formData.phone.trim()) {
       setPhoneError(phoneErrorMessage);
@@ -2065,44 +2076,42 @@ export default function BookingModal() {
               {step === 'detail' && selectedTherapist ? <TherapistDetail therapist={selectedTherapist} availableServices={availableServices} selectedServiceName={formData.service} selectedDuration={Number(formData.durationMinutes)} totalAmount={selectedTotalAmount} onSelectService={handleSelectService} onSelectDuration={handleSelectDuration} onBack={() => setStep('wall')} onBook={handleBookSelection} promoDiscount={promoState.discount} /> : null}
 
               {step === 'email' ? (
+                /* 2026-08-01 老板拍板:去邮箱。菲律宾普通人日常不用邮箱,这一步曾是
+                   加购后最大的流失点(选好服务→被要邮箱→走人)。手机号就是身份:
+                   券按它发、订单按它查、确认走 WhatsApp。邮箱字段整个拿掉。 */
                 <form onSubmit={handleEmailContinue} className="space-y-5">
                   <div>
-                    <h3 className="text-2xl font-bold text-[#0F0F0F]">Use this email for your booking</h3>
-                    <p className="mt-2 text-sm text-gray-600">We use email to keep the booking request connected to you. Confirmation still happens on WhatsApp.</p>
+                    <h3 className="text-2xl font-bold text-[#0F0F0F]">Your mobile number</h3>
+                    <p className="mt-2 text-sm text-gray-600">We confirm your booking on WhatsApp — no email, no account needed.</p>
                   </div>
                   <div className={summaryCardClass}>
                     <div className="flex justify-between gap-4"><span className={summaryLabelClass}>Therapist</span><strong className={summaryValueClass}>{selectedTherapist.name}</strong></div>
                     <div className="mt-2 flex justify-between gap-4"><span className={summaryLabelClass}>Service</span><strong className={summaryValueClass}>{formData.service} / {formData.durationMinutes} mins</strong></div>
                     <div className="mt-2 flex justify-between gap-4"><span className={summaryLabelClass}>Total</span><PriceWithDiscount amount={selectedTotalAmount} discount={promoState.discount} mainClassName={summaryMoneyClass} /></div>
                   </div>
-                  <label className={bookingLabelClass}><Mail className="mr-2 inline h-4 w-4" />Email *</label>
-                  <input className={bookingInputClass} type="email" value={emailDraft.email} onChange={event => setEmailDraft(current => ({ ...current, email: event.target.value }))} placeholder="you@example.com" data-testid="booking-email" data-readability-field="booking-email" required />
-                  <p className="-mt-3 text-xs font-medium leading-5 text-[#4E8D43]">Use this email to log in and track your booking anytime after you order.</p>
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div>
-                      <label className={bookingLabelClass}>Name optional</label>
-                      <input className={bookingInputClass} value={emailDraft.name} onChange={event => setEmailDraft(current => ({ ...current, name: event.target.value }))} placeholder="Your name" data-readability-field="customerName" />
-                    </div>
-                    <div>
-                      {/* ⚠ 2026-07-29 老板拍板:优惠直接挂在手机号这一格。
-                          客人不知道为什么要填手机号,给他一个理由 —— 而且这句话
-                          就是广告承诺的兑现点,必须出现在他填号码的那一刻。 */}
-                      <label className={bookingLabelClass}>Phone</label>
-                      <p className="-mt-2 mb-2 text-xs font-bold leading-5 text-[#0E6F1A]">
-                        First booking? Enter your mobile to get ₱150 off — applied automatically.
-                      </p>
-                      <div className="flex gap-2">
-                        <select aria-label="Phone country" className="h-12 w-[8.25rem] shrink-0 rounded-2xl border border-gray-300 bg-white px-3 text-sm font-bold text-[#0F0F0F] focus:border-[#4E8D43] focus:outline-none" value={phoneCountry} onChange={event => setPhoneCountry(event.target.value)}>
-                          {BOOKING_PHONE_COUNTRIES.map(country => <option key={country.iso} value={country.iso}>{country.flag} +{country.callingCode}</option>)}
-                        </select>
-                        <div className="relative min-w-0 flex-1">
-                          <span className="pointer-events-none absolute inset-y-0 left-4 flex items-center text-sm font-semibold text-gray-500">+{bookingPhoneCountry(phoneCountry).callingCode}</span>
-                          <input autoComplete="tel-national" className={`${bookingInputClass} pl-14`} inputMode="tel" value={emailDraft.phone} onChange={event => setEmailDraft(current => ({ ...current, phone: event.target.value }))} placeholder="908 123 4567" data-readability-field="phone" />
-                        </div>
+                  {/* ⚠ 2026-07-29 老板拍板:优惠直接挂在手机号这一格。
+                      客人不知道为什么要填手机号,给他一个理由 —— 而且这句话
+                      就是广告承诺的兑现点,必须出现在他填号码的那一刻。 */}
+                  <div>
+                    <label className={bookingLabelClass}><Phone className="mr-2 inline h-4 w-4" />WhatsApp / Phone *</label>
+                    <p className="-mt-2 mb-2 text-xs font-bold leading-5 text-[#0E6F1A]">
+                      First booking? Enter your mobile to get ₱150 off — applied automatically.
+                    </p>
+                    <div className="flex gap-2">
+                      <select aria-label="Phone country" className="h-12 w-[8.25rem] shrink-0 rounded-2xl border border-gray-300 bg-white px-3 text-sm font-bold text-[#0F0F0F] focus:border-[#4E8D43] focus:outline-none" value={phoneCountry} onChange={event => setPhoneCountry(event.target.value)}>
+                        {BOOKING_PHONE_COUNTRIES.map(country => <option key={country.iso} value={country.iso}>{country.flag} +{country.callingCode}</option>)}
+                      </select>
+                      <div className="relative min-w-0 flex-1">
+                        <span className="pointer-events-none absolute inset-y-0 left-4 flex items-center text-sm font-semibold text-gray-500">+{bookingPhoneCountry(phoneCountry).callingCode}</span>
+                        <input autoComplete="tel-national" className={`${bookingInputClass} pl-14`} inputMode="tel" value={emailDraft.phone} onChange={event => setEmailDraft(current => ({ ...current, phone: event.target.value }))} placeholder="908 123 4567" data-testid="booking-phone" data-readability-field="phone" required />
                       </div>
                     </div>
                   </div>
-                  <button type="submit" className="h-12 w-full rounded-2xl bg-[#4E8D43] px-6 font-bold text-white hover:bg-[#3F7838]">Continue with email</button>
+                  <div>
+                    <label className={bookingLabelClass}>Name optional</label>
+                    <input className={bookingInputClass} value={emailDraft.name} onChange={event => setEmailDraft(current => ({ ...current, name: event.target.value }))} placeholder="Your name" data-readability-field="customerName" />
+                  </div>
+                  <button type="submit" className="h-12 w-full rounded-2xl bg-[#4E8D43] px-6 font-bold text-white hover:bg-[#3F7838]">Continue</button>
                 </form>
               ) : null}
 
