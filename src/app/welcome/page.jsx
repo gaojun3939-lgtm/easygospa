@@ -1,16 +1,17 @@
 import WelcomeGift from '../../components/WelcomeGift';
 
-// 广告落地页(2026-08-01 老板拍板改版:先亮货、后设卡)。
-// 客人点广告 → 第一屏先看到真实技师(零门槛,不弹定位不要输入)
-// → 动了心 → 第二屏输手机号拆 ₱150 → 24 小时倒计时 → 直推技师墙。
+// 广告落地页 v3(2026-08-02 老板拍板"墙即入口、下单即领券",两位外部专家复核一致)。
+// 领券卡整个撤掉:下单流程里手机号当场查/发 ₱150(2026-07-29 起就不依赖预领),
+// 前置 Claim 是假步骤(在线三天 ₱2,000 流量 0 成交)。
+// 新结构一条道:三条拆"怕"的卖点 → 技师墙(点谁都进下单) → 大按钮。
 // 设计铁律:
-//  · 第一屏绝不弹任何权限框、不要任何输入 —— 先让客人看见货(旧版一进来就要手机号,人流失在门口)
-//  · 只要手机号不要邮箱 —— 我们发不了邮件,但 WhatsApp 能追;而且菲律宾人背得出手机号
-//  · 不爱填表的给 Messenger 侧门 —— 聊天成交是菲律宾主流,AI 在那头接
+//  · 全页零权限弹窗、零输入门槛 —— 先让客人看见货
+//  · 主流程(卖点→墙→下单)中间不许有任何打岔的口子(老板 2026-08-02 拍板)
+//  · 聊天入口只许在页尾一行小字(Messenger+WhatsApp),接"想先问正规吗"的人;口碑起来可撤
 //  · 文案不写 "win / lucky / 抽奖" —— 这是优惠券不是博彩,也避开 Meta 的误判
 export const metadata = {
-  title: 'Your welcome gift | EasyGo Spa',
-  description: 'First booking? Open your welcome gift. No transport fee, no tips, cash when your therapist arrives.',
+  title: 'Pick your therapist · ₱150 off | EasyGo Spa',
+  description: 'Choose your therapist, book in 60 seconds. ₱150 off your first booking, applied automatically. No deposit, nothing upfront.',
   // 这是广告落地页,不给搜索引擎收录(免得优惠被当成常态价挂在搜索结果里)
   robots: { index: false, follow: false }
 };
