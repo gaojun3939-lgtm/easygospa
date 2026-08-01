@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, BadgeCheck, ShieldCheck, Star, UserCheck } from 'lucide-react';
+import { ArrowRight, BadgeCheck, Gift, ShieldCheck, Star, UserCheck, Zap } from 'lucide-react';
 import { whatsappLink } from '@/lib/contactConfig';
 
 // 广告落地页 v3(2026-08-02 老板拍板,两位外部专家复核一致):
@@ -72,9 +72,11 @@ export default function WelcomeGift() {
           Pick who comes to you
         </h1>
 
-        {/* ₱150 明写在墙上:优惠当定价用,不当门槛用(下单填手机号时自动生效) */}
-        <p className="mt-2 inline-flex items-center rounded-full bg-[#FCEBEB] px-3 py-1 text-[13px] font-bold text-[#A32D2D]">
-          ₱150 off your first booking · applied automatically
+        {/* 速度承诺(老板 2026-08-02 拍板加上):写"最快 30 分钟"不写死必达——
+            在岗+10km 内才做得到,"as fast as" 客人照样兴奋,做不到不算食言 */}
+        <p className="mt-2 flex items-center gap-1.5 text-[15px] font-bold text-[#3F7838]">
+          <Zap className="fill-[#EF9F27] text-[#EF9F27]" size={17} />
+          As fast as 30 minutes to your door
         </p>
 
         <ul className="mt-4 space-y-2.5">
@@ -115,8 +117,14 @@ export default function WelcomeGift() {
           </div>
         ) : null}
 
+        {/* ₱150 钉在决策点上(老板 2026-08-02 拍板):红色显眼,紧贴大按钮——
+            犹豫发生在按下按钮前一秒,优惠放这里比挂页面顶上管用 */}
+        <p className="mt-5 flex items-center justify-center gap-2 text-[15px] font-extrabold text-[#D42B2A]">
+          <Gift className="shrink-0" size={18} />
+          ₱150 OFF your first booking
+        </p>
         <button
-          className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-[#2db83d] py-3.5 text-lg font-semibold text-white"
+          className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-[#2db83d] py-3.5 text-lg font-semibold text-white"
           onClick={goBook}
           type="button"
         >
