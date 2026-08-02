@@ -94,7 +94,9 @@ function normalizeCustomerLocation(value) {
 
 export function normalizeWebsiteBookingRequest(input = {}) {
   const customerName = requiredText(input.customerName || input.client_name || input.name, 'customerName');
-  const customerEmail = requiredText(input.customerEmail || input.email, 'customerEmail').toLowerCase();
+  // 2026-08-02 去邮箱最后一处:下单只要手机号,邮箱改为可选(老单/老会话带了就照传)。
+  // 上线当天此处仍是必填,把去掉邮箱输入框后的所有下单/优惠券预览全部 400 打回——客人当场下不了单。
+  const customerEmail = cleanText(input.customerEmail || input.email, 160).toLowerCase();
   const phone = normalizePhone(input.phone || input.whatsapp);
   const selectedServices = normalizeSelectedServices(input);
   const primaryService = selectedServices[0];

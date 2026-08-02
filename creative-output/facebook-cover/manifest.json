@@ -1,0 +1,58 @@
+{
+  "generatedAt": "2026-08-02T00:18:33.262Z",
+  "canvas": {
+    "width": 1640,
+    "height": 624
+  },
+  "safeArea": {
+    "left": 220,
+    "right": 1420,
+    "width": 1200,
+    "height": 624
+  },
+  "copy": {
+    "title": "You choose your therapist",
+    "subtitle": "Real photos · No deposit · As fast as 30 min",
+    "brand": "EasyGo Spa · Premium Home Massage"
+  },
+  "sourcePolicy": "EasyGoSpa therapist-record images only; deterministic crop and tone normalization; no generated faces.",
+  "variants": [
+    {
+      "file": "EasyGoSpa-Facebook-Cover-A-text-left.png",
+      "layout": "text-left",
+      "technicians": [
+        "th-a-018",
+        "th-a-060",
+        "th-a-023",
+        "th-a-058"
+      ],
+      "output": {
+        "format": "png",
+        "width": 1640,
+        "height": 624,
+        "channels": 4,
+        "premultiplied": false,
+        "size": 534174
+      }
+    },
+    {
+      "file": "EasyGoSpa-Facebook-Cover-B-text-top.png",
+      "layout": "text-top",
+      "technicians": [
+        "th-a-062",
+        "th-a-060",
+        "th-a-023",
+        "th-a-058",
+        "th-a-057"
+      ],
+      "output": {
+        "format": "png",
+        "width": 1640,
+        "height": 624,
+        "channels": 4,
+        "premultiplied": false,
+        "size": 610797
+      }
+    }
+  ]
+}
