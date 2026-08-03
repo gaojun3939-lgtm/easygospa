@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { captureAdAttribution } from '@/lib/adAttribution.mjs';
+import { trackMetaEvent as trackEvent } from '@/lib/metaPixelTrack';
 
 // Meta Pixel(批A 投流引擎的旁路眼睛):记录官网访客与下单动作,回传 Meta 让广告越投越准,
 // 并为将来"追官网来过没下单的人"攒受众。
@@ -19,6 +20,9 @@ export default function MetaPixel() {
   useEffect(() => {
     // 归因抓取:每次进站跑一次,先到先得(第一次把客人带来的那条广告算功劳)
     try { captureAdAttribution(); } catch { /* 埋点绝不能拖累页面 */ }
+    // 没配像素时这一枪也要记进我们自己的底稿——底稿的意义就是"像素不管用了我们还有数"。
+    // 配了像素的情况走下面那个 effect(要等 fbq('init') 之后才能 track)。
+    if (!PIXEL_ID) trackEvent('PageView');
   }, []);
 
   useEffect(() => {
@@ -31,7 +35,8 @@ export default function MetaPixel() {
     script.src = 'https://connect.facebook.net/en_US/fbevents.js';
     document.head.appendChild(script);
     window.fbq('init', PIXEL_ID);
-    window.fbq('track', 'PageView');
+    // 走 trackEvent 而不是直接 fbq:这样这一枪也会抄一份进我们自己的底稿
+    trackEvent('PageView');
   }, []);
   return null;
 }

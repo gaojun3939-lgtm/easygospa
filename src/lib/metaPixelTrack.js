@@ -5,9 +5,55 @@
 
 const PIXEL_ID = String(process.env.NEXT_PUBLIC_META_PIXEL_ID || '').trim();
 
+// ================= 我们自己的底稿 =================
+// 2026-08-04 老板:"为什么我们后台还是没有底稿?"
+// 前 5 枪本来只有客人浏览器发给 Meta,我们服务器全程不知情 —— Meta 说收到多少就是
+// 多少,对不了账;像素被拦截器挡掉或者埋点被改坏,我们这边一点动静没有。
+// 所以每打一枪,顺手也抄一份到我们自己库里(POST /api/funnel-log)。
+// 三条铁规矩:①绝不阻塞主流程 ②失败一声不吭 ③一个字的个人信息都不带。
+
+// 匿名会话号:只为把同一个人的漏斗串起来(进来100个,走到填手机号剩几个)。
+// 存 sessionStorage,关标签页就换一个,认不到具体是谁。
+function funnelSessionId() {
+  try {
+    const KEY = 'eg_funnel_sid';
+    let sid = window.sessionStorage.getItem(KEY);
+    if (!sid) {
+      sid = `s${Date.now().toString(36)}${Math.random().toString(36).slice(2, 10)}`;
+      window.sessionStorage.setItem(KEY, sid);
+    }
+    return sid;
+  } catch { return ''; }
+}
+
+function logToOurBooks(eventName, params) {
+  try {
+    if (typeof window === 'undefined') return;
+    const body = JSON.stringify({
+      event_name: eventName,
+      session_id: funnelSessionId(),
+      value: Number(params?.value) || 0,
+      currency: params?.currency || 'PHP',
+      content_name: params?.content_name || '',
+      content_ids: Array.isArray(params?.content_ids) ? params.content_ids : [],
+      page_path: window.location?.pathname || ''
+    });
+    // sendBeacon 优先:客人点完就跳走(比如提交后跳 /track)时,普通 fetch 会被浏览器
+    // 掐断,beacon 不会——Schedule 那一枪最容易丢在这上面。
+    if (navigator?.sendBeacon) {
+      navigator.sendBeacon('/api/funnel-log', new Blob([body], { type: 'application/json' }));
+      return;
+    }
+    fetch('/api/funnel-log', { method: 'POST', headers: { 'content-type': 'application/json' }, body, keepalive: true }).catch(() => {});
+  } catch { /* 底稿是旁路,绝不影响主流程 */ }
+}
+
 // options 走 fbq 的第四个参数,目前只用 eventID:同一单浏览器和服务端都报时,
 // Meta 靠它去重,不会算成两次。
 export function trackMetaEvent(eventName, params, options) {
+  // 先记我们自己的账,再发 Meta:
+  // 万一像素被拦截器挡掉/没配像素 ID,我们这份底稿照样在——那正是要它的原因。
+  logToOurBooks(eventName, params);
   try {
     if (typeof window === 'undefined' || typeof window.fbq !== 'function') return;
     if (options && options.eventID) window.fbq('track', eventName, params || {}, options);
