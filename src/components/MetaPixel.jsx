@@ -11,11 +11,9 @@ import { captureAdAttribution } from '@/lib/adAttribution.mjs';
 //   两件事互不依赖:没配像素 ID 时归因照抓。
 const PIXEL_ID = String(process.env.NEXT_PUBLIC_META_PIXEL_ID || '').trim();
 
-export function trackMetaEvent(eventName, params) {
-  try {
-    if (typeof window !== 'undefined' && typeof window.fbq === 'function') window.fbq('track', eventName, params || {});
-  } catch { /* 像素是增强,绝不影响主流程 */ }
-}
+// 打枪那一下搬去了 @/lib/metaPixelTrack(纯 JS,好让验收脚本 import 真函数)。
+// 这里 re-export,现有 import 路径全都不动。
+export { trackMetaEvent, identifyMetaUser } from '@/lib/metaPixelTrack';
 
 export default function MetaPixel() {
   useEffect(() => {

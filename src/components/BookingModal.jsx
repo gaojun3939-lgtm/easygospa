@@ -41,7 +41,7 @@ import {
 } from '../lib/activeBooking.mjs';
 import { cancelPublicBooking } from '../lib/publicBookingCancel.mjs';
 import { LocationPicker } from './LocationPicker.jsx';
-import { trackMetaEvent } from './MetaPixel.jsx';
+import { trackMetaEvent, identifyMetaUser } from './MetaPixel.jsx';
 import { AddressAutocompleteInput } from './AddressAutocompleteInput.jsx';
 import {
   BOOKING_PHONE_COUNTRIES,
@@ -1432,8 +1432,12 @@ export default function BookingModal() {
     setAvailability({ status: 'idle', days: [], earliest: null });
     setError('');
     setStep('detail');
-    // 漏斗眼睛(2026-07-28:169 进站 0 单,死在哪一步没人知道)——看了技师详情
-    trackMetaEvent('ViewContent');
+    // 漏斗眼睛(2026-07-28:169 进站 0 单,死在哪一步没人知道)——看了技师详情。
+    // 这一步只带技师、不带金额:进详情时故意不预选服务(见上面注释),价格还没定,
+    // 报个 0 会把 Meta 的均价学歪。带上技师是为了看"哪几个人最招客"。
+    trackMetaEvent('ViewContent', {
+      content_name: therapist?.name || '', content_ids: therapist?.id ? [therapist.id] : [], content_type: 'product'
+    });
   };
 
   // 老板 2026-07-24:进详情页时滚回顶部——之前从列表滚下去点技师,详情会停在中间(价格)。
@@ -1493,8 +1497,13 @@ export default function BookingModal() {
     if (!selectedServiceOption) return;
     setError('');
     setStep('email');
-    // 漏斗眼睛——选好服务,进入邮箱步
-    trackMetaEvent('AddToCart');
+    // 漏斗眼睛——选好服务,进入邮箱步。
+    // 2026-08-04 补金额:原来四个事件全是光秃秃的,Meta 只知道"有人点了",
+    // 不知道值多少钱 → 学不出"高价单长什么样",也没法用"最大化转化价值"。
+    trackMetaEvent('AddToCart', {
+      value: selectedTotalAmount, currency: 'PHP',
+      content_name: formData.service || '', content_ids: formData.serviceId ? [formData.serviceId] : [], content_type: 'product'
+    });
   };
 
   // 2026-08-01 去邮箱:这一步只认手机号(必填有效),邮箱变成可有可无的历史字段。
@@ -1516,6 +1525,20 @@ export default function BookingModal() {
     setFormData(current => ({ ...current, customerEmail: session.customerEmail, customerName: session.customerName || current.customerName, phone: sessionPhone.localNumber || current.phone }));
     setError('');
     setStep('details');
+    // 进阶匹配(2026-08-04 老板拍板开):客人刚交出手机号,这是全流程最早能认人的一刻。
+    // 必须赶在 Lead 之前调——fbq('init') 更新完认人字段,后面这一枪才带得上,
+    // 顺序反了这条 Lead 就白瞎(只有 cookie,服务端的 Purchase 对不上同一个人)。
+    identifyMetaUser({
+      phone: normalizedSession.phone,
+      email: session.customerEmail,
+      name: session.customerName
+    });
+    // 漏斗眼睛——手机号填完了(2026-08-04 补)。
+    // 017cc0f 那次照电商三件套(看商品/加购物车/去结账)埋,漏了这一步:我们比电商多
+    // 一道"交出个人信息"的坎,而这正是最容易掉人的地方。原来"加入购物车→发起结账"
+    // 之间掉了多少人只知道掉了,不知道卡在手机号还是卡在后面的姓名地址。
+    // 用 Lead:Meta 对它的标准定义就是"用户留下了联系方式",跟这一步严丝合缝。
+    trackMetaEvent('Lead', { value: selectedTotalAmount, currency: 'PHP', content_name: formData.service || '' });
   };
 
   const validateDetails = () => {
@@ -1681,7 +1704,10 @@ export default function BookingModal() {
     setCouponPreview(null);
     setStep('confirm');
     // 漏斗眼睛——资料填完,到了最后确认页
-    trackMetaEvent('InitiateCheckout');
+    trackMetaEvent('InitiateCheckout', {
+      value: selectedTotalAmount, currency: 'PHP',
+      content_name: formData.service || '', content_ids: formData.serviceId ? [formData.serviceId] : [], content_type: 'product'
+    });
     void requestCouponPreview(false);
   };
 
@@ -1827,7 +1853,19 @@ export default function BookingModal() {
         return;
       }
       activeBookingInspectionSequenceRef.current += 1;
-      trackMetaEvent('Schedule'); // 像素旁路:官网下单成功打一个信号给 Meta(没配像素时静默)
+      // 像素旁路:官网下单成功打一个信号给 Meta(没配像素时静默)。
+      // 2026-08-04 补金额+单号。
+      // ⚠ eventID 是防**这一枪自己**被重复上报(客人刷新/重试/重渲染),不是跟服务端去重:
+      //   服务端回传的是 Purchase(easygospa-ai/lib/conversionSweep.js),这里是 Schedule,
+      //   Meta 按 event_name+event_id 配对去重,名字都不一样,本来就不会互相抵消。
+      //   两边的 ID 也不是同一个(服务端用 EG-0803-004 这种短号,这里用 mbr-brand-a-xxx)——
+      //   哪天要让两边认成同一笔,得先把 ID 口径统一,别以为现在已经通了。
+      // 金额报服务原价:真正到手多少由服务端 Purchase 报
+      // (我们是货到付款,下单这一刻钱还没收,浏览器这边不该说"已付款")。
+      trackMetaEvent('Schedule', {
+        value: selectedTotalAmount, currency: 'PHP',
+        content_name: formData.service || '', content_ids: formData.serviceId ? [formData.serviceId] : [], content_type: 'product'
+      }, { eventID: String(reference || '') });
       setIsOpen(false);
       router.push(`/track/${encodeURIComponent(reference)}`);
     } catch (submitError) {
