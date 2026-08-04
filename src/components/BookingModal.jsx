@@ -36,6 +36,7 @@ import {
   clearActiveBooking,
   isActiveBookingReference,
   isPublicBookingCancelToken,
+  readActiveBooking,
   resolveActiveBookingGate,
   writeActiveBooking
 } from '../lib/activeBooking.mjs';
@@ -1265,6 +1266,9 @@ export default function BookingModal() {
       isCurrent: () => inspectionSequence === activeBookingInspectionSequenceRef.current,
       loadStatus: async reference => {
         const response = await fetch(apiUrl(`/api/booking-status?ref=${encodeURIComponent(reference)}`), { cache: 'no-store' });
+        // 404 = 服务器明确说"这单不存在",跟 502/断网 是两回事,不能一起抹成 null。
+        // 抹掉的后果:单被删的客人被永久拦住,下不了单也取消不掉(2026-08-04 老板踩到)。
+        if (response.status === 404) return { ok: false, missing: true };
         if (!response.ok) return null;
         return response.json().catch(() => null);
       }
@@ -1739,6 +1743,15 @@ export default function BookingModal() {
       return;
     }
     if (result.httpStatus === 404) {
+      // 取消接口的 404 分不清"联系方式填错了"还是"这单根本没了"。
+      // 别猜——拿状态接口再问一次,它答得明确。真没了 gate 会自己撕纸条、关弹窗;
+      // 单还在就照旧提示填错。否则单被删的客人连取消这条自救路都堵死。
+      await inspectStoredActiveBooking();
+      if (!readActiveBooking()) {
+        setActiveCancelConfirming(false);
+        setActiveCancelContact('');
+        return;
+      }
       setActiveCancelError("We couldn't verify that booking with those details.");
       return;
     }
