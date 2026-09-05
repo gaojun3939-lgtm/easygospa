@@ -46,13 +46,28 @@ export async function GET(request) {
   }
 
   try {
-    const response = await fetch(targetUrl, { cache: 'no-store' });
+    // 2026-09-06 ②只传变化:把浏览器带来的 If-None-Match 原样转给后台;后台说"没变"(304)
+    // 就原样回 304 零字节,墙保持原样。有内容时把后台的 ETag 一并交给浏览器下次带回来。
+    const ifNoneMatch = String(request.headers.get('if-none-match') || '').trim();
+    const response = await fetch(targetUrl, {
+      cache: 'no-store',
+      headers: ifNoneMatch ? { 'If-None-Match': ifNoneMatch } : {}
+    });
+    const upstreamEtag = String(response.headers.get('etag') || '').trim();
+    if (response.status === 304 && ifNoneMatch) {
+      return new NextResponse(null, {
+        status: 304,
+        headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate', ...(upstreamEtag ? { ETag: upstreamEtag } : {}) }
+      });
+    }
     const text = await response.text();
     const payload = parseJson(text);
     if (!response.ok || payload?.ok === false || !payload) {
       return json(getFallbackWebsiteBookingCatalog('ai_office_public_catalog_unavailable'));
     }
-    return json(normalizePublicBookingCatalog(payload));
+    const out = json(normalizePublicBookingCatalog(payload));
+    if (upstreamEtag) out.headers.set('ETag', upstreamEtag);
+    return out;
   } catch {
     return json(getFallbackWebsiteBookingCatalog('ai_office_public_catalog_fetch_failed'));
   }

@@ -927,6 +927,8 @@ export default function BookingModal() {
   const [catalogStatus, setCatalogStatus] = useState('loading');
   const catalogStatusRef = useRef('loading');
   const catalogHydratedRef = useRef(false);
+  // 上次成功拿到名单时后台给的 ETag(按请求地址记,带坐标和不带坐标是两份)
+  const catalogEtagRef = useRef({ url: '', etag: '' });
   const bookingOpenRef = useRef(false);
   // ?book=1 自动弹窗只允许触发一次:目录每 12 秒刷新会让所在的 effect 重跑,
   // 不加这道闸,客人每 12 秒被打回技师墙一次(2026-07-29 老板实测发现)。
@@ -1121,9 +1123,17 @@ export default function BookingModal() {
         const catalogUrl = catalogCoords
           ? apiUrl(`/api/booking-catalog?lat=${encodeURIComponent(catalogCoords.latitude)}&lng=${encodeURIComponent(catalogCoords.longitude)}`)
           : apiUrl('/api/booking-catalog');
-        const response = await fetch(catalogUrl, { cache: 'no-store' });
+        // ②只传变化(2026-09-06):带上上次的 ETag,后台内容没变就回 304 零字节,墙原样不动。
+        const knownEtag = catalogEtagRef.current.url === catalogUrl ? catalogEtagRef.current.etag : '';
+        const response = await fetch(catalogUrl, {
+          cache: 'no-store',
+          headers: knownEtag ? { 'If-None-Match': knownEtag } : {}
+        });
+        if (response.status === 304 && knownEtag && catalogStatusRef.current === 'ready') return;
         const payload = await response.json().catch(() => null);
         if (!active || !response.ok || payload?.ok !== true) throw new Error('BOOKING_CATALOG_LOAD_FAILED');
+        const nextEtag = String(response.headers.get('etag') || '').trim();
+        catalogEtagRef.current = nextEtag ? { url: catalogUrl, etag: nextEtag } : { url: '', etag: '' };
         if (payload.fallback) {
           // 静默刷新撞上兜底名单:保住墙上的真名单,不用假名单顶掉。
           if (catalogStatusRef.current === 'ready') return;
