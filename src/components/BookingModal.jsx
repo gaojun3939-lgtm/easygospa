@@ -93,6 +93,8 @@ const timeSlots = Array.from({ length: 48 }, (_, index) => `${String(Math.floor(
 const BOOKING_LEAD_MINUTES = 30;
 const areaOptions = ['BGC', 'Makati', 'Taguig', 'Pasay', 'Ortigas', 'Metro Manila'];
 const allServiceAreasValue = 'all_service_areas';
+// 后台广播用的租户频道名(与 ai-office-admin 的 DEFAULT_TENANT_ID 一致);可用环境变量覆盖
+const LIVE_TENANT_ID = process.env.NEXT_PUBLIC_LIVE_TENANT_ID || 'brand-a';
 const catalogUnavailableNotice = 'No specific therapist is available right now.';
 const catalogUnavailableFollowUp = 'Please try again in a few minutes, or message us on WhatsApp to book.';
 const missingProfileIntroduction = 'No profile introduction has been provided yet.';
@@ -1145,19 +1147,35 @@ export default function BookingModal() {
     }
     loadBookingCatalog();
     // 老板 2026-07-18:技师墙开着也要实时反映技师端动态(接单→最早可约往后跳,
-    // 完成/退单→往前跳)。每 12 秒静默重拉,只在弹窗打开且页面可见时跑,不闪
-    // Loading、不顶掉已选技师。
-    const liveTimer = window.setInterval(() => {
-      if (bookingOpenRef.current && document.visibilityState === 'visible') loadBookingCatalog();
-    }, 12000);
-    const onVisible = () => {
+    // 完成/退单→往前跳)。只在弹窗打开且页面可见时静默重拉,不闪 Loading、不顶掉已选技师。
+    // 2026-09-06 老板拍板(数据库被轮询拖死后):改成 Supabase Realtime 广播驱动——后台每次
+    // 写单/技师上下班会往 live:<tenant> 频道发一条"变了"(不带业务数据),官网收到才重拉;
+    // 原来的 12 秒轮询降级为 60 秒兜底。频道上只有信号,真数据仍走 /api/booking-catalog。
+    const refreshIfWatching = () => {
       if (bookingOpenRef.current && document.visibilityState === 'visible') loadBookingCatalog();
     };
+    const liveTimer = window.setInterval(refreshIfWatching, 60000);
+    const onVisible = refreshIfWatching;
     document.addEventListener('visibilitychange', onVisible);
+    let liveChannel = null;
+    const liveClient = getSupabaseClient();
+    if (liveClient) {
+      try {
+        liveChannel = liveClient.channel(`live:${LIVE_TENANT_ID}`, { config: { broadcast: { self: false } } });
+        liveChannel.on('broadcast', { event: 'changed' }, message => {
+          const scope = message?.payload?.scope;
+          if (!scope || scope === 'catalog' || scope === 'orders' || scope === 'therapists') refreshIfWatching();
+        });
+        liveChannel.subscribe();
+      } catch {
+        liveChannel = null;
+      }
+    }
     return () => {
       active = false;
       window.clearInterval(liveTimer);
       document.removeEventListener('visibilitychange', onVisible);
+      if (liveChannel && liveClient) { try { liveClient.removeChannel(liveChannel); } catch { /* ignore */ } }
     };
   }, [customerCoords]);
 
