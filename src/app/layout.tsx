@@ -311,9 +311,12 @@ export default function RootLayout({
 
           {/* Bottom Bar */}
           <div className="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm text-gray-400">
-              © 2026 EasyGo Spa. All rights reserved.
-            </p>
+            <div className="text-sm text-gray-400 text-center md:text-left leading-[1.618]">
+              <p>© 2026 EASYGOSPA HOME MASSAGE SERVICES OPC. All rights reserved.</p>
+              <p>SEC Reg. No. 2026060255013-01</p>
+              <p>Unit 706, Medical Towers Makati, 103 Rufino Street,</p>
+              <p>Legazpi Village, Bel-Air, Makati City, Metro Manila 1209</p>
+            </div>
             <nav aria-label="Legal links">
               <div className="flex gap-6 text-sm">
                 <a
