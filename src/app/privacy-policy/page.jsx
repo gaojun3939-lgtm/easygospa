@@ -72,6 +72,7 @@ export default function PrivacyPolicyPage() {
               <li>Semaphore — SMS verification codes in the Philippines.</li>
               <li>Google Firebase Cloud Messaging and Apple Push Notification service — app notifications.</li>
               <li>Google Analytics for Firebase — app usage statistics.</li>
+              <li>Firebase Crashlytics — crash reports (device model, app version, error details) so we can fix problems.</li>
               <li>AppsFlyer — measuring which ads and links bring app installs and bookings.</li>
               <li>Meta (Meta Pixel on our website) — measuring which ads bring website bookings.</li>
               <li>Xendit — QR Ph payments of platform fees by therapists.</li>
