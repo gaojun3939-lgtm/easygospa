@@ -1,35 +1,11 @@
-"use client"
-import Hero from "../components/Hero";
-import TransitionCircle from "../components/TransitionCircle";
-import WhyChooseUs from "../components/WhyChooseUs";
-import PromotionalBanner from "../components/PromotionalBanner";
-import ProductSpecialty from "../components/ProductSpecialty";
-import WhatWeDo from "../components/WhatWeDo";
-import TestimonialsSection from "../components/TestimonialsSection";
-import BrandPartners from "../components/BrandPartners";
-import StatsSection from "../components/StatsSection";
-import ServicesSection from "../components/ServicesSection";
+import HomePage from "../components/HomePage";
+import { loadPublicServiceMenu } from "../lib/publicServiceMenu.mjs";
 
-export default function Home() {
-  return (
-    <div>
-      <div className="relative">
-        <Hero />
-        <TransitionCircle />
-      </div>
-      {/* The container below provides the background for all subsequent sections, ensuring a seamless transition */}
-      <div className="bg-[#FDFCF9] relative">
-        <WhyChooseUs />
-        <ServicesSection />
-        <StatsSection />
-      </div>
-      <ProductSpecialty />
-      <div className="bg-[#FDFCF9] relative">
-        <WhatWeDo />
-        <PromotionalBanner />
-        <BrandPartners />
-       
-      </div>
-    </div>
-  );
+// 2026-10-26:首页服务卡要显示后台真价(Xendit 审核要一眼看到价格)。
+// 每 60 秒最多重算一次;读不到后台时继续给上一次的页面,规则见 lib/publicServiceMenu.mjs。
+export const revalidate = 60;
+
+export default async function Home() {
+  const services = await loadPublicServiceMenu();
+  return <HomePage services={services} />;
 }

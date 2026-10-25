@@ -22,6 +22,9 @@ export default function Navbar() {
 
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  // 菜单「实底」样式(米色玻璃底 + 深色字 + 彩色莲花):往下滚、打开手机菜单时用;
+  // /pricing 顶上没有深色大图,透明底白字压在米色上看不见,所以这一页一直用实底(老板 2026-10-26 点头)。
+  const solidNav = isScrolled || isMenuOpen || pathname === "/pricing";
 
   React.useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 80);
@@ -78,6 +81,8 @@ export default function Navbar() {
     () => [
       { name: "Home", url: "/" },
       { name: "Services", url:"/services" },
+      // 2026-10-26 老板定:价目表页挂进菜单,Xendit 审核员和客人一进站就找得到价格
+      { name: "Pricing", url: "/pricing" },
       { name: "Contact", url: "/contact" },
     ],
     []
@@ -88,7 +93,7 @@ export default function Navbar() {
     <div>
          <nav
         className={`fixed font-extrabold top-0 left-0 right-0 z-50 nav-transition ${
-          isScrolled || isMenuOpen ? "glass-nav border-b-1 border-[#2db83d1a] backdrop-blur-lg bg-[#f8f2ecf2] py-4" : "bg-transparent py-6"
+          solidNav ? "glass-nav border-b-1 border-[#2db83d1a] backdrop-blur-lg bg-[#f8f2ecf2] py-4" : "bg-transparent py-6"
         }`}
         role="navigation"
         aria-label="Main navigation"
@@ -102,7 +107,7 @@ export default function Navbar() {
               aria-label="EasyGo Spa - Home Massage Service"
             >
               <div className="relative">
-                <BrandMark size={34} tone={isScrolled || isMenuOpen ? 'brand' : 'light'} />
+                <BrandMark size={34} tone={solidNav ? 'brand' : 'light'} />
               </div>
               <div>
                 <h1
@@ -112,7 +117,7 @@ export default function Navbar() {
                 </h1>
                 <p
                   className={`text-xs text-center tracking-widest ${
-                    isScrolled || isMenuOpen
+                    solidNav
                       ? "text-[#2db83d]"
                       : "text-[#2db83d] text-shadow-dark"
                   }`}
@@ -134,7 +139,7 @@ export default function Navbar() {
                     className={`text-lg font-medium transition-all duration-300 hover:text-[#2db83d] relative group ${
                       active
                         ? "text-[#2db83d]"
-                        : isScrolled || isMenuOpen
+                        : solidNav
                         ? "text-[#0F0F0F]"
                         : "text-white text-shadow-dark"
                     }`}
@@ -157,7 +162,7 @@ export default function Navbar() {
                   window.dispatchEvent(new CustomEvent("open-my-orders"))
                 }
                 className={`text-lg font-medium transition-colors duration-300 hover:text-[#2db83d] ${
-                  isScrolled || isMenuOpen ? "text-[#0F0F0F]" : "text-white text-shadow-dark"
+                  solidNav ? "text-[#0F0F0F]" : "text-white text-shadow-dark"
                 }`}
                 aria-label="Open my orders"
               >
@@ -177,7 +182,7 @@ export default function Navbar() {
             {/* Mobile Menu Button */}
             <button
               className={`lg:hidden p-2 z-50 focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 rounded ${
-                isScrolled || isMenuOpen
+                solidNav
                   ? "text-[#0F0F0F]"
                   : "text-white text-shadow-dark"
               }`}

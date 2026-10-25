@@ -6,78 +6,13 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Head from "next/head";
 
-// Complete EasyGo Spa Service Menu with SEO-optimized alt text and optimized image URLs
-const servicesData = [
-  // Massage Services
-  {
-    id: 1,
-    name: "Swedish Massage",
-    category: "massage",
-    description: "Indulge in a timeless classic at Manila's premier wellness destination. Our Swedish Massage utilizes masterful, flowing strokes and gentle kneading to dissolve muscle tension, enhance circulation, and guide you to a state of profound relaxation. This is the perfect introduction to therapeutic massage, meticulously performed by our certified therapists in Metro Manila to restore your body's natural harmony.",
-    price: 2500,
-    duration: "60 min",
-    image_url: "/images/brand/service-previews/service-swedish-preview.webp",
-    alt_text: "Professional Swedish massage therapy session at EasyGo Spa luxury spa in Metro Manila - premium relaxation treatment"
-  },
-  {
-    id: 2,
-    name: "Hot Stone Massage",
-    category: "massage",
-    description: "A relaxing massage using warm stones and gentle techniques to ease muscle tension, improve comfort, and support deep relaxation.",
-    price: 3500,
-    duration: "90 min",
-    image_url: "/images/brand/service-previews/service-hot-stone-preview.webp",
-    alt_text: "Hot stone massage with warm basalt stones for professional home massage service in Metro Manila"
-  },
-  {
-    id: 3,
-    name: "Thai Dry Massage",
-    category: "massage", 
-    description: "Experience the ancient art of healing with our authentic Thai Dry Massage in Metro Manila. This traditional, oil-free therapy combines rhythmic acupressure, gentle rocking, and assisted yoga stretches to unblock energy pathways, improve flexibility, and relieve deep-seated tension. Let our expert therapists guide your body into a state of blissful release and renewed vitality.",
-    price: 3000,
-    duration: "75 min",
-    image_url: "/images/brand/service-previews/service-thai-dry-preview.webp",
-    alt_text: "Traditional Thai dry massage therapy with acupressure and yoga stretches at EasyGo Spa Metro Manila"
-  },
-  {
-    id: 4,
-    name: "Foot Massage",
-    category: "massage",
-    description: "Revitalize your entire being from the ground up with our specialized Foot Massage. This ancient reflexology-based treatment targets key pressure points in your feet that correspond to different organs and systems in the body. Alleviate fatigue, reduce stress, and promote overall wellness in the comfort of your own space.",
-    price: 1500,
-    duration: "45 min", 
-    image_url: "/images/brand/service-previews/service-foot-preview.webp",
-    alt_text: "Relaxing foot reflexology massage therapy at EasyGo Spa luxury wellness center in Metro Manila"
-  },
-  {
-    id: 5,
-    name: "Head and Shoulder Massage",
-    category: "massage",
-    description: "Melt away the stresses of modern life with our targeted Head and Shoulder Massage. This concentrated therapy focuses on the high-tension areas of your neck, shoulders, and scalp, providing immediate relief from headaches, stiffness, and digital fatigue. It's the ultimate quick escape to tranquility, offered from the best home massage team in Metro Manila.",
-    price: 1200,
-    duration: "30 min",
-    image_url: "/images/brand/service-previews/service-head-shoulder-preview.webp",
-    alt_text: "Therapeutic head and shoulder massage for stress relief at EasyGo Spa premium spa in Metro Manila"
-  },
-  {
-    id: 6,
-    name: "Deep Tissue Massage",
-    category: "massage",
-    description: "For those seeking powerful relief from chronic pain and muscle tightness, our Deep Tissue Massage is the definitive solution. Our highly skilled therapists use slow, deliberate strokes and deep pressure to target the inner layers of your muscles and connective tissues. Ideal for athletes and individuals with persistent knots, this is a truly transformative treatment.",
-    price: 3500,
-    duration: "60 min",
-    image_url: "/images/brand/service-previews/service-deep-tissue-preview.webp",
-    alt_text: "Deep tissue massage therapy for chronic pain relief at EasyGo Spa luxury spa - professional treatment in Metro Manila"
-  },
-];
+import { ServiceCardImage, ServicePrices } from "./ServiceMenuParts";
 
-const categories = [
-  { key: "all", name: "All Services" },
-  { key: "massage", name: "Massage Therapy" },
-  
-];
+// 2026-10-26 老板定:原来这里写死 6 张卡(其中 Thai Dry / Foot / Head and Shoulder 后台根本没有,
+// 还带着 ₱2,500 这类假价字段)。现在卡片 = 后台「服务项目」里在售的项目,名字、介绍、三档价格都读后台,
+// 跟下单页、/pricing 同一份;页面在服务端读好传进来(app/page.tsx)。
 
-export default function ServicesSection() {
+export default function ServicesSection({ services = [] }) {
   
 
   const handleServiceBooking = useCallback((service) => {
@@ -122,7 +57,7 @@ export default function ServicesSection() {
 
           {/* Services Grid */}
           <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-[clamp(1rem,2vw,2.5rem)]">
-            {servicesData.slice(0, 6).map((service, index) => (
+            {services.map((service, index) => (
               <motion.div
                 key={service.id}
                 initial={{ opacity: 0, y: 60 }}
@@ -137,13 +72,7 @@ export default function ServicesSection() {
               >
                 {/* Service Image */}
                 <div className="relative h-64 overflow-hidden">
-                  <img
-                    src={service.image_url}
-                    alt={service.alt_text}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    loading="lazy"
-                    decoding="async"
-                  />
+                  <ServiceCardImage service={service} />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                 </div>
@@ -157,6 +86,7 @@ export default function ServicesSection() {
                   <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-3">
                     {service.description}
                   </p>
+                  <ServicePrices options={service.durationOptions} className="mb-4" />
                   <button 
                     onClick={() => handleServiceBooking(service)}
                     className="w-full bg-[#2db83d]/10 text-[#2db83d] py-3 rounded-full font-medium hover:bg-[#2db83d] hover:text-white transition-all duration-300 group-hover:shadow-lg flex items-center justify-center gap-2"
