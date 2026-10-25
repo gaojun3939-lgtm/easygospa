@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Users, Car, Coins, Moon } from "lucide-react";
 
@@ -8,68 +8,16 @@ import { Users, Car, Coins, Moon } from "lucide-react";
 // 技师墙上每个技师都是 "5.0 ★ (0 reviews) NEW"。
 // 5000 个满意客户却一条评价都没有,一屏之内就自相矛盾,客人一眼看穿就再不信任何一句。
 // 换成三条**经得起当场核对**的真话,也正好是我们跟普通上门按摩的区别。
+// ⚠ 2026-10-26 老板改:第三格「Open Until 2 AM」→「24/7 Available」,跟首页顶上「24/7 Available」一致。
+// 同时去掉从 0 往上跳的计数动画——网页原文和动画前的截图里会是「0 AM」,像页面坏了(Xendit 审核会截图)。
+// 现在直接写最终的字,打开就是这样。
 const stats = [
-  { icon: Car, label: "Transport Fee", value: 0, prefix: "₱" },
-  { icon: Coins, label: "Tips Expected", value: 0, prefix: "₱" },
-  { icon: Moon, label: "Open Until", value: 2, suffix: " AM" },
+  { icon: Car, label: "Transport Fee", text: "₱0" },
+  { icon: Coins, label: "Tips Expected", text: "₱0" },
+  { icon: Moon, label: "Available", text: "24/7" },
 ];
 
 const StatsSection = () => {
-  const [animatedValues, setAnimatedValues] = useState(stats.map(() => 0));
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          stats.forEach((stat, index) => {
-            let start = 0;
-            const end = stat.value;
-            // ⚠ 数值是 0 的那两条(免车费/免小费)不能走计数动画:
-            // duration/0 = 无穷,setInterval 拿到无穷不会停,而且 start 永远等不到 0,
-            // 计数器会一直往上爬。0 直接落定,不动。
-            if (end <= 0) {
-              setAnimatedValues((prev) => {
-                const newValues = [...prev];
-                newValues[index] = 0;
-                return newValues;
-              });
-              return;
-            }
-            const duration = 2000;
-            const stepTime = Math.max(16, Math.abs(Math.floor(duration / end)));
-            let timer;
-
-            timer = setInterval(() => {
-              start += 1;
-              setAnimatedValues((prev) => {
-                const newValues = [...prev];
-                newValues[index] = start;
-                return newValues;
-              });
-
-              if (start === end) {
-                clearInterval(timer);
-              }
-            }, stepTime);
-          });
-          observer.unobserve(entry.target);
-        }
-      },
-      { threshold: 0.5 }
-    );
-
-    const sectionRef = document.querySelector("#stats-section");
-    if (sectionRef) {
-      observer.observe(sectionRef);
-    }
-
-    return () => {
-      if (sectionRef) {
-        observer.unobserve(sectionRef);
-      }
-    };
-  }, []);
-
   return (
     <section id="stats-section" className="py-16 md:py-20 bg-gradient-to-b from-white to-[#FDFCF9] relative overflow-hidden">
       <div
@@ -172,9 +120,7 @@ const StatsSection = () => {
                   key={`value-${index}`}
                   className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-[#f8f2ecf2] group-hover:text-[#0F0F0F] transition-colors duration-300"
                 >
-                  {stat.prefix}
-                  {animatedValues[index].toLocaleString()}
-                  {stat.suffix}
+                  {stat.text}
                 </motion.p>
                 <p className="font-sans text-sm text-gray-300 uppercase tracking-wider">
                   {stat.label}
