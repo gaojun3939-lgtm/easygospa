@@ -276,15 +276,22 @@ export function filterTherapistsForWall({
 }
 
 // 墙上可选的服务类型(所有技师的服务/展示服务并集)。
-export function serviceTypeOptionsForWall(therapists = websiteTherapists) {
-  const set = new Set();
+// 墙顶「Service type」筛选的选项。
+// ⚠ 2026-10-26 老板定:只列后台价目里在售、且至少一位技师能做的项目——跟价目表一模一样。
+// 原来把技师资料里自己填的旧标签(specialties)也并进来,筛选里冒出 10 个价目表里没有的名字
+// (Swedish Massage with Extra Hand & Foot Massage、Deep Tissue Massage 跟 Deep tissue 重复……),
+// Xendit 审核员走结账流程一眼对不上。旧标签照样留着给搜索框匹配,只是不再当选项。
+export function serviceTypeOptionsForWall(therapists = websiteTherapists, services = []) {
+  const offered = new Set();
   for (const therapist of concreteTherapistsForWall('', therapists)) {
-    for (const name of [...(therapist.availableServices || []), ...(therapist.specialties || [])]) {
+    for (const name of therapist.availableServices || []) {
       const clean = String(name || '').trim();
-      if (clean) set.add(clean);
+      if (clean) offered.add(clean);
     }
   }
-  return Array.from(set).sort((a, b) => a.localeCompare(b));
+  const catalogNames = services.map(service => String(service?.name || '').trim()).filter(Boolean);
+  const names = catalogNames.length ? catalogNames.filter(name => offered.has(name)) : Array.from(offered);
+  return Array.from(new Set(names)).sort((a, b) => a.localeCompare(b));
 }
 
 export function servicesForTherapist(therapistId = '', therapists = websiteTherapists, services = websiteBookingServices) {

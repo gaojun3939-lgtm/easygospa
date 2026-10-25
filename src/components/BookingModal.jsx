@@ -1005,7 +1005,7 @@ export default function BookingModal() {
   // safeFallbackTherapist 仅保留给历史链接兜底解析,不再作为可选项展示。
   const selectedTherapist = useMemo(() => findWebsiteTherapist(formData.requestedTechnicianId, bookingTherapists), [bookingTherapists, formData.requestedTechnicianId]);
   const serviceFilterName = formData.preferredService || formData.service;
-  const serviceTypeOptions = useMemo(() => serviceTypeOptionsForWall(catalogTherapists), [catalogTherapists]);
+  const serviceTypeOptions = useMemo(() => serviceTypeOptionsForWall(catalogTherapists, catalogServices), [catalogTherapists, catalogServices]);
   const wallTherapists = useMemo(() => filterTherapistsForWall({
     therapists: catalogTherapists,
     query: wallSearch,
