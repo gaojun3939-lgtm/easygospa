@@ -182,56 +182,28 @@ export default function RootLayout({
               <h3 className="font-serif text-lg font-semibold mb-6 text-[#2db83d]">
                 Popular Treatments
               </h3>
+              {/* 2026-10-26 老板「页脚你来修」:原来列着 Combination / Traditional Hilot / Couple Massage,后台没有、下不了单。
+                  现在跟后台「服务项目」在售的 6 个一致(名字照后台原样),点了去价目表;后台改名 / 加项目时这里要跟着改。 */}
               <nav aria-label="Services navigation">
                 <ul className="space-y-3 text-sm">
-                  <li>
-                    <a
-                      href="#"
-                      className="text-gray-300 hover:text-[#2db83d] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 focus:ring-offset-[#0F0F0F] rounded"
-                    >
-                      Swedish Massage
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="text-gray-300 hover:text-[#2db83d] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 focus:ring-offset-[#0F0F0F] rounded"
-                    >
-                      Combination Massage
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="text-gray-300 hover:text-[#2db83d] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 focus:ring-offset-[#0F0F0F] rounded"
-                    >
-                      Deep Tissue Massage
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="text-gray-300 hover:text-[#2db83d] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 focus:ring-offset-[#0F0F0F] rounded"
-                    >
-                      Traditional Hilot
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="text-gray-300 hover:text-[#2db83d] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 focus:ring-offset-[#0F0F0F] rounded"
-                    >
-                      Couple Massage
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="text-gray-300 hover:text-[#2db83d] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 focus:ring-offset-[#0F0F0F] rounded"
-                    >
-                      Home & Hotel Massage
-                    </a>
-                  </li>
+                  {[
+                    ["Deep tissue", "/pricing"],
+                    ["Hot Stone Massage", "/pricing"],
+                    ["Relaxing Premium Aromatherapy Body Massage", "/pricing"],
+                    ["Shiatsu Massage(without Oil)", "/pricing"],
+                    ["Swedish Massage", "/pricing"],
+                    ["Thai Body Massage", "/pricing"],
+                    ["Home & Hotel Massage", "/services"],
+                  ].map(([label, href]) => (
+                    <li key={label}>
+                      <a
+                        href={href}
+                        className="text-gray-300 hover:text-[#2db83d] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 focus:ring-offset-[#0F0F0F] rounded"
+                      >
+                        {label}
+                      </a>
+                    </li>
+                  ))}
                 </ul>
               </nav>
             </div>

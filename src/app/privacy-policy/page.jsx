@@ -137,6 +137,9 @@ export default function PrivacyPolicyPage() {
             <p>Email: <a className="text-[#2db83d]" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p>
             <p>Phone / WhatsApp: {COMPANY_PHONE}</p>
           </Section>
+
+          {/* 2026-10-26 老板定:所有条款结尾加「解释权归公司」,写法跟 App 隐私政策一致 */}
+          <p className="pt-4 border-t border-gray-200 text-gray-600">{COMPANY} reserves the right of final interpretation of this Policy.</p>
         </div>
       </div>
     </main>

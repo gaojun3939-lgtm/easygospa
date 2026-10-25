@@ -169,7 +169,7 @@ export default function Contact() {
                     <h3 className="font-serif text-xl font-bold text-[#0F0F0F] mb-2">Service Area</h3>
                     <div className="leading-[1.618] text-gray-600">
                       <p className="font-medium text-[#2db83d]">Metro Manila</p>
-                      <p className="text-sm">Home, condo, hotel, and office massage service. Enter your address during booking to check availability and travel fees.</p>
+                      <p className="text-sm">Home, condo, hotel, and office massage service. Enter your address during booking to check availability. No transport fee.</p>
                     </div>
                   </div>
                 </div>

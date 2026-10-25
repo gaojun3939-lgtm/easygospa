@@ -2259,7 +2259,7 @@ export default function BookingModal() {
                 <form onSubmit={handleSubmit} className="space-y-5" data-testid="confirm-step">
                   <div>
                     <h3 className="text-2xl font-bold text-[#0F0F0F]">Confirm Cash before service</h3>
-                    <p className="mt-2 text-sm text-gray-600">Payment will be collected when the therapist arrives, before the massage starts. No online payment is collected on this website.</p>
+                    <p className="mt-2 text-sm text-gray-600">Payment will be collected when the therapist arrives, before the massage starts.</p>
                   </div>
                   <div className={summaryCardClass}>
                     <div className="grid gap-3">
