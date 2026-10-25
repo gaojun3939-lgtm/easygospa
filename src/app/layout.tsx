@@ -303,6 +303,13 @@ export default function RootLayout({
                 >
                   Terms of Service
                 </a>
+                {/* 2026-10-26:退款政策单独露出(Xendit 审核会专门找),直达条款第 4 节 */}
+                <a
+                  href="/terms-of-service#refunds"
+                  className="text-gray-400 hover:text-[#2db83d] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 focus:ring-offset-[#0F0F0F] rounded"
+                >
+                  Refund Policy
+                </a>
               </div>
             </nav>
           </div>

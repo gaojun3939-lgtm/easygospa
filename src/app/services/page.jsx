@@ -8,11 +8,12 @@ export const revalidate = 60;
 
 export const metadata = {
   title: "Premium Services | EasyGo Spa Premium Home Massage",
-  description: "Discover our premium home massage services in Metro Manila: Swedish massage, deep tissue massage, Thai dry massage and foot massage, delivered to your hotel, condo or home by verified therapists, 24/7.",
+  // 2026-10-26:原来写着 Thai dry / foot massage(我们没有)、分享卡写 salon、配图文件不存在;改成真项目,配图用全站默认那张
+  description: "Home massage in Metro Manila with prices for every treatment: Swedish, deep tissue, shiatsu, Thai, hot stone and aromatherapy massage, delivered to your hotel, condo or home by verified therapists, 24/7.",
   openGraph: {
     title: "Premium Services | EasyGo Spa Premium Home Massage",
-    description: "Explore our range of luxury spa and salon services designed for ultimate relaxation and beauty.",
-    images: ["/services-og-image.jpg"],
+    description: "Professional home massage in Metro Manila — see every treatment and price.",
+    images: [{ url: "/opengraph-image.png", width: 1200, height: 630, alt: "EasyGo Spa" }],
   },
 };
 

@@ -386,13 +386,15 @@ export default function Contact() {
                         onChange={handleInputChange}
                         className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#2db83d] transition-colors duration-300"
                       >
+                        {/* 2026-10-26:原来是建站模板的美容 / 激光脱毛 / 美甲 / 美发,换成后台在售的 6 个按摩项目(名字照后台原样) */}
                         <option value="">Select a service</option>
-                        <option value="massage">Massage Therapy</option>
-                        <option value="beauty">Beauty & Cosmetics</option>
-                        <option value="laser">Laser Hair Removal</option>
-                        <option value="nails">Nail Care</option>
-                        <option value="hair">Hair Services</option>
-                        <option value="consultation">Consultation</option>
+                        <option value="Deep tissue">Deep tissue</option>
+                        <option value="Hot Stone Massage">Hot Stone Massage</option>
+                        <option value="Relaxing Premium Aromatherapy Body Massage">Relaxing Premium Aromatherapy Body Massage</option>
+                        <option value="Shiatsu Massage(without Oil)">Shiatsu Massage(without Oil)</option>
+                        <option value="Swedish Massage">Swedish Massage</option>
+                        <option value="Thai Body Massage">Thai Body Massage</option>
+                        <option value="Consultation">Consultation</option>
                       </select>
                     </div>
 

@@ -32,7 +32,7 @@ export default function TermsOfServicePage() {
 
           {/* 2026-10-26 老板定:退款规则照 App(窗口 3 方案 2.4,照 Grab 菲律宾):出发前全退、出发后收 ₱50/100/150 取消费全给技师、
               放鸽子同价一单一次、技师的错不收、现金客人加到下一单、原路退 / 退不了进余额、48 小时申诉。App 改规矩这里要跟着改。 */}
-          <Section title="4. Cancellations and refunds">
+          <Section id="refunds" title="4. Cancellations and refunds">
             <p>If you need to cancel or reschedule, please tell us as early as possible so we can free up the therapist.</p>
             <ul className="mt-3 list-disc pl-5 space-y-2">
               <li><strong>Before your therapist sets off:</strong> you can cancel free of charge. If you paid online, you get a full refund.</li>
@@ -85,9 +85,9 @@ export default function TermsOfServicePage() {
   );
 }
 
-function Section({ title, children }) {
+function Section({ id, title, children }) {
   return (
-    <section>
+    <section id={id} className="scroll-mt-28">
       <h2 className="font-serif text-xl font-bold text-[#0F0F0F] mt-8 mb-2">{title}</h2>
       {children}
     </section>

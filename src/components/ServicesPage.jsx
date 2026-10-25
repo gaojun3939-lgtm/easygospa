@@ -4,7 +4,6 @@ import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { useSearchParams, useRouter } from "next/navigation";
-import Head from "next/head";
 
 import { ServiceCardImage, ServicePrices } from "./ServiceMenuParts";
 
@@ -58,18 +57,6 @@ export default function ServicesPage({ services = [] }) {
 
   return (
     <>
-      <Head>
-        <title>Premium Home Massage Services in Metro Manila | EasyGo Spa</title>
-        <meta 
-          name="description" 
-          content="Discover professional home massage in Metro Manila: Swedish, deep tissue, Thai dry and foot massage delivered to your hotel, condo or home by EasyGo Spa's verified therapists. Book 24/7." 
-        />
-        <meta name="keywords" content="home massage Metro Manila, hotel massage Manila, Swedish massage, deep tissue massage, Thai massage, foot massage, 24/7 massage service" />
-        <meta property="og:title" content="Premium Home Massage Services in Metro Manila | EasyGo Spa" />
-        <meta property="og:description" content="Experience luxury wellness treatments at Metro Manila's premier spa. From therapeutic massages to beauty services and hair care." />
-        <meta property="og:type" content="website" />
-        <link rel="canonical" href="https://yourwebsite.com/services" />
-      </Head>
 
       <div className="pt-32 pb-24 bg-gradient-to-b from-[#F8F2EC] to-white min-h-screen relative">
         <div style={{backgroundImage:'url(/images/young-woman-hero2.jpg)'}} className="inset-0 w-full h-80 bg-center bg-cover bg-no-repeat bg-fixed -mt-70">
@@ -95,8 +82,8 @@ export default function ServicesPage({ services = [] }) {
             </h1>
             
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-[1.618]">
-              Discover our comprehensive menu of luxury treatments, performed by certified professionals 
-              using state-of-the-art equipment and organic products.
+              Professional massage at your home, condo or hotel across Metro Manila. Every treatment and
+              price is listed below — no transport fee, no tips.
             </p>
           </motion.div>
 
@@ -159,8 +146,7 @@ export default function ServicesPage({ services = [] }) {
                 Ready for Your Transformation?
               </h2>
               <p className="text-gray-600 mb-8 max-w-2xl mx-auto leading-[1.618]">
-                Book your appointment today and experience the luxury wellness treatments 
-                that have made EasyGo Spa the #1 spa in Metro Manila.
+                Book your appointment today — choose your therapist and pay in cash when they arrive.
               </p>
               <button 
                 onClick={() => {

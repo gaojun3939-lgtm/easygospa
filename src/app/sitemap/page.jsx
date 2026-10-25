@@ -3,79 +3,34 @@
 import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Sparkles, Home, Scissors, Camera, Users, Phone, ArrowRight } from "lucide-react";
+import { Sparkles, Home, ArrowRight } from "lucide-react";
 
-// Utility function to create page URLs (Next.js style)
-const createPageUrl = (page) => {
-  if (page === "Services?category=massage") return "/services?category=massage";
-  if (page === "Services?category=beauty") return "/services?category=beauty";
-  if (page === "Services?category=laser") return "/services?category=laser";
-  if (page === "Services?category=nails") return "/services?category=nails";
-  if (page === "Services?category=hair") return "/services?category=hair";
-  return `/${page.toLowerCase()}`;
-};
-
+// 2026-10-26 老板定(重新申请 Xendit 前全站清模板残留):原来列着 Gallery / Our Team(假页面,已下线)
+// 和美容、激光脱毛、美甲、美发、Japanese Head Spa(我们没有)。现在只列真页面和后台在售的 6 个按摩项目,
+// 项目名照后台原样,点了去价目表;后台改名 / 加项目时这里要跟着改。
 const sitePages = [
   {
     category: "Main Pages",
     icon: Home,
     pages: [
-      {
-        name: "Home",
-        url: "/",
-        description: "Welcome to EasyGo Spa - Metro Manila's premier Premium Home Massage experience"
-      },
-      {
-        name: "Services",
-        url: "/services",
-        description: "Complete menu of premium spa treatments, beauty services, and wellness therapies"
-      },
-      {
-        name: "Gallery",
-        url: "/gallery",
-        description: "Visual tour of our luxurious facilities and elegant treatment spaces"
-      },
-      {
-        name: "Our Team",
-        url: "/team",
-        description: "Meet our certified professionals and expert therapists"
-      },
-      {
-        name: "Contact",
-        url: "/contact",
-        description: "Get in touch, find our location, and connect with us"
-      }
+      { name: "Home", url: "/", description: "Professional home massage across Metro Manila" },
+      { name: "Services", url: "/services", description: "All massage treatments with prices" },
+      { name: "Pricing", url: "/pricing", description: "Prices for every treatment and duration" },
+      { name: "Contact", url: "/contact", description: "Phone, WhatsApp, email and service area" },
+      { name: "Terms of Service", url: "/terms-of-service", description: "Booking, payment, cancellation and refund rules" },
+      { name: "Privacy Policy", url: "/privacy-policy", description: "How we handle your personal information" }
     ]
   },
   {
-    category: "Service Categories",
-    icon: Scissors,
+    category: "Massage Treatments",
+    icon: Sparkles,
     pages: [
-      {
-        name: "Massage Therapy",
-        url: "/services?category=massage",
-        description: "Swedish, Thai, Deep Tissue, Japanese Head Spa, and therapeutic massages"
-      },
-      {
-        name: "Beauty & Cosmetics",
-        url: "/services?category=beauty",
-        description: "Microblading, Lash Extensions, Lip Blush, and premium beauty treatments"
-      },
-      {
-        name: "Laser Hair Removal",
-        url: "/services?category=laser",
-        description: "Advanced laser technology for permanent hair reduction"
-      },
-      {
-        name: "Nail Care Services",
-        url: "/services?category=nails",
-        description: "Manicures, Pedicures, Gel Extensions, and nail artistry"
-      },
-      {
-        name: "Hair Services",
-        url: "/services?category=hair",
-        description: "Cuts, Colors, Treatments, Extensions, and professional styling"
-      }
+      { name: "Deep tissue", url: "/pricing", description: "Firm, targeted pressure for chronic muscle tension" },
+      { name: "Hot Stone Massage", url: "/pricing", description: "Warm stones and soothing massage to relax tight muscles" },
+      { name: "Relaxing Premium Aromatherapy Body Massage", url: "/pricing", description: "Gentle massage with natural essential oils" },
+      { name: "Shiatsu Massage(without Oil)", url: "/pricing", description: "Traditional Japanese finger and palm pressure, no oil" },
+      { name: "Swedish Massage", url: "/pricing", description: "Gentle full-body massage with oil, great for beginners" },
+      { name: "Thai Body Massage", url: "/pricing", description: "Oil-free deep pressure with full-body stretching" }
     ]
   }
 ];
@@ -101,8 +56,7 @@ export default function Sitemap() {
           </h1>
           
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-[1.618]">
-            Navigate through all pages and services of our luxury wellness website. 
-            Find exactly what you're looking for in our organized site structure.
+            Find every page of the EasyGoSpa website in one place.
           </p>
         </motion.div>
 
@@ -187,23 +141,23 @@ export default function Sitemap() {
               </h3>
               <ul className="space-y-2 text-gray-600">
                 <li>• Responsive design for all devices</li>
-                <li>• Advanced booking system</li>
-                <li>• Professional service catalog</li>
-                <li>• Interactive gallery showcase</li>
-                <li>• Team member profiles</li>
-                <li>• Contact and location information</li>
+                <li>• Online booking — choose your own therapist</li>
+                <li>• Service menu with prices</li>
+                <li>• Order tracking</li>
+                <li>• Contact and service area information</li>
               </ul>
             </div>
             
             <div>
               <h3 className="font-serif text-lg font-bold text-[#2db83d] mb-3">
-                Our Location
+                Registered Office
               </h3>
+              {/* 原来是建站模板的假地址(P-145, Sector A…1229),换成跟页脚一致的公司注册地址 */}
               <div className="text-gray-600 space-y-1">
-                <p>EasyGo Spa Premium Home Massage</p>
-                <p>P-145, Sector A, Metropolitan Co-Operative</p>
-                <p>Housing Society Limited, Ho</p>
-                <p>Metro Manila, Metro Manila 1229</p>
+                <p>EASYGOSPA HOME MASSAGE SERVICES OPC</p>
+                <p>Unit 706, Medical Towers Makati, 103 Rufino Street,</p>
+                <p>Legazpi Village, Bel-Air, Makati City, Metro Manila 1209</p>
+                <p>Home service only — our therapists come to you.</p>
                 <p className="mt-3 font-medium">Phone: +63 964 857 0967</p>
               </div>
             </div>
@@ -222,7 +176,7 @@ export default function Sitemap() {
               Ready to Experience EasyGo Spa?
             </h2>
             <p className="text-lg mb-8 text-white/90 max-w-2xl mx-auto">
-              Book your appointment today and discover why we're Metro Manila's premier Premium Home Massage destination.
+              Book your appointment today — choose your therapist and pay in cash when they arrive.
             </p>
             <button 
               onClick={() => window.dispatchEvent(new CustomEvent('open-booking-modal'))}
