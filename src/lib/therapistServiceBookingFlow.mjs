@@ -265,12 +265,10 @@ export function filterTherapistsForWall({
       .includes(normalizedQuery);
   });
   // Nearby = 距离升序(无距离排后);默认保持 API 推荐排名(= Most booked)。
+  // ⚠ 2026-10-26 修:原来用 Number(a.distanceKm),没坐标的技师 distanceKm 是 null,Number(null) = 0,
+  // 被当成 0 公里排到最前(实测 10 位没位置的全顶在「附近」第一屏)。改用 therapistDistanceKm,算不出 = 最远。
   if (sortBy === 'nearby') {
-    return [...rows].sort((a, b) => {
-      const da = Number.isFinite(Number(a.distanceKm)) ? Number(a.distanceKm) : Infinity;
-      const db = Number.isFinite(Number(b.distanceKm)) ? Number(b.distanceKm) : Infinity;
-      return da - db;
-    });
+    return [...rows].sort((a, b) => (therapistDistanceKm(a) ?? Infinity) - (therapistDistanceKm(b) ?? Infinity));
   }
   return rows;
 }

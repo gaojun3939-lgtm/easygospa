@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { ServicePrices } from '../../components/ServiceMenuParts';
 import { loadPublicServiceMenu } from '../../lib/publicServiceMenu.mjs';
 
@@ -47,12 +46,15 @@ export default async function PricingPage() {
         </div>
 
         <div className="mt-10 text-center">
-          <Link
+          {/* 2026-10-26 修:原来是站内跳 /?book=1,但预约弹窗挂在全站外壳里、站内跳转不会重查 ?book=1,
+              客人点完只回到首页、什么都不弹。改成就地打开预约窗(全站通用的 data-open-booking,跟顶部 Book Now 一样)。 */}
+          <button
+            type="button"
+            data-open-booking="1"
             className="inline-block rounded-full bg-[#2db83d] px-8 py-4 font-semibold text-white"
-            href="/?book=1"
           >
             Pick your therapist
-          </Link>
+          </button>
           <p className="mt-4 text-sm text-gray-500">
             You choose the therapist yourself — real photos and profiles on the wall.
           </p>
