@@ -1,6 +1,8 @@
 import { CONTACT_EMAIL, COMPANY_PHONE } from "@/lib/contactConfig";
 
 // 2026-10-19：跟 App 里「条款与政策 › 隐私政策」对齐（D:\APP\src\content\helpArticles.ts，英文为准）。
+// 2026-10-27：老板逐句批了 App 隐私政策的补充（10-18 以后新功能：提现账户、推荐有奖、紧急联系人、客服对话、信用分、钱包），
+// 主窗口转来 App 定稿英文（App src/shared/i18n/en.ts 的 help.privacy.*），这里 11 处整句照换 / 新加，其余句子不动。
 // Google Play 后台填的隐私政策网址就是这一页，审核员看的是它：App 的数据、技师路上的位置分享、第三方服务商、删号都要写全。
 // 官网自己多两样：Meta 像素（广告统计）、网站 Cookie。
 export const metadata = {
@@ -8,7 +10,7 @@ export const metadata = {
   description: "How EasyGoSpa collects, uses, and protects your personal information on our website and in the EasyGoSpa app.",
 };
 
-const LAST_UPDATED = "October 19, 2026";
+const LAST_UPDATED = "October 27, 2026";
 const COMPANY = "EASYGOSPA HOME MASSAGE SERVICES OPC";
 const DELETE_URL = "https://app-easygospa.vercel.app/delete-account";
 
@@ -26,19 +28,22 @@ export default function PrivacyPolicyPage() {
             <p>From everyone who books with us or uses the app:</p>
             <ul className="list-disc pl-5 space-y-1">
               <li>Account: phone number or email; if you sign in with Google, your Google name and profile photo.</li>
-              <li>Profile: the name you want to be called, gender and nationality (optional).</li>
+              <li>Profile: the name you want to be called, a profile photo you upload, gender and nationality (optional).</li>
               <li>Addresses and location: service addresses you give or save, and your device location when you allow it.</li>
-              <li>Bookings: services, times, prices, notes and booking status.</li>
-              <li>Messages and reviews: chats about a booking (in the app, on the website, WhatsApp or other channels), and ratings or reviews you leave.</li>
+              <li>Bookings: services, times, prices and booking status, plus payment, refund and balance records.</li>
+              <li>Messages and reviews: in-app chats about a booking, your conversations with our support team, and ratings, reviews or reports you leave.</li>
               <li>Device: notification token, app version and basic error logs.</li>
               <li>App usage and advertising: which screens you open and key actions (signing in, viewing a therapist, placing a booking and its amount), your device and advertising identifiers, and which ad or link brought you to the app or website. We use this to measure our ads and improve our services; it does not include your name, phone number or address.</li>
+              <li>Referrals: who you invited with your link or code, who invited you, and the rewards or commissions that result.</li>
+              <li>Payout account: when you withdraw (therapist earnings or referral commissions), the GCash number and account name, or the bank name, account name and account number you enter — used only to pay you.</li>
             </ul>
             <p>Additionally from therapists:</p>
             <ul className="list-disc pl-5 space-y-1">
-              <li>Service profile: profile photo, work photos, introduction, services, service area and working hours.</li>
-              <li>Identity verification: ID type, legal name, photos of the front and back of the ID, and a selfie.</li>
-              <li>Job records: the time and location of arrival, job progress, earnings and platform fee records.</li>
+              <li>Service profile: profile photo, work photos, introduction, years of experience, services, service area and working hours.</li>
+              <li>Identity verification: ID type, ID number (we keep only the last 4 digits and a one-way fingerprint that stops one ID being used for several accounts), expiry date, legal name, photos of the front and back of the ID, and a selfie.</li>
+              <li>Job records: the time and location of arrival, job progress, earnings, platform fees, prepaid balance and wallet transactions, and credit score records (such as declined or missed offers).</li>
               <li>Live location on the way: from tapping “Depart” until arrival, the therapist’s location is shared with that booking’s customer, including while the app is in the background (a notification shows while this is on). It stops on arrival and we keep only the latest point, not a route.</li>
+              <li>Safety: the emergency contact you add (name, phone number and relationship) — we may call them only if you raise a safety alert, and we never text them; and if you hold the “Safety” button, your location keeps being sent to EasyGoSpa — not to the customer — until our team closes the alert.</li>
             </ul>
           </Section>
 
@@ -57,7 +62,7 @@ export default function PrivacyPolicyPage() {
             <ul className="list-disc pl-5 space-y-1">
               <li>Customers can see a therapist’s public profile: name, photos, introduction, services, rating and approximate distance.</li>
               <li>A therapist sees a customer’s service address and contact details only after accepting that booking.</li>
-              <li>ID photos are visible only to the EasyGoSpa staff who review verifications — never to customers or other users.</li>
+              <li>ID photos and payout accounts are visible only to the EasyGoSpa staff who review verifications and make payouts — never to customers or other users.</li>
               <li>Chats about a booking, and a record of when the call button is tapped, may be reviewed by authorized EasyGoSpa staff for safety and to handle disputes. We do not record phone calls.</li>
               <li>We may disclose information if required by law or to protect the safety of our customers, therapists and staff.</li>
               <li>We do not sell your personal information.</li>
@@ -86,6 +91,7 @@ export default function PrivacyPolicyPage() {
           <Section title="6. How long we keep it">
             <p>We keep your information while your account is active or while we need it for your bookings. After you delete your account, we delete or anonymize your personal information, except records we must keep by law, for tax, or to resolve disputes.</p>
             <p>In-app chats about a booking are kept for 1 year and photos sent in a chat for 180 days; after that they are deleted automatically.</p>
+            <p>To stop the same person signing up again and again for referral rewards, we keep a one-way fingerprint of the phone number and email (it cannot be turned back into the number) until it has not appeared for 1 year, or until your account data is deleted after you delete your account, whichever comes first.</p>
           </Section>
 
           <Section title="7. How we protect it">
