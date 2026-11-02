@@ -27,7 +27,7 @@ export default function Navbar() {
   // 菜单「实底」样式(米色玻璃底 + 深色字 + 彩色莲花):往下滚、打开手机菜单时用;
   // 这几页顶上没有深色大图,透明底白字压在米色上看不见,所以一直用实底
   // (老板 2026-10-26:先点头 /pricing,后又定条款、隐私、目录页照做)。新加浅色顶的页面记得加进来。
-  const solidNav = isScrolled || isMenuOpen || LIGHT_TOP_PAGES.has(pathname);
+  const solidNav = isScrolled || isMenuOpen || LIGHT_TOP_PAGES.has(pathname) || pathname?.startsWith("/r/");
 
   React.useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 80);

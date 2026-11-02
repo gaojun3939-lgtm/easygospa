@@ -1,0 +1,10 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["DA2MP9PG4Z.com.easygospa.app"],
+        "components": [{ "/": "/r/*" }]
+      }
+    ]
+  }
+}

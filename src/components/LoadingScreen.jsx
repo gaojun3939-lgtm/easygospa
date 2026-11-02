@@ -1,9 +1,17 @@
 "use client"
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { usePathname } from "next/navigation";
 import BrandMark from "./BrandMark";
 
 export default function LoadingScreen() {
+  const pathname = usePathname();
+  // 推荐页不出全站加载画面：客人从聊天点进来要马上看到按钮（2026-11-03）
+  if (pathname?.startsWith("/r/")) return null;
+  return <LoadingOverlay />;
+}
+
+function LoadingOverlay() {
   const [progress, setProgress] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
 

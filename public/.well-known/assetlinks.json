@@ -1,0 +1,15 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.easygospa.app",
+      "sha256_cert_fingerprints": [
+        "CC:FD:1E:ED:F3:8E:B7:0A:E1:F4:A4:CA:09:A9:AF:BB:23:8E:C3:B2:96:5C:67:DC:D7:58:CE:37:DC:0B:E1:60",
+        "69:9E:BC:45:1F:2C:E3:85:19:40:92:AC:18:71:DA:72:B9:DE:8E:29:6D:57:7F:12:11:72:0D:BE:43:C2:9E:07",
+        "4C:2D:8A:FD:FB:06:83:1C:4B:5F:C3:64:85:12:CC:F6:72:BC:C4:F9:18:95:CD:96:3B:E7:DC:D3:23:69:12:D0",
+        "BE:3A:26:DA:E7:70:2B:23:3A:36:96:27:18:9A:05:87:EE:FD:BF:AD:85:48:82:B6:F7:E1:82:B0:F6:6D:DB:41"
+      ]
+    }
+  }
+]

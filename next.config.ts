@@ -15,6 +15,8 @@ const CORS_HEADERS = [
 ];
 
 const nextConfig: NextConfig = {
+  // 分享信息一律放在网页头部:聊天软件只看头部,不是每家都在 Next 默认名单里;苹果横幅同理。
+  htmlLimitedBots: /.*/,
   turbopack: {
     root: process.cwd(),
   },
@@ -31,13 +33,27 @@ const nextConfig: NextConfig = {
   // 页面代码在 git 历史里(提交 519146c 及以前),要恢复从那里找。
   async redirects() {
     return [
+      // 2026-11-03:不带 www 的地址整站跳 www,只留 /.well-known/ 直接返回(谷歌、苹果校验都不接受跳转)。
+      // Vercel 域名层的跳转关掉之后这条才起作用,所以要先部署这条、再关域名层。
+      {
+        source: "/:path((?!\\.well-known/).*)",
+        has: [{ type: "host", value: "easygospa.com" }],
+        destination: "https://www.easygospa.com/:path",
+        permanent: true,
+      },
       { source: "/team", destination: "/services", permanent: true },
       { source: "/gallery", destination: "/services", permanent: true },
       { source: "/attribution-check", destination: "/", permanent: true },
+      // 2026-11-03 老板「为什么推荐的是 404」:推荐链接不带码时回首页;带码的 /r/<码> 不受影响。
+      { source: "/r", destination: "/", permanent: false },
     ];
   },
   async headers() {
     return [
+      {
+        source: "/.well-known/apple-app-site-association",
+        headers: [{ key: "Content-Type", value: "application/json" }],
+      },
       {
         source: "/api/:path*",
         headers: CORS_HEADERS,
