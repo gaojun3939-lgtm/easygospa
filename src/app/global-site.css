@@ -34,9 +34,20 @@
 .ga-hero { height: 240vh; background: var(--ga-ink); }
 .ga-hero-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; color: #fff; }
 .ga-door { position: absolute; inset: 0; overflow: hidden; clip-path: inset(15% 37% 0% 37% round 260px 260px 0px 0px); will-change: clip-path; }
-.ga-door img { object-position: 62% 50%; }
+.ga-door-inner { position: absolute; inset: -2.5%; }
+.ga-door-inner img, .ga-door-inner canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; }
+.ga-door-open { opacity: 0; visibility: hidden; }
+.ga-door-inner canvas { opacity: 0; }
+.ga-door-inner canvas.is-on { opacity: 1; }
+.ga-intro { position: fixed; inset: 0; z-index: 70; display: flex; align-items: center; justify-content: center; background: var(--ga-ink); cursor: pointer; animation: ga-intro-out .4s linear 2.4s forwards; }
+@keyframes ga-intro-out { to { opacity: 0; visibility: hidden; } }
+.ga-seen .ga-intro { display: none; }
+.ga-slit { position: absolute; left: 50%; top: 15%; bottom: 0; width: 2px; margin-left: -1px; background: #f2c58a; box-shadow: 0 0 24px 4px rgba(242,197,138,.75); transform-origin: 50% 100%; }
+.ga-intro-lotus { position: relative; width: 96px !important; height: auto !important; object-fit: contain; visibility: hidden; }
+.ga-float { position: fixed; z-index: 45; left: 0; top: 0; width: 300px; height: 210px; border-radius: 16px; overflow: hidden; pointer-events: none; opacity: 0; visibility: hidden; box-shadow: 0 24px 60px rgba(0,0,0,.45); }
+.ga-row-thumb { display: none; }
 .ga-hero-shade { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(10,11,9,.62), rgba(10,11,9,0) 46%); pointer-events: none; }
-.ga-hero-title { position: absolute; left: 0; right: 0; top: 50%; margin: 0; transform: translateY(-58%); text-align: center; font: 400 clamp(58px, 12.2vw, 230px)/.96 var(--ga-serif); letter-spacing: -0.03em; pointer-events: none; }
+.ga-hero-title { position: absolute; left: 0; right: 0; top: 37%; margin: 0; transform: translateY(-50%); text-align: center; font: 400 clamp(58px, 12.2vw, 230px)/.96 var(--ga-serif); letter-spacing: -0.03em; pointer-events: none; }
 .ga-hero-foot { position: absolute; left: 0; right: 0; bottom: clamp(26px, 5vh, 56px); margin-inline: auto; display: flex; align-items: flex-end; justify-content: space-between; gap: 28px; }
 .ga-eyebrow { margin: 0; font: 500 12.5px/1.4 var(--ga-sans); letter-spacing: .17em; text-transform: uppercase; }
 .ga-hero-line { margin: 12px 0 0; max-width: 26em; font-size: clamp(16px, 1.4vw, 20px); line-height: 1.45; }
@@ -121,14 +132,21 @@
 
 /* 还原动效：字和图直接显示 */
 .ga-still .ga-door { clip-path: none; }
+.ga-still .ga-intro { display: none; }
+@media (prefers-reduced-motion: reduce) { .ga-intro { display: none; } }
 .ga-still .ga-hero { height: 100svh; }
 
 @media (max-width: 960px) {
   .ga-hero { height: 200vh; }
   .ga-hero-stage { height: calc(100svh - var(--ga-bar)); }
   .ga-door { clip-path: inset(13% 15% 0% 15% round 170px 170px 0px 0px); }
-  .ga-door img { object-position: 66% 50%; }
-  .ga-hero-title { top: 42%; font-size: clamp(56px, 17vw, 110px); padding-inline: 12px; }
+  .ga-slit { top: 13%; }
+  .ga-row-thumb { display: block; grid-column: 1 / -1; grid-row: 1; aspect-ratio: 16 / 7; border-radius: 12px; overflow: hidden; }
+  .ga-row-name { grid-column: 1; grid-row: 2; }
+  .ga-row .ga-row-book { grid-column: 2; grid-row: 2; }
+  .ga-row .ga-row-prices { grid-row: 3; }
+  .ga-float { display: none; }
+  .ga-hero-title { top: 31%; font-size: clamp(56px, 17vw, 110px); padding-inline: 12px; }
   .ga-hero-foot .ga-btn { display: none; }
   .ga-hero-foot { bottom: 22px; }
 
@@ -169,6 +187,8 @@ body.booking-modal-open .ga-bar { display: none; }
 
 /* 菜单 */
 .ga-nav { position: fixed; z-index: 50; top: 0; left: 0; right: 0; color: #fff; font-family: var(--ga-sans); transition: background .35s, color .35s, border-color .35s; border-bottom: 1px solid transparent; }
+.ga-nav { transition: background .35s, color .35s, border-color .35s, transform .45s cubic-bezier(.2,.7,.2,1); }
+.ga-nav.is-hidden { transform: translateY(-100%); }
 .ga-nav.is-solid { background: rgba(247,244,238,.94); backdrop-filter: blur(14px); color: var(--ga-ink); border-color: var(--ga-line); }
 .ga-nav-in { display: flex; align-items: center; gap: 34px; height: 76px; padding-inline: var(--ga-gutter); max-width: 1680px; margin-inline: auto; box-sizing: border-box; }
 .ga-logo { display: flex; align-items: center; gap: 10px; font: 400 25px/1 var(--ga-serif); color: inherit; text-decoration: none; }

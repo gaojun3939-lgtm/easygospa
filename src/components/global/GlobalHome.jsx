@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import Lenis from 'lenis'
 
 // 全球站首页「The Arrival」（2026-11-03，方案全文在共享笔记夹 窗口5-官网改造/arrival/）。
 // 一路滑下去像看电影：门慢慢打开 → 技师抵达 → 房间变样 → 项目和价格 → 城市。
@@ -22,6 +23,22 @@ const ARRIVAL = [
   { image: 'linen', alt: 'Folded linen beside the EasyGoSpa bag' },
 ]
 
+// 开门片子拆成一张张图，跟着滑动一帧帧画（AirPods 页面的做法）。手机、电脑各一套
+const FILM = {
+  desktop: { dir: '/global/door-d', frames: 96 },
+  phone: { dir: '/global/door-m', frames: 60 },
+}
+// 项目那一行鼠标移上去浮出的图
+const SERVICE_IMAGE = {
+  'swedish-massage': 'svc-swedish',
+  'deep-tissue': 'svc-deep',
+  'hot-stone-massage': 'svc-hotstone',
+  'thai-body-massage': 'svc-thai',
+  'shiatsu-body-massage-without-oil': 'svc-shiatsu',
+  'whole-body-aromatherapy-massage': 'svc-aroma',
+}
+const INTRO_KEY = 'ga-intro-seen'
+
 const peso = (value) => `₱${Number(value).toLocaleString('en-US')}`
 const niceName = (name) => String(name || '').replace(/\(/, ' (').replace(/\s+/g, ' ').trim()
 const bookService = (service) => window.dispatchEvent(new CustomEvent('open-booking-modal-with-service', { detail: { service } }))
@@ -36,12 +53,98 @@ export default function GlobalHome({ services = [] }) {
   const from = lowest.length ? Math.min(...lowest) : null
 
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const connection = navigator.connection
+    const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (calm) {
       root.current?.classList.add('ga-still')
       return
     }
+    // 省流量、2G、内存小的手机不下载片子，用两张静图代替，不让客人干等
+    const lite = !!connection?.saveData || ['slow-2g', '2g'].includes(connection?.effectiveType) || (navigator.deviceMemory && navigator.deviceMemory < 3)
+    const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches
+    const isDesktop = window.matchMedia('(min-width: 961px)').matches
     gsap.registerPlugin(ScrollTrigger)
+
+    // 平滑滚动，只在电脑上；弹窗打开时停下，弹窗里的滚动不受影响
+    let lenis = null
+    let bodyWatch = null
+    let tick = null
+    if (finePointer && isDesktop) {
+      lenis = new Lenis({ lerp: 0.09, prevent: (node) => !!node.closest?.('[role="dialog"], .fixed, [data-lenis-prevent]') })
+      lenis.on('scroll', ScrollTrigger.update)
+      tick = (time) => lenis.raf(time * 1000)
+      gsap.ticker.add(tick)
+      gsap.ticker.lagSmoothing(0)
+      const sync = () => {
+        const locked = document.body.classList.contains('booking-modal-open') || document.body.style.overflow === 'hidden'
+        if (locked) lenis.stop()
+        else lenis.start()
+      }
+      bodyWatch = new MutationObserver(sync)
+      bodyWatch.observe(document.body, { attributes: true, attributeFilter: ['class', 'style'] })
+    }
+
+    // 开门片子：一帧帧画到画布上，第一帧没到之前显示关门静图
+    const film = isDesktop ? FILM.desktop : FILM.phone
+    const canvas = root.current?.querySelector('.ga-door canvas')
+    const images = []
+    const state = { frame: 0 }
+    const draw = () => {
+      if (!canvas) return
+      const img = images[Math.round(state.frame)] || images.slice(0, Math.round(state.frame) + 1).reverse().find((item) => item?.complete && item.naturalWidth)
+      if (!img?.complete || !img.naturalWidth) return
+      const ctx = canvas.getContext('2d')
+      const ratio = Math.min(window.devicePixelRatio || 1, 1.5)
+      const w = canvas.clientWidth * ratio
+      const h = canvas.clientHeight * ratio
+      if (canvas.width !== w || canvas.height !== h) {
+        canvas.width = w
+        canvas.height = h
+      }
+      const scale = Math.max(w / img.naturalWidth, h / img.naturalHeight)
+      const dw = img.naturalWidth * scale
+      const dh = img.naturalHeight * scale
+      ctx.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh)
+      canvas.classList.add('is-on')
+    }
+    if (!lite && canvas) {
+      for (let i = 0; i < film.frames; i += 1) {
+        const img = new Image()
+        img.decoding = 'async'
+        img.src = `${film.dir}/${String(i + 1).padStart(3, '0')}.webp`
+        if (i === 0) img.onload = draw
+        images.push(img)
+      }
+    }
+    window.addEventListener('resize', draw)
+
     const ctx = gsap.context(() => {
+      // 第一次打开：门缝的光 → 莲花 → 门缝拉开成拱门 → 大字升起。点一下就跳过，这次打开过就不再播
+      const intro = root.current.querySelector('.ga-intro')
+      const seen = document.documentElement.classList.contains('ga-seen')
+      const titleWords = () => root.current.querySelectorAll('.ga-hero-title .ga-word-in')
+      const splitTitle = () => {
+        const el = root.current.querySelector('.ga-hero-title')
+        const text = (el.textContent || '').trim()
+        el.setAttribute('aria-label', text)
+        el.innerHTML = text.split(/\s+/).map((w) => `<span class="ga-word" aria-hidden="true"><span class="ga-word-in">${w}</span></span>`).join(' ')
+      }
+      splitTitle()
+      if (intro && !seen) {
+        try { sessionStorage.setItem(INTRO_KEY, '1') } catch {}
+        const tl = gsap.timeline({ onComplete: () => intro.remove() })
+        tl.fromTo('.ga-slit', { scaleY: 0 }, { scaleY: 1, duration: 0.55, ease: 'power3.inOut' })
+          .fromTo('.ga-intro-lotus', { clipPath: 'inset(0 100% 0 0)', autoAlpha: 1 }, { clipPath: 'inset(0 0% 0 0)', duration: 0.5, ease: 'power2.inOut' }, 0.2)
+          .to('.ga-intro-lotus', { autoAlpha: 0, duration: 0.25 }, 0.85)
+          .to('.ga-slit', { scaleX: 40, autoAlpha: 0, duration: 0.5, ease: 'power2.in' }, 0.95)
+          .to(intro, { autoAlpha: 0, duration: 0.45, ease: 'power1.out' }, 1.1)
+          .fromTo('.ga-door', { clipPath: isDesktop ? 'inset(15% 49.9% 0% 49.9% round 260px 260px 0px 0px)' : 'inset(13% 49.8% 0% 49.8% round 170px 170px 0px 0px)' }, { clipPath: isDesktop ? 'inset(15% 37% 0% 37% round 260px 260px 0px 0px)' : 'inset(13% 15% 0% 15% round 170px 170px 0px 0px)', duration: 0.9, ease: 'power3.inOut', clearProps: 'clipPath' }, 1.0)
+          .from(titleWords(), { yPercent: 112, duration: 1, ease: 'power4.out', stagger: 0.07 }, 1.25)
+        intro.addEventListener('click', () => tl.progress(1), { once: true })
+      } else {
+        gsap.from(titleWords(), { yPercent: 112, duration: 1, ease: 'power4.out', stagger: 0.07 })
+      }
+
       // 大字一个词一个词升上来
       gsap.utils.toArray('[data-words]').forEach((el) => {
         const text = (el.textContent || '').trim()
@@ -61,11 +164,57 @@ export default function GlobalHome({ services = [] }) {
         onEnter: (els) => gsap.fromTo(els, { y: 34, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 1, ease: 'power3.out', stagger: 0.08 }),
       })
 
-      // 开场：门从一条拱形缝打开到整屏
-      gsap.timeline({ scrollTrigger: { trigger: '.ga-hero', start: 'top top', end: 'bottom bottom', scrub: 0.7 } })
-        .to('.ga-door', { clipPath: 'inset(0% 0% 0% 0% round 0px 0px 0px 0px)', ease: 'none' }, 0)
-        .fromTo('.ga-door img', { scale: 1.22 }, { scale: 1, ease: 'none' }, 0)
-        .to('.ga-hero-title', { yPercent: -18, ease: 'none' }, 0)
+      // 滑动：拱门拉到整屏，同时门一帧帧打开
+      const hero = gsap.timeline({ scrollTrigger: { trigger: '.ga-hero', start: 'top top', end: 'bottom bottom', scrub: 0.5 } })
+      hero.to('.ga-door', { clipPath: 'inset(0% 0% 0% 0% round 0px 0px 0px 0px)', ease: 'none', duration: 0.4 }, 0)
+        .to('.ga-hero-title', { yPercent: -18, ease: 'none', duration: 1 }, 0)
+      if (lite) hero.to('.ga-door-open', { autoAlpha: 1, ease: 'none', duration: 0.6 }, 0.4)
+      else hero.to(state, { frame: film.frames - 1, ease: 'none', duration: 0.95, onUpdate: draw }, 0.05)
+
+      // 电脑上：画面跟着鼠标轻轻动，按钮被鼠标吸过去，项目那一行浮出图
+      if (finePointer) {
+        const stage = root.current.querySelector('.ga-hero-stage')
+        const moveX = gsap.quickTo('.ga-door-inner', 'x', { duration: 1.1, ease: 'power3' })
+        const moveY = gsap.quickTo('.ga-door-inner', 'y', { duration: 1.1, ease: 'power3' })
+        const titleX = gsap.quickTo('.ga-hero-title', 'x', { duration: 1.4, ease: 'power3' })
+        stage.addEventListener('pointermove', (event) => {
+          const dx = event.clientX / window.innerWidth - 0.5
+          const dy = event.clientY / window.innerHeight - 0.5
+          moveX(dx * -26)
+          moveY(dy * -16)
+          titleX(dx * 14)
+        })
+        gsap.utils.toArray('.ga-btn', root.current).forEach((button) => {
+          const bx = gsap.quickTo(button, 'x', { duration: 0.5, ease: 'power3' })
+          const by = gsap.quickTo(button, 'y', { duration: 0.5, ease: 'power3' })
+          button.addEventListener('pointermove', (event) => {
+            const box = button.getBoundingClientRect()
+            bx((event.clientX - box.left - box.width / 2) * 0.32)
+            by((event.clientY - box.top - box.height / 2) * 0.42)
+          })
+          button.addEventListener('pointerleave', () => {
+            gsap.to(button, { x: 0, y: 0, duration: 0.8, ease: 'elastic.out(1, .4)' })
+          })
+        })
+        const float = root.current.querySelector('.ga-float')
+        const floatImg = float?.querySelector('img')
+        if (float && isDesktop) {
+          const fx = gsap.quickTo(float, 'x', { duration: 0.7, ease: 'power3' })
+          const fy = gsap.quickTo(float, 'y', { duration: 0.7, ease: 'power3' })
+          gsap.utils.toArray('.ga-row', root.current).forEach((row) => {
+            row.addEventListener('pointerenter', () => {
+              floatImg.src = `/global/${row.dataset.image}.jpg`
+              gsap.to(float, { autoAlpha: 1, scale: 1, duration: 0.45, ease: 'power3.out' })
+            })
+            row.addEventListener('pointerleave', () => gsap.to(float, { autoAlpha: 0, scale: 0.86, duration: 0.3 }))
+            row.addEventListener('pointermove', (event) => {
+              // 放在这一行左边，不挡名字和价格
+              fx(row.getBoundingClientRect().left - 340 + (event.clientX - row.getBoundingClientRect().left) * 0.04)
+              fy(event.clientY - 105)
+            })
+          })
+        }
+      }
 
       // 房间：一条竖线扫过，空房间变成准备好的房间
       gsap.timeline({ scrollTrigger: { trigger: '.ga-room', start: 'top top', end: 'bottom bottom', scrub: 0.6 } })
@@ -94,16 +243,32 @@ export default function GlobalHome({ services = [] }) {
         })
       })
     }, root)
-    return () => ctx.revert()
+    return () => {
+      window.removeEventListener('resize', draw)
+      ctx.revert()
+      bodyWatch?.disconnect()
+      if (tick) gsap.ticker.remove(tick)
+      lenis?.destroy()
+    }
   }, [])
 
   return (
     <div className="ga" ref={root}>
+      {/* 开场动画：这次打开过就不再播；万一脚本没跑，样式 2.4 秒后自己收起，不挡内容 */}
+      <script dangerouslySetInnerHTML={{ __html: `try{if(sessionStorage.getItem('${INTRO_KEY}'))document.documentElement.classList.add('ga-seen')}catch(e){}` }} />
+      <div className="ga-intro" aria-hidden="true">
+        <span className="ga-slit" />
+        <img className="ga-intro-lotus" src="/global/lotus-white.png" alt="" />
+      </div>
       {/* 第一幕：门 */}
       <section className="ga-hero" aria-label="EasyGoSpa">
         <div className="ga-hero-stage">
           <div className="ga-door">
-            <img src="/global/door-night.jpg" alt="An EasyGoSpa therapist arriving at a condo door at night" fetchPriority="high" />
+            <div className="ga-door-inner">
+              <img src="/global/door-shut.jpg" alt="A closed condo door at night with warm light along its edge" fetchPriority="high" />
+              <img className="ga-door-open" src="/global/door-lit.jpg" alt="" loading="lazy" />
+              <canvas aria-hidden="true" />
+            </div>
           </div>
           <div className="ga-hero-shade" aria-hidden="true" />
           <p className="ga-hero-title">Let the city wait.</p>
@@ -163,7 +328,8 @@ export default function GlobalHome({ services = [] }) {
           </div>
           <ul className="ga-rows">
             {services.map((service) => (
-              <li className="ga-row" key={service.id} data-reveal>
+              <li className="ga-row" key={service.id} data-reveal data-image={SERVICE_IMAGE[service.id] || 'still-life'}>
+                <figure className="ga-row-thumb"><img src={`/global/${SERVICE_IMAGE[service.id] || 'still-life'}.jpg`} alt="" loading="lazy" /></figure>
                 <div className="ga-row-name">
                   <h3>{niceName(service.name)}</h3>
                   {service.description ? <p>{service.description}</p> : null}
@@ -241,6 +407,8 @@ export default function GlobalHome({ services = [] }) {
           <button type="button" className="ga-btn ga-btn-big" data-open-booking="1">Book Now</button>
         </div>
       </section>
+
+      <div className="ga-float" aria-hidden="true"><img alt="" /></div>
 
       {/* 手机底部常驻下单 */}
       <div className="ga-bar">

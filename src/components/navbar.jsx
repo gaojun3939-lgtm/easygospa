@@ -29,10 +29,12 @@ export default function Navbar() {
     const [isScrolled, setIsScrolled] = React.useState(false);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [isRegionOpen, setIsRegionOpen] = React.useState(false);
+  const [isNavHidden, setIsNavHidden] = React.useState(false);
   const [isBookingOpen, setIsBookingOpen] = React.useState(false);
   const [initialService, setInitialService] = React.useState(null);
   const [isLoading, setIsLoading] = React.useState(true);
 
+  const lastScrollY = React.useRef(0);
   const pathname = usePathname();
   const searchParams = useSearchParams();
   // 菜单「实底」样式(米色玻璃底 + 深色字 + 彩色莲花):往下滚、打开手机菜单时用;
@@ -45,6 +47,12 @@ export default function Navbar() {
     const handleScroll = () => {
       const hero = document.querySelector(".ga-hero");
       setIsScrolled(window.scrollY > (hero ? hero.offsetHeight - window.innerHeight - 40 : 80));
+      // 往下滑藏起来，往上滑出现
+      const y = window.scrollY;
+      if (Math.abs(y - lastScrollY.current) > 6) {
+        setIsNavHidden(y > lastScrollY.current && y > 160);
+        lastScrollY.current = y;
+      }
     };
     const closeRegion = (event) => { if (!event.target.closest?.(".ga-region")) setIsRegionOpen(false); };
     document.addEventListener("click", closeRegion);
@@ -112,7 +120,7 @@ export default function Navbar() {
 
   return (
     <div>
-      <nav className={`ga-nav${solidNav ? " is-solid" : ""}`} role="navigation" aria-label="Main navigation">
+      <nav className={`ga-nav${solidNav ? " is-solid" : ""}${isNavHidden && !isMenuOpen && !isRegionOpen ? " is-hidden" : ""}`} role="navigation" aria-label="Main navigation">
         <div className="ga-nav-in">
           <Link href="/" className="ga-logo" aria-label="EasyGoSpa - Home Massage Service">
             <img src={solidNav ? "/global/lotus-olive.png" : "/global/lotus-white.png"} alt="" />
