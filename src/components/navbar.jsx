@@ -13,11 +13,22 @@ import React from 'react'
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 
+// 全球站预留的 6 个地方（老板 2026-11-03 战略规划），现在只有菲律宾在服务
+const REGIONS = [
+  { name: "Philippines", live: true },
+  { name: "Taiwan" },
+  { name: "Vietnam" },
+  { name: "Malaysia" },
+  { name: "Thailand" },
+  { name: "Singapore" },
+];
+
 const LIGHT_TOP_PAGES = new Set(["/pricing", "/terms-of-service", "/privacy-policy", "/sitemap"]);
 
 export default function Navbar() {
     const [isScrolled, setIsScrolled] = React.useState(false);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [isRegionOpen, setIsRegionOpen] = React.useState(false);
   const [isBookingOpen, setIsBookingOpen] = React.useState(false);
   const [initialService, setInitialService] = React.useState(null);
   const [isLoading, setIsLoading] = React.useState(true);
@@ -30,7 +41,13 @@ export default function Navbar() {
   const solidNav = isScrolled || isMenuOpen || LIGHT_TOP_PAGES.has(pathname) || pathname?.startsWith("/r/");
 
   React.useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 80);
+    // 首页第一幕是整屏夜景，滑过之后菜单才变实底
+    const handleScroll = () => {
+      const hero = document.querySelector(".ga-hero");
+      setIsScrolled(window.scrollY > (hero ? hero.offsetHeight - window.innerHeight - 40 : 80));
+    };
+    const closeRegion = (event) => { if (!event.target.closest?.(".ga-region")) setIsRegionOpen(false); };
+    document.addEventListener("click", closeRegion);
 
     // add listeners safely on client
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -63,6 +80,7 @@ export default function Navbar() {
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("click", closeRegion);
       window.removeEventListener("open-booking-modal", openBookingModal);
       window.removeEventListener(
         "open-booking-modal-with-service",
@@ -94,159 +112,61 @@ export default function Navbar() {
 
   return (
     <div>
-         <nav
-        className={`fixed font-extrabold top-0 left-0 right-0 z-50 nav-transition ${
-          solidNav ? "glass-nav border-b-1 border-[#2db83d1a] backdrop-blur-lg bg-[#f8f2ecf2] py-4" : "bg-transparent py-6"
-        }`}
-        role="navigation"
-        aria-label="Main navigation"
-      >
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="flex items-center justify-between pt-4">
-            {/* Logo */}
-            <Link
-              href="/"
-              className="flex items-center gap-3 group transform transition-transform hover:scale-105"
-              aria-label="EasyGo Spa - Home Massage Service"
-            >
-              <div className="relative">
-                <BrandMark size={34} tone={solidNav ? 'brand' : 'light'} />
-              </div>
-              <div>
-                <h1
-                  className={`text-[#2db83d] text-lg font-bold font-serif text-center glow-text`}
-                >
-                  EasyGo Spa
-                </h1>
-                <p
-                  className={`text-xs text-center tracking-widest ${
-                    solidNav
-                      ? "text-[#2db83d]"
-                      : "text-[#2db83d] text-shadow-dark"
-                  }`}
-                >
-                  Premium Home Massage
-                </p>
-              </div>
-            </Link>
-
-            {/* Desktop Nav */}
-            <div className="hidden lg:flex items-center gap-8" role="menubar">
-              {currentNavItems.map((item) => {
-                const active = pathname === item.url;
-                return (
-                  <Link
-                    key={item.name}
-                    href={item.url}
-                    role="menuitem"
-                    className={`text-lg font-medium transition-all duration-300 hover:text-[#2db83d] relative group ${
-                      active
-                        ? "text-[#2db83d]"
-                        : solidNav
-                        ? "text-[#0F0F0F]"
-                        : "text-white text-shadow-dark"
-                    }`}
-                    aria-current={active ? "page" : undefined}
-                  >
-                    {item.name}
-                    <span
-                      className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#2db83d] transition-all duration-300 group-hover:w-full"
-                      aria-hidden="true"
-                    />
-                  </Link>
-                );
-              })}
-            </div>
-
-            {/* CTA */}
-            <div className="hidden lg:flex items-center gap-5">
-              <button
-                onClick={() =>
-                  window.dispatchEvent(new CustomEvent("open-my-orders"))
-                }
-                className={`text-lg font-medium transition-colors duration-300 hover:text-[#2db83d] ${
-                  solidNav ? "text-[#0F0F0F]" : "text-white text-shadow-dark"
-                }`}
-                aria-label="Open my orders"
-              >
-                My orders
+      <nav className={`ga-nav${solidNav ? " is-solid" : ""}`} role="navigation" aria-label="Main navigation">
+        <div className="ga-nav-in">
+          <Link href="/" className="ga-logo" aria-label="EasyGoSpa - Home Massage Service">
+            <img src={solidNav ? "/global/lotus-olive.png" : "/global/lotus-white.png"} alt="" />
+            EasyGoSpa
+          </Link>
+          <div className="ga-nav-links" role="menubar">
+            {currentNavItems.map((item) => (
+              <Link key={item.name} href={item.url} role="menuitem" aria-current={pathname === item.url ? "page" : undefined}>
+                {item.name}
+              </Link>
+            ))}
+          </div>
+          <div className="ga-nav-right">
+            <div className={`ga-region${isRegionOpen ? " is-open" : ""}`}>
+              <button type="button" className="ga-region-btn" aria-expanded={isRegionOpen} onClick={() => setIsRegionOpen((open) => !open)}>
+                <span className="ga-region-long">Philippines · English</span>
+                <span className="ga-region-short">PH · EN</span>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg>
               </button>
-              <button
-                onClick={() =>
-                  window.dispatchEvent(new CustomEvent("open-booking-modal"))
-                }
-                className="bg-[#2db83d] text-white px-6 py-3 rounded-full text-sm font-medium hover:bg-[#0F0F0F] transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2"
-                aria-label="Open booking appointment modal"
-              >
-                Book Now
-              </button>
+              <div className="ga-region-panel">
+                {REGIONS.map((region) => (
+                  <div key={region.name} className={`ga-region-row${region.live ? " is-on" : ""}`}>
+                    <span>{region.name}</span>
+                    <span>{region.live ? "Now serving" : "Coming soon"}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              className={`lg:hidden p-2 z-50 focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 rounded ${
-                solidNav
-                  ? "text-[#0F0F0F]"
-                  : "text-white text-shadow-dark"
-              }`}
-              onClick={() => setIsMenuOpen((s) => !s)}
-              aria-expanded={isMenuOpen}
-              aria-controls="mobile-menu"
-              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-            >
-              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            <button type="button" className="ga-orders" onClick={() => window.dispatchEvent(new CustomEvent("open-my-orders"))} aria-label="Open my orders">
+              My orders
+            </button>
+            <button type="button" className="ga-btn" onClick={() => window.dispatchEvent(new CustomEvent("open-booking-modal"))} aria-label="Open booking appointment modal">
+              Book Now
+            </button>
+            <button type="button" className="ga-burger" onClick={() => setIsMenuOpen((open) => !open)} aria-expanded={isMenuOpen} aria-controls="mobile-menu" aria-label={isMenuOpen ? "Close menu" : "Open menu"}>
+              {isMenuOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
             </button>
           </div>
         </div>
       </nav>
 
-      {/* Mobile Menu */}
       {isMenuOpen && (
-        <div
-          id="mobile-menu"
-          className="fixed inset-0 bg-[#F8F2EC]/95 backdrop-blur-lg z-40 flex flex-col items-center justify-center lg:hidden"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Mobile navigation menu"
-        >
-          <div className="flex flex-col items-center gap-8">
-            {currentNavItems.map((item) => {
-              const active = pathname === item.url;
-              return (
-                <Link
-                  key={item.name}
-                  href={item.url}
-                  onClick={() => setIsMenuOpen(false)}
-                  className={`text-2xl font-medium transition-all duration-300 hover:text-[#2db83d] focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 rounded px-2 py-1 ${
-                    active ? "text-[#2db83d]" : "text-[#0F0F0F]"
-                  }`}
-                  aria-current={active ? "page" : undefined}
-                >
-                  {item.name}
-                </Link>
-              );
-            })}
-            <button
-              onClick={() => {
-                setIsMenuOpen(false);
-                window.dispatchEvent(new CustomEvent("open-my-orders"));
-              }}
-              className="text-2xl font-medium text-[#0F0F0F] transition-all duration-300 hover:text-[#2db83d] focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 rounded px-2 py-1"
-              aria-label="Open my orders"
-            >
-              My orders
-            </button>
-            <button
-              onClick={() => {
-                setIsMenuOpen(false);
-                window.dispatchEvent(new CustomEvent("open-booking-modal"));
-              }}
-              className="mt-8 bg-[#2db83d] text-white px-8 py-4 rounded-full text-lg font-medium hover:bg-[#0F0F0F] transition-all duration-300 hover:scale-105 shadow-lg focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 cursor-pointer"
-              aria-label="Open booking appointment modal"
-            >
-              Book Appointment
-            </button>
-          </div>
+        <div id="mobile-menu" className="ga-sheet" role="dialog" aria-modal="true" aria-label="Mobile navigation menu">
+          {currentNavItems.map((item) => (
+            <Link key={item.name} href={item.url} onClick={() => setIsMenuOpen(false)} aria-current={pathname === item.url ? "page" : undefined}>
+              {item.name}
+            </Link>
+          ))}
+          <button type="button" onClick={() => { setIsMenuOpen(false); window.dispatchEvent(new CustomEvent("open-my-orders")); }} aria-label="Open my orders">
+            My orders
+          </button>
+          <button type="button" className="ga-btn" onClick={() => { setIsMenuOpen(false); window.dispatchEvent(new CustomEvent("open-booking-modal")); }} aria-label="Open booking appointment modal">
+            Book Appointment
+          </button>
         </div>
       )}
     </div>
