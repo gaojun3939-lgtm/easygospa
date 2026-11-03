@@ -17,7 +17,7 @@ export function ServiceCardImage({ service }) {
   const src = SERVICE_PREVIEW_IMAGES[service.id];
   if (!src) {
     return (
-      <div className="w-full h-full flex items-center justify-center bg-[#F8F2EC]">
+      <div className="w-full h-full flex items-center justify-center bg-[#F7F4EE]">
         <BrandMark size={120} tone="brand" />
       </div>
     );
@@ -38,9 +38,9 @@ export function ServicePrices({ options = [], className = '' }) {
   return (
     <div className={`grid gap-2 ${className}`} style={{ gridTemplateColumns: `repeat(${Math.max(options.length, 1)}, minmax(0, 1fr))` }}>
       {options.map(option => (
-        <div className="rounded-xl bg-[#FDFCF9] px-3 py-2 text-center" key={option.optionId || option.durationMinutes}>
+        <div className="rounded-xl bg-[#F7F4EE] px-3 py-2 text-center" key={option.optionId || option.durationMinutes}>
           <p className="text-xs text-gray-500 m-0">{option.durationMinutes} min</p>
-          <p className="text-lg font-bold text-[#0F0F0F] m-0">{formatPeso(option.price)}</p>
+          <p className="text-lg font-bold text-[#171A17] m-0">{formatPeso(option.price)}</p>
         </div>
       ))}
     </div>

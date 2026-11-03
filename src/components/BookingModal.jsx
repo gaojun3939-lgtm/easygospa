@@ -99,13 +99,13 @@ const catalogUnavailableNotice = 'No specific therapist is available right now.'
 const catalogUnavailableFollowUp = 'Please try again in a few minutes, or message us on WhatsApp to book.';
 const missingProfileIntroduction = 'No profile introduction has been provided yet.';
 const phoneErrorMessage = 'Please enter a valid phone number for the selected country.';
-const bookingInputClass = 'h-12 w-full rounded-2xl border border-gray-300 bg-white px-4 font-medium text-[#0F0F0F] caret-[#0F0F0F] placeholder:text-gray-500 focus:border-[#4E8D43] focus:outline-none';
+const bookingInputClass = 'h-12 w-full rounded-2xl border border-gray-300 bg-white px-4 font-medium text-[#171A17] caret-[#171A17] placeholder:text-gray-500 focus:border-[#64734F] focus:outline-none';
 const bookingTextareaClass = `${bookingInputClass} min-h-28 resize-none py-3`;
 const bookingLabelClass = 'mb-2 block text-sm font-semibold text-slate-800';
-const summaryCardClass = 'rounded-[1.5rem] border border-[#4E8D43]/30 bg-[#F1FBF3] p-5 text-sm';
+const summaryCardClass = 'rounded-[1.5rem] border border-[#64734F]/30 bg-[#F2F4EC] p-5 text-sm';
 const summaryLabelClass = 'font-semibold text-slate-700';
-const summaryValueClass = 'text-right font-semibold text-[#0F0F0F]';
-const summaryMoneyClass = 'text-right font-bold text-[#0E6F1A]';
+const summaryValueClass = 'text-right font-semibold text-[#171A17]';
+const summaryMoneyClass = 'text-right font-bold text-[#55633F]';
 
 function timeSlotMinutes(value = '') {
   const [hour, minute] = String(value).split(':').map(Number);
@@ -263,8 +263,8 @@ export function BookingCouponAmounts({ couponPreview, selectedTotalAmount, promo
       </div>
       {discount > 0 ? (
         <>
-          <div className="flex justify-between gap-4 text-[#0E6F1A]" data-testid="booking-coupon-discount"><strong>Discount</strong><span className="font-bold">− {peso(discount)} (Automatically applied)</span></div>
-          <div className="flex items-baseline justify-between gap-4 border-t border-[#4E8D43]/20 pt-3" data-testid="booking-cash-to-collect"><strong className="text-base text-[#0F0F0F]">Cash payment</strong><span className="text-2xl font-extrabold text-[#0F0F0F]">{peso(cashToCollect)}</span></div>
+          <div className="flex justify-between gap-4 text-[#55633F]" data-testid="booking-coupon-discount"><strong>Discount</strong><span className="font-bold">− {peso(discount)} (Automatically applied)</span></div>
+          <div className="flex items-baseline justify-between gap-4 border-t border-[#64734F]/20 pt-3" data-testid="booking-cash-to-collect"><strong className="text-base text-[#171A17]">Cash payment</strong><span className="text-2xl font-extrabold text-[#171A17]">{peso(cashToCollect)}</span></div>
         </>
       ) : null}
     </>
@@ -281,14 +281,14 @@ export function BookingCouponSelector({
 }) {
   return (
     <section className="rounded-[1.5rem] border border-gray-200 bg-white p-5" data-testid="booking-coupon-selector">
-      <h4 className="font-bold text-[#0F0F0F]">Coupon</h4>
+      <h4 className="font-bold text-[#171A17]">Coupon</h4>
       <p className="mt-1 text-xs leading-5 text-gray-500">We securely match active coupons from the signed-in account for this booking email.</p>
       <div className="mt-4" aria-live="polite">
         {couponPreviewState === 'loading' ? <p className="text-sm text-gray-500">Checking for an active coupon…</p> : null}
         {couponPreviewState === 'error' ? (
           <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
             <p className="text-sm text-amber-800">We could not confirm your coupon and cash total.</p>
-            <button type="button" onClick={onRetry} className="mt-2 text-sm font-bold text-[#3F7838]">Try again</button>
+            <button type="button" onClick={onRetry} className="mt-2 text-sm font-bold text-[#55633F]">Try again</button>
           </div>
         ) : null}
         {/* ⚠ 2026-07-29:下面几条原来全按 couponApplied 分支,而新客活动券那个标志永远是 false,
@@ -296,8 +296,8 @@ export function BookingCouponSelector({
             现在统一按"实际减了多少钱"判断:减了就说减了,是哪种券客人不需要知道。
             「不用券」那个开关只对账号券有意义,活动券不给这个选项(它是广告给的,没人想退掉)。 */}
         {couponPreviewState === 'ready' && couponDiscountAmount(couponPreview) > 0 ? (
-          <div className="rounded-2xl bg-[#F1FBF3] p-4">
-            <p className="text-sm font-bold text-[#0E6F1A]">{peso(couponDiscountAmount(couponPreview))} off — automatically applied</p>
+          <div className="rounded-2xl bg-[#F2F4EC] p-4">
+            <p className="text-sm font-bold text-[#55633F]">{peso(couponDiscountAmount(couponPreview))} off — automatically applied</p>
             <p className="mt-1 text-xs leading-5 text-gray-600">Your discount is already in the cash total below. Nothing else to do.</p>
             {couponPreview?.couponApplied === true ? (
               <button type="button" onClick={onOptOut} className="mt-3 text-xs font-bold text-gray-500 underline decoration-gray-300 underline-offset-4">Don&apos;t use coupon</button>
@@ -307,7 +307,7 @@ export function BookingCouponSelector({
         {couponPreviewState === 'ready' && couponDiscountAmount(couponPreview) === 0 && couponOptOut ? (
           <div className="rounded-2xl bg-gray-50 p-4">
             <p className="text-sm font-semibold text-gray-600">Coupon not applied. You will pay the full amount.</p>
-            <button type="button" onClick={onUseCoupon} className="mt-3 text-xs font-bold text-[#3F7838] underline decoration-[#4E8D43]/40 underline-offset-4">Use coupon automatically</button>
+            <button type="button" onClick={onUseCoupon} className="mt-3 text-xs font-bold text-[#55633F] underline decoration-[#64734F]/40 underline-offset-4">Use coupon automatically</button>
           </div>
         ) : null}
         {couponPreviewState === 'ready' && couponDiscountAmount(couponPreview) === 0 && !couponOptOut ? (
@@ -333,12 +333,12 @@ function ScheduleChooser({ mode, slot, onSlotChange, days, loading, loadFailed, 
       <label className={bookingLabelClass}><Clock className="mr-2 inline h-4 w-4" />When would you like your massage?</label>
 
       {mode === 'asap' ? (
-        <div className="flex items-center justify-between gap-3 rounded-2xl bg-[#eaf1e7] px-4 py-3 text-sm font-medium text-[#3F7838]">
+        <div className="flex items-center justify-between gap-3 rounded-2xl bg-[#E9ECE1] px-4 py-3 text-sm font-medium text-[#55633F]">
           <span><Clock className="mr-2 inline h-4 w-4" />⚡ As soon as possible — your therapist departs right after accepting.</span>
           <button type="button" onClick={onChangeOnWall} data-testid="schedule-change-on-wall" className="shrink-0 text-sm font-bold underline underline-offset-2">Change</button>
         </div>
       ) : slotConfirmed ? (
-        <div className="flex items-center justify-between gap-3 rounded-2xl bg-[#eaf1e7] px-4 py-3 text-sm font-medium text-[#3F7838]" data-testid="schedule-summary">
+        <div className="flex items-center justify-between gap-3 rounded-2xl bg-[#E9ECE1] px-4 py-3 text-sm font-medium text-[#55633F]" data-testid="schedule-summary">
           <span><Clock className="mr-2 inline h-4 w-4" />🕘 Your appointment: <strong>{formatScheduleLabel(slot.date, slot.time)}</strong>{therapistName ? ` with ${therapistName}` : ''}</span>
           <button type="button" onClick={onChangeOnWall} data-testid="schedule-change-on-wall" className="shrink-0 text-sm font-bold underline underline-offset-2">Change</button>
         </div>
@@ -371,8 +371,8 @@ function ScheduleChooser({ mode, slot, onSlotChange, days, loading, loadFailed, 
                 type="button"
                 onClick={() => onSlotChange({ date: day.date, time: '' })}
                 className={`rounded-full border px-4 py-2 text-xs font-bold transition ${day.date === activeDate
-                  ? 'border-[#4E8D43] bg-[#4E8D43] text-white'
-                  : 'border-gray-300 bg-white text-gray-700 hover:border-[#4E8D43]'}`}
+                  ? 'border-[#64734F] bg-[#64734F] text-white'
+                  : 'border-gray-300 bg-white text-gray-700 hover:border-[#64734F]'}`}
               >
                 {manilaDayLabel(day.date, day.dayOffset)}
               </button>
@@ -385,8 +385,8 @@ function ScheduleChooser({ mode, slot, onSlotChange, days, loading, loadFailed, 
                 type="button"
                 onClick={() => onSlotChange({ date: activeDate, time })}
                 className={`rounded-xl border px-2 py-2.5 text-sm font-bold transition ${slot?.date === activeDate && slot?.time === time
-                  ? 'border-[#4E8D43] bg-[#F1FBF3] text-[#3F7838]'
-                  : 'border-gray-300 bg-white text-gray-700 hover:border-[#4E8D43]'}`}
+                  ? 'border-[#64734F] bg-[#F2F4EC] text-[#55633F]'
+                  : 'border-gray-300 bg-white text-gray-700 hover:border-[#64734F]'}`}
                 data-testid={`schedule-time-${time}`}
               >
                 {time}
@@ -592,7 +592,7 @@ function TherapistWallCard({ therapist, selected, onSelect, onRequireLocation, c
       onClick={openDetail}
       onKeyDown={handleKeyDown}
       data-testid={`therapist-card-${therapist.id}`}
-      className={`relative w-full cursor-pointer overflow-hidden rounded-[1.5rem] border bg-white p-3 text-left shadow-sm transition-all ${selected ? 'border-[#4E8D43] shadow-md' : 'border-gray-100 hover:border-[#4E8D43]/60 hover:shadow-md'}`}
+      className={`relative w-full cursor-pointer overflow-hidden rounded-[1.5rem] border bg-white p-3 text-left shadow-sm transition-all ${selected ? 'border-[#64734F] shadow-md' : 'border-gray-100 hover:border-[#64734F]/60 hover:shadow-md'}`}
     >
       {therapist.isNew === true ? <span className="pointer-events-none absolute left-3 top-3 z-10 rounded-md bg-sky-600 px-2 py-1 text-[10px] font-extrabold leading-none tracking-[0.12em] text-white shadow-sm" data-testid="therapist-new-badge">NEW</span> : null}
       {showRangeHint ? (
@@ -608,21 +608,21 @@ function TherapistWallCard({ therapist, selected, onSelect, onRequireLocation, c
         <TherapistAvatar therapist={therapist} mode="wall" />
         <div className="flex min-w-0 flex-1 flex-col">
           <div className="flex items-center gap-2">
-            <h3 className="min-w-0 flex-1 truncate text-[17px] font-bold leading-6 text-[#0F0F0F]">{therapist.name}</h3>
+            <h3 className="min-w-0 flex-1 truncate text-[17px] font-bold leading-6 text-[#171A17]">{therapist.name}</h3>
             {/* Owner call (2026-07-18): show the earliest slot even off-shift —
                 the backend now sends cross-day values like "Tomorrow 09:00". */}
             {therapist.earliestAvailable ? (
-              <span className="flex shrink-0 items-center gap-1 text-xs font-semibold leading-5 text-[#3F7838]" data-testid="therapist-earliest-availability">
+              <span className="flex shrink-0 items-center gap-1 text-xs font-semibold leading-5 text-[#55633F]" data-testid="therapist-earliest-availability">
                 <Clock className="h-3.5 w-3.5 shrink-0" />Earliest {therapist.earliestAvailable}
               </span>
             ) : null}
-            {selected ? <Check className="h-4 w-4 shrink-0 text-[#4E8D43]" /> : null}
+            {selected ? <Check className="h-4 w-4 shrink-0 text-[#64734F]" /> : null}
           </div>
           {/* 老板 2026-07-24:卡片只留精华(名字/评分/距离/Book),对标对手一屏 6 个。
               删掉 Massage Therapist、覆盖区一长串、自我介绍——都挪到点进去的详情页。 */}
           <div className="mt-1.5 text-sm font-bold text-gray-700"><TherapistRating therapist={therapist} /></div>
           {distanceKm !== null && distanceKm <= 100 ? (
-            <p className={`mt-2 flex items-center gap-1 text-xs font-semibold ${outOfRange ? 'text-gray-400' : 'text-[#3F7838]'}`} data-testid="therapist-distance">
+            <p className={`mt-2 flex items-center gap-1 text-xs font-semibold ${outOfRange ? 'text-gray-400' : 'text-[#55633F]'}`} data-testid="therapist-distance">
               <MapPin className="h-3.5 w-3.5 shrink-0" />
               {distanceKm < 10 ? distanceKm.toFixed(1) : Math.round(distanceKm)} km
               {outOfRange ? <span data-testid="therapist-out-of-range-tag"> · Too far</span> : null}
@@ -640,7 +640,7 @@ function TherapistWallCard({ therapist, selected, onSelect, onRequireLocation, c
               }}
               data-testid={`therapist-card-book-${therapist.id}`}
               aria-disabled={rangeBlocked || undefined}
-              className={`ml-auto inline-flex h-11 min-w-20 shrink-0 items-center justify-center rounded-full px-4 text-sm font-bold transition ${rangeBlocked ? 'cursor-not-allowed bg-gray-200 text-gray-500' : 'bg-[#4E8D43] text-white hover:bg-[#3F7838]'}`}
+              className={`ml-auto inline-flex h-11 min-w-20 shrink-0 items-center justify-center rounded-full px-4 text-sm font-bold transition ${rangeBlocked ? 'cursor-not-allowed bg-gray-200 text-gray-500' : 'bg-[#64734F] text-white hover:bg-[#55633F]'}`}
             >
               Book
             </button>
@@ -670,20 +670,20 @@ function ServiceCard({ service, selected, selectedDuration, onSelectService, onS
 
   return (
     <section
-      className={`cursor-pointer overflow-hidden rounded-[1.5rem] border shadow-sm transition-all ${selected ? 'border-[#4E8D43] bg-[#F1FBF3] ring-1 ring-[#4E8D43]/20' : 'border-gray-200 bg-white hover:border-[#4E8D43]/50 hover:shadow-md'}`}
+      className={`cursor-pointer overflow-hidden rounded-[1.5rem] border shadow-sm transition-all ${selected ? 'border-[#64734F] bg-[#F2F4EC] ring-1 ring-[#64734F]/20' : 'border-gray-200 bg-white hover:border-[#64734F]/50 hover:shadow-md'}`}
       data-testid={`therapist-service-${service.id}`}
       onClick={() => onSelectService(service)}
     >
       <div className="p-4">
         <div className="flex items-start justify-between gap-3">
-          <span className="block min-w-0 flex-1 text-lg font-bold text-[#0F0F0F]">{service.name}</span>
+          <span className="block min-w-0 flex-1 text-lg font-bold text-[#171A17]">{service.name}</span>
           <button
             type="button"
             onClick={event => { event.stopPropagation(); onSelectService(service); }}
             data-testid={`service-select-${service.id}`}
             aria-pressed={selected}
             aria-label={`Select ${service.name}`}
-            className={`mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border transition ${selected ? 'border-[#4E8D43] bg-[#4E8D43] text-white' : 'border-gray-300 bg-white text-transparent'}`}
+            className={`mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border transition ${selected ? 'border-[#64734F] bg-[#64734F] text-white' : 'border-gray-300 bg-white text-transparent'}`}
           >
             <Check className="h-4 w-4" />
           </button>
@@ -699,7 +699,7 @@ function ServiceCard({ service, selected, selectedDuration, onSelectService, onS
                 onClick={event => { event.stopPropagation(); onSelectDuration(service, option); }}
                 data-testid="service-duration-option"
                 aria-pressed={durationSelected}
-                className={`inline-flex h-10 items-center gap-1.5 rounded-full border px-4 text-sm font-bold transition-all ${durationSelected ? 'border-[#4E8D43] bg-[#E8F5E9] text-[#3F7838]' : 'border-gray-200 bg-white text-gray-700 hover:border-[#4E8D43]/60'}`}
+                className={`inline-flex h-10 items-center gap-1.5 rounded-full border px-4 text-sm font-bold transition-all ${durationSelected ? 'border-[#64734F] bg-[#E9ECE1] text-[#55633F]' : 'border-gray-200 bg-white text-gray-700 hover:border-[#64734F]/60'}`}
               >
                 {option.durationMinutes} mins
                 {durationSelected ? <Check className="h-4 w-4" /> : null}
@@ -713,7 +713,7 @@ function ServiceCard({ service, selected, selectedDuration, onSelectService, onS
                 老板 2026-07-29:"点 book 的时候就应该能看到 850" —— 客人得在挑服务
                 这一刻就看见自己省了多少,不能等到最后一步才揭晓。 */}
             <div className="flex items-baseline gap-1.5" data-testid={`service-price-${service.id}`}>
-              <PriceWithDiscount amount={priceOption.price} discount={promoDiscount} mainClassName="text-2xl font-extrabold text-[#0F0F0F]" />
+              <PriceWithDiscount amount={priceOption.price} discount={promoDiscount} mainClassName="text-2xl font-extrabold text-[#171A17]" />
               <span className="text-xs font-semibold text-gray-500">/ {priceOption.durationMinutes} mins</span>
             </div>
             {/* Book 长在选中的卡片里(老板 2026-07-21:底部长条挡视野,不要了)。 */}
@@ -722,7 +722,7 @@ function ServiceCard({ service, selected, selectedDuration, onSelectService, onS
                 type="button"
                 onClick={event => { event.stopPropagation(); onBook?.(); }}
                 data-testid="detail-book"
-                className="inline-flex h-11 min-w-24 shrink-0 items-center justify-center rounded-full bg-[#4E8D43] px-6 font-bold text-white transition hover:bg-[#3F7838]"
+                className="inline-flex h-11 min-w-24 shrink-0 items-center justify-center rounded-full bg-[#64734F] px-6 font-bold text-white transition hover:bg-[#55633F]"
               >
                 Book
               </button>
@@ -795,10 +795,10 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
             <TherapistAvatar therapist={therapist} mode="detail" />
           )}
           <button type="button" onClick={onBack} className="absolute left-3 top-3 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-gray-700 shadow-sm" aria-label="Back to therapist list"><ArrowLeft className="h-5 w-5" /></button>
-          {usesFallbackImage && heroPhotos.length === 0 ? <span className="absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-[#3F7838]">EasyGoSpa therapist profile</span> : null}
+          {usesFallbackImage && heroPhotos.length === 0 ? <span className="absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-[#55633F]">EasyGoSpa therapist profile</span> : null}
         </div>
         <div className="p-5">
-          <h3 className="text-3xl font-bold tracking-normal text-[#0F0F0F]">{therapist.name}</h3>
+          <h3 className="text-3xl font-bold tracking-normal text-[#171A17]">{therapist.name}</h3>
           {/* 老板 2026-07-21 对标 Glow:名字下一行"距离 · 金星评分(评价数)",
               撤掉 Available after confirmation / 项目标签等杂物(项目下面 My Services 有)。 */}
           <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-semibold text-gray-700">
@@ -825,14 +825,14 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
               <span data-testid="therapist-rating-static"><TherapistRating therapist={therapist} /></span>
             )}
           </div>
-          <div className="mt-4 flex items-center gap-4 rounded-2xl border border-[#4E8D43]/35 bg-[#F7FCF8] px-4 py-3" data-testid="therapist-care">
-            <span className="flex flex-col items-center gap-1 text-[#3F7838]">
+          <div className="mt-4 flex items-center gap-4 rounded-2xl border border-[#64734F]/35 bg-[#F7FCF8] px-4 py-3" data-testid="therapist-care">
+            <span className="flex flex-col items-center gap-1 text-[#55633F]">
               <ShieldCheck className="h-7 w-7" />
               <span className="text-[11px] font-bold leading-none">EasyGoSpa Care</span>
             </span>
             <span className="grid gap-1.5 text-sm text-gray-800">
-              <span className="inline-flex items-center gap-2"><Check className="h-4 w-4 shrink-0 text-[#3F7838]" />No tip, no travel fee</span>
-              <span className="inline-flex items-center gap-2"><Check className="h-4 w-4 shrink-0 text-[#3F7838]" />No sensitive information required</span>
+              <span className="inline-flex items-center gap-2"><Check className="h-4 w-4 shrink-0 text-[#55633F]" />No tip, no travel fee</span>
+              <span className="inline-flex items-center gap-2"><Check className="h-4 w-4 shrink-0 text-[#55633F]" />No sensitive information required</span>
             </span>
           </div>
         </div>
@@ -845,16 +845,16 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
         </div>
       ) : null}
       <section className="rounded-[1.5rem] border border-gray-200 bg-white p-5 shadow-sm" data-testid="therapist-about">
-        <h3 className="mb-2 text-xl font-bold text-[#0F0F0F]">About {therapist.name}</h3>
+        <h3 className="mb-2 text-xl font-bold text-[#171A17]">About {therapist.name}</h3>
         <p className={`text-sm leading-7 text-gray-700 ${shouldClampAbout && !showFullAbout ? 'line-clamp-4' : ''}`}>{aboutText}</p>
         {shouldClampAbout ? (
-          <button type="button" onClick={() => setShowFullAbout(current => !current)} className="mt-2 text-sm font-bold text-[#3F7838]">
+          <button type="button" onClick={() => setShowFullAbout(current => !current)} className="mt-2 text-sm font-bold text-[#55633F]">
             {showFullAbout ? 'Show less' : 'Show more'}
           </button>
         ) : null}
       </section>
       <div data-testid="therapist-services">
-        <h3 className="text-2xl font-bold text-[#0F0F0F]">My Services</h3>
+        <h3 className="text-2xl font-bold text-[#171A17]">My Services</h3>
         <p className="mt-1 text-sm text-gray-600">Real bookable services and prices from the public catalog.</p>
         <div className="mt-4 grid gap-4 lg:grid-cols-2">
           {availableServices.map(service => <ServiceCard key={service.id} service={service} selected={selectedServiceName === service.name} selectedDuration={selectedServiceName === service.name ? Number(selectedDuration) : 0} onSelectService={onSelectService} onSelectDuration={onSelectDuration} onBook={onBook} promoDiscount={promoDiscount} />)}
@@ -868,15 +868,15 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
           <div>
             <div className="flex items-center gap-2">
               <Star className="h-5 w-5 fill-[#f0a41c] text-[#f0a41c]" />
-              <h4 className="font-bold text-[#0F0F0F]">Verified reviews</h4>
+              <h4 className="font-bold text-[#171A17]">Verified reviews</h4>
             </div>
             <div className="mt-3 flex items-baseline gap-2">
-              <strong className="text-4xl font-extrabold text-[#0F0F0F]">{averageRating.toFixed(1)}</strong>
+              <strong className="text-4xl font-extrabold text-[#171A17]">{averageRating.toFixed(1)}</strong>
               <span className="text-sm font-semibold text-gray-500">({reviewCount} {reviewCount === 1 ? 'review' : 'reviews'})</span>
             </div>
           </div>
           {verifiedReviews.length > 3 ? (
-            <button type="button" onClick={() => setShowAllReviews(current => !current)} className="text-sm font-bold text-[#3F7838]">
+            <button type="button" onClick={() => setShowAllReviews(current => !current)} className="text-sm font-bold text-[#55633F]">
               {showAllReviews ? 'Show recent' : 'View all'}
             </button>
           ) : null}
@@ -899,14 +899,14 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
             {visibleReviews.map(review => (
               <article key={review.id} className="py-4 first:pt-0" data-testid="verified-review">
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <strong className="text-sm text-[#0F0F0F]">{review.maskedCustomerName || 'Verified customer'}</strong>
+                  <strong className="text-sm text-[#171A17]">{review.maskedCustomerName || 'Verified customer'}</strong>
                   <span className="text-xs text-gray-400">{formatReviewDate(review.createdAt)}</span>
                 </div>
                 <p className="mt-1 text-sm tracking-[0.08em] text-[#e08700]" aria-label={`${review.stars} out of 5 stars`}>{'★'.repeat(review.stars)}{'☆'.repeat(5 - review.stars)}</p>
                 {review.text ? <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-gray-700">{review.text}</p> : <p className="mt-2 text-sm italic text-gray-400">Star rating only</p>}
                 {review.reply?.text ? (
-                  <div className="mt-3 rounded-xl bg-[#F1FBF3] p-3">
-                    <p className="text-xs font-bold uppercase tracking-wide text-[#3F7838]">EasyGoSpa reply</p>
+                  <div className="mt-3 rounded-xl bg-[#F2F4EC] p-3">
+                    <p className="text-xs font-bold uppercase tracking-wide text-[#55633F]">EasyGoSpa reply</p>
                     <p className="mt-1 text-sm leading-6 text-gray-700">{review.reply.text}</p>
                   </div>
                 ) : null}
@@ -1933,8 +1933,8 @@ export default function BookingModal() {
                 <div className="flex items-center justify-between gap-3">
                   <button type="button" onClick={handleClose} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200" aria-label="Close booking modal"><ArrowLeft className="h-5 w-5 text-gray-600" /></button>
                   <div className="min-w-0 flex-1">
-                    <h2 className="truncate text-xl font-bold text-[#0F0F0F]">Choose therapist</h2>
-                    <p className="mt-1 inline-flex max-w-full items-center gap-1 text-xs font-bold text-[#3F7838]" data-testid="therapist-area-label">
+                    <h2 className="truncate text-xl font-bold text-[#171A17]">Choose therapist</h2>
+                    <p className="mt-1 inline-flex max-w-full items-center gap-1 text-xs font-bold text-[#55633F]" data-testid="therapist-area-label">
                       <MapPin className="h-3.5 w-3.5 shrink-0" />
                       <span className="truncate">Serving within {MAX_SERVICE_DISTANCE_KM} km</span>
                     </p>
@@ -1956,13 +1956,13 @@ export default function BookingModal() {
                     value={serviceTypeFilter}
                     onChange={event => setServiceTypeFilter(event.target.value)}
                     data-testid="therapist-servicetype-filter"
-                    className="h-10 shrink-0 rounded-full border border-gray-200 bg-white px-3.5 text-sm font-bold text-gray-700 outline-none focus:border-[#4E8D43]"
+                    className="h-10 shrink-0 rounded-full border border-gray-200 bg-white px-3.5 text-sm font-bold text-gray-700 outline-none focus:border-[#64734F]"
                   >
                     <option value={ALL_SERVICE_TYPES_VALUE}>Service type</option>
                     {serviceTypeOptions.map(name => <option key={name} value={name}>{name}</option>)}
                   </select>
-                  <button type="button" onClick={() => setWallSort('nearby')} aria-pressed={wallSort === 'nearby'} data-testid="wall-sort-nearby" className={`h-10 shrink-0 rounded-full border px-3.5 text-sm font-bold ${wallSort === 'nearby' ? 'border-[#4E8D43] bg-[#4E8D43] text-white' : 'border-gray-200 bg-white text-gray-700'}`}>Nearby</button>
-                  <button type="button" onClick={() => setWallSort('recommended')} aria-pressed={wallSort === 'recommended'} data-testid="wall-sort-popular" className={`h-10 shrink-0 rounded-full border px-3.5 text-sm font-bold ${wallSort === 'recommended' ? 'border-[#4E8D43] bg-[#4E8D43] text-white' : 'border-gray-200 bg-white text-gray-700'}`}>Most booked</button>
+                  <button type="button" onClick={() => setWallSort('nearby')} aria-pressed={wallSort === 'nearby'} data-testid="wall-sort-nearby" className={`h-10 shrink-0 rounded-full border px-3.5 text-sm font-bold ${wallSort === 'nearby' ? 'border-[#64734F] bg-[#64734F] text-white' : 'border-gray-200 bg-white text-gray-700'}`}>Nearby</button>
+                  <button type="button" onClick={() => setWallSort('recommended')} aria-pressed={wallSort === 'recommended'} data-testid="wall-sort-popular" className={`h-10 shrink-0 rounded-full border px-3.5 text-sm font-bold ${wallSort === 'recommended' ? 'border-[#64734F] bg-[#64734F] text-white' : 'border-gray-200 bg-white text-gray-700'}`}>Most booked</button>
                 </div>
               </div>
             ) : step !== 'detail' ? (
@@ -1970,7 +1970,7 @@ export default function BookingModal() {
                 <div className="flex min-w-0 items-center gap-3">
                   <button type="button" onClick={goBack} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200" aria-label="Back"><ArrowLeft className="h-5 w-5 text-gray-600" /></button>
                   <div className="min-w-0">
-                    <h2 className="text-xl font-bold text-[#0F0F0F] sm:text-2xl">Book EasyGoSpa</h2>
+                    <h2 className="text-xl font-bold text-[#171A17] sm:text-2xl">Book EasyGoSpa</h2>
                     <p className="text-sm text-gray-500">Enter your details to continue.</p>
                   </div>
                 </div>
@@ -1993,14 +1993,14 @@ export default function BookingModal() {
                         onClick={() => { setScheduleMode('asap'); setScheduleSlot(null); setWallScheduleNudge(false); }}
                         aria-pressed={scheduleMode === 'asap'}
                         data-testid="wall-schedule-now"
-                        className={`h-10 flex-1 rounded-full border text-sm font-bold transition ${scheduleMode === 'asap' ? 'border-[#4E8D43] bg-[#4E8D43] text-white' : 'border-gray-200 bg-white text-gray-700 hover:border-[#4E8D43]'}`}
+                        className={`h-10 flex-1 rounded-full border text-sm font-bold transition ${scheduleMode === 'asap' ? 'border-[#64734F] bg-[#64734F] text-white' : 'border-gray-200 bg-white text-gray-700 hover:border-[#64734F]'}`}
                       >⚡ Now</button>
                       <button
                         type="button"
                         onClick={() => setScheduleMode('scheduled')}
                         aria-pressed={scheduleMode === 'scheduled'}
                         data-testid="wall-schedule-later"
-                        className={`h-10 flex-1 rounded-full border text-sm font-bold transition ${scheduleMode === 'scheduled' ? 'border-[#4E8D43] bg-[#4E8D43] text-white' : 'border-gray-200 bg-white text-gray-700 hover:border-[#4E8D43]'}`}
+                        className={`h-10 flex-1 rounded-full border text-sm font-bold transition ${scheduleMode === 'scheduled' ? 'border-[#64734F] bg-[#64734F] text-white' : 'border-gray-200 bg-white text-gray-700 hover:border-[#64734F]'}`}
                       >🕘 Book for later</button>
                     </div>
                     {scheduleMode === 'scheduled' ? (
@@ -2014,7 +2014,7 @@ export default function BookingModal() {
                                 key={dateKey}
                                 type="button"
                                 onClick={() => setScheduleSlot({ date: dateKey, time: '' })}
-                                className={`rounded-full border px-3.5 py-1.5 text-xs font-bold transition ${active ? 'border-[#4E8D43] bg-[#F1FBF3] text-[#3F7838]' : 'border-gray-300 bg-white text-gray-700 hover:border-[#4E8D43]'}`}
+                                className={`rounded-full border px-3.5 py-1.5 text-xs font-bold transition ${active ? 'border-[#64734F] bg-[#F2F4EC] text-[#55633F]' : 'border-gray-300 bg-white text-gray-700 hover:border-[#64734F]'}`}
                               >{manilaDayLabel(dateKey, offset)}</button>
                             );
                           })}
@@ -2023,7 +2023,7 @@ export default function BookingModal() {
                             onChange={event => { setScheduleSlot({ date: scheduleSlot?.date || manilaToday(), time: event.target.value }); if (event.target.value) setWallScheduleNudge(false); }}
                             data-testid="wall-schedule-time"
                             aria-label="Pick a time"
-                            className="h-9 rounded-full border border-gray-300 bg-white px-3 text-sm font-bold text-gray-700 outline-none focus:border-[#4E8D43]"
+                            className="h-9 rounded-full border border-gray-300 bg-white px-3 text-sm font-bold text-gray-700 outline-none focus:border-[#64734F]"
                           >
                             <option value="">Pick a time…</option>
                             {timeSlots.filter(time => isSelectableManilaTime(scheduleSlot?.date || manilaToday(), time)).map(time => (
@@ -2040,7 +2040,7 @@ export default function BookingModal() {
                         ) : wallTimeMatch.status === 'failed' ? (
                           <p className="text-xs font-semibold text-amber-700" data-testid="wall-schedule-check-failed">We could not verify schedules just now — showing everyone. Your time is re-checked when you book.</p>
                         ) : wallTimeMatch.status === 'ready' ? (
-                          <p className="text-xs font-semibold text-[#3F7838]" data-testid="wall-schedule-match-note">Showing therapists free at {formatScheduleLabel(scheduleSlot.date, scheduleSlot.time)}.</p>
+                          <p className="text-xs font-semibold text-[#55633F]" data-testid="wall-schedule-match-note">Showing therapists free at {formatScheduleLabel(scheduleSlot.date, scheduleSlot.time)}.</p>
                         ) : null}
                       </div>
                     ) : null}
@@ -2051,11 +2051,11 @@ export default function BookingModal() {
                       ③下单表单自动带过去,不用再填一遍。 */}
                   {promoCampaign.enabled && !promoState.discount ? (
                     <form
-                      className="mx-1 rounded-[1.5rem] border border-[#4E8D43]/30 bg-[#F1FBF3] p-4"
+                      className="mx-1 rounded-[1.5rem] border border-[#64734F]/30 bg-[#F2F4EC] p-4"
                       data-testid="wall-promo-phone"
                       onSubmit={submitWallPromoPhone}
                     >
-                      <p className="text-sm font-bold text-[#0E6F1A]">
+                      <p className="text-sm font-bold text-[#55633F]">
                         First booking? Get {money(promoCampaign.amount)} off
                       </p>
                       <p className="mt-1 text-xs leading-5 text-gray-600">
@@ -2064,7 +2064,7 @@ export default function BookingModal() {
                       <div className="mt-3 flex gap-2">
                         <input
                           autoComplete="tel"
-                          className="h-11 min-w-0 flex-1 rounded-xl border border-gray-300 bg-white px-3 font-medium text-[#0F0F0F] focus:border-[#4E8D43] focus:outline-none"
+                          className="h-11 min-w-0 flex-1 rounded-xl border border-gray-300 bg-white px-3 font-medium text-[#171A17] focus:border-[#64734F] focus:outline-none"
                           inputMode="tel"
                           onChange={event => setWallPromoPhone(event.target.value)}
                           placeholder="09XX XXX XXXX"
@@ -2072,7 +2072,7 @@ export default function BookingModal() {
                           value={wallPromoPhone}
                         />
                         <button
-                          className="h-11 shrink-0 rounded-xl bg-[#4E8D43] px-5 text-sm font-bold text-white disabled:opacity-60"
+                          className="h-11 shrink-0 rounded-xl bg-[#64734F] px-5 text-sm font-bold text-white disabled:opacity-60"
                           disabled={promoState.loading}
                           type="submit"
                         >
@@ -2083,8 +2083,8 @@ export default function BookingModal() {
                     </form>
                   ) : null}
                   {promoState.discount > 0 ? (
-                    <div className="mx-1 flex items-center justify-between gap-3 rounded-full border border-[#4E8D43]/30 bg-[#F1FBF3] px-4 py-2" data-testid="wall-promo-applied">
-                      <p className="truncate text-sm font-bold text-[#0E6F1A]">
+                    <div className="mx-1 flex items-center justify-between gap-3 rounded-full border border-[#64734F]/30 bg-[#F2F4EC] px-4 py-2" data-testid="wall-promo-applied">
+                      <p className="truncate text-sm font-bold text-[#55633F]">
                         {money(promoState.discount)} off applied — prices below are yours
                       </p>
                     </div>
@@ -2092,9 +2092,9 @@ export default function BookingModal() {
                   {/* 老板 2026-07-24:定位确认后收成一条细条(大地图默认藏),别霸屏挡技师;
                       点"Adjust"才展开地图改 pin。未设定位时才给完整提示面板。 */}
                   {isUsableCustomerLocation(customerCoords) && !showWallLocationPicker ? (
-                    <div className="mx-1 flex items-center justify-between gap-3 rounded-full border border-green-200 bg-green-50 px-4 py-2" data-testid="wall-location-entry">
-                      <p className="flex min-w-0 items-center gap-1.5 truncate text-sm font-semibold text-[#3F7838]"><MapPin className="h-4 w-4 shrink-0" />Location confirmed</p>
-                      <button type="button" onClick={() => setShowWallLocationPicker(true)} data-testid="wall-location-entry-toggle" className="shrink-0 text-sm font-bold text-[#3F7838] underline underline-offset-2">Adjust</button>
+                    <div className="mx-1 flex items-center justify-between gap-3 rounded-full border border-[#64734F]/25 bg-[#E9ECE1] px-4 py-2" data-testid="wall-location-entry">
+                      <p className="flex min-w-0 items-center gap-1.5 truncate text-sm font-semibold text-[#55633F]"><MapPin className="h-4 w-4 shrink-0" />Location confirmed</p>
+                      <button type="button" onClick={() => setShowWallLocationPicker(true)} data-testid="wall-location-entry-toggle" className="shrink-0 text-sm font-bold text-[#55633F] underline underline-offset-2">Adjust</button>
                     </div>
                   ) : (
                     <div className="mx-1 rounded-[1.5rem] border border-amber-200 bg-amber-50 p-4" data-testid="wall-location-entry">
@@ -2104,7 +2104,7 @@ export default function BookingModal() {
                           type="button"
                           onClick={() => setShowWallLocationPicker(current => !current)}
                           data-testid="wall-location-entry-toggle"
-                          className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full bg-[#4E8D43] px-4 text-sm font-bold text-white transition hover:bg-[#3F7838]"
+                          className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full bg-[#64734F] px-4 text-sm font-bold text-white transition hover:bg-[#55633F]"
                         >
                           <MapPin className="h-4 w-4" />{showWallLocationPicker ? 'Hide map' : 'Set location'}
                         </button>
@@ -2120,7 +2120,7 @@ export default function BookingModal() {
                   <div className="grid gap-3 px-1 pb-6 sm:grid-cols-2" data-testid="booking-therapist-list">
                     {catalogStatus === 'loading' ? (
                       <div className="rounded-[1.5rem] border border-gray-200 bg-white p-5 text-sm text-gray-700" data-testid="booking-catalog-loading">
-                        <p className="font-bold text-[#0F0F0F]">Loading therapists…</p>
+                        <p className="font-bold text-[#171A17]">Loading therapists…</p>
                         <p className="mt-1">Checking the current public booking catalog.</p>
                       </div>
                     ) : null}
@@ -2145,7 +2145,7 @@ export default function BookingModal() {
                           <p className="mt-1">Try another time, or switch to <strong>⚡ Now</strong> to see who can come soonest.</p>
                         </div>
                       ) : (
-                        <div className="rounded-[1.5rem] border border-gray-200 bg-white p-5 text-sm text-gray-600" data-testid="booking-search-no-results"><p className="font-bold text-[#0F0F0F]">No therapists match your search.</p><p className="mt-1">Try a different name, area, or service filter.</p></div>
+                        <div className="rounded-[1.5rem] border border-gray-200 bg-white p-5 text-sm text-gray-600" data-testid="booking-search-no-results"><p className="font-bold text-[#171A17]">No therapists match your search.</p><p className="mt-1">Try a different name, area, or service filter.</p></div>
                       )
                     ) : null}
                   </div>
@@ -2160,7 +2160,7 @@ export default function BookingModal() {
                    券按它发、订单按它查、确认走 WhatsApp。邮箱字段整个拿掉。 */
                 <form onSubmit={handleEmailContinue} className="space-y-5">
                   <div>
-                    <h3 className="text-2xl font-bold text-[#0F0F0F]">Your mobile number</h3>
+                    <h3 className="text-2xl font-bold text-[#171A17]">Your mobile number</h3>
                     <p className="mt-2 text-sm text-gray-600">We confirm your booking on WhatsApp — no email, no account needed.</p>
                   </div>
                   <div className={summaryCardClass}>
@@ -2173,11 +2173,11 @@ export default function BookingModal() {
                       就是广告承诺的兑现点,必须出现在他填号码的那一刻。 */}
                   <div>
                     <label className={bookingLabelClass}><Phone className="mr-2 inline h-4 w-4" />WhatsApp / Phone *</label>
-                    <p className="-mt-2 mb-2 text-xs font-bold leading-5 text-[#0E6F1A]">
+                    <p className="-mt-2 mb-2 text-xs font-bold leading-5 text-[#55633F]">
                       First booking? Enter your mobile to get ₱150 off — applied automatically.
                     </p>
                     <div className="flex gap-2">
-                      <select aria-label="Phone country" className="h-12 w-[8.25rem] shrink-0 rounded-2xl border border-gray-300 bg-white px-3 text-sm font-bold text-[#0F0F0F] focus:border-[#4E8D43] focus:outline-none" value={phoneCountry} onChange={event => setPhoneCountry(event.target.value)}>
+                      <select aria-label="Phone country" className="h-12 w-[8.25rem] shrink-0 rounded-2xl border border-gray-300 bg-white px-3 text-sm font-bold text-[#171A17] focus:border-[#64734F] focus:outline-none" value={phoneCountry} onChange={event => setPhoneCountry(event.target.value)}>
                         {BOOKING_PHONE_COUNTRIES.map(country => <option key={country.iso} value={country.iso}>{country.flag} +{country.callingCode}</option>)}
                       </select>
                       <div className="relative min-w-0 flex-1">
@@ -2190,14 +2190,14 @@ export default function BookingModal() {
                     <label className={bookingLabelClass}>Name optional</label>
                     <input className={bookingInputClass} value={emailDraft.name} onChange={event => setEmailDraft(current => ({ ...current, name: event.target.value }))} placeholder="Your name" data-readability-field="customerName" />
                   </div>
-                  <button type="submit" className="h-12 w-full rounded-2xl bg-[#4E8D43] px-6 font-bold text-white hover:bg-[#3F7838]">Continue</button>
+                  <button type="submit" className="h-12 w-full rounded-2xl bg-[#64734F] px-6 font-bold text-white hover:bg-[#55633F]">Continue</button>
                 </form>
               ) : null}
 
               {step === 'details' ? (
                 <form onSubmit={handleDetailsContinue} className="space-y-5">
                   <div>
-                    <h3 className="text-2xl font-bold text-[#0F0F0F]">Customer and address details</h3>
+                    <h3 className="text-2xl font-bold text-[#171A17]">Customer and address details</h3>
                     <p className="mt-2 text-sm text-gray-600">We only need your contact details, schedule, and exact service location.</p>
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
@@ -2208,7 +2208,7 @@ export default function BookingModal() {
                     <div>
                       <label className={bookingLabelClass}><Phone className="mr-2 inline h-4 w-4" />WhatsApp / Phone *</label>
                       <div className="flex gap-2">
-                        <select aria-label="Phone country" className="h-12 w-[8.25rem] shrink-0 rounded-2xl border border-gray-300 bg-white px-3 text-sm font-bold text-[#0F0F0F] focus:border-[#4E8D43] focus:outline-none" value={phoneCountry} onChange={event => { setPhoneCountry(event.target.value); setPhoneError(''); }}>
+                        <select aria-label="Phone country" className="h-12 w-[8.25rem] shrink-0 rounded-2xl border border-gray-300 bg-white px-3 text-sm font-bold text-[#171A17] focus:border-[#64734F] focus:outline-none" value={phoneCountry} onChange={event => { setPhoneCountry(event.target.value); setPhoneError(''); }}>
                           {BOOKING_PHONE_COUNTRIES.map(country => <option key={country.iso} value={country.iso}>{country.flag} +{country.callingCode}</option>)}
                         </select>
                         <div className="relative min-w-0 flex-1">
@@ -2230,12 +2230,12 @@ export default function BookingModal() {
                     earliestLabel={availability.earliest ? formatScheduleLabel(availability.earliest.dateKey, availability.earliest.time) : ''}
                     therapistName={selectedTherapist?.name || ''}
                   />
-                  <div className={addressFeedback === 'success' ? 'rounded-2xl ring-4 ring-[#4E8D43]/20 transition' : 'transition'} data-location-address-feedback={addressFeedback || undefined} ref={addressFieldRef}>
+                  <div className={addressFeedback === 'success' ? 'rounded-2xl ring-4 ring-[#64734F]/20 transition' : 'transition'} data-location-address-feedback={addressFeedback || undefined} ref={addressFieldRef}>
                     <label className={bookingLabelClass}><MapPin className="mr-2 inline h-4 w-4" />Building, condo, hotel, or exact address *</label>
                     <p className="mb-2 text-xs text-gray-500">Type or search your building</p>
                     <AddressAutocompleteInput
                       value={formData.addressNote}
-                      inputClassName={`${bookingInputClass} ${addressFeedback === 'success' ? 'border-[#4E8D43] bg-[#F1FBF3]' : ''}`}
+                      inputClassName={`${bookingInputClass} ${addressFeedback === 'success' ? 'border-[#64734F] bg-[#F2F4EC]' : ''}`}
                       placeholder="Start typing your building, condo, or hotel"
                       onTextChange={text => { setAddressFeedback(''); updateField('addressNote', text); }}
                       onLocationResolved={updateCustomerLocation}
@@ -2251,14 +2251,14 @@ export default function BookingModal() {
                     <label className={bookingLabelClass}><MessageSquare className="mr-2 inline h-4 w-4" />Arrival notes (optional)</label>
                     <textarea className={bookingTextareaClass} rows={3} value={formData.notes} onChange={event => updateField('notes', event.target.value)} placeholder="Building entrance, parking, gate code, or how to find you" data-readability-field="notes" />
                   </div>
-                  <button type="submit" data-testid="review-cash-booking" className="h-12 w-full rounded-2xl bg-[#4E8D43] px-6 font-bold text-white hover:bg-[#3F7838]">Review cash booking</button>
+                  <button type="submit" data-testid="review-cash-booking" className="h-12 w-full rounded-2xl bg-[#64734F] px-6 font-bold text-white hover:bg-[#55633F]">Review cash booking</button>
                 </form>
               ) : null}
 
               {step === 'confirm' ? (
                 <form onSubmit={handleSubmit} className="space-y-5" data-testid="confirm-step">
                   <div>
-                    <h3 className="text-2xl font-bold text-[#0F0F0F]">Confirm Cash before service</h3>
+                    <h3 className="text-2xl font-bold text-[#171A17]">Confirm Cash before service</h3>
                     <p className="mt-2 text-sm text-gray-600">Payment will be collected when the therapist arrives, before the massage starts.</p>
                   </div>
                   <div className={summaryCardClass}>
@@ -2287,7 +2287,7 @@ export default function BookingModal() {
                       void requestCouponPreview(false);
                     }}
                   />
-                  <button type="submit" disabled={isSubmitting || couponPreviewState !== 'ready'} className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-[#4E8D43] px-6 font-bold text-white hover:bg-[#3F7838] disabled:cursor-not-allowed disabled:opacity-60">
+                  <button type="submit" disabled={isSubmitting || couponPreviewState !== 'ready'} className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-[#64734F] px-6 font-bold text-white hover:bg-[#55633F] disabled:cursor-not-allowed disabled:opacity-60">
                     {isSubmitting ? <><span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />Submitting...</> : 'Submit booking request'}
                   </button>
                 </form>
@@ -2318,7 +2318,7 @@ export default function BookingModal() {
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 text-amber-700">
                   <Clock className="h-6 w-6" />
                 </div>
-                <h2 id="active-booking-dialog-title" className="mt-4 text-2xl font-bold text-[#0F0F0F]">You already have a booking waiting for confirmation</h2>
+                <h2 id="active-booking-dialog-title" className="mt-4 text-2xl font-bold text-[#171A17]">You already have a booking waiting for confirmation</h2>
                 <p className="mt-3 break-all font-mono text-xs text-gray-500">{activeBookingDialog.reference}</p>
                 {activeBookingDialog.notice ? (
                   <p className="mt-3 rounded-2xl border border-amber-200 bg-amber-50 p-3 text-sm leading-6 text-amber-900">{activeBookingDialog.notice}</p>
@@ -2334,7 +2334,7 @@ export default function BookingModal() {
                           setIsOpen(false);
                           router.push(`/track/${encodeURIComponent(activeBookingDialog.reference)}`);
                         }}
-                        className="h-12 rounded-2xl bg-[#4E8D43] px-4 font-bold text-white transition hover:bg-[#3F7838]"
+                        className="h-12 rounded-2xl bg-[#64734F] px-4 font-bold text-white transition hover:bg-[#55633F]"
                       >
                         View my booking
                       </button>
@@ -2410,7 +2410,7 @@ export default function BookingModal() {
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 text-amber-700">
                   <AlertTriangle className="h-6 w-6" />
                 </div>
-                <h2 id="resting-therapist-warning-title" className="mt-4 text-2xl font-bold text-[#0F0F0F]">Warning</h2>
+                <h2 id="resting-therapist-warning-title" className="mt-4 text-2xl font-bold text-[#171A17]">Warning</h2>
                 {findWebsiteTherapist(pendingRestingTherapistId, bookingTherapists)?.technicianAccountId ? (
                   <>
                     <p className="mt-3 text-sm leading-6 text-gray-600">Therapist is currently resting, low chance of accepting orders, do you still want to continue?</p>
@@ -2418,7 +2418,7 @@ export default function BookingModal() {
                       <button type="button" onClick={cancelRestingTherapistSelection} className="h-12 rounded-2xl border border-gray-200 bg-white px-4 font-bold text-gray-700 transition hover:bg-gray-50">
                         Cancel
                       </button>
-                      <button type="button" onClick={continueRestingTherapistSelection} className="h-12 rounded-2xl bg-[#4E8D43] px-4 font-bold text-white transition hover:bg-[#3F7838]">
+                      <button type="button" onClick={continueRestingTherapistSelection} className="h-12 rounded-2xl bg-[#64734F] px-4 font-bold text-white transition hover:bg-[#55633F]">
                         Continue anyway
                       </button>
                     </div>
@@ -2427,7 +2427,7 @@ export default function BookingModal() {
                   <>
                     <p className="mt-3 text-sm leading-6 text-gray-600">This therapist is currently resting and not accepting bookings. Please choose another therapist.</p>
                     <div className="mt-6">
-                      <button type="button" onClick={cancelRestingTherapistSelection} className="h-12 w-full rounded-2xl bg-[#4E8D43] px-4 font-bold text-white transition hover:bg-[#3F7838]">
+                      <button type="button" onClick={cancelRestingTherapistSelection} className="h-12 w-full rounded-2xl bg-[#64734F] px-4 font-bold text-white transition hover:bg-[#55633F]">
                         Choose another therapist
                       </button>
                     </div>

@@ -1,4 +1,5 @@
-import { ServicePrices } from '../../components/ServiceMenuParts';
+import PageHead from '../../components/global/PageHead';
+import ServiceRows from '../../components/global/ServiceRows';
 import { loadPublicServiceMenu } from '../../lib/publicServiceMenu.mjs';
 
 // ⚠ 2026-07-29 重写。这一页原来把价格**硬写死在代码里**,而且全是建站时的示例假数据:
@@ -19,48 +20,28 @@ export default async function PricingPage() {
   const services = await loadPublicServiceMenu();
 
   return (
-    <div className="min-h-screen pt-32 pb-20 px-6 bg-[#FDFCF9]">
-      <div className="max-w-3xl mx-auto">
+    <div className="ga ga-page">
+      <PageHead title="Pricing">
+        <p>The therapist comes to your home, condo or hotel.</p>
+        <p className="ga-page-note">No transport fee · No tips · Cash when she arrives</p>
+      </PageHead>
 
-        <h1 className="font-serif text-4xl md:text-5xl font-bold text-center mb-3 text-[#0F0F0F]">
-          Pricing
-        </h1>
-        <p className="text-center text-gray-600 mb-3">
-          The therapist comes to your home, condo or hotel.
-        </p>
-        <p className="text-center text-[#2db83d] font-semibold mb-10">
-          No transport fee · No tips · Cash when she arrives
-        </p>
+      <section className="ga-wrap ga-page-sec">
+        {services.length ? (
+          <ServiceRows services={services} light bookable={false} showText={false} />
+        ) : (
+          <p className="ga-empty">Prices are loading. Please open the booking page to see live rates.</p>
+        )}
 
-        <div className="bg-white rounded-3xl p-5 md:p-8 shadow-lg">
-          {services.length ? services.map((service, index) => (
-            <div className={index < services.length - 1 ? 'border-b border-gray-100 pb-5 mb-5' : ''} key={service.id || service.name}>
-              <p className="font-semibold text-[#0F0F0F] mb-2">{service.name}</p>
-              <ServicePrices options={service.durationOptions || []} />
-            </div>
-          )) : (
-            <p className="text-center text-gray-500 py-8 m-0">
-              Prices are loading. Please open the booking page to see live rates.
-            </p>
-          )}
-        </div>
-
-        <div className="mt-10 text-center">
+        <div className="ga-page-foot">
           {/* 2026-10-26 修:原来是站内跳 /?book=1,但预约弹窗挂在全站外壳里、站内跳转不会重查 ?book=1,
               客人点完只回到首页、什么都不弹。改成就地打开预约窗(全站通用的 data-open-booking,跟顶部 Book Now 一样)。 */}
-          <button
-            type="button"
-            data-open-booking="1"
-            className="inline-block rounded-full bg-[#2db83d] px-8 py-4 font-semibold text-white"
-          >
+          <button type="button" data-open-booking="1" className="ga-btn ga-btn-big">
             Pick your therapist
           </button>
-          <p className="mt-4 text-sm text-gray-500">
-            You choose the therapist yourself — real photos and profiles on the wall.
-          </p>
+          <p>You choose the therapist yourself — real photos and profiles on the wall.</p>
         </div>
-
-      </div>
+      </section>
     </div>
   );
 }

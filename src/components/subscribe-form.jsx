@@ -13,7 +13,7 @@ function SubscribeForm() {
       target="_blank"
       rel="noreferrer"
       aria-label="Follow EasyGoSpa on Facebook"
-      className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#2db83d] px-5 py-3 font-medium text-white transition-colors duration-300 hover:bg-[#45f248] focus:outline-none focus:ring-2 focus:ring-[#2db83d] focus:ring-offset-2 focus:ring-offset-[#0F0F0F] sm:w-auto"
+      className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#64734F] px-5 py-3 font-medium text-white transition-colors duration-300 hover:bg-[#55633F] focus:outline-none focus:ring-2 focus:ring-[#64734F] focus:ring-offset-2 focus:ring-offset-[#171A17] sm:w-auto"
     >
       <Facebook className="h-5 w-5" aria-hidden="true" />
       Follow us on Facebook

@@ -11,7 +11,7 @@ export default function SiteFooter() {
         <div className="ga-foot-cols">
           <div className="ga-foot-brand">
             <b>EasyGoSpa</b>
-            <p>Professional Home Massage. EasyGoSpa provides professional home massage services across Metro Manila.</p>
+            <p>Premium Home Massage. EasyGoSpa provides professional home massage services across Metro Manila. Book relaxing massage treatments at your hotel, condo, home, or office with trained and trusted therapists.</p>
             <div className="ga-foot-social">
               <a href={INSTAGRAM_URL} target="_blank" rel="noreferrer">Instagram</a>
               <a href={FACEBOOK_URL} target="_blank" rel="noreferrer">Facebook</a>
@@ -28,8 +28,9 @@ export default function SiteFooter() {
           <div>
             <h2>Contact EasyGoSpa</h2>
             <ul>
-              <li><a href="https://www.easygospa.com/">Website: www.easygospa.com</a></li>
+              <li><a href="https://www.easygospa.com/">Website: https://www.easygospa.com/</a></li>
               <li>Service Area: Metro Manila</li>
+              <li>Metro Manila Home Service</li>
               <li>Available in selected areas across Metro Manila</li>
               <li><a href={`tel:${COMPANY_PHONE.replace(/\s/g, '')}`}>Phone: {COMPANY_PHONE}</a></li>
               <li><a href={whatsappLink(WHATSAPP_TEXT)} target="_blank" rel="noreferrer">WhatsApp: {COMPANY_PHONE}</a></li>

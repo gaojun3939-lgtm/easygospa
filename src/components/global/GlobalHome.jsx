@@ -4,25 +4,22 @@ import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Lenis from 'lenis'
+import ServiceRows from './ServiceRows'
 
 // 全球站首页「The Arrival」（2026-11-03，方案全文在共享笔记夹 窗口5-官网改造/arrival/）。
 // 一路滑下去像看电影：门慢慢打开 → 技师抵达 → 房间变样 → 项目和价格 → 城市。
 // 字都是真网页文字，不靠动效才显示；系统设了「减少动态效果」就全部不动。价格读后台，不写死。
+// 图和片段全部是公司现有素材（老板 11-03）：技师进门那段裁掉了脸，首页不放真人；不放按摩床。
 // 只开了菲律宾，其它地方先不显示（老板 11-03）。开第二个国家时改成 true
 const SHOW_MARKETS = false
 const AREAS = ['Makati', 'BGC', 'Taguig', 'Pasay', 'Manila', 'Quezon City', 'Pasig', 'Mandaluyong']
 const MARKETS = [
-  { name: 'Philippines', status: 'Now serving', image: 'city-manila', live: true },
-  { name: 'Taiwan', status: 'Coming soon', image: 'city-taipei' },
-  { name: 'Vietnam', status: 'Coming soon', image: 'city-vietnam' },
-  { name: 'Malaysia', status: 'Coming soon', image: 'city-kl' },
-  { name: 'Thailand', status: 'Coming soon', image: 'city-bangkok' },
-  { name: 'Singapore', status: 'Coming soon', image: 'city-singapore' },
-]
-const ARRIVAL = [
-  { image: 'hand-door', alt: 'A therapist in uniform at a condo door' },
-  { image: 'id-card', alt: 'A therapist showing an ID card' },
-  { image: 'linen', alt: 'Folded linen beside the EasyGoSpa bag' },
+  { name: 'Philippines', status: 'Now serving', live: true },
+  { name: 'Taiwan', status: 'Coming soon' },
+  { name: 'Vietnam', status: 'Coming soon' },
+  { name: 'Malaysia', status: 'Coming soon' },
+  { name: 'Thailand', status: 'Coming soon' },
+  { name: 'Singapore', status: 'Coming soon' },
 ]
 
 // 「掀开马尼拉」片子（easygospa.ph 做过的那条，老板 11-01 选的方向）拆成一张张图，跟着滑动一帧帧画（AirPods 页面的做法）。
@@ -31,20 +28,9 @@ const FILM = {
   desktop: { dir: '/global/film-d', frames: 104 },
   phone: { dir: '/global/film-m', frames: 64 },
 }
-// 项目那一行鼠标移上去浮出的图
-const SERVICE_IMAGE = {
-  'swedish-massage': 'svc-swedish',
-  'deep-tissue': 'svc-deep',
-  'hot-stone-massage': 'svc-hotstone',
-  'thai-body-massage': 'svc-thai',
-  'shiatsu-body-massage-without-oil': 'svc-shiatsu',
-  'whole-body-aromatherapy-massage': 'svc-aroma',
-}
 const INTRO_KEY = 'ga-intro-seen'
 
 const peso = (value) => `₱${Number(value).toLocaleString('en-US')}`
-const niceName = (name) => String(name || '').replace(/\(/, ' (').replace(/\s+/g, ' ').trim()
-const bookService = (service) => window.dispatchEvent(new CustomEvent('open-booking-modal-with-service', { detail: { service } }))
 
 function Words({ as: Tag = 'h2', children, className = '' }) {
   return <Tag className={className} data-words>{children}</Tag>
@@ -150,6 +136,22 @@ export default function GlobalHome({ services = [] }) {
     }
     window.addEventListener('resize', draw)
 
+    // 片段：滑到才下载才播，播一次停在最后；省流量的手机不播，停在静图
+    let clipWatch = null
+    if (!lite) {
+      clipWatch = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return
+          entry.target.play().catch(() => {})
+          clipWatch.unobserve(entry.target)
+        })
+      }, { threshold: 0.35 })
+      root.current?.querySelectorAll('video[data-clip]').forEach((clip) => {
+        if (clip.dataset.first) clip.poster = clip.dataset.first
+        clipWatch.observe(clip)
+      })
+    }
+
     const ctx = gsap.context(() => {
       // 第一次打开：门缝的光 → 莲花 → 门缝拉开成拱门 → 大字升起。点一下就跳过，这次打开过就不再播
       const intro = root.current.querySelector('.ga-intro')
@@ -206,7 +208,7 @@ export default function GlobalHome({ services = [] }) {
       else hero.to(state, { frame: film.frames - 1, ease: 'none', duration: 0.88, onUpdate: draw }, 0.02)
       hero.to('.ga-hero-fade', { autoAlpha: 1, ease: 'none', duration: 0.12 }, 0.88)
 
-      // 电脑上：画面跟着鼠标轻轻动，按钮被鼠标吸过去，项目那一行浮出图
+      // 电脑上：画面跟着鼠标轻轻动，按钮被鼠标吸过去
       if (finePointer) {
         const stage = root.current.querySelector('.ga-hero-stage')
         const moveX = gsap.quickTo('.ga-door-inner', 'x', { duration: 1.1, ease: 'power3' })
@@ -231,27 +233,9 @@ export default function GlobalHome({ services = [] }) {
             gsap.to(button, { x: 0, y: 0, duration: 0.8, ease: 'elastic.out(1, .4)' })
           })
         })
-        const float = root.current.querySelector('.ga-float')
-        const floatImg = float?.querySelector('img')
-        if (float && isDesktop) {
-          const fx = gsap.quickTo(float, 'x', { duration: 0.7, ease: 'power3' })
-          const fy = gsap.quickTo(float, 'y', { duration: 0.7, ease: 'power3' })
-          gsap.utils.toArray('.ga-row', root.current).forEach((row) => {
-            row.addEventListener('pointerenter', () => {
-              floatImg.src = `/global/${row.dataset.image}.jpg`
-              gsap.to(float, { autoAlpha: 1, scale: 1, duration: 0.45, ease: 'power3.out' })
-            })
-            row.addEventListener('pointerleave', () => gsap.to(float, { autoAlpha: 0, scale: 0.86, duration: 0.3 }))
-            row.addEventListener('pointermove', (event) => {
-              // 放在这一行左边，不挡名字和价格
-              fx(row.getBoundingClientRect().left - 340 + (event.clientX - row.getBoundingClientRect().left) * 0.04)
-              fy(event.clientY - 105)
-            })
-          })
-        }
       }
 
-      // 房间：一条竖线扫过，空房间变成准备好的房间
+      // 房间：一条竖线扫过，空着的客厅变成正在按摩的样子
       gsap.timeline({ scrollTrigger: { trigger: '.ga-room', start: 'top top', end: 'bottom bottom', scrub: 0.6 } })
         .fromTo('.ga-room-after', { clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0 0% 0 0)', ease: 'none' }, 0)
         .fromTo('.ga-seam', { left: '0%' }, { left: '100%', ease: 'none' }, 0)
@@ -265,7 +249,7 @@ export default function GlobalHome({ services = [] }) {
       })
       gsap.from('.ga-areas li', { yPercent: 60, autoAlpha: 0, duration: 0.9, ease: 'power3.out', stagger: 0.06, scrollTrigger: { trigger: '.ga-areas', start: 'top 85%', once: true } })
 
-      // 电脑上横向滑：抵达那组照片、六个地方。手机用手指左右滑，不接管滚动
+      // 电脑上横向滑：抵达那组画面、六个地方。手机用手指左右滑，不接管滚动
       const mm = gsap.matchMedia()
       mm.add('(min-width: 961px)', () => {
         gsap.utils.toArray('[data-sideways]').forEach((section) => {
@@ -281,6 +265,7 @@ export default function GlobalHome({ services = [] }) {
     return () => {
       window.removeEventListener('resize', draw)
       ctx.revert()
+      clipWatch?.disconnect()
       bodyWatch?.disconnect()
       if (tick) gsap.ticker.remove(tick)
       lenis?.destroy()
@@ -339,11 +324,12 @@ export default function GlobalHome({ services = [] }) {
                 <li><i className="ga-n">3</i><b>Pay cash on arrival</b><span>No deposit, nothing to pay upfront.</span></li>
               </ol>
             </div>
-            {ARRIVAL.map((item) => (
-              <figure className="ga-arrive-photo" key={item.image}>
-                <img src={`/global/${item.image}.jpg`} alt={item.alt} loading="lazy" />
-              </figure>
-            ))}
+            <figure className="ga-arrive-photo">
+              <video data-clip data-first="/global/arrive-first.jpg" src="/global/arrive.mp4" poster="/global/arrive-still.jpg" muted playsInline preload="none" aria-label="A therapist in uniform walking through a condo door, carrying folded towels and the EasyGoSpa bag" />
+            </figure>
+            <figure className="ga-arrive-photo">
+              <img src="/global/hotel.jpg" alt="The EasyGoSpa bag on a hotel bed" loading="lazy" />
+            </figure>
           </div>
         </div>
       </section>
@@ -351,8 +337,8 @@ export default function GlobalHome({ services = [] }) {
       {/* 第三幕：房间 */}
       <section className="ga-room">
         <div className="ga-sticky">
-          <img className="ga-room-img" src="/global/room-before.jpg" alt="A calm condo bedroom" loading="lazy" />
-          <img className="ga-room-img ga-room-after" src="/global/room-after.jpg" alt="The same bedroom, the bed made ready with clean towels" loading="lazy" />
+          <img className="ga-room-img" src="/global/window.jpg" alt="A quiet condo living room with a view of the city" loading="lazy" />
+          <img className="ga-room-img ga-room-after" src="/global/longweek.jpg" alt="A therapist massaging a seated client's shoulders in a condo" loading="lazy" />
           <span className="ga-seam" aria-hidden="true" />
           <div className="ga-room-shade" aria-hidden="true" />
           <div className="ga-room-text ga-wrap">
@@ -367,41 +353,22 @@ export default function GlobalHome({ services = [] }) {
         <div className="ga-wrap ga-menu-in">
           <div className="ga-menu-head">
             <Words>Choose what your body needs.</Words>
-            <p className="ga-lead" data-reveal>Six professional massages. Choose your therapist when you book.</p>
-            <figure className="ga-menu-photo" data-reveal><img src="/global/still-life.jpg" alt="Folded towels and a glass of water" loading="lazy" /></figure>
+            <p className="ga-lead" data-reveal>Every treatment and price, listed. Choose your therapist when you book.</p>
           </div>
-          <ul className="ga-rows">
-            {services.map((service) => (
-              <li className="ga-row" key={service.id} data-reveal data-image={SERVICE_IMAGE[service.id] || 'still-life'}>
-                <figure className="ga-row-thumb"><img src={`/global/${SERVICE_IMAGE[service.id] || 'still-life'}.jpg`} alt="" loading="lazy" /></figure>
-                <div className="ga-row-name">
-                  <h3>{niceName(service.name)}</h3>
-                  {service.description ? <p>{service.description}</p> : null}
-                </div>
-                <div className="ga-row-prices">
-                  {(service.durationOptions || []).map((option) => (
-                    <div key={option.durationMinutes}><span>{option.durationMinutes} min</span><b className="ga-n">{peso(option.price)}</b></div>
-                  ))}
-                </div>
-                <button type="button" className="ga-row-book" onClick={() => bookService(service)}>Book Now</button>
-              </li>
-            ))}
-          </ul>
+          <ServiceRows services={services} />
         </div>
       </section>
 
       {/* 第五幕：价格就是价格 */}
       <section className="ga-price">
-        <div className="ga-wrap ga-price-in">
-          <div>
-            <Words className="ga-big">The price is the price.</Words>
-            <ul className="ga-promises">
-              <li data-reveal>No transport fee.</li>
-              <li data-reveal>No tips.</li>
-              <li data-reveal>Pay cash when your therapist arrives.</li>
-            </ul>
-          </div>
-          <figure className="ga-price-photo"><img data-drift src="/global/cash.jpg" alt="Cash on a linen side table" loading="lazy" /></figure>
+        <div className="ga-wrap">
+          <Words className="ga-big">The price is the price.</Words>
+          <ul className="ga-nums">
+            <li data-reveal><b className="ga-n">₱0</b><span>Transport Fee</span></li>
+            <li data-reveal><b className="ga-n">₱0</b><span>Tips Expected</span></li>
+            <li data-reveal><b className="ga-n">24/7</b><span>Available</span></li>
+          </ul>
+          <p className="ga-price-note" data-reveal>Pay cash when your therapist arrives.</p>
         </div>
       </section>
 
@@ -415,7 +382,7 @@ export default function GlobalHome({ services = [] }) {
 
       {/* 第六幕：城市 */}
       <section className="ga-dusk">
-        <figure><img data-zoom src="/global/dusk.jpg" alt="Metro Manila at dusk from a high window" loading="lazy" /></figure>
+        <figure><video data-clip src="/global/flyby.mp4" poster="/global/flyby.jpg" muted playsInline preload="none" aria-label="Flying past lit condo towers in Metro Manila at night" /></figure>
         <div className="ga-dusk-shade" aria-hidden="true" />
         <div className="ga-dusk-text ga-wrap">
           <Words className="ga-big">A calmer hour, across the city.</Words>
@@ -433,7 +400,6 @@ export default function GlobalHome({ services = [] }) {
             </div>
             {MARKETS.map((market) => (
               <figure className={`ga-city${market.live ? ' is-live' : ''}`} key={market.name}>
-                <img src={`/global/${market.image}.jpg`} alt="" loading="lazy" />
                 <figcaption><b>{market.name}</b><span>{market.status}</span></figcaption>
               </figure>
             ))}
@@ -443,7 +409,7 @@ export default function GlobalHome({ services = [] }) {
 
       {/* 第八幕：门开着 */}
       <section className="ga-closing">
-        <figure><img data-zoom src="/global/door-open.jpg" alt="A warmly lit bedroom with folded towels on the bed at night" loading="lazy" /></figure>
+        <figure className="ga-closing-door"><img data-zoom src="/global/door-ajar.jpg" alt="A condo door opening onto warm light at night" loading="lazy" /></figure>
         <div className="ga-closing-shade" aria-hidden="true" />
         <div className="ga-closing-text ga-wrap">
           <Words className="ga-big">Choose your therapist. Then exhale.</Words>
@@ -451,8 +417,6 @@ export default function GlobalHome({ services = [] }) {
           <button type="button" className="ga-btn ga-btn-big" data-open-booking="1">Book Now</button>
         </div>
       </section>
-
-      <div className="ga-float" aria-hidden="true"><img alt="" /></div>
 
       {/* 手机底部常驻下单 */}
       <div className="ga-bar">

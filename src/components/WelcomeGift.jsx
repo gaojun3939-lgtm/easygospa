@@ -19,7 +19,7 @@ const MESSENGER_URL = 'https://m.me/607203729144956';
 function TherapistBadge({ therapist }) {
   const reviews = Number(therapist.reviewCount || 0);
   if (!reviews) {
-    return <span className="rounded-full bg-[#EAF3DE] px-2 py-0.5 text-[10px] font-bold text-[#3B6D11]">NEW</span>;
+    return <span className="rounded-full bg-[#E9ECE1] px-2 py-0.5 text-[10px] font-bold text-[#55633F]">NEW</span>;
   }
   return (
     <span className="flex items-center gap-1 text-[11px] font-semibold text-[#854F0B]">
@@ -72,16 +72,16 @@ export default function WelcomeGift() {
   return (
     // pt-32 给顶部固定导航让位(LOGO 压标题的重叠 bug 就是原来 py-10 不够高;
     // 导航未滚动态实测底边 ~108-122px,128px 连光晕一起盖住)
-    <div className="min-h-screen bg-[#FDFCF9] px-5 pb-10 pt-32">
+    <div className="min-h-screen bg-[#F7F4EE] px-5 pb-10 pt-32">
       <div className="mx-auto w-full max-w-md">
 
-        <h1 className="font-serif text-[26px] font-bold leading-tight text-[#0F0F0F]">
+        <h1 className="font-serif text-[26px] font-bold leading-tight text-[#171A17]">
           Pick who comes to you
         </h1>
 
         {/* 速度承诺(老板 2026-08-02 拍板加上):写"最快 30 分钟"不写死必达——
             在岗+10km 内才做得到,"as fast as" 客人照样兴奋,做不到不算食言 */}
-        <p className="mt-2 flex items-center gap-1.5 text-[15px] font-bold text-[#3F7838]">
+        <p className="mt-2 flex items-center gap-1.5 text-[15px] font-bold text-[#55633F]">
           <Zap className="fill-[#EF9F27] text-[#EF9F27]" size={17} />
           As fast as 30 minutes to your door
         </p>
@@ -89,7 +89,7 @@ export default function WelcomeGift() {
         <ul className="mt-4 space-y-2.5">
           {SELLING_POINTS.map(({ icon: Icon, text }, index) => (
             <li className="flex items-start gap-2.5 text-[13.5px] leading-5 text-gray-600" key={index}>
-              <Icon className="mt-0.5 shrink-0 text-[#3B6D11]" size={16} />
+              <Icon className="mt-0.5 shrink-0 text-[#55633F]" size={16} />
               <span>{text}</span>
             </li>
           ))}
@@ -113,10 +113,10 @@ export default function WelcomeGift() {
                   src={therapist.listImageUrl || therapist.photoUrl}
                 />
                 <div className="px-2.5 py-2">
-                  <p className="truncate text-[13px] font-bold text-[#0F0F0F]">{therapist.name}</p>
+                  <p className="truncate text-[13px] font-bold text-[#171A17]">{therapist.name}</p>
                   <div className="mt-0.5 flex items-center justify-between">
                     <TherapistBadge therapist={therapist} />
-                    {therapist.onShift ? <span className="h-2 w-2 rounded-full bg-[#2db83d]" title="On shift now" /> : null}
+                    {therapist.onShift ? <span className="h-2 w-2 rounded-full bg-[#64734F]" title="On shift now" /> : null}
                   </div>
                 </div>
               </button>
@@ -131,7 +131,7 @@ export default function WelcomeGift() {
           ₱150 OFF your first booking
         </p>
         <button
-          className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-[#2db83d] py-3.5 text-lg font-semibold text-white"
+          className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-[#64734F] py-3.5 text-lg font-semibold text-white"
           onClick={goBook}
           type="button"
         >

@@ -16,9 +16,9 @@ const DELETE_URL = "https://app-easygospa.vercel.app/delete-account";
 
 export default function PrivacyPolicyPage() {
   return (
-    <main className="pt-28 pb-24 bg-gradient-to-b from-[#F8F2EC] to-white min-h-screen">
+    <main className="ga-legal">
       <div className="max-w-3xl mx-auto px-6">
-        <h1 className="font-serif text-4xl font-bold text-[#0F0F0F]">Privacy Policy</h1>
+        <h1 className="ga-legal-title">Privacy Policy</h1>
         <p className="mt-2 text-sm text-gray-500">Last updated: {LAST_UPDATED}</p>
 
         <div className="prose prose-gray mt-8 space-y-6 text-[15px] leading-7 text-gray-700">
@@ -126,7 +126,7 @@ export default function PrivacyPolicyPage() {
           </Section>
 
           <Section title="11. Deleting your account">
-            <p>You can request deletion of your EasyGoSpa account and its data in the app, or on our account deletion page: <a className="text-[#2db83d]" href={DELETE_URL}>{DELETE_URL}</a>. Therapists stop receiving jobs as soon as the request is submitted, and can contact us to withdraw it until we finish processing.</p>
+            <p>You can request deletion of your EasyGoSpa account and its data in the app, or on our account deletion page: <a className="text-[#64734F]" href={DELETE_URL}>{DELETE_URL}</a>. Therapists stop receiving jobs as soon as the request is submitted, and can contact us to withdraw it until we finish processing.</p>
           </Section>
 
           <Section title="12. Minors">
@@ -139,8 +139,8 @@ export default function PrivacyPolicyPage() {
 
           <Section title="14. Contact us">
             <p>For any privacy questions or requests, contact us at:</p>
-            <p className="font-medium text-[#0F0F0F]">{COMPANY}</p>
-            <p>Email: <a className="text-[#2db83d]" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p>
+            <p className="font-medium text-[#171A17]">{COMPANY}</p>
+            <p>Email: <a className="text-[#64734F]" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p>
             <p>Phone / WhatsApp: {COMPANY_PHONE}</p>
           </Section>
 
@@ -155,7 +155,7 @@ export default function PrivacyPolicyPage() {
 function Section({ title, children }) {
   return (
     <section>
-      <h2 className="font-serif text-xl font-bold text-[#0F0F0F] mt-8 mb-2">{title}</h2>
+      <h2 className="ga-legal-h2">{title}</h2>
       {children}
     </section>
   );

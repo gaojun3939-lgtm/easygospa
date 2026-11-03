@@ -178,7 +178,7 @@ export function LocationPicker({ value, onChange, onAddress }) {
           type="button"
           onClick={confirmPinLocation}
           disabled={locationLocked}
-          className={locationLocked ? completedClassName : 'inline-flex h-11 items-center gap-2 rounded-2xl bg-[#4E8D43] px-4 text-sm font-bold text-white hover:bg-[#3F7838]'}
+          className={locationLocked ? completedClassName : 'inline-flex h-11 items-center gap-2 rounded-2xl bg-[#64734F] px-4 text-sm font-bold text-white hover:bg-[#55633F]'}
           data-testid="confirm-pin-button"
         >
           <MapPin className="h-4 w-4" />
@@ -189,7 +189,7 @@ export function LocationPicker({ value, onChange, onAddress }) {
             type="button"
             onClick={locateMe}
             disabled={locateState === 'locating' || locationLocked}
-            className={locationLocked ? completedClassName : 'inline-flex h-11 items-center gap-2 rounded-2xl border border-[#4E8D43]/40 bg-white px-4 text-sm font-bold text-[#3F7838] hover:border-[#4E8D43] disabled:opacity-60'}
+            className={locationLocked ? completedClassName : 'inline-flex h-11 items-center gap-2 rounded-2xl border border-[#64734F]/40 bg-white px-4 text-sm font-bold text-[#55633F] hover:border-[#64734F] disabled:opacity-60'}
             data-testid="locate-me-button"
           >
             <Crosshair className="h-4 w-4" />
@@ -197,7 +197,7 @@ export function LocationPicker({ value, onChange, onAddress }) {
           </button>
         ) : null}
         {value?.latitude ? (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E8F5E9] px-3 py-1.5 text-xs font-semibold text-[#3F7838]" data-testid="location-set-chip">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E9ECE1] px-3 py-1.5 text-xs font-semibold text-[#55633F]" data-testid="location-set-chip">
             <MapPin className="h-3.5 w-3.5" />
             Location pinned
           </span>

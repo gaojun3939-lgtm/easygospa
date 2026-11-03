@@ -1,11 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Lato:wght@300;400&display=swap');
 
 @import "tailwindcss";
 
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f7f4ee;
+  --foreground: #171a17;
 }
 
 @theme inline {
@@ -15,12 +14,6 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
 * {
   box-sizing: border-box;
 }
@@ -32,12 +25,11 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-display: swap;
-  font-family: Lato, Helvetica, sans-serif;
+  font-family: var(--ga-sans);
 }
 
-.font-serif { font-family: 'Playfair Display', serif; }
-.font-sans { font-family: 'Lato', sans-serif; 
-}
+.font-serif { font-family: var(--ga-serif); font-weight: 400 !important; letter-spacing: -.01em; }
+.font-sans { font-family: var(--ga-sans); }
 
 
 .glass-nav {
@@ -108,7 +100,7 @@ body.booking-modal-open * {
 
 @media (max-width: 375px) {
   button[class*="bg-gradient-to-r"],
-  button[class*="bg-[#2db83d]"],
+  button[class*="bg-[#64734F]"],
   button[class*="bg-black/80"] {
     min-height: 44px;
     padding: 0.75rem 1.25rem !important;

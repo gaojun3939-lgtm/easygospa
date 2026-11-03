@@ -2,8 +2,8 @@
 // Single source of truth for the logo — navbar, loading screen and the
 // favicon (src/app/icon.svg) all use this same geometry.
 export default function BrandMark({ size = 32, tone = 'brand', className = '' }) {
-  const petal = tone === 'light' ? '#ffffff' : '#279a43';
-  const bowl = tone === 'light' ? 'rgba(255,255,255,0.82)' : '#c9a24b';
+  const petal = tone === 'light' ? '#ffffff' : '#64734F';
+  const bowl = tone === 'light' ? 'rgba(255,255,255,0.82)' : '#64734F';
   return (
     <svg
       aria-hidden="true"

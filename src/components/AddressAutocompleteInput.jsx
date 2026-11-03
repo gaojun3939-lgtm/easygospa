@@ -144,13 +144,13 @@ export function AddressAutocompleteInput({ value, onTextChange, onLocationResolv
               <button
                 type="button"
                 onMouseDown={event => { event.preventDefault(); selectSuggestion(item); }}
-                className={`flex w-full items-start gap-3 px-4 py-2.5 text-left transition ${index === activeIndex ? 'bg-[#F1FBF3]' : 'hover:bg-gray-50'}`}
+                className={`flex w-full items-start gap-3 px-4 py-2.5 text-left transition ${index === activeIndex ? 'bg-[#F2F4EC]' : 'hover:bg-gray-50'}`}
               >
-                <span className="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-[#E8F5E9] text-[#3F7838]">
+                <span className="mt-0.5 flex h-6 w-6 flex-none items-center justify-center rounded-full bg-[#E9ECE1] text-[#55633F]">
                   <MapPin className="h-3.5 w-3.5" />
                 </span>
                 <span className="min-w-0">
-                  <span className="block truncate text-sm font-semibold text-[#0F0F0F]">{item.mainText}</span>
+                  <span className="block truncate text-sm font-semibold text-[#171A17]">{item.mainText}</span>
                   {item.secondaryText ? <span className="block truncate text-xs text-gray-500">{item.secondaryText}</span> : null}
                 </span>
               </button>

@@ -9,9 +9,9 @@ const LAST_UPDATED = "October 26, 2026";
 
 export default function TermsOfServicePage() {
   return (
-    <main className="pt-28 pb-24 bg-gradient-to-b from-[#F8F2EC] to-white min-h-screen">
+    <main className="ga-legal">
       <div className="max-w-3xl mx-auto px-6">
-        <h1 className="font-serif text-4xl font-bold text-[#0F0F0F]">Terms of Service</h1>
+        <h1 className="ga-legal-title">Terms of Service</h1>
         <p className="mt-2 text-sm text-gray-500">Last updated: {LAST_UPDATED}</p>
 
         <div className="mt-8 space-y-6 text-[15px] leading-7 text-gray-700">
@@ -72,8 +72,8 @@ export default function TermsOfServicePage() {
 
           <Section title="11. Contact us">
             <p>For questions about these terms, contact us at:</p>
-            <p className="font-medium text-[#0F0F0F]">EasyGoSpa</p>
-            <p>Email: <a className="text-[#2db83d]" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p>
+            <p className="font-medium text-[#171A17]">EasyGoSpa</p>
+            <p>Email: <a className="text-[#64734F]" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p>
             <p>Phone / WhatsApp: {COMPANY_PHONE}</p>
           </Section>
 
@@ -88,7 +88,7 @@ export default function TermsOfServicePage() {
 function Section({ id, title, children }) {
   return (
     <section id={id} className="scroll-mt-28">
-      <h2 className="font-serif text-xl font-bold text-[#0F0F0F] mt-8 mb-2">{title}</h2>
+      <h2 className="ga-legal-h2">{title}</h2>
       {children}
     </section>
   );

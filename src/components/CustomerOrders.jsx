@@ -49,7 +49,7 @@ function formatSchedule(iso) {
 function statusTone(status) {
   if (status === 'completed') return { dot: '#9a9a95', text: '#8a8a86' };
   if (status === 'cancelled') return { dot: '#c0392b', text: '#c0392b' };
-  return { dot: '#4E8D43', text: '#3F7838' };
+  return { dot: '#64734F', text: '#55633F' };
 }
 
 export default function CustomerOrders() {
@@ -239,7 +239,7 @@ export default function CustomerOrders() {
                 <ChevronLeft className="h-6 w-6" />
               </button>
             ) : null}
-            <h2 className="text-lg font-bold text-[#0F0F0F]">{selectedOrder ? 'Order status' : accountTab === 'coupons' ? 'My coupon wallet' : 'My orders'}</h2>
+            <h2 className="text-lg font-bold text-[#171A17]">{selectedOrder ? 'Order status' : accountTab === 'coupons' ? 'My coupon wallet' : 'My orders'}</h2>
           </div>
           <div className="flex items-center gap-3">
             {session ? (
@@ -268,8 +268,8 @@ export default function CustomerOrders() {
           ) : (
             <>
               <div className="mb-4 grid grid-cols-2 rounded-2xl bg-white p-1 shadow-sm" role="tablist" aria-label="Customer account">
-                <button type="button" role="tab" aria-selected={accountTab === 'orders'} onClick={() => setAccountTab('orders')} className={`h-10 rounded-xl text-sm font-bold ${accountTab === 'orders' ? 'bg-[#4E8D43] text-white' : 'text-gray-500'}`}>Bookings</button>
-                <button type="button" role="tab" aria-selected={accountTab === 'coupons'} onClick={() => setAccountTab('coupons')} className={`h-10 rounded-xl text-sm font-bold ${accountTab === 'coupons' ? 'bg-[#4E8D43] text-white' : 'text-gray-500'}`}>
+                <button type="button" role="tab" aria-selected={accountTab === 'orders'} onClick={() => setAccountTab('orders')} className={`h-10 rounded-xl text-sm font-bold ${accountTab === 'orders' ? 'bg-[#64734F] text-white' : 'text-gray-500'}`}>Bookings</button>
+                <button type="button" role="tab" aria-selected={accountTab === 'coupons'} onClick={() => setAccountTab('coupons')} className={`h-10 rounded-xl text-sm font-bold ${accountTab === 'coupons' ? 'bg-[#64734F] text-white' : 'text-gray-500'}`}>
                   <CouponTabLabel activeCouponCount={activeCouponCount} />
                 </button>
               </div>
@@ -291,7 +291,7 @@ function couponStatusLabel(status) {
 }
 
 function couponStatusTone(status) {
-  if (status === 'active') return 'text-[#0E6F1A]';
+  if (status === 'active') return 'text-[#55633F]';
   if (status === 'used') return 'text-gray-500';
   return 'text-red-600';
 }
@@ -311,7 +311,7 @@ export function CouponWallet({ state, coupons, error, onRetry }) {
     return (
       <div className="mt-10 text-center" data-testid="coupon-wallet">
         <p className="text-sm text-gray-500">{error || 'Could not load your coupons.'}</p>
-        <button type="button" onClick={onRetry} className="mt-3 rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-[#4E8D43]">Try again</button>
+        <button type="button" onClick={onRetry} className="mt-3 rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-[#64734F]">Try again</button>
       </div>
     );
   }
@@ -319,7 +319,7 @@ export function CouponWallet({ state, coupons, error, onRetry }) {
     return (
       <div className="mt-12 text-center" data-testid="coupon-wallet">
         <TicketPercent className="mx-auto h-10 w-10 text-gray-300" />
-        <p className="mt-3 text-base font-semibold text-[#0F0F0F]">No coupons yet</p>
+        <p className="mt-3 text-base font-semibold text-[#171A17]">No coupons yet</p>
         <p className="mt-1 text-sm leading-6 text-gray-500">Review a completed booking to receive a ₱50 coupon valid for 30 days.</p>
       </div>
     );
@@ -328,14 +328,14 @@ export function CouponWallet({ state, coupons, error, onRetry }) {
     <div className="space-y-3" data-testid="coupon-wallet">
       {coupons.map(coupon => (
         <article key={coupon.id} className={`flex min-h-28 overflow-hidden rounded-2xl border bg-white shadow-sm ${coupon.status === 'expired' ? 'border-red-100' : 'border-gray-100'}`}>
-          <div className={`flex w-28 shrink-0 flex-col items-center justify-center px-3 text-white ${coupon.status === 'active' ? 'bg-[#4E8D43]' : 'bg-gray-400'}`}>
+          <div className={`flex w-28 shrink-0 flex-col items-center justify-center px-3 text-white ${coupon.status === 'active' ? 'bg-[#64734F]' : 'bg-gray-400'}`}>
             <strong className="text-3xl">₱{Number(coupon.amount || 0).toLocaleString('en-US')}</strong>
             <span className="mt-1 text-[10px] font-bold uppercase tracking-wider">Coupon</span>
           </div>
           <div className="min-w-0 flex-1 p-4">
-            {coupon.status === 'active' ? <p className="mb-2 text-xs font-extrabold text-[#0E6F1A]">Auto-applied on your next booking</p> : null}
+            {coupon.status === 'active' ? <p className="mb-2 text-xs font-extrabold text-[#55633F]">Auto-applied on your next booking</p> : null}
             <div className="flex items-center justify-between gap-2">
-              <strong className="text-sm text-[#0F0F0F]">EasyGoSpa reward</strong>
+              <strong className="text-sm text-[#171A17]">EasyGoSpa reward</strong>
               <span className={`text-xs font-bold ${couponStatusTone(coupon.status)}`}>{couponStatusLabel(coupon.status)}</span>
             </div>
             <p className="mt-2 text-xs text-gray-500">Valid on any booking · one coupon per booking</p>
@@ -356,27 +356,27 @@ function LoginView({ step, email, code, busy, error, notice, resendIn, onEmail, 
         <button type="button" onClick={onBack} className="mb-4 flex items-center gap-1 text-sm font-semibold text-gray-500">
           <ChevronLeft className="h-4 w-4" />Back
         </button>
-        <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-[#eaf1e7] text-[#4E8D43]">
+        <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-[#E9ECE1] text-[#64734F]">
           <Mail className="h-6 w-6" />
         </div>
-        <h3 className="text-center text-xl font-bold text-[#0F0F0F]">Enter code</h3>
+        <h3 className="text-center text-xl font-bold text-[#171A17]">Enter code</h3>
         {notice ? <p className="mt-1 text-center text-sm text-gray-500">{notice}</p> : null}
         <input
           value={code}
           onChange={event => onCode(event.target.value.replace(/\D/g, '').slice(0, OTP_MAX_LENGTH))}
           inputMode="numeric" autoComplete="one-time-code" placeholder="••••••"
-          className="mt-5 w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-center text-2xl font-bold tracking-[0.25em] text-[#0F0F0F] outline-none focus:border-[#4E8D43]"
+          className="mt-5 w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-center text-2xl font-bold tracking-[0.25em] text-[#171A17] outline-none focus:border-[#64734F]"
         />
         {error ? <p className="mt-3 text-center text-sm text-red-600">{error}</p> : null}
         <button type="button" disabled={busy || code.length < OTP_MIN_LENGTH} onClick={onVerify}
-          className="mt-4 flex h-12 w-full items-center justify-center rounded-full bg-[#4E8D43] text-base font-bold text-white disabled:opacity-50">
+          className="mt-4 flex h-12 w-full items-center justify-center rounded-full bg-[#64734F] text-base font-bold text-white disabled:opacity-50">
           {busy ? 'Verifying…' : 'Verify'}
         </button>
         <div className="mt-4 text-center text-sm">
           {resendIn > 0 ? (
             <span className="text-gray-400">Resend code in {resendIn}s</span>
           ) : (
-            <button type="button" onClick={onResend} disabled={busy} className="font-semibold text-[#4E8D43]">Resend code</button>
+            <button type="button" onClick={onResend} disabled={busy} className="font-semibold text-[#64734F]">Resend code</button>
           )}
         </div>
       </div>
@@ -386,12 +386,12 @@ function LoginView({ step, email, code, busy, error, notice, resendIn, onEmail, 
   return (
     <div className="pt-6">
       <div className="mb-8 text-center">
-        <p className="text-3xl font-bold text-[#4E8D43]">EasyGoSpa</p>
+        <p className="text-3xl font-bold text-[#64734F]">EasyGoSpa</p>
         <p className="mt-1.5 text-sm text-gray-500">Your bookings, one tap away</p>
       </div>
 
       <button type="button" onClick={onGoogle} disabled={busy}
-        className="flex h-[52px] w-full items-center justify-center gap-3 rounded-full border border-gray-200 bg-white text-base font-semibold text-[#0F0F0F] shadow-sm disabled:opacity-60">
+        className="flex h-[52px] w-full items-center justify-center gap-3 rounded-full border border-gray-200 bg-white text-base font-semibold text-[#171A17] shadow-sm disabled:opacity-60">
         <GoogleGlyph />Continue with Google
       </button>
 
@@ -405,11 +405,11 @@ function LoginView({ step, email, code, busy, error, notice, resendIn, onEmail, 
         value={email}
         onChange={event => onEmail(event.target.value)}
         type="email" autoComplete="email" placeholder="name@email.com"
-        className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-base text-[#0F0F0F] outline-none focus:border-[#4E8D43]"
+        className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-base text-[#171A17] outline-none focus:border-[#64734F]"
       />
       {error ? <p className="mt-3 text-center text-sm text-red-600">{error}</p> : null}
       <button type="button" disabled={busy} onClick={onSendCode}
-        className="mt-3 flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[#4E8D43] text-base font-bold text-white disabled:opacity-50">
+        className="mt-3 flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[#64734F] text-base font-bold text-white disabled:opacity-50">
         <Mail className="h-4 w-4" />{busy ? 'Sending…' : 'Send code'}
       </button>
       <p className="mt-4 text-center text-xs text-gray-400">No password needed · any email works</p>
@@ -424,14 +424,14 @@ function OrdersList({ state, orders, errorDetail, onOpen, onRetry }) {
       <div className="mt-10 text-center">
         <p className="text-sm text-gray-500">Could not load your orders.</p>
         {errorDetail ? <p className="mt-1 text-xs text-gray-400">{errorDetail}</p> : null}
-        <button type="button" onClick={onRetry} className="mt-3 rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-[#4E8D43]">Try again</button>
+        <button type="button" onClick={onRetry} className="mt-3 rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-[#64734F]">Try again</button>
       </div>
     );
   }
   if (!orders.length) {
     return (
       <div className="mt-12 text-center">
-        <p className="text-base font-semibold text-[#0F0F0F]">No bookings yet</p>
+        <p className="text-base font-semibold text-[#171A17]">No bookings yet</p>
         <p className="mt-1 text-sm text-gray-500">Your bookings will show up here once you book a therapist.</p>
       </div>
     );
@@ -442,18 +442,18 @@ function OrdersList({ state, orders, errorDetail, onOpen, onRetry }) {
         const tone = statusTone(order.status);
         return (
           <button key={order.reference} type="button" onClick={() => onOpen(order.reference)}
-            className="w-full rounded-2xl border border-gray-100 bg-white p-4 text-left shadow-sm transition hover:border-[#4E8D43]/50">
+            className="w-full rounded-2xl border border-gray-100 bg-white p-4 text-left shadow-sm transition hover:border-[#64734F]/50">
             <div className="flex items-center gap-2">
               <span className="h-2 w-2 rounded-full" style={{ background: tone.dot }} />
               <span className="text-xs font-semibold" style={{ color: tone.text }}>{order.statusLabel}</span>
             </div>
-            <p className="mt-1.5 text-[15px] font-bold text-[#0F0F0F]">
+            <p className="mt-1.5 text-[15px] font-bold text-[#171A17]">
               {order.therapist?.name ? `${order.therapist.name} · ` : ''}{order.serviceName || 'Massage'}
               {order.durationMinutes ? ` ${order.durationMinutes} min` : ''}
             </p>
             <div className="mt-1 flex items-center gap-2 text-xs text-gray-500">
               {order.status === 'on_the_way' && order.etaMinutes != null
-                ? <span className="font-semibold text-[#3F7838]">Arriving in about {order.etaMinutes} min</span>
+                ? <span className="font-semibold text-[#55633F]">Arriving in about {order.etaMinutes} min</span>
                 : <span>{formatSchedule(order.scheduledAt) || formatSchedule(order.placedAt)}</span>}
             </div>
           </button>
@@ -469,7 +469,7 @@ function OrderDetail({ order, bookingEmail, onReviewSuccess }) {
   const whatsapp = (order.whatsapp || WHATSAPP_FALLBACK).replace(/[^\d]/g, '');
   return (
     <div className="pt-2">
-      <p className="text-base font-bold text-[#0F0F0F]">
+      <p className="text-base font-bold text-[#171A17]">
         {order.therapist?.name ? `${order.therapist.name} · ` : ''}{order.serviceName || 'Massage'}
       </p>
       <p className="mt-0.5 text-sm font-semibold" style={{ color: statusTone(order.status).text }}>
@@ -489,17 +489,17 @@ function OrderDetail({ order, bookingEmail, onReviewSuccess }) {
                 <div className="flex flex-col items-center">
                   <span className="flex h-6 w-6 items-center justify-center rounded-full"
                     style={{
-                      background: upcoming ? '#eceae4' : '#4E8D43',
+                      background: upcoming ? '#eceae4' : '#64734F',
                       boxShadow: active ? '0 0 0 4px #dcebd5' : 'none'
                     }}>
                     {done ? <Check className="h-3.5 w-3.5 text-white" /> : active ? <Clock className="h-3.5 w-3.5 text-white" /> : null}
                   </span>
-                  {index < TIMELINE.length - 1 ? <span className="my-1 w-0.5 flex-1" style={{ background: index < current ? '#4E8D43' : '#e4e4df' }} /> : null}
+                  {index < TIMELINE.length - 1 ? <span className="my-1 w-0.5 flex-1" style={{ background: index < current ? '#64734F' : '#e4e4df' }} /> : null}
                 </div>
                 <div className={`pb-5 ${active ? '' : ''}`}>
                   <p className="text-sm font-semibold" style={{ color: upcoming ? '#b0b0ab' : '#2a2430' }}>{stepItem.label}</p>
                   {active && order.status === 'on_the_way' && order.etaMinutes != null
-                    ? <p className="text-xs font-semibold text-[#3F7838]">~{order.etaMinutes} min away</p> : null}
+                    ? <p className="text-xs font-semibold text-[#55633F]">~{order.etaMinutes} min away</p> : null}
                 </div>
               </li>
             );
@@ -537,7 +537,7 @@ function OrderDetail({ order, bookingEmail, onReviewSuccess }) {
       ) : null}
 
       <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noreferrer"
-        className={`${order.status === 'waiting_acceptance' || (!cancelled && order.status !== 'completed') ? 'mt-3' : 'mt-6'} flex h-11 w-full items-center justify-center gap-2 rounded-full bg-[#eaf1e7] text-sm font-semibold text-[#3F7838]`}>
+        className={`${order.status === 'waiting_acceptance' || (!cancelled && order.status !== 'completed') ? 'mt-3' : 'mt-6'} flex h-11 w-full items-center justify-center gap-2 rounded-full bg-[#E9ECE1] text-sm font-semibold text-[#55633F]`}>
         <MessageCircle className="h-4 w-4" />Message us on WhatsApp
       </a>
       {/* 老板 2026-07-22 对标 Glow:客户订单页加独立投诉入口(现走 WhatsApp 带单号,将来接 AI 客服)。 */}

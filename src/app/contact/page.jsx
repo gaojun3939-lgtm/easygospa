@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from "react";
-import { motion } from "framer-motion";
-import { MapPin, Phone, Mail, Clock, Instagram, Facebook, Sparkles, Send, CheckCircle } from "lucide-react";
+import { Instagram, Facebook, Send, CheckCircle } from "lucide-react";
+import PageHead from "../../components/global/PageHead";
 import { whatsappLink } from "@/lib/contactConfig";
 
 
@@ -121,329 +121,107 @@ export default function Contact() {
   };
 
   return (
-    <>
-      <div className="pt-32 pb-24 bg-gradient-to-b from-[#F8F2EC] to-white min-h-screen relative">
-      <div style={{backgroundImage:'url(/images/young-woman-hero2.jpg)'}} className="inset-0 w-full h-80 bg-center bg-cover bg-no-repeat bg-fixed -mt-70">
-      <div className="inset-0 w-full h-full bg-black/70 flex items-center justify-center">
-      </div>
-        </div>
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          {/* Page Header */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-16"
-          >
-            {/* 老板 2026-07-19:字体太浅看不清 → 深绿底白字加粗,清晰可读。 */}
-            <div className="inline-flex items-center gap-2 bg-[#2db83d] rounded-full px-6 py-3 mb-6 shadow-sm">
-              <Sparkles className="w-5 h-5 text-white" strokeWidth={2.5} />
-              <span className="text-lg font-semibold text-white">Get In Touch</span>
+    <div className="ga ga-page">
+      <PageHead eyebrow="Get In Touch" title="Contact EasyGoSpa - Professional Home Massage in Metro Manila">
+        Book a trained massage therapist to your hotel, condo, home, or office.
+        Message us for availability, service details, and booking assistance.
+      </PageHead>
+
+      <section className="ga-wrap ga-page-sec ga-contact">
+        <div className="ga-info">
+          <section>
+            <h3>Service Area</h3>
+            <b>Metro Manila</b>
+            <p>Home, condo, hotel, and office massage service. Enter your address during booking to check availability. No transport fee.</p>
+          </section>
+          <section>
+            <h3>Booking &amp; WhatsApp</h3>
+            <a href="tel:+63 964 857 0967">+63 964 857 0967</a>
+            <p>Message us anytime to book or ask about therapist availability.</p>
+          </section>
+          <section>
+            <h3>Email Support</h3>
+            <a href="mailto:services@easygospa.com">services@easygospa.com</a>
+            <a href="https://www.easygospa.com/">https://www.easygospa.com/</a>
+            <p>For booking questions, service details, and business inquiries.</p>
+          </section>
+          <section>
+            <h3>Service Hours</h3>
+            <b>24 Hours / 7 Days</b>
+            <p>Online booking and message support are available 24/7. Therapist availability may vary by area and time.</p>
+          </section>
+          <section>
+            <h3>Follow Us</h3>
+            <div className="ga-social">
+              <button type="button" onClick={() => handleSocialClick('instagram')} aria-label="Follow us on Instagram"><Instagram size={22} /></button>
+              <button type="button" onClick={() => handleSocialClick('facebook')} aria-label="Follow us on Facebook"><Facebook size={22} /></button>
             </div>
-            
-            <h1 className="font-serif font-medium text-[clamp(2.5rem,5vw,4rem)] text-[#0F0F0F] mb-6 leading-tight">
-              Contact EasyGoSpa - Professional Home Massage in Metro Manila
-            </h1>
-            
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-[1.618]">
-              Book a trained massage therapist to your hotel, condo, home, or office.
-              Message us for availability, service details, and booking assistance.
-            </p>
-          </motion.div>
-
-          <div className="grid lg:grid-cols-2 gap-[clamp(1rem,2vw,2.5rem)]">
-            {/* Contact Information */}
-            <motion.div
-              initial={{ opacity: 0, x: -40 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              className="space-y-[1.2em]"
-            >
-              {/* Service Area */}
-              <div className="bg-white rounded-3xl p-8 shadow-lg border border-[#2db83d]/20">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-[#2db83d]/10 rounded-2xl flex items-center justify-center">
-                    <MapPin className="w-6 h-6 text-[#2db83d]" />
-                  </div>
-                  <div>
-                    <h3 className="font-serif text-xl font-bold text-[#0F0F0F] mb-2">Service Area</h3>
-                    <div className="leading-[1.618] text-gray-600">
-                      <p className="font-medium text-[#2db83d]">Metro Manila</p>
-                      <p className="text-sm">Home, condo, hotel, and office massage service. Enter your address during booking to check availability. No transport fee.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Booking & WhatsApp */}
-              <div className="bg-white rounded-3xl p-8 shadow-lg border border-[#2db83d]/20">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-[#2db83d]/10 rounded-2xl flex items-center justify-center">
-                    <Phone className="w-6 h-6 text-[#2db83d]" />
-                  </div>
-                  <div>
-                    <h3 className="font-serif text-xl font-bold text-[#0F0F0F] mb-2">Booking & WhatsApp</h3>
-                    <div className="leading-[1.618] text-gray-600">
-                      <a 
-                        href="tel:+63 964 857 0967"
-                        className="text-[#2db83d] hover:text-[#45f248] transition-colors duration-300 font-medium"
-                      >
-                        +63 964 857 0967
-                      </a>
-                      <br />
-                      <span className="text-sm">Message us anytime to book or ask about therapist availability.</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Email Support */}
-              <div className="bg-white rounded-3xl p-8 shadow-lg border border-[#2db83d]/20">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-[#2db83d]/10 rounded-2xl flex items-center justify-center">
-                    <Mail className="w-6 h-6 text-[#2db83d]" />
-                  </div>
-                  <div>
-                    <h3 className="font-serif text-xl font-bold text-[#0F0F0F] mb-2">Email Support</h3>
-                    <div className="leading-[1.618] text-gray-600">
-                      <a 
-                        href="mailto:services@easygospa.com"
-                        className="text-[#2db83d] hover:text-[#45f248] transition-colors duration-300 font-medium"
-                      >
-                        services@easygospa.com
-                      </a>
-                      <br />
-                      <a
-                        href="https://www.easygospa.com/"
-                        className="text-[#2db83d] hover:text-[#45f248] transition-colors duration-300 font-medium"
-                      >
-                        https://www.easygospa.com/
-                      </a>
-                      <br />
-                      <span className="text-sm">For booking questions, service details, and business inquiries.</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Service Hours */}
-              <div className="bg-white rounded-3xl p-8 shadow-lg border border-[#2db83d]/20">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-[#2db83d]/10 rounded-2xl flex items-center justify-center">
-                    <Clock className="w-5 h-5 text-[#2db83d]" />
-                  </div>
-                  <div>
-                    <h3 className="font-serif text-xl font-bold text-[#0F0F0F] mb-2">Service Hours</h3>
-                    <div className="text-gray-600 space-y-1 leading-[1.618]">
-                      <p className="font-medium text-[#2db83d]">24 Hours / 7 Days</p>
-                      <p className="text-sm">Online booking and message support are available 24/7. Therapist availability may vary by area and time.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Social Media */}
-              <div className="bg-white rounded-3xl p-8 shadow-lg border border-[#2db83d]/20">
-                <h3 className="font-serif text-xl font-bold text-[#0F0F0F] mb-4">Follow Us</h3>
-                <div className="flex gap-4">
-                  <button 
-                    onClick={() => handleSocialClick('instagram')}
-                    className="w-12 h-12 bg-[#2db83d] rounded-2xl flex items-center justify-center hover:bg-[#45f248] transition-colors duration-300 text-white"
-                    aria-label="Follow us on Instagram"
-                  >
-                    <Instagram className="w-6 h-6" />
-                  </button>
-                  <button 
-                    onClick={() => handleSocialClick('facebook')}
-                    className="w-12 h-12 bg-[#2db83d] rounded-2xl flex items-center justify-center hover:bg-[#45f248] transition-colors duration-300 text-white"
-                    aria-label="Follow us on Facebook"
-                  >
-                    <Facebook className="w-6 h-6" />
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Contact Form */}
-            <motion.div
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              className="bg-white rounded-3xl p-8 shadow-lg border border-[#2db83d]/20"
-            >
-              {isSubmitted ? (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="text-center py-12"
-                >
-                  <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                  <h2 className="font-serif text-2xl font-bold text-[#0F0F0F] mb-2">Thank You!</h2>
-                  <p className="text-gray-600">Your message has been sent successfully. We'll get back to you within 2 hours.</p>
-                </motion.div>
-              ) : (
-                <>
-                  <h2 className="font-serif text-[clamp(2rem,4vw,3rem)] font-bold text-[#0F0F0F] mb-6">Send Us a Message</h2>
-                  
-                  <form onSubmit={handleSubmit} className="space-y-6" noValidate>
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <div>
-                        <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
-                          First Name *
-                        </label>
-                        <input
-                          type="text"
-                          id="firstName"
-                          name="firstName"
-                          value={formData.firstName}
-                          onChange={handleInputChange}
-                          className={`w-full px-4 py-3 border rounded-xl focus:outline-none transition-colors duration-300 ${
-                            errors.firstName 
-                              ? 'border-red-300 focus:border-red-500' 
-                              : 'border-gray-200 focus:border-[#2db83d]'
-                          }`}
-                          placeholder="Your first name"
-                        />
-                        {errors.firstName && (
-                          <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>
-                        )}
-                      </div>
-                      <div>
-                        <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
-                          Last Name *
-                        </label>
-                        <input
-                          type="text"
-                          id="lastName"
-                          name="lastName"
-                          value={formData.lastName}
-                          onChange={handleInputChange}
-                          className={`w-full px-4 py-3 border rounded-xl focus:outline-none transition-colors duration-300 ${
-                            errors.lastName 
-                              ? 'border-red-300 focus:border-red-500' 
-                              : 'border-gray-200 focus:border-[#2db83d]'
-                          }`}
-                          placeholder="Your last name"
-                        />
-                        {errors.lastName && (
-                          <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>
-                        )}
-                      </div>
-                    </div>
-
-                    <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                        Email Address *
-                      </label>
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border rounded-xl focus:outline-none transition-colors duration-300 ${
-                          errors.email 
-                            ? 'border-red-300 focus:border-red-500' 
-                            : 'border-gray-200 focus:border-[#2db83d]'
-                        }`}
-                        placeholder="your@email.com"
-                      />
-                      {errors.email && (
-                        <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                        Phone Number *
-                      </label>
-                      <input
-                        type="tel"
-                        id="phone"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border rounded-xl focus:outline-none transition-colors duration-300 ${
-                          errors.phone 
-                            ? 'border-red-300 focus:border-red-500' 
-                            : 'border-gray-200 focus:border-[#2db83d]'
-                        }`}
-                        placeholder="+63 964 857 0967"
-                      />
-                      {errors.phone && (
-                        <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label htmlFor="service" className="block text-sm font-medium text-gray-700 mb-2">
-                        Interested Service
-                      </label>
-                      <select
-                        id="service"
-                        name="service"
-                        value={formData.service}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-[#2db83d] transition-colors duration-300"
-                      >
-                        {/* 2026-10-26:原来是建站模板的美容 / 激光脱毛 / 美甲 / 美发,换成后台在售的 6 个按摩项目(名字照后台原样) */}
-                        <option value="">Select a service</option>
-                        <option value="Deep tissue">Deep tissue</option>
-                        <option value="Hot Stone Massage">Hot Stone Massage</option>
-                        <option value="Relaxing Premium Aromatherapy Body Massage">Relaxing Premium Aromatherapy Body Massage</option>
-                        <option value="Shiatsu Massage(without Oil)">Shiatsu Massage(without Oil)</option>
-                        <option value="Swedish Massage">Swedish Massage</option>
-                        <option value="Thai Body Massage">Thai Body Massage</option>
-                        <option value="Consultation">Consultation</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
-                        Message *
-                      </label>
-                      <textarea
-                        id="message"
-                        name="message"
-                        rows={4}
-                        value={formData.message}
-                        onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border rounded-xl focus:outline-none transition-colors duration-300 resize-none ${
-                          errors.message 
-                            ? 'border-red-300 focus:border-red-500' 
-                            : 'border-gray-200 focus:border-[#2db83d]'
-                        }`}
-                        placeholder="Tell us your preferred service, location, date, and time."
-                      />
-                      {errors.message && (
-                        <p className="text-red-500 text-sm mt-1">{errors.message}</p>
-                      )}
-                    </div>
-
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="w-full bg-[#2db83d] text-white py-4 rounded-xl font-medium hover:bg-[#45f248] transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-[#2db83d] flex items-center justify-center gap-2"
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                          Sending...
-                        </>
-                      ) : (
-                        <>
-                          <Send className="w-5 h-5" />
-                          Send Message
-                        </>
-                      )}
-                    </button>
-                  </form>
-                </>
-              )}
-            </motion.div>
-          </div>
+          </section>
         </div>
-      </div>
-    </>
+
+        <div className="ga-form">
+          {isSubmitted ? (
+            <div className="ga-sent">
+              <CheckCircle size={56} />
+              <h2>Thank You!</h2>
+              <p>Your message has been sent successfully. We'll get back to you within 2 hours.</p>
+            </div>
+          ) : (
+            <>
+              <h2>Send Us a Message</h2>
+              <form onSubmit={handleSubmit} noValidate>
+                <div className="ga-2col">
+                  <div className={`ga-field${errors.firstName ? ' is-bad' : ''}`}>
+                    <label htmlFor="firstName">First Name *</label>
+                    <input type="text" id="firstName" name="firstName" value={formData.firstName} onChange={handleInputChange} placeholder="Your first name" />
+                    {errors.firstName && <p className="ga-err">{errors.firstName}</p>}
+                  </div>
+                  <div className={`ga-field${errors.lastName ? ' is-bad' : ''}`}>
+                    <label htmlFor="lastName">Last Name *</label>
+                    <input type="text" id="lastName" name="lastName" value={formData.lastName} onChange={handleInputChange} placeholder="Your last name" />
+                    {errors.lastName && <p className="ga-err">{errors.lastName}</p>}
+                  </div>
+                </div>
+                <div className={`ga-field${errors.email ? ' is-bad' : ''}`}>
+                  <label htmlFor="email">Email Address *</label>
+                  <input type="email" id="email" name="email" value={formData.email} onChange={handleInputChange} placeholder="your@email.com" />
+                  {errors.email && <p className="ga-err">{errors.email}</p>}
+                </div>
+                <div className={`ga-field${errors.phone ? ' is-bad' : ''}`}>
+                  <label htmlFor="phone">Phone Number *</label>
+                  <input type="tel" id="phone" name="phone" value={formData.phone} onChange={handleInputChange} placeholder="+63 964 857 0967" />
+                  {errors.phone && <p className="ga-err">{errors.phone}</p>}
+                </div>
+
+                <div className="ga-field">
+                  <label htmlFor="service">Interested Service</label>
+                  <select id="service" name="service" value={formData.service} onChange={handleInputChange}>
+                    {/* 2026-10-26:原来是建站模板的美容 / 激光脱毛 / 美甲 / 美发,换成后台在售的 6 个按摩项目(名字照后台原样) */}
+                    <option value="">Select a service</option>
+                    <option value="Deep tissue">Deep tissue</option>
+                    <option value="Hot Stone Massage">Hot Stone Massage</option>
+                    <option value="Relaxing Premium Aromatherapy Body Massage">Relaxing Premium Aromatherapy Body Massage</option>
+                    <option value="Shiatsu Massage(without Oil)">Shiatsu Massage(without Oil)</option>
+                    <option value="Swedish Massage">Swedish Massage</option>
+                    <option value="Thai Body Massage">Thai Body Massage</option>
+                    <option value="Consultation">Consultation</option>
+                  </select>
+                </div>
+
+                <div className={`ga-field${errors.message ? ' is-bad' : ''}`}>
+                  <label htmlFor="message">Message *</label>
+                  <textarea id="message" name="message" rows={4} value={formData.message} onChange={handleInputChange} placeholder="Tell us your preferred service, location, date, and time." />
+                  {errors.message && <p className="ga-err">{errors.message}</p>}
+                </div>
+
+                <button type="submit" disabled={isSubmitting} className="ga-btn ga-btn-big">
+                  {isSubmitting ? 'Sending...' : <><Send size={18} /> Send Message</>}
+                </button>
+              </form>
+            </>
+          )}
+        </div>
+      </section>
+    </div>
   );
 }

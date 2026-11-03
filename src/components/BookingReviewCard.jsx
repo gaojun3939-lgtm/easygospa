@@ -85,28 +85,28 @@ export default function BookingReviewCard({
 
   if (state === 'submitted') {
     return (
-      <section className="mt-5 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-center" data-testid="completed-order-review-success" aria-live="polite">
-        <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-emerald-100 text-emerald-700"><Check className="h-6 w-6" /></span>
-        <p className="mt-3 text-sm font-bold text-emerald-800">Thanks! ₱50 coupon added to your wallet</p>
+      <section className="mt-5 rounded-2xl border border-[#64734F]/25 bg-[#E9ECE1] p-5 text-center" data-testid="completed-order-review-success" aria-live="polite">
+        <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-[#E9ECE1] text-[#55633F]"><Check className="h-6 w-6" /></span>
+        <p className="mt-3 text-sm font-bold text-[#55633F]">Thanks! ₱50 coupon added to your wallet</p>
       </section>
     );
   }
 
   if (!expanded) {
     return (
-      <section className="mt-5 rounded-2xl border border-[#e0a52b]/35 bg-[#fffaf0] p-4 shadow-sm" data-testid="completed-order-review-cta">
-        <button type="button" onClick={() => setExpanded(true)} className="flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-[#4E8D43] px-4 text-sm font-bold text-white transition hover:bg-[#3F7838]">
-          <Star className="h-5 w-5 fill-[#f6d27a] text-[#f6d27a]" />Rate your massage · Get ₱50 coupon
+      <section className="mt-5 rounded-2xl border border-[#64734F]/35 bg-[#F7F4EE] p-4 shadow-sm" data-testid="completed-order-review-cta">
+        <button type="button" onClick={() => setExpanded(true)} className="flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-[#64734F] px-4 text-sm font-bold text-white transition hover:bg-[#55633F]">
+          <Star className="h-5 w-5 fill-[#f0a41c] text-[#f0a41c]" />Rate your massage · Get ₱50 coupon
         </button>
       </section>
     );
   }
 
   return (
-    <section className="mt-5 rounded-2xl border border-[#e0a52b]/35 bg-[#fffaf0] p-4 shadow-sm" data-testid="completed-order-review-form">
+    <section className="mt-5 rounded-2xl border border-[#64734F]/35 bg-[#F7F4EE] p-4 shadow-sm" data-testid="completed-order-review-form">
       <form onSubmit={submitReview}>
-        <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#8a6518]">Review &amp; get a ₱50 coupon</p>
-        <h3 className="mt-2 text-lg font-bold text-[#0F0F0F]">How was {therapistName}?</h3>
+        <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#55633F]">Review &amp; get a ₱50 coupon</p>
+        <h3 className="mt-2 text-lg font-bold text-[#171A17]">How was {therapistName}?</h3>
         <div className="mt-3 flex gap-1" role="radiogroup" aria-label="Star rating">
           {[1, 2, 3, 4, 5].map(value => (
             <button
@@ -116,18 +116,18 @@ export default function BookingReviewCard({
               aria-checked={stars === value}
               aria-label={`${value} star${value === 1 ? '' : 's'}`}
               onClick={() => { setStars(value); setError(''); }}
-              className="flex h-10 w-10 items-center justify-center rounded-xl transition hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-[#e0a52b]"
+              className="flex h-10 w-10 items-center justify-center rounded-xl transition hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-[#64734F]"
             >
               <Star className={`h-8 w-8 ${value <= stars ? 'fill-[#f0a41c] text-[#f0a41c]' : 'text-gray-300'}`} />
             </button>
           ))}
         </div>
         <label htmlFor="order-review-comment" className="mt-4 block text-sm font-semibold text-gray-700">Tell us more <span className="font-normal text-gray-400">(optional)</span></label>
-        <textarea id="order-review-comment" value={comment} onChange={event => setComment(event.target.value.slice(0, 1000))} rows={3} className="mt-2 w-full resize-none rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-[#0F0F0F] outline-none focus:border-[#e0a52b]" placeholder="What stood out about your massage?" />
+        <textarea id="order-review-comment" value={comment} onChange={event => setComment(event.target.value.slice(0, 1000))} rows={3} className="mt-2 w-full resize-none rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-[#171A17] outline-none focus:border-[#64734F]" placeholder="What stood out about your massage?" />
         {error ? <p className="mt-3 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</p> : null}
         <div className="mt-4 grid grid-cols-2 gap-2">
           <button type="button" onClick={() => { setExpanded(false); setError(''); }} className="h-11 rounded-full border border-gray-200 bg-white text-sm font-bold text-gray-600">Not now</button>
-          <button type="submit" disabled={state === 'submitting'} className="h-11 rounded-full bg-[#4E8D43] text-sm font-bold text-white disabled:opacity-60">{state === 'submitting' ? 'Submitting…' : 'Submit review'}</button>
+          <button type="submit" disabled={state === 'submitting'} className="h-11 rounded-full bg-[#64734F] text-sm font-bold text-white disabled:opacity-60">{state === 'submitting' ? 'Submitting…' : 'Submit review'}</button>
         </div>
       </form>
     </section>

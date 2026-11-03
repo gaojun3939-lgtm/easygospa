@@ -24,8 +24,6 @@ const REGIONS = [
   { name: "Singapore" },
 ];
 
-const LIGHT_TOP_PAGES = new Set(["/pricing", "/terms-of-service", "/privacy-policy", "/sitemap"]);
-
 export default function Navbar() {
     const [isScrolled, setIsScrolled] = React.useState(false);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -39,9 +37,8 @@ export default function Navbar() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   // 菜单「实底」样式(米色玻璃底 + 深色字 + 彩色莲花):往下滚、打开手机菜单时用;
-  // 这几页顶上没有深色大图,透明底白字压在米色上看不见,所以一直用实底
-  // (老板 2026-10-26:先点头 /pricing,后又定条款、隐私、目录页照做)。新加浅色顶的页面记得加进来。
-  const solidNav = isScrolled || isMenuOpen || LIGHT_TOP_PAGES.has(pathname) || pathname?.startsWith("/r/");
+  // 只有首页顶上是深色大图，其它页顶上都是浅色，透明底白字看不见，所以一直用实底
+  const solidNav = isScrolled || isMenuOpen || pathname !== "/";
 
   React.useEffect(() => {
     // 首页第一幕是整屏夜景，滑过之后菜单才变实底

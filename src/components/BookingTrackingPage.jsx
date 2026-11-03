@@ -111,18 +111,18 @@ function CompletedBookingReview({ reference, therapistName }) {
   };
 
   return (
-    <section className="rounded-[2rem] border border-[#e0a52b]/35 bg-[linear-gradient(135deg,#fffaf0,#ffffff)] p-5 shadow-sm sm:p-7" data-testid="completed-booking-review">
+    <section className="rounded-[2rem] border border-[#64734F]/35 bg-[linear-gradient(135deg,#F7F4EE,#ffffff)] p-5 shadow-sm sm:p-7" data-testid="completed-booking-review">
       {state === 'submitted' ? (
         <div className="text-center">
-          <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-700"><Check className="h-7 w-7" /></span>
-          <h2 className="mt-4 text-2xl font-bold text-[#17142f]">Thanks! {'★'.repeat(stars)}</h2>
-          <p className="mt-2 text-sm font-semibold text-emerald-700">A ₱50 coupon is now in your wallet.</p>
+          <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#E9ECE1] text-[#55633F]"><Check className="h-7 w-7" /></span>
+          <h2 className="mt-4 text-2xl font-bold text-[#171A17]">Thanks! {'★'.repeat(stars)}</h2>
+          <p className="mt-2 text-sm font-semibold text-[#55633F]">A ₱50 coupon is now in your wallet.</p>
           <p className="mt-2 text-xs text-slate-500">Each completed booking can be reviewed once.</p>
         </div>
       ) : (
         <form onSubmit={submitReview}>
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#8a6518]">Review &amp; get a ₱50 coupon</p>
-          <h2 className="mt-2 text-2xl font-bold text-[#17142f]">How was {therapistName}?</h2>
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#55633F]">Review &amp; get a ₱50 coupon</p>
+          <h2 className="mt-2 text-2xl font-bold text-[#171A17]">How was {therapistName}?</h2>
           <div className="mt-4 flex flex-wrap gap-1" role="radiogroup" aria-label="Star rating">
             {[1, 2, 3, 4, 5].map(value => (
               <button
@@ -132,7 +132,7 @@ function CompletedBookingReview({ reference, therapistName }) {
                 aria-checked={stars === value}
                 aria-label={`${value} star${value === 1 ? '' : 's'}`}
                 onClick={() => { setStars(value); setError(''); }}
-                className="flex h-11 w-11 items-center justify-center rounded-xl transition hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-[#e0a52b]"
+                className="flex h-11 w-11 items-center justify-center rounded-xl transition hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-[#64734F]"
               >
                 <Star className={`h-9 w-9 ${value <= stars ? 'fill-[#f0a41c] text-[#f0a41c]' : 'text-slate-300'}`} />
               </button>
@@ -142,15 +142,15 @@ function CompletedBookingReview({ reference, therapistName }) {
             <div className="min-h-0 space-y-4">
               <div>
                 <label htmlFor="review-comment" className="mb-2 block text-sm font-semibold text-slate-800">Tell us more <span className="font-normal text-slate-400">(optional)</span></label>
-                <textarea id="review-comment" value={comment} onChange={event => setComment(event.target.value.slice(0, 1000))} rows={4} className="w-full resize-none rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-[#17142f] outline-none focus:border-[#e0a52b]" placeholder="What stood out about your massage?" />
+                <textarea id="review-comment" value={comment} onChange={event => setComment(event.target.value.slice(0, 1000))} rows={4} className="w-full resize-none rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-[#171A17] outline-none focus:border-[#64734F]" placeholder="What stood out about your massage?" />
               </div>
               <div>
                 <label htmlFor="review-email" className="mb-2 block text-sm font-semibold text-slate-800">Booking phone or email</label>
-                <input id="review-email" type="text" autoComplete="tel" value={email} onChange={event => setEmail(event.target.value)} className="h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm text-[#17142f] outline-none focus:border-[#e0a52b]" placeholder="09XX XXX XXXX" required />
+                <input id="review-email" type="text" autoComplete="tel" value={email} onChange={event => setEmail(event.target.value)} className="h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm text-[#171A17] outline-none focus:border-[#64734F]" placeholder="09XX XXX XXXX" required />
                 <p className="mt-1 text-xs text-slate-500">Used only to verify that this completed booking is yours.</p>
               </div>
               {error ? <p className="rounded-2xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</p> : null}
-              <button type="submit" disabled={state === 'submitting'} className="h-12 w-full rounded-2xl bg-[#211c46] px-6 font-bold text-white hover:bg-[#17142f] disabled:opacity-60">{state === 'submitting' ? 'Submitting…' : 'Submit review'}</button>
+              <button type="submit" disabled={state === 'submitting'} className="h-12 w-full rounded-2xl bg-[#171A17] px-6 font-bold text-white hover:bg-[#171A17] disabled:opacity-60">{state === 'submitting' ? 'Submitting…' : 'Submit review'}</button>
             </div>
           </div>
         </form>
@@ -213,7 +213,7 @@ function StateCard({ icon, title, body, action }) {
   return (
     <div className="mx-auto w-full max-w-xl rounded-[2rem] border border-slate-200 bg-white p-7 text-center shadow-sm">
       <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-50 text-amber-700">{icon}</div>
-      <h1 className="mt-5 text-2xl font-bold text-[#17142f]">{title}</h1>
+      <h1 className="mt-5 text-2xl font-bold text-[#171A17]">{title}</h1>
       <p className="mt-3 text-sm leading-6 text-slate-600">{body}</p>
       <div className="mt-6">{action}</div>
     </div>
@@ -280,15 +280,15 @@ function TherapistBadge({ therapist }) {
   const initial = therapist.name?.charAt(0)?.toUpperCase() || 'T';
 
   return (
-    <div className="mt-3 flex min-w-0 items-center gap-3 rounded-2xl border border-[#e0a52b]/25 bg-[#fffaf0] p-3">
+    <div className="mt-3 flex min-w-0 items-center gap-3 rounded-2xl border border-[#64734F]/25 bg-[#F7F4EE] p-3">
       {therapist.avatarUrl ? (
         <img src={therapist.avatarUrl} alt={`${therapist.name || 'Therapist'} profile`} className="h-11 w-11 shrink-0 rounded-full object-cover" />
       ) : (
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#211c46] font-bold text-[#f6d27a]">{initial}</span>
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#171A17] font-bold text-[#DDE3CF]">{initial}</span>
       )}
       <div className="min-w-0">
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Your therapist</p>
-        <p className="truncate font-bold text-[#17142f]">{therapist.name || 'Assigned therapist'}</p>
+        <p className="truncate font-bold text-[#171A17]">{therapist.name || 'Assigned therapist'}</p>
       </div>
     </div>
   );
@@ -322,14 +322,14 @@ function BookingStatusTimeline({ booking }) {
         return (
           <li key={step.status} className="relative flex gap-4 pb-7 last:pb-0" aria-current={isCurrent ? 'step' : undefined}>
             {index < BOOKING_STATUS_STEPS.length - 1 ? (
-              <span className={`absolute left-[19px] top-10 h-[calc(100%-2.1rem)] w-0.5 ${index < currentIndex ? 'bg-[#e0a52b]' : 'bg-slate-200'}`} aria-hidden="true" />
+              <span className={`absolute left-[19px] top-10 h-[calc(100%-2.1rem)] w-0.5 ${index < currentIndex ? 'bg-[#64734F]' : 'bg-slate-200'}`} aria-hidden="true" />
             ) : null}
-            <span className={`relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 ${isPast ? 'border-[#e0a52b] bg-[#e0a52b] text-[#17142f]' : isCurrent ? 'animate-pulse border-[#f6d27a] bg-[#211c46] text-[#f6d27a] shadow-[0_0_0_6px_rgba(224,165,43,0.16)]' : 'border-slate-200 bg-white text-slate-400'}`}>
+            <span className={`relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 ${isPast ? 'border-[#64734F] bg-[#64734F] text-[#171A17]' : isCurrent ? 'animate-pulse border-[#DDE3CF] bg-[#171A17] text-[#DDE3CF] shadow-[0_0_0_6px_rgba(224,165,43,0.16)]' : 'border-slate-200 bg-white text-slate-400'}`}>
               {isPast ? <Check className="h-5 w-5" /> : isCurrent ? <Clock3 className="h-5 w-5" /> : <span className="h-2.5 w-2.5 rounded-full bg-current" />}
             </span>
-            <div className={`min-w-0 flex-1 pt-1.5 ${isCurrent ? 'text-[#17142f]' : isPast ? 'text-slate-700' : 'text-slate-400'}`}>
+            <div className={`min-w-0 flex-1 pt-1.5 ${isCurrent ? 'text-[#171A17]' : isPast ? 'text-slate-700' : 'text-slate-400'}`}>
               <p className="font-bold">{step.label}</p>
-              {showEta ? <p className="mt-1 text-sm font-semibold text-[#8a6518]">Estimated arrival: {Math.round(booking.etaMinutes)} minutes</p> : null}
+              {showEta ? <p className="mt-1 text-sm font-semibold text-[#55633F]">Estimated arrival: {Math.round(booking.etaMinutes)} minutes</p> : null}
               {showTherapist ? <TherapistBadge therapist={booking.therapist} /> : null}
             </div>
           </li>
@@ -532,7 +532,7 @@ export default function BookingTrackingPage({ reference }) {
           body="Please check your connection and try again."
           action={(
             <div className="grid gap-3">
-              <button type="button" onClick={() => loadBooking()} className="h-12 rounded-2xl bg-[#211c46] px-6 font-bold text-white hover:bg-[#17142f]">Try again</button>
+              <button type="button" onClick={() => loadBooking()} className="h-12 rounded-2xl bg-[#171A17] px-6 font-bold text-white hover:bg-[#171A17]">Try again</button>
               {whatsappButton}
             </div>
           )}
@@ -541,10 +541,10 @@ export default function BookingTrackingPage({ reference }) {
 
       {viewState === 'ready' && booking ? (
         <div className="mx-auto w-full max-w-3xl space-y-5" data-testid="booking-tracker-ready">
-          <section data-booking-primary-status className="overflow-hidden rounded-[2rem] border border-[#e0a52b]/30 bg-[#211c46] p-6 text-white shadow-xl shadow-[#211c46]/10 sm:p-8">
+          <section data-booking-primary-status className="overflow-hidden rounded-[2rem] border border-[#64734F]/30 bg-[#171A17] p-6 text-white shadow-xl shadow-[#171A17]/10 sm:p-8">
             <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0">
-                <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#f6d27a]">My booking</p>
+                <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#DDE3CF]">My booking</p>
                 <h1 className="mt-3 text-3xl font-bold sm:text-4xl">
                   {confirmationNotice || (booking.status === 'waiting_acceptance'
                     ? `Waiting for ${therapistDisplayName} to confirm...`
@@ -556,7 +556,7 @@ export default function BookingTrackingPage({ reference }) {
                     : `Live status updates refresh automatically every ${pollingSeconds} seconds.`}
                 </p>
               </div>
-              <span className="w-fit rounded-full border border-[#f6d27a]/35 bg-[#f6d27a]/10 px-4 py-2 text-sm font-bold text-[#f6d27a]">{booking.statusLabel}</span>
+              <span className="w-fit rounded-full border border-[#DDE3CF]/35 bg-[#DDE3CF]/10 px-4 py-2 text-sm font-bold text-[#DDE3CF]">{booking.statusLabel}</span>
             </div>
           </section>
 
@@ -569,7 +569,7 @@ export default function BookingTrackingPage({ reference }) {
               href={`https://wa.me/${booking.therapistLine}?text=${encodeURIComponent(`Hi! Booking ${reference} — I'd like to chat with my therapist${booking.therapist?.name ? ` ${booking.therapist.name}` : ''}.`)}`}
               target="_blank"
               rel="noreferrer"
-              className="flex items-center justify-center gap-3 rounded-2xl bg-[#25D366] px-6 py-4 text-center shadow-lg shadow-emerald-500/30 ring-2 ring-emerald-300/60 transition hover:bg-[#1fbd5a] active:scale-[0.99]"
+              className="flex items-center justify-center gap-3 rounded-2xl bg-[#25D366] px-6 py-4 text-center shadow-lg shadow-emerald-500/30 ring-2 ring-[#64734F]/40 transition hover:bg-[#1fbd5a] active:scale-[0.99]"
             >
               <span className="relative flex h-3 w-3 shrink-0">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
@@ -583,7 +583,7 @@ export default function BookingTrackingPage({ reference }) {
               href={buildBookingUpdatesWhatsAppUrl(reference)}
               target="_blank"
               rel="noreferrer"
-              className="flex items-center justify-center gap-3 rounded-2xl bg-[#25D366] px-6 py-4 text-center shadow-lg shadow-emerald-500/30 ring-2 ring-emerald-300/60 transition hover:bg-[#1fbd5a] active:scale-[0.99]"
+              className="flex items-center justify-center gap-3 rounded-2xl bg-[#25D366] px-6 py-4 text-center shadow-lg shadow-emerald-500/30 ring-2 ring-[#64734F]/40 transition hover:bg-[#1fbd5a] active:scale-[0.99]"
             >
               <span className="relative flex h-3 w-3 shrink-0">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
@@ -601,7 +601,7 @@ export default function BookingTrackingPage({ reference }) {
             <div className="grid gap-5 sm:grid-cols-2">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">Service</p>
-                <p className="mt-1 font-bold text-[#17142f]">{booking.serviceName || 'Service pending'}</p>
+                <p className="mt-1 font-bold text-[#171A17]">{booking.serviceName || 'Service pending'}</p>
                 <p className="mt-1 text-sm text-slate-600">{Number.isFinite(booking.durationMinutes) ? `${booking.durationMinutes} minutes` : 'Duration pending'}</p>
               </div>
               {/* 客人只关心"技师什么时候到",不关心内部排班(2026-07-28 老板拍板)。
@@ -611,23 +611,23 @@ export default function BookingTrackingPage({ reference }) {
               {booking.scheduleMode === 'scheduled' && booking.scheduledAt ? (
                 <div data-booking-appointment-time>
                   <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500"><CalendarClock className="mr-1 inline h-4 w-4" />Your appointment</p>
-                  <p className="mt-1 font-bold text-[#17142f]">{formatManilaBookingDateTime(booking.scheduledAt)}</p>
+                  <p className="mt-1 font-bold text-[#171A17]">{formatManilaBookingDateTime(booking.scheduledAt)}</p>
                   <p className="mt-1 text-sm text-slate-600">Booked for later — your therapist arrives for this time.</p>
                 </div>
               ) : null}
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500"><CalendarClock className="mr-1 inline h-4 w-4" />Your therapist</p>
-                <p className="mt-1 font-bold text-[#17142f]">{therapistArrivalHeadline(booking)}</p>
+                <p className="mt-1 font-bold text-[#171A17]">{therapistArrivalHeadline(booking)}</p>
                 <p className="mt-1 text-sm text-slate-600">{therapistArrivalNote(booking)}</p>
               </div>
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500"><MapPin className="mr-1 inline h-4 w-4" />Area</p>
-                <p className="mt-1 font-bold text-[#17142f]">{booking.areaName || 'Area pending'}</p>
+                <p className="mt-1 font-bold text-[#171A17]">{booking.areaName || 'Area pending'}</p>
               </div>
               <div className="min-w-0">
                 <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">Booking reference</p>
                 <div className="mt-1 flex min-w-0 items-center gap-2">
-                  <code className="min-w-0 flex-1 break-all text-sm font-bold text-[#17142f]">{booking.reference}</code>
+                  <code className="min-w-0 flex-1 break-all text-sm font-bold text-[#171A17]">{booking.reference}</code>
                   <button type="button" onClick={copyReference} className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-xl bg-slate-100 px-3 text-xs font-bold text-slate-700 hover:bg-slate-200" aria-label="Copy booking reference">
                     <Copy className="h-3.5 w-3.5" />{copied ? 'Copied' : 'Copy'}
                   </button>
@@ -639,7 +639,7 @@ export default function BookingTrackingPage({ reference }) {
           <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
             <div className="mb-7 flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h2 className="text-xl font-bold text-[#17142f]">Booking progress</h2>
+                <h2 className="text-xl font-bold text-[#171A17]">Booking progress</h2>
                 <p className="mt-1 text-xs text-slate-500">Last updated {formatManilaBookingDateTime(booking.updatedAt)}</p>
               </div>
               <button type="button" onClick={() => loadBooking({ silent: true })} disabled={isRefreshing} className="inline-flex h-10 items-center gap-2 rounded-xl border border-slate-200 px-4 text-sm font-bold text-slate-700 hover:bg-slate-50 disabled:opacity-60">
@@ -661,11 +661,11 @@ export default function BookingTrackingPage({ reference }) {
             ) : null}
           </section>
 
-          <section className="rounded-[2rem] border border-[#e0a52b]/25 bg-[#fffaf0] p-5 sm:p-6">
+          <section className="rounded-[2rem] border border-[#64734F]/25 bg-[#F7F4EE] p-5 sm:p-6">
             <div className="flex items-start gap-3">
-              <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-[#8a6518]" />
+              <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-[#55633F]" />
               <div>
-                <h2 className="font-bold text-[#17142f]">Need an update?</h2>
+                <h2 className="font-bold text-[#171A17]">Need an update?</h2>
                 <p className="mt-1 text-sm leading-6 text-slate-600">Message our team and include your booking reference.</p>
               </div>
             </div>
@@ -685,7 +685,7 @@ export default function BookingTrackingPage({ reference }) {
             onSubmit={handleCancellation}
             onClick={event => event.stopPropagation()}
           >
-            <h2 id="booking-cancel-dialog-title" className="text-2xl font-bold text-[#17142f]">Cancel this booking?</h2>
+            <h2 id="booking-cancel-dialog-title" className="text-2xl font-bold text-[#171A17]">Cancel this booking?</h2>
             <p className="mt-3 text-sm leading-6 text-slate-600">Only a booking still waiting for Therapist confirmation can be cancelled here.</p>
             <div className="mt-5">
               <label htmlFor="booking-cancel-contact" className="mb-2 block text-sm font-semibold text-slate-800">Booking email or phone</label>
@@ -696,7 +696,7 @@ export default function BookingTrackingPage({ reference }) {
                   setCancelContact(event.target.value);
                   setCancelError('');
                 }}
-                className="h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 font-medium text-[#17142f] outline-none focus:border-[#4E8D43]"
+                className="h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 font-medium text-[#171A17] outline-none focus:border-[#64734F]"
                 autoComplete="email"
                 required
               />
