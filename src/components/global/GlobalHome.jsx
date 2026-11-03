@@ -5,10 +5,10 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Lenis from 'lenis'
 import Clip from './Clip'
-import ServiceRows from './ServiceRows'
+import ServiceMenu from './ServiceMenu'
 
 // 全球站首页「The Arrival」（2026-11-03，方案全文在共享笔记夹 窗口5-官网改造/arrival/）。
-// 一路滑下去像看电影：飞进窗户 → 门打开、技师走到面前 → 房间变样 → 项目和价格 → 城市 → 门开着。
+// 一路滑下去像看电影：飞进窗户 → 门打开、技师走到面前 → 正在按摩的画面 → 项目和价格 → 三步 → 一天任何钟点 → 家 / 公寓 / 酒店 → 城市 → 门开着。
 // 字都是真网页文字，不靠动效才显示；系统设了「减少动态效果」就全部不动。价格读后台，不写死。
 // 片子全部是公司现有素材，能放的都放上去，人物露脸（老板 11-03「都花了钱的」）；带按摩床的镜头不用，技师不带床。
 // 只开了菲律宾，其它地方先不显示（老板 11-03）。开第二个国家时改成 true
@@ -34,11 +34,40 @@ const ARRIVE = {
   desktop: { dir: '/global/arrive-d', frames: 96 },
   phone: { dir: '/global/arrive-m', frames: 64 },
 }
-const TILES = [
-  { clip: 'corridor', word: 'Licensed', label: 'A smiling therapist walking down a condo corridor with folded towels and the EasyGoSpa bag' },
-  { clip: 'walkin', word: 'Uniformed', label: 'A therapist in the EasyGoSpa uniform walking in through an open door' },
-  { clip: 'greet', word: 'ID-verified', label: 'A therapist in uniform opening a door and smiling' },
-  { clip: 'closeup', word: 'At your door', label: 'A smiling therapist arriving at a condo door with towels and the EasyGoSpa bag' },
+// 「你的房间变成水疗室」：先整屏一张，缩回去，周围的图露出来
+const SPA_TILES = [
+  { key: 'a', src: 'foot', alt: 'A therapist in the EasyGoSpa uniform massaging a client\'s foot beside the sofa' },
+  { key: 'b', src: 'stone-arm', alt: 'A therapist gliding a warm stone along a client\'s forearm' },
+  { key: 'c', src: 'neck', alt: 'A therapist easing the tension in a client\'s neck' },
+  { key: 'd', src: 'amber', alt: 'A bottle of massage oil beside a folded towel' },
+  { key: 'e', src: 'towels', alt: 'Rolled and folded towels on a dark wood bench' },
+  { key: 'f', src: 'lotus', alt: 'A white lotus floating in a celadon bowl' },
+  { key: 'g', src: 'cup', alt: 'A folded towel and a small tea cup in soft afternoon light' },
+]
+const STRIP = ['stones-linen', 'bag', 'towels-sofa', 'handle', 'oils', 'lotus', 'glass', 'leaf']
+const STEPS = [
+  { title: 'Choose your therapist', note: 'See each profile when you book.', clip: 'greet', label: 'A therapist in uniform opening a door and smiling' },
+  { title: 'Choose your time', note: 'Now, or book for later.', clip: 'glide', label: 'Gliding through a lit window into a quiet condo living room' },
+  { title: 'Pay cash on arrival', note: 'No deposit, nothing to pay upfront.', clip: 'night', label: 'A therapist walking in through a condo door at night, carrying folded towels' },
+]
+// 一天里任何钟点都能约（24/7）：从早上滑到半夜，画面跟着从白天变成黑夜
+const HOURS = [
+  { time: '7:00', part: 'am', line: 'Before the first meeting.', src: 'morning', alt: 'A bright bedroom with the city in morning light' },
+  { time: '1:00', part: 'pm', line: 'Between checkout and the flight.', src: 'hotel', alt: 'The EasyGoSpa bag on a hotel bed, the city through the window' },
+  { time: '6:30', part: 'pm', line: 'After the long week.', src: 'sunset', alt: 'Metro Manila at sunset from a high window' },
+  { time: '11:00', part: 'pm', line: 'When the city finally quiets.', src: 'night-hands', alt: 'A therapist massaging a client\'s back at night, a lamp on and the city lit outside' },
+  { time: '2:00', part: 'am', line: 'Yes, even now.', clip: 'window', label: 'Gliding through a lit window into a quiet condo living room at night' },
+]
+const PLACES = [
+  { word: 'Home.', clip: 'living', label: 'A therapist stepping into a living room with a view of the city' },
+  { word: 'Condo.', clip: 'lobby', label: 'A therapist walking in through a condo door, carrying folded towels and the EasyGoSpa bag' },
+  { word: 'Hotel.', clip: 'corridor', label: 'A smiling therapist walking down a corridor with folded towels and the EasyGoSpa bag' },
+]
+const TRUST = [
+  { word: 'Licensed', clip: 'walkin', label: 'A therapist in the EasyGoSpa uniform walking in through an open door' },
+  { word: 'Uniformed', clip: 'uniform', label: 'A smiling therapist in the EasyGoSpa uniform, carrying folded towels' },
+  { word: 'ID-verified', src: 'badge', alt: 'A therapist in the EasyGoSpa uniform holding up her ID card' },
+  { word: 'At your door', clip: 'closeup', label: 'A smiling therapist arriving at a condo door with towels and the EasyGoSpa bag' },
 ]
 const INTRO_KEY = 'ga-intro-seen'
 
@@ -259,16 +288,146 @@ export default function GlobalHome({ services = [] }) {
         })
       }
 
-      // 房间：三条片子先放一会儿，再一条竖线扫过，变成正在按摩的样子
-      gsap.timeline({ scrollTrigger: { trigger: '.ga-room', start: 'top top', end: 'bottom bottom', scrub: 0.6 } })
-        .fromTo('.ga-room-after', { clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0 0% 0 0)', ease: 'none', duration: 0.6 }, 0.4)
-        .fromTo('.ga-seam', { left: '0%' }, { left: '100%', ease: 'none', duration: 0.6 }, 0.4)
+      // 按摩：先整屏一张，缩回左上角，周围的图露出来、各走各的速度，字从白变深
+      const spa = gsap.timeline({ scrollTrigger: { trigger: '.ga-spa', start: 'top top', end: 'bottom bottom', scrub: 0.6, invalidateOnRefresh: true } })
+      spa.from('.ga-spa-main', { left: 0, top: 0, width: '100%', height: '100%', borderRadius: 0, ease: 'power2.inOut', duration: 0.42 }, 0.06)
+        .fromTo('.ga-spa-main-shade', { autoAlpha: 1 }, { autoAlpha: 0, ease: 'none', duration: 0.2 }, 0.18)
+        // 字：整屏时白字；图缩回去的时候先退场，图让开了再换深色回来，不叠在图边上
+        .fromTo('.ga-spa-text', { color: '#ffffff', autoAlpha: 1 }, { autoAlpha: 0, ease: 'none', duration: 0.07 }, 0.08)
+        .set('.ga-spa-text', { color: '#171a17' }, 0.2)
+        .to('.ga-spa-text', { autoAlpha: 1, ease: 'none', duration: 0.1 }, 0.36)
+      gsap.utils.toArray('.ga-spa-tile', root.current).forEach((tile, index) => {
+        // 下半部分的图往上走得少，不压到中间的字
+        const drift = [6, 22, 7, 26, 6, 7, 6][index % 7]
+        spa.fromTo(tile, { y: `${drift}vh`, autoAlpha: 0.2 }, { y: 0, autoAlpha: 1, ease: 'power2.out', duration: 0.4 }, 0.12 + index * 0.012)
+          .to(tile, { y: `${-drift * 0.8}vh`, ease: 'none', duration: 0.46 }, 0.54)
+      })
+      spa.to('.ga-spa-main', { y: '-17vh', ease: 'none', duration: 0.46 }, 0.54)
+        .to('.ga-spa-text', { y: '-7vh', ease: 'none', duration: 0.46 }, 0.54)
 
-      gsap.from('.ga-areas li', { yPercent: 60, autoAlpha: 0, duration: 0.9, ease: 'power3.out', stagger: 0.06, scrollTrigger: { trigger: '.ga-areas', start: 'top 85%', once: true } })
+      // 三步：一张卡盖上一张卡，被盖住的往后缩一点，片子也停
+      const cards = gsap.utils.toArray('.ga-stack-card', root.current)
+      cards.forEach((card, index) => {
+        const next = cards[index + 1]
+        if (!next) return
+        gsap.to(card.querySelector('.ga-stack-in'), {
+          scale: 0.93,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: next,
+            start: 'top bottom',
+            end: 'top top',
+            scrub: true,
+            onLeave: () => card.querySelector('video')?.pause(),
+            onEnterBack: () => card.querySelector('video')?.play().catch(() => {}),
+          },
+        })
+      })
 
-      // 电脑上横向滑：技师那组片子、六个地方。手机用手指左右滑，不接管滚动
+      // 任何钟点：一张从下往上盖过上一张，只有看得见的片子在放
+      const slides = gsap.utils.toArray('.ga-hour-slide', root.current)
+      const ticks = gsap.utils.toArray('.ga-hour-rail li', root.current)
+      let hourNow = -1
+      const hour = gsap.timeline({
+        scrollTrigger: {
+          trigger: '.ga-hour',
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: 0.4,
+          onUpdate: (self) => {
+            const now = Math.min(slides.length - 1, Math.floor(self.progress * slides.length))
+            if (now === hourNow) return
+            hourNow = now
+            ticks.forEach((tick, index) => tick.classList.toggle('is-on', index <= now))
+            slides.forEach((slide, index) => {
+              const video = slide.querySelector('video')
+              if (!video) return
+              if (index === now) video.play().catch(() => {})
+              else video.pause()
+            })
+          },
+          onLeave: () => slides.forEach((slide) => slide.querySelector('video')?.pause()),
+          onLeaveBack: () => slides.forEach((slide) => slide.querySelector('video')?.pause()),
+        },
+      })
+      slides.forEach((slide, index) => {
+        if (!index) {
+          hour.fromTo(slide.querySelector('.ga-hour-pic'), { scale: 1.12 }, { scale: 1, ease: 'none', duration: 1 }, 0)
+          return
+        }
+        const at = index - 0.5
+        hour.fromTo(slide, { clipPath: 'inset(100% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', ease: 'power2.inOut', duration: 0.6 }, at)
+          .fromTo(slide.querySelector('.ga-hour-pic'), { scale: 1.18, yPercent: 6 }, { scale: 1, yPercent: 0, ease: 'none', duration: 1.2 }, at)
+          .fromTo(slide.querySelector('.ga-hour-text'), { y: 70, autoAlpha: 0 }, { y: 0, autoAlpha: 1, ease: 'power2.out', duration: 0.42 }, at + 0.22)
+      })
+
+      // 三种地方：哪一块轮到了就撑开。手机只放撑开那块的片子，别的先停
+      const places = gsap.utils.toArray('.ga-place', root.current)
+      let placeNow = -1
+      const onlyActive = window.matchMedia('(max-width: 960px)').matches
+      const place = gsap.timeline({
+        scrollTrigger: {
+          trigger: '.ga-places',
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: 0.5,
+          onUpdate: (self) => {
+            const now = Math.min(places.length - 1, Math.floor(self.progress * places.length))
+            if (now === placeNow) return
+            placeNow = now
+            places.forEach((item, index) => {
+              item.classList.toggle('is-on', index === now)
+              if (!onlyActive) return
+              const video = item.querySelector('video')
+              if (index === now) video?.play().catch(() => {})
+              else video?.pause()
+            })
+          },
+        },
+      })
+      place.fromTo(places[0], { flexGrow: 3.4 }, { flexGrow: 1, ease: 'power2.inOut', duration: 1 }, 0.3)
+        .fromTo(places[1], { flexGrow: 1 }, { flexGrow: 3.4, ease: 'power2.inOut', duration: 1 }, 0.3)
+        .to(places[1], { flexGrow: 1, ease: 'power2.inOut', duration: 1 }, 1.7)
+        .fromTo(places[2], { flexGrow: 1 }, { flexGrow: 3.4, ease: 'power2.inOut', duration: 1 }, 1.7)
+        .to({}, { duration: 0.3 }, 2.7)
+
+      // 城市：片子先只从 Manila 几个字里透出来，字越飞越大，人就穿过字飞进城市
+      const maskWord = root.current.querySelector('.ga-dusk-word')
+      const pivot = maskWord?.querySelector('em')
+      const setPivot = () => {
+        if (!maskWord || !pivot) return
+        const box = maskWord.getBoundingClientRect()
+        const stem = pivot.getBoundingClientRect()
+        // 转动中心放在字母 i 的那一竖上，放大时正好从这里穿过去
+        if (box.width) gsap.set(maskWord, { transformOrigin: `${((stem.left + stem.width / 2 - box.left) / box.width) * 100}% 62%` })
+      }
+      setPivot()
+      document.fonts?.ready?.then(setPivot)
+      gsap.timeline({ scrollTrigger: { trigger: '.ga-dusk', start: 'top top', end: 'bottom bottom', scrub: 0.5, onRefresh: setPivot } })
+        .fromTo(maskWord, { scale: 1 }, { scale: 26, ease: 'power3.in', duration: 0.62, force3D: false }, 0.06)
+        .fromTo('.ga-dusk-mask', { autoAlpha: 1 }, { autoAlpha: 0, ease: 'none', duration: 0.14 }, 0.54)
+        .fromTo('.ga-dusk-shade', { autoAlpha: 0 }, { autoAlpha: 1, ease: 'none', duration: 0.2 }, 0.66)
+        .fromTo('.ga-dusk-text', { autoAlpha: 0, y: 40 }, { autoAlpha: 1, y: 0, ease: 'power2.out', duration: 0.2 }, 0.72)
+
+      // 价格下面那条静物，跟着滑动往左走
+      const strip = root.current.querySelector('.ga-strip')
+      gsap.fromTo(strip, { x: 0 }, {
+        x: () => Math.min(0, window.innerWidth - strip.scrollWidth),
+        ease: 'none',
+        scrollTrigger: { trigger: strip, start: 'top bottom', end: 'bottom top', scrub: 0.6, invalidateOnRefresh: true },
+      })
+
+      // 电脑上横向滑：六个地方（暂不显示）。手机用手指左右滑，不接管滚动
       const mm = gsap.matchMedia()
       mm.add('(min-width: 961px)', () => {
+        // 拱门高低错开，滑动时各走各的
+        gsap.utils.toArray('.ga-olive-arch', root.current).forEach((arch, index) => {
+          gsap.fromTo(arch, { y: 60 + (index % 2) * 70 }, {
+            y: -20 - (index % 2) * 30,
+            ease: 'none',
+            scrollTrigger: { trigger: '.ga-olive-row', start: 'top bottom', end: 'bottom top', scrub: 0.6 },
+          })
+        })
         gsap.utils.toArray('[data-sideways]').forEach((section) => {
           const track = section.querySelector('[data-track]')
           gsap.to(track, {
@@ -347,61 +506,88 @@ export default function GlobalHome({ services = [] }) {
         </div>
       </section>
 
-      {/* 第三幕：三步和一组片子 */}
-      <section className="ga-arrive" data-sideways>
+      {/* 第三幕：正在按摩。先整屏一张，缩回去，周围的图露出来 */}
+      <section className="ga-spa">
         <div className="ga-sticky">
-          <div className="ga-track" data-track>
-            <div className="ga-arrive-text">
-              <Words>Book in three steps.</Words>
-              <ol className="ga-steps" data-reveal>
-                <li><i className="ga-n">1</i><b>Choose your therapist</b><span>See each profile when you book.</span></li>
-                <li><i className="ga-n">2</i><b>Choose your time</b><span>Now, or book for later.</span></li>
-                <li><i className="ga-n">3</i><b>Pay cash on arrival</b><span>No deposit, nothing to pay upfront.</span></li>
-              </ol>
-            </div>
-            <div className="ga-tiles">
-              {TILES.map((tile) => (
-                <figure className="ga-tile" key={tile.clip}>
-                  <Clip name={tile.clip} label={tile.label} />
-                  <figcaption>{tile.word}</figcaption>
-                </figure>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 第四幕：房间，三条片子并排，手机只放第一条 */}
-      <section className="ga-room">
-        <div className="ga-sticky">
-          <div className="ga-room-tri">
-            <figure><Clip name="window" label="Gliding through a lit window into a quiet condo living room" /></figure>
-            <figure><Clip name="lobby" label="A therapist walking in through a condo door, carrying folded towels and the EasyGoSpa bag" /></figure>
-            <figure><Clip name="living" label="A therapist stepping into a condo living room with a view of the city" /></figure>
-          </div>
-          <img className="ga-room-img ga-room-after" src="/global/longweek.jpg" alt="A therapist massaging a seated client's shoulders in a condo" loading="lazy" />
-          <span className="ga-seam" aria-hidden="true" />
-          <div className="ga-room-shade" aria-hidden="true" />
-          <div className="ga-room-text ga-wrap">
+          {SPA_TILES.map((tile) => (
+            <figure className={`ga-spa-tile is-${tile.key}`} key={tile.key}>
+              <img src={`/global/photos/${tile.src}.webp`} alt={tile.alt} loading="lazy" />
+            </figure>
+          ))}
+          <figure className="ga-spa-main">
+            <img src="/global/photos/night-hands.webp" alt="A therapist massaging a client's back at night, a lamp on and the city lit outside" loading="lazy" />
+            <span className="ga-spa-main-shade" aria-hidden="true" />
+          </figure>
+          <div className="ga-spa-text">
             <h2 className="ga-big">Your room becomes the spa.</h2>
             <p className="ga-lead">Your therapist comes to you. You stay where you are.</p>
           </div>
         </div>
       </section>
 
-      {/* 第四幕：项目和价格，不用点就都看得到 */}
+      {/* 第四幕：项目和价格，不用点就都看得到；旁边的拱门跟着换图 */}
       <section className="ga-menu" id="services">
-        <div className="ga-wrap ga-menu-in">
+        <div className="ga-wrap">
           <div className="ga-menu-head">
             <Words>Choose what your body needs.</Words>
             <p className="ga-lead" data-reveal>Every treatment and price, listed. Choose your therapist when you book.</p>
-            <figure className="ga-menu-film"><Clip name="night" label="A therapist walking in through a condo door at night, carrying folded towels" /></figure>
           </div>
-          <ServiceRows services={services} />
+          <ServiceMenu services={services} />
         </div>
       </section>
 
-      {/* 第五幕：价格就是价格 */}
+      {/* 第五幕：三步，一张卡盖上一张卡 */}
+      <section className="ga-stack">
+        <div className="ga-stack-head ga-wrap"><Words className="ga-big">Book in three steps.</Words></div>
+        {STEPS.map((step, index) => (
+          <article className={`ga-stack-card is-${index + 1}`} key={step.title}>
+            <div className="ga-stack-in ga-wrap">
+              <div className="ga-stack-text">
+                <i className="ga-n">{index + 1}</i>
+                <h3>{step.title}</h3>
+                <p>{step.note}</p>
+              </div>
+              <figure className="ga-stack-film"><Clip name={step.clip} label={step.label} /></figure>
+            </div>
+          </article>
+        ))}
+      </section>
+
+      {/* 第六幕：一天任何钟点（24/7） */}
+      <section className="ga-hour">
+        <div className="ga-sticky">
+          {HOURS.map((item) => (
+            <div className="ga-hour-slide" key={item.time + item.part}>
+              <div className="ga-hour-pic">
+                {item.clip ? <Clip name={item.clip} label={item.label} manual /> : <img src={`/global/photos/${item.src}.webp`} alt={item.alt} loading="lazy" />}
+              </div>
+              <div className="ga-hour-shade" aria-hidden="true" />
+              <div className="ga-hour-text ga-wrap">
+                <b className="ga-n">{item.time}<small>{item.part}</small></b>
+                <p>{item.line}</p>
+              </div>
+            </div>
+          ))}
+          <p className="ga-hour-tag ga-wrap"><b className="ga-n">24/7</b></p>
+          <ol className="ga-hour-rail" aria-hidden="true">{HOURS.map((item, index) => <li key={item.time + item.part} className={index ? undefined : 'is-on'} />)}</ol>
+        </div>
+      </section>
+
+      {/* 第七幕：家、公寓、酒店，哪一块轮到了就撑开 */}
+      <section className="ga-places">
+        <div className="ga-sticky">
+          <div className="ga-places-row">
+            {PLACES.map((item, index) => (
+              <figure className={`ga-place${index ? '' : ' is-on'}`} key={item.word}>
+                <Clip name={item.clip} label={item.label} at={0.2} />
+                <figcaption>{item.word}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 第八幕：价格就是价格 */}
       <section className="ga-price">
         <div className="ga-wrap">
           <Words className="ga-big">The price is the price.</Words>
@@ -412,26 +598,39 @@ export default function GlobalHome({ services = [] }) {
           </ul>
           <p className="ga-price-note" data-reveal>Pay cash when your therapist arrives.</p>
         </div>
-      </section>
-
-      {/* 一页一章的绿 */}
-      <section className="ga-olive">
-        <div className="ga-wrap ga-olive-in">
-          <div className="ga-olive-text">
-            <Words className="ga-big">Strictly professional.</Words>
-            <p className="ga-lead" data-reveal>Licensed, uniformed, ID-verified therapists. Professional massage only.</p>
-          </div>
-          <figure className="ga-olive-arch"><Clip name="uniform" label="A smiling therapist in the EasyGoSpa uniform, carrying folded towels" /></figure>
+        <div className="ga-strip" aria-hidden="true">
+          {STRIP.map((name) => <figure key={name}><img src={`/global/photos/${name}.webp`} alt="" loading="lazy" /></figure>)}
         </div>
       </section>
 
-      {/* 第七幕：城市 */}
+      {/* 一页一章的绿：四扇拱门 */}
+      <section className="ga-olive">
+        <div className="ga-wrap ga-olive-text">
+          <Words className="ga-big">Strictly professional.</Words>
+          <p className="ga-lead" data-reveal>Licensed, uniformed, ID-verified therapists. Professional massage only.</p>
+        </div>
+        <div className="ga-olive-row">
+          {TRUST.map((item) => (
+            <figure className="ga-olive-arch" key={item.word}>
+              <div className="ga-olive-door">
+                {item.clip ? <Clip name={item.clip} label={item.label} /> : <img src={`/global/photos/${item.src}.webp`} alt={item.alt} loading="lazy" />}
+              </div>
+              <figcaption>{item.word}</figcaption>
+            </figure>
+          ))}
+        </div>
+      </section>
+
+      {/* 第九幕：城市，从 Manila 几个字里透出来 */}
       <section className="ga-dusk">
-        <figure><Clip name="city-wide" phone="city-tall" label="Flying past lit condo towers in Metro Manila at night" /></figure>
-        <div className="ga-dusk-shade" aria-hidden="true" />
-        <div className="ga-dusk-text ga-wrap">
-          <Words className="ga-big">A calmer hour, across the city.</Words>
-          <ul className="ga-areas">{AREAS.map((area) => <li key={area}>{area}</li>)}</ul>
+        <div className="ga-sticky">
+          <figure className="ga-dusk-film"><Clip name="city-wide" phone="city-tall" label="Flying past lit condo towers in Metro Manila at night" /></figure>
+          <div className="ga-dusk-shade" aria-hidden="true" />
+          <div className="ga-dusk-text ga-wrap">
+            <h2 className="ga-big">A calmer hour, across the city.</h2>
+            <ul className="ga-areas">{AREAS.map((area) => <li key={area}>{area}</li>)}</ul>
+          </div>
+          <div className="ga-dusk-mask" aria-hidden="true"><span className="ga-dusk-word">Man<em>i</em>la</span></div>
         </div>
       </section>
 

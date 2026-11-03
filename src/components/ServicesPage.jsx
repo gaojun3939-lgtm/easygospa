@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 
 import Clip from "./global/Clip";
 import PageHead from "./global/PageHead";
-import ServiceRows from "./global/ServiceRows";
+import ServiceMenu from "./global/ServiceMenu";
 
 // 2026-10-26 老板定:跟首页服务区一样,卡片 = 后台在售项目 + 每档价格(app/services/page.jsx 服务端读好传进来)。
 // 原来写死的 6 张卡(含后台没有的项目和假价字段)已删。
@@ -54,15 +54,15 @@ export default function ServicesPage({ services = [] }) {
       </PageHead>
 
       <section className="ga-band ga-band-tri">
-        <figure><Clip name="uniform" label="A smiling therapist in the EasyGoSpa uniform, carrying folded towels" /></figure>
-        <figure><Clip name="corridor" label="A smiling therapist walking down a condo corridor with folded towels and the EasyGoSpa bag" /></figure>
+        <figure><img src="/global/photos/foot.webp" alt="A therapist in the EasyGoSpa uniform massaging a client's foot beside the sofa" /></figure>
         <figure><Clip name="walkin" label="A therapist in the EasyGoSpa uniform walking in through an open door" /></figure>
+        <figure><img src="/global/photos/stone-arm.webp" alt="A therapist gliding a warm stone along a client's forearm" /></figure>
       </section>
 
       {/* 老板 2026-07-19:去掉"Massage Therapy"分类筛选;服务本就全是按摩,
           整条筛选无意义,直接移除(默认展示全部服务)。 */}
       <section className="ga-wrap ga-page-sec">
-        <ServiceRows services={filteredServices} light fullText />
+        <ServiceMenu services={filteredServices} light fullText />
       </section>
 
       <section className="ga-cta ga-cta-film">

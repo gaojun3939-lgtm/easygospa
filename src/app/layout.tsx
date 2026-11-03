@@ -96,6 +96,8 @@ export const metadata: Metadata = {
     },
   },
   metadataBase: new URL("https://easygospa.com"),
+  // 苹果手机会把页脚的公司注册号当电话自动加链接，页面对不上，整段重新渲染（2026-11-04 模拟器查到）。电话都是自己写的链接，不受影响
+  formatDetection: { telephone: false },
 };
 
 export default function RootLayout({

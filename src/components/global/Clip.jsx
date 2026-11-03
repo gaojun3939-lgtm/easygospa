@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react'
 
 // 片段（公司现有素材，在 public/global/clips）。快滑到才挂上，看得见才下载才播，滑走就停；
 // 播完停在最后一格，滑回来再播一次。省流量、2G、内存小的手机和「减少动态效果」只放一张静图。
-export default function Clip({ name, phone, label, at = 0.3 }) {
+export default function Clip({ name, phone, label, at = 0.3, manual = false }) {
   const ref = useRef(null)
 
   useEffect(() => {
@@ -33,7 +33,8 @@ export default function Clip({ name, phone, label, at = 0.3 }) {
       attach()
     }, { rootMargin: '100% 0px' })
     near.observe(video.closest('section') || video)
-    if (still) return () => near.disconnect()
+    // manual：叠在一起的片子看不出谁被盖住，由外面决定什么时候放
+    if (still || manual) return () => near.disconnect()
 
     // 滑得快时一次会攒好几条记录，只有最后一条算数；两个观察者谁先到不一定，所以这里也挂一次
     const seen = new IntersectionObserver((entries) => {
@@ -49,7 +50,7 @@ export default function Clip({ name, phone, label, at = 0.3 }) {
       near.disconnect()
       seen.disconnect()
     }
-  }, [name, phone, at])
+  }, [name, phone, at, manual])
 
   return <video ref={ref} muted playsInline preload="none" aria-label={label} />
 }
