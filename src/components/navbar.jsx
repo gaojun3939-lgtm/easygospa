@@ -13,7 +13,8 @@ import React from 'react'
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 
-// 全球站预留的 6 个地方（老板 2026-11-03 战略规划），现在只有菲律宾在服务
+// 全球站预留的 6 个地方（老板 2026-11-03 战略规划）。现在只开了菲律宾，他定先不显示其它地方，开第二个国家时改成 true
+const SHOW_REGION_MENU = false;
 const REGIONS = [
   { name: "Philippines", live: true },
   { name: "Taiwan" },
@@ -134,6 +135,7 @@ export default function Navbar() {
             ))}
           </div>
           <div className="ga-nav-right">
+            {SHOW_REGION_MENU ? (
             <div className={`ga-region${isRegionOpen ? " is-open" : ""}`}>
               <button type="button" className="ga-region-btn" aria-expanded={isRegionOpen} onClick={() => setIsRegionOpen((open) => !open)}>
                 <span className="ga-region-long">Philippines · English</span>
@@ -149,6 +151,12 @@ export default function Navbar() {
                 ))}
               </div>
             </div>
+            ) : (
+              <span className="ga-region-static">
+                <span className="ga-region-long">Philippines · English</span>
+                <span className="ga-region-short">PH · EN</span>
+              </span>
+            )}
             <button type="button" className="ga-orders" onClick={() => window.dispatchEvent(new CustomEvent("open-my-orders"))} aria-label="Open my orders">
               My orders
             </button>

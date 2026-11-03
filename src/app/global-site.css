@@ -31,7 +31,7 @@
 .ga-sticky { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
 
 /* 第一幕：门 */
-.ga-hero { height: 440vh; background: var(--ga-ink); }
+.ga-hero { height: 400vh; background: var(--ga-ink); }
 .ga-hero-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; color: #fff; }
 .ga-door { position: absolute; inset: 0; overflow: hidden; clip-path: inset(15% 37% 0% 37% round 260px 260px 0px 0px); will-change: clip-path; }
 .ga-door-inner { position: absolute; inset: -2.5%; }
@@ -47,6 +47,7 @@
 .ga-float { position: fixed; z-index: 45; left: 0; top: 0; width: 300px; height: 210px; border-radius: 16px; overflow: hidden; pointer-events: none; opacity: 0; visibility: hidden; box-shadow: 0 24px 60px rgba(0,0,0,.45); }
 .ga-row-thumb { display: none; }
 .ga-hero-shade { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(10,11,9,.66), rgba(10,11,9,0) 42%), linear-gradient(180deg, rgba(10,11,9,.42), rgba(10,11,9,0) 58%); pointer-events: none; }
+.ga-hero-fade { position: absolute; inset: 0; z-index: 3; background: var(--ga-ivory); opacity: 0; visibility: hidden; pointer-events: none; }
 .ga-hero-title { position: absolute; left: 0; right: 0; top: 37%; margin: 0; transform: translateY(-50%); text-align: center; font: 400 clamp(58px, 12.2vw, 230px)/.96 var(--ga-serif); letter-spacing: -0.03em; pointer-events: none; }
 .ga-hero-foot { position: absolute; left: 0; right: 0; bottom: clamp(26px, 5vh, 56px); margin-inline: auto; display: flex; align-items: flex-end; justify-content: space-between; gap: 28px; }
 .ga-eyebrow { margin: 0; font: 500 12.5px/1.4 var(--ga-sans); letter-spacing: .17em; text-transform: uppercase; }
@@ -137,7 +138,7 @@
 .ga-still .ga-hero { height: 100svh; }
 
 @media (max-width: 960px) {
-  .ga-hero { height: 360vh; }
+  .ga-hero { height: 320vh; }
   .ga-hero-stage { height: calc(100svh - var(--ga-bar)); }
   .ga-door { clip-path: inset(13% 15% 0% 15% round 170px 170px 0px 0px); }
   .ga-slit { top: 13%; }

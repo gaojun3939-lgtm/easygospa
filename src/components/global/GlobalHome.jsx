@@ -8,6 +8,8 @@ import Lenis from 'lenis'
 // 全球站首页「The Arrival」（2026-11-03，方案全文在共享笔记夹 窗口5-官网改造/arrival/）。
 // 一路滑下去像看电影：门慢慢打开 → 技师抵达 → 房间变样 → 项目和价格 → 城市。
 // 字都是真网页文字，不靠动效才显示；系统设了「减少动态效果」就全部不动。价格读后台，不写死。
+// 只开了菲律宾，其它地方先不显示（老板 11-03）。开第二个国家时改成 true
+const SHOW_MARKETS = false
 const AREAS = ['Makati', 'BGC', 'Taguig', 'Pasay', 'Manila', 'Quezon City', 'Pasig', 'Mandaluyong']
 const MARKETS = [
   { name: 'Philippines', status: 'Now serving', image: 'city-manila', live: true },
@@ -24,10 +26,10 @@ const ARRIVAL = [
 ]
 
 // 「掀开马尼拉」片子（easygospa.ph 做过的那条，老板 11-01 选的方向）拆成一张张图，跟着滑动一帧帧画（AirPods 页面的做法）。
-// 从城市夜景飞向亮灯的窗，穿过纱帘，落进准备好的按摩房。手机、电脑各一套
+// 从城市夜景飞向亮灯的窗，到纱帘前淡入下一屏。原片后面的按摩房不用：技师不带床（老板 11-03）。手机、电脑各一套
 const FILM = {
-  desktop: { dir: '/global/film-d', frames: 126 },
-  phone: { dir: '/global/film-m', frames: 107 },
+  desktop: { dir: '/global/film-d', frames: 104 },
+  phone: { dir: '/global/film-m', frames: 64 },
 }
 // 项目那一行鼠标移上去浮出的图
 const SERVICE_IMAGE = {
@@ -199,8 +201,9 @@ export default function GlobalHome({ services = [] }) {
       hero.to('.ga-door', { clipPath: 'inset(0% 0% 0% 0% round 0px 0px 0px 0px)', ease: 'none', duration: 0.16 }, 0)
         .to('.ga-hero-title', { yPercent: -22, ease: 'none', duration: 0.55 }, 0)
         .to('.ga-hero-title', { autoAlpha: 0, ease: 'none', duration: 0.14 }, 0.42)
-      if (lite) hero.to('.ga-door-open', { autoAlpha: 1, ease: 'none', duration: 0.5 }, 0.45)
-      else hero.to(state, { frame: film.frames - 1, ease: 'none', duration: 0.98, onUpdate: draw }, 0.02)
+      if (lite) hero.to('.ga-door-open', { autoAlpha: 1, ease: 'none', duration: 0.5 }, 0.4)
+      else hero.to(state, { frame: film.frames - 1, ease: 'none', duration: 0.88, onUpdate: draw }, 0.02)
+      hero.to('.ga-hero-fade', { autoAlpha: 1, ease: 'none', duration: 0.12 }, 0.88)
 
       // 电脑上：画面跟着鼠标轻轻动，按钮被鼠标吸过去，项目那一行浮出图
       if (finePointer) {
@@ -308,6 +311,7 @@ export default function GlobalHome({ services = [] }) {
             </div>
           </div>
           <div className="ga-hero-shade" aria-hidden="true" />
+          <div className="ga-hero-fade" aria-hidden="true" />
           <p className="ga-hero-title">Let the city wait.</p>
           <div className="ga-hero-foot ga-wrap">
             <div>
@@ -344,13 +348,13 @@ export default function GlobalHome({ services = [] }) {
       {/* 第三幕：房间 */}
       <section className="ga-room">
         <div className="ga-sticky">
-          <img className="ga-room-img" src="/global/room-before.jpg" alt="A calm condo living room" loading="lazy" />
-          <img className="ga-room-img ga-room-after" src="/global/room-after.jpg" alt="The same room, prepared for a massage" loading="lazy" />
+          <img className="ga-room-img" src="/global/room-before.jpg" alt="A calm condo bedroom" loading="lazy" />
+          <img className="ga-room-img ga-room-after" src="/global/room-after.jpg" alt="The same bedroom, the bed made ready with clean towels" loading="lazy" />
           <span className="ga-seam" aria-hidden="true" />
           <div className="ga-room-shade" aria-hidden="true" />
           <div className="ga-room-text ga-wrap">
             <h2 className="ga-big">Your room becomes the spa.</h2>
-            <p className="ga-lead">We bring what the ritual needs. You stay where you are.</p>
+            <p className="ga-lead">Your therapist comes to you. You stay where you are.</p>
           </div>
         </div>
       </section>
@@ -416,8 +420,8 @@ export default function GlobalHome({ services = [] }) {
         </div>
       </section>
 
-      {/* 第七幕：下一扇门 */}
-      <section className="ga-cities" data-sideways>
+      {/* 第七幕：下一扇门（暂不显示，见 SHOW_MARKETS） */}
+      {SHOW_MARKETS ? <section className="ga-cities" data-sideways>
         <div className="ga-sticky">
           <div className="ga-track" data-track>
             <div className="ga-cities-text">
@@ -432,11 +436,11 @@ export default function GlobalHome({ services = [] }) {
             ))}
           </div>
         </div>
-      </section>
+      </section> : null}
 
       {/* 第八幕：门开着 */}
       <section className="ga-closing">
-        <figure><img data-zoom src="/global/door-open.jpg" alt="A prepared room with the door open at night" loading="lazy" /></figure>
+        <figure><img data-zoom src="/global/door-open.jpg" alt="A warmly lit bedroom with folded towels on the bed at night" loading="lazy" /></figure>
         <div className="ga-closing-shade" aria-hidden="true" />
         <div className="ga-closing-text ga-wrap">
           <Words className="ga-big">Choose your therapist. Then exhale.</Words>
