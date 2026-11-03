@@ -24,7 +24,11 @@ export default function Clip({ name, phone, label, at = 0.3, manual = false }) {
       if (attached) return
       attached = true
       video.poster = `/global/clips/${file}${still ? '-still' : ''}.jpg`
-      if (!still) video.src = `/global/clips/${file}.mp4`
+      if (still) return
+      // 一下跳过来时外面可能已经喊过放了，那时还没挂片子，挂上要再喊一次，不然停在第一格
+      const asked = !video.paused
+      video.src = `/global/clips/${file}.mp4`
+      if (asked) video.play().catch(() => {})
     }
     // 手机上藏起来的片子（display: none）不下载
     const near = new IntersectionObserver((entries) => {
