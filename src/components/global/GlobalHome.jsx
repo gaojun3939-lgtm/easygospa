@@ -170,7 +170,8 @@ export default function GlobalHome({ services = [] }) {
           .to('.ga-intro-lotus', { autoAlpha: 0, duration: 0.25 }, 0.85)
           .to('.ga-slit', { scaleX: 40, autoAlpha: 0, duration: 0.5, ease: 'power2.in' }, 0.95)
           .to(intro, { autoAlpha: 0, duration: 0.45, ease: 'power1.out' }, 1.1)
-          .fromTo('.ga-door', { clipPath: isDesktop ? 'inset(15% 49.9% 0% 49.9% round 260px 260px 0px 0px)' : 'inset(13% 49.8% 0% 49.8% round 170px 170px 0px 0px)' }, { clipPath: isDesktop ? 'inset(15% 37% 0% 37% round 260px 260px 0px 0px)' : 'inset(13% 15% 0% 15% round 170px 170px 0px 0px)', duration: 0.9, ease: 'power3.inOut', clearProps: 'clipPath' }, 1.0)
+          // 开场只动外面这一层，跟滑动控制的拱门分开，开场没播完就滑也不会打架
+          .fromTo('.ga-door-reveal', { clipPath: 'inset(0% 49.8% 0% 49.8%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.9, ease: 'power3.inOut', clearProps: 'clipPath' }, 1.0)
           .from(titleWords(), { yPercent: 112, duration: 1, ease: 'power4.out', stagger: 0.07 }, 1.25)
         intro.addEventListener('click', () => tl.progress(1), { once: true })
       } else {
@@ -297,6 +298,7 @@ export default function GlobalHome({ services = [] }) {
       {/* 第一幕：门 */}
       <section className="ga-hero" aria-label="EasyGoSpa">
         <div className="ga-hero-stage">
+          <div className="ga-door-reveal">
           <div className="ga-door">
             <div className="ga-door-inner">
               <picture>
@@ -309,6 +311,7 @@ export default function GlobalHome({ services = [] }) {
               </picture>
               <canvas aria-hidden="true" />
             </div>
+          </div>
           </div>
           <div className="ga-hero-shade" aria-hidden="true" />
           <div className="ga-hero-fade" aria-hidden="true" />
