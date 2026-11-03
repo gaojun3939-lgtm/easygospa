@@ -23,10 +23,11 @@ const ARRIVAL = [
   { image: 'linen', alt: 'Folded linen beside the EasyGoSpa bag' },
 ]
 
-// 开门片子拆成一张张图，跟着滑动一帧帧画（AirPods 页面的做法）。手机、电脑各一套
+// 「掀开马尼拉」片子（easygospa.ph 做过的那条，老板 11-01 选的方向）拆成一张张图，跟着滑动一帧帧画（AirPods 页面的做法）。
+// 从城市夜景飞向亮灯的窗，穿过纱帘，落进准备好的按摩房。手机、电脑各一套
 const FILM = {
-  desktop: { dir: '/global/door-d', frames: 96 },
-  phone: { dir: '/global/door-m', frames: 60 },
+  desktop: { dir: '/global/film-d', frames: 126 },
+  phone: { dir: '/global/film-m', frames: 107 },
 }
 // 项目那一行鼠标移上去浮出的图
 const SERVICE_IMAGE = {
@@ -84,15 +85,25 @@ export default function GlobalHome({ services = [] }) {
       bodyWatch.observe(document.body, { attributes: true, attributeFilter: ['class', 'style'] })
     }
 
-    // 开门片子：一帧帧画到画布上，第一帧没到之前显示关门静图
+    // 片子：一帧帧画到画布上，第一帧没到之前显示静图
     const film = isDesktop ? FILM.desktop : FILM.phone
     const canvas = root.current?.querySelector('.ga-door canvas')
     const images = []
     const state = { frame: 0 }
     const draw = () => {
       if (!canvas) return
-      const img = images[Math.round(state.frame)] || images.slice(0, Math.round(state.frame) + 1).reverse().find((item) => item?.complete && item.naturalWidth)
-      if (!img?.complete || !img.naturalWidth) return
+      // 这一帧还没到就画离它最近的已到的一帧
+      const at = Math.round(state.frame)
+      let img = null
+      for (let gap = 0; gap < film.frames && !img; gap += 1) {
+        for (const candidate of [images[at - gap], images[at + gap]]) {
+          if (candidate?.complete && candidate.naturalWidth) {
+            img = candidate
+            break
+          }
+        }
+      }
+      if (!img) return
       const ctx = canvas.getContext('2d')
       const ratio = Math.min(window.devicePixelRatio || 1, 1.5)
       const w = canvas.clientWidth * ratio
@@ -108,13 +119,32 @@ export default function GlobalHome({ services = [] }) {
       canvas.classList.add('is-on')
     }
     if (!lite && canvas) {
-      for (let i = 0; i < film.frames; i += 1) {
+      // 先隔几帧下一张，一滑就有画面；开始滑了才补中间的，只看一眼就走的客人不多花流量
+      const order = []
+      for (let i = 0; i < film.frames; i += 4) order.push(i)
+      const coarse = order.length
+      for (let i = 0; i < film.frames; i += 1) if (i % 4) order.push(i)
+      let next = 0
+      let scrolled = false
+      const loadNext = () => {
+        if (next >= order.length || (next >= coarse && !scrolled)) return
+        const index = order[next]
+        next += 1
         const img = new Image()
         img.decoding = 'async'
-        img.src = `${film.dir}/${String(i + 1).padStart(3, '0')}.webp`
-        if (i === 0) img.onload = draw
-        images.push(img)
+        img.onload = () => {
+          draw()
+          loadNext()
+        }
+        img.onerror = loadNext
+        img.src = `${film.dir}/${String(index + 1).padStart(3, '0')}.webp`
+        images[index] = img
       }
+      for (let i = 0; i < 6; i += 1) loadNext()
+      window.addEventListener('scroll', () => {
+        scrolled = true
+        for (let i = 0; i < 6; i += 1) loadNext()
+      }, { once: true, passive: true })
     }
     window.addEventListener('resize', draw)
 
@@ -164,12 +194,13 @@ export default function GlobalHome({ services = [] }) {
         onEnter: (els) => gsap.fromTo(els, { y: 34, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 1, ease: 'power3.out', stagger: 0.08 }),
       })
 
-      // 滑动：拱门拉到整屏，同时门一帧帧打开
+      // 滑动：拱门拉到整屏，片子一帧帧往前走，大字在飞近窗户时退场
       const hero = gsap.timeline({ scrollTrigger: { trigger: '.ga-hero', start: 'top top', end: 'bottom bottom', scrub: 0.5 } })
-      hero.to('.ga-door', { clipPath: 'inset(0% 0% 0% 0% round 0px 0px 0px 0px)', ease: 'none', duration: 0.4 }, 0)
-        .to('.ga-hero-title', { yPercent: -18, ease: 'none', duration: 1 }, 0)
-      if (lite) hero.to('.ga-door-open', { autoAlpha: 1, ease: 'none', duration: 0.6 }, 0.4)
-      else hero.to(state, { frame: film.frames - 1, ease: 'none', duration: 0.95, onUpdate: draw }, 0.05)
+      hero.to('.ga-door', { clipPath: 'inset(0% 0% 0% 0% round 0px 0px 0px 0px)', ease: 'none', duration: 0.16 }, 0)
+        .to('.ga-hero-title', { yPercent: -22, ease: 'none', duration: 0.55 }, 0)
+        .to('.ga-hero-title', { autoAlpha: 0, ease: 'none', duration: 0.14 }, 0.42)
+      if (lite) hero.to('.ga-door-open', { autoAlpha: 1, ease: 'none', duration: 0.5 }, 0.45)
+      else hero.to(state, { frame: film.frames - 1, ease: 'none', duration: 0.98, onUpdate: draw }, 0.02)
 
       // 电脑上：画面跟着鼠标轻轻动，按钮被鼠标吸过去，项目那一行浮出图
       if (finePointer) {
@@ -265,8 +296,14 @@ export default function GlobalHome({ services = [] }) {
         <div className="ga-hero-stage">
           <div className="ga-door">
             <div className="ga-door-inner">
-              <img src="/global/door-shut.jpg" alt="A closed condo door at night with warm light along its edge" fetchPriority="high" />
-              <img className="ga-door-open" src="/global/door-lit.jpg" alt="" loading="lazy" />
+              <picture>
+                <source media="(max-width: 960px)" srcSet="/global/film-first-m.jpg" />
+                <img src="/global/film-first.jpg" alt="Metro Manila at night, one window glowing warm in a tall condo tower" fetchPriority="high" />
+              </picture>
+              <picture>
+                <source media="(max-width: 960px)" srcSet="/global/film-last-m.jpg" />
+                <img className="ga-door-open" src="/global/film-last.jpg" alt="" loading="lazy" />
+              </picture>
               <canvas aria-hidden="true" />
             </div>
           </div>
