@@ -107,7 +107,7 @@ export default function RootLayout({
 
 
   return (
-    <html lang="en" className={`${gaSerif.variable} ${gaSans.variable}`}>
+    <html lang="en" className={`${gaSerif.variable} ${gaSans.variable}`} suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

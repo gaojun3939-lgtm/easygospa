@@ -3,6 +3,7 @@
 import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
+import Clip from "./global/Clip";
 import PageHead from "./global/PageHead";
 import ServiceRows from "./global/ServiceRows";
 
@@ -52,7 +53,11 @@ export default function ServicesPage({ services = [] }) {
         price is listed below — no transport fee, no tips.
       </PageHead>
 
-      <figure className="ga-band"><img src="/global/longweek.jpg" alt="A therapist massaging a seated client's shoulders in a condo" /></figure>
+      <section className="ga-band ga-band-tri">
+        <figure><Clip name="uniform" label="A smiling therapist in the EasyGoSpa uniform, carrying folded towels" /></figure>
+        <figure><Clip name="corridor" label="A smiling therapist walking down a condo corridor with folded towels and the EasyGoSpa bag" /></figure>
+        <figure><Clip name="walkin" label="A therapist in the EasyGoSpa uniform walking in through an open door" /></figure>
+      </section>
 
       {/* 老板 2026-07-19:去掉"Massage Therapy"分类筛选;服务本就全是按摩,
           整条筛选无意义,直接移除(默认展示全部服务)。 */}
@@ -60,7 +65,8 @@ export default function ServicesPage({ services = [] }) {
         <ServiceRows services={filteredServices} light fullText />
       </section>
 
-      <section className="ga-cta">
+      <section className="ga-cta ga-cta-film">
+        <figure className="ga-cta-arch"><Clip name="glide" label="Gliding through a lit window into a quiet condo living room" /></figure>
         <div className="ga-wrap">
           <h2>Ready for Your Transformation?</h2>
           <p>Book your appointment today — choose your therapist and pay in cash when they arrive.</p>

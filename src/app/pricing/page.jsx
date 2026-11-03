@@ -1,3 +1,4 @@
+import Clip from '../../components/global/Clip';
 import PageHead from '../../components/global/PageHead';
 import ServiceRows from '../../components/global/ServiceRows';
 import { loadPublicServiceMenu } from '../../lib/publicServiceMenu.mjs';
@@ -25,6 +26,8 @@ export default async function PricingPage() {
         <p>The therapist comes to your home, condo or hotel.</p>
         <p className="ga-page-note">No transport fee · No tips · Cash when she arrives</p>
       </PageHead>
+
+      <section className="ga-band ga-band-face"><Clip name="arrival-wide" phone="night" label="A smiling therapist in the EasyGoSpa uniform arriving at a condo door" /></section>
 
       <section className="ga-wrap ga-page-sec">
         {services.length ? (

@@ -1,3 +1,4 @@
+import Clip from '../../components/global/Clip';
 import PageHead from '../../components/global/PageHead';
 
 const AREAS = ['Makati', 'BGC', 'Taguig', 'Pasay', 'Manila', 'Quezon City', 'Pasig', 'Mandaluyong'];
@@ -9,7 +10,7 @@ export default function CoveragePage() {
       <section className="ga-wrap ga-page-sec">
         <ul className="ga-coverage">{AREAS.map((area) => <li key={area}>{area}</li>)}</ul>
       </section>
-      <figure className="ga-band"><img src="/global/flyby.jpg" alt="Lit condo towers in Metro Manila at night" /></figure>
+      <section className="ga-band"><Clip name="drone" phone="city-tall" label="Flying toward a lit condo window in Metro Manila at night" /></section>
     </div>
   );
 }

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Instagram, Facebook, Send, CheckCircle } from "lucide-react";
+import Clip from "../../components/global/Clip";
 import PageHead from "../../components/global/PageHead";
 import { whatsappLink } from "@/lib/contactConfig";
 
@@ -157,6 +158,7 @@ export default function Contact() {
               <button type="button" onClick={() => handleSocialClick('facebook')} aria-label="Follow us on Facebook"><Facebook size={22} /></button>
             </div>
           </section>
+          <figure className="ga-side-film"><Clip name="greet" label="A therapist in the EasyGoSpa uniform opening a door and smiling" /></figure>
         </div>
 
         <div className="ga-form">

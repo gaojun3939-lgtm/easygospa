@@ -46,26 +46,49 @@
 .ga-slit { position: absolute; left: 50%; top: 15%; bottom: 0; width: 2px; margin-left: -1px; background: #f2c58a; box-shadow: 0 0 24px 4px rgba(242,197,138,.75); transform-origin: 50% 100%; }
 .ga-intro-lotus { position: relative; width: 96px !important; height: auto !important; object-fit: contain; visibility: hidden; }
 .ga-hero-shade { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(10,11,9,.66), rgba(10,11,9,0) 42%), linear-gradient(180deg, rgba(10,11,9,.42), rgba(10,11,9,0) 58%); pointer-events: none; }
-.ga-hero-fade { position: absolute; inset: 0; z-index: 3; background: var(--ga-ivory); opacity: 0; visibility: hidden; pointer-events: none; }
+.ga-hero-fade { position: absolute; inset: 0; z-index: 3; background: var(--ga-ink); opacity: 0; visibility: hidden; pointer-events: none; }
 .ga-hero-title { position: absolute; left: 0; right: 0; top: 37%; margin: 0; transform: translateY(-50%); text-align: center; font: 400 clamp(58px, 12.2vw, 230px)/.96 var(--ga-serif); letter-spacing: -0.03em; pointer-events: none; }
 .ga-hero-foot { position: absolute; left: 0; right: 0; bottom: clamp(26px, 5vh, 56px); margin-inline: auto; display: flex; align-items: flex-end; justify-content: space-between; gap: 28px; }
 .ga-eyebrow { margin: 0; font: 500 12.5px/1.4 var(--ga-sans); letter-spacing: .17em; text-transform: uppercase; }
 .ga-hero-line { margin: 12px 0 0; max-width: 26em; font-size: clamp(16px, 1.4vw, 20px); line-height: 1.45; }
 
-/* 第二幕：抵达 */
-.ga-arrive { height: 240vh; }
+/* 第二幕：进门，跟着滑动走 */
+.ga-film { height: 320vh; background: var(--ga-ink); color: #fff; }
+.ga-film img, .ga-film canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.ga-film canvas { opacity: 0; }
+.ga-film canvas.is-on { opacity: 1; }
+.ga-film-end { opacity: 0; visibility: hidden; }
+.ga-lite .ga-film-end, .ga-still .ga-film-end { opacity: 1; visibility: visible; }
+.ga-film-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,11,9,.62), rgba(10,11,9,0) 46%), linear-gradient(0deg, rgba(10,11,9,.7), rgba(10,11,9,0) 30%); pointer-events: none; }
+.ga-film-title { position: absolute; left: 0; right: 0; top: clamp(96px, 15vh, 150px); margin-inline: auto; }
+.ga-film-title .ga-big { max-width: 9em; }
+.ga-film-note { position: absolute; left: 0; right: 0; bottom: clamp(30px, 6vh, 64px); margin: 0 auto; font-size: clamp(17px, 1.5vw, 22px); line-height: 1.5; }
+.ga-still .ga-film { height: 100svh; }
+
+/* 第三幕：三步和一组片子 */
+.ga-arrive { height: 320vh; }
 .ga-arrive .ga-sticky, .ga-cities .ga-sticky { display: flex; align-items: center; }
 .ga-track { display: flex; align-items: center; gap: clamp(16px, 2vw, 32px); padding-inline: var(--ga-gutter); will-change: transform; }
 .ga-arrive-text { flex: 0 0 min(46vw, 760px); padding-right: 4vw; }
+.ga-tiles { display: contents; }
+.ga-tile { position: relative; flex: 0 0 auto; height: 84vh; aspect-ratio: 9 / 16; border-radius: 22px; overflow: hidden; background: var(--ga-ink); }
+.ga-tile:nth-child(even) { transform: translateY(3vh); }
+.ga-tile::after { content: ""; position: absolute; inset: 62% 0 0; background: linear-gradient(0deg, rgba(0,0,0,.6), transparent); }
+.ga-tile figcaption { position: absolute; z-index: 1; left: 22px; right: 22px; bottom: 20px; color: #fff; font: 400 clamp(24px, 2.2vw, 34px)/1.1 var(--ga-serif); }
+.ga-still .ga-arrive { height: auto; padding-block: 70px; }
+.ga-still .ga-arrive .ga-sticky { position: static; height: auto; display: block; }
+.ga-still .ga-arrive .ga-track { display: block; }
+.ga-still .ga-tiles { display: flex; overflow-x: auto; gap: 12px; margin-top: 28px; }
 .ga-steps { margin-top: 36px !important; border-top: 1px solid var(--ga-line); }
 .ga-steps li { display: grid; grid-template-columns: 34px 1fr; column-gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--ga-line); }
 .ga-steps i { grid-row: span 2; color: var(--ga-olive); }
 .ga-steps b { font: 400 21px/1.25 var(--ga-serif); }
 .ga-steps span { color: var(--ga-soft); font-size: 15px; }
-.ga-arrive-photo { flex: 0 0 min(38vw, 620px); height: 82vh; border-radius: 22px; overflow: hidden; background: var(--ga-tint); }
 
-/* 第三幕：房间 */
-.ga-room { height: 240vh; background: var(--ga-ink); }
+/* 第四幕：房间 */
+.ga-room { height: 340vh; background: var(--ga-ink); }
+.ga-room-tri { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; background: var(--ga-ink); }
+.ga-room-tri figure { overflow: hidden; background: #241f18; }
 .ga-room-img { position: absolute; inset: 0; }
 .ga-seam { position: absolute; top: 0; bottom: 0; left: 100%; width: 2px; background: #fff; box-shadow: 0 0 24px rgba(255,255,255,.7); }
 .ga-room-shade { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(10,11,9,.66), rgba(10,11,9,0) 52%); }
@@ -77,6 +100,8 @@
 .ga-menu-head { position: sticky; top: 104px; }
 .ga-menu-head h2 { font-size: clamp(44px, 5.4vw, 88px); }
 .ga-menu-head .ga-lead { color: #c9c7bc; }
+.ga-menu-film { width: min(100%, 36vh); aspect-ratio: 4 / 5; margin-top: 26px !important; border-radius: 18px; overflow: hidden; background: #241f18; }
+.ga-menu-film video { object-position: 50% 30%; }
 .ga-rows { --row-line: rgba(247,244,238,.2); --row-soft: #a9a89d; --row-ink: var(--ga-ivory); --row-accent: #9fb07f; color: var(--row-ink); }
 .ga-rows.is-light { --row-line: var(--ga-line); --row-soft: var(--ga-soft); --row-ink: var(--ga-ink); --row-accent: var(--ga-olive); }
 .ga-row { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px 28px; padding-block: 28px; border-top: 1px solid var(--row-line); align-items: start; }
@@ -103,9 +128,13 @@
 .ga-price-note { margin: clamp(36px, 4vw, 60px) 0 0; font: 400 clamp(24px, 2.6vw, 42px)/1.2 var(--ga-serif); }
 
 /* 绿 */
-.ga-olive { padding-block: clamp(90px, 12vw, 180px); background: var(--ga-olive); color: #fff; }
+.ga-olive { padding-top: clamp(70px, 8vw, 120px); background: var(--ga-olive); color: #fff; overflow: hidden; }
+.ga-olive-in { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(24px, 4vw, 70px); align-items: end; }
+.ga-olive-text { align-self: center; padding-bottom: clamp(70px, 8vw, 120px); }
+.ga-olive-arch { height: min(84vh, 60vw); border-radius: 999px 999px 0 0; overflow: hidden; background: var(--ga-olive-deep); }
+.ga-olive-arch video { object-position: 50% 20%; }
 
-/* 第六幕：城市 */
+/* 第七幕：城市 */
 .ga-dusk { position: relative; height: 110vh; overflow: hidden; color: #fff; background: var(--ga-ink); }
 .ga-dusk figure { position: absolute; inset: 0; overflow: hidden; }
 .ga-dusk-shade { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(10,11,9,.84), rgba(10,11,9,.34) 48%, rgba(10,11,9,.06) 76%); }
@@ -113,7 +142,7 @@
 .ga-dusk-text .ga-big { max-width: 12em; }
 .ga-areas { display: flex; flex-wrap: wrap; gap: 6px 26px; margin-top: 30px !important; font-size: clamp(17px, 1.6vw, 24px); }
 
-/* 第七幕：下一扇门 */
+/* 下一扇门（暂不显示） */
 .ga-cities { height: 320vh; background: var(--ga-ivory); }
 .ga-cities-text { flex: 0 0 min(44vw, 720px); padding-right: 4vw; }
 .ga-city { position: relative; flex: 0 0 min(25vw, 400px); height: 76vh; border-radius: 22px; overflow: hidden; background: var(--ga-tint); }
@@ -126,12 +155,12 @@
 .ga-city.is-live span::before { content: ""; display: inline-block; width: 8px; height: 8px; margin-right: 7px; border-radius: 50%; background: #b8d39a; }
 
 /* 第八幕：门开着 */
-.ga-closing { position: relative; display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(24px, 4vw, 70px); min-height: 100vh; padding-inline: var(--ga-gutter); padding-top: clamp(70px, 10vh, 110px); box-sizing: border-box; overflow: hidden; color: #fff; background: var(--ga-ink); }
-.ga-closing-text { align-self: center; padding-bottom: clamp(70px, 10vh, 110px); }
+.ga-closing { position: relative; display: flex; align-items: center; min-height: 100vh; overflow: hidden; color: #fff; background: var(--ga-ink); }
+.ga-closing-door { position: absolute; inset: 0; overflow: hidden; }
+.ga-closing-shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(10,11,9,.7), rgba(10,11,9,.28) 44%, rgba(10,11,9,0) 62%); }
+.ga-closing-text { position: relative; padding-block: clamp(70px, 10vh, 110px); }
 .ga-closing-text .ga-big { max-width: 9em; }
 .ga-closing-text .ga-btn { margin-top: 34px; }
-.ga-closing-door { order: 2; align-self: end; height: 86vh; border-radius: 999px 999px 0 0; overflow: hidden; }
-.ga-closing-shade { display: none; }
 
 .ga-bar { display: none; }
 
@@ -150,15 +179,30 @@
   .ga-hero-foot .ga-btn { display: none; }
   .ga-hero-foot { bottom: 22px; }
 
+  .ga-film { height: 280vh; }
+  .ga-film .ga-sticky { height: calc(100svh - var(--ga-bar)); }
+  .ga-film-title { top: 84px; }
+  .ga-film-note { bottom: 20px; }
+  .ga-film-shade { background: linear-gradient(180deg, rgba(10,11,9,.62), rgba(10,11,9,0) 40%), linear-gradient(0deg, rgba(10,11,9,.86), rgba(10,11,9,0) 30%); }
+
   .ga-arrive, .ga-cities { height: auto; padding-block: clamp(70px, 16vw, 110px); }
   .ga-arrive .ga-sticky, .ga-cities .ga-sticky { position: static; height: auto; overflow: visible; display: block; }
-  .ga-arrive .ga-track { display: block; padding-inline: var(--ga-gutter); }
+  .ga-arrive .ga-track { display: block; padding-inline: var(--ga-gutter); will-change: auto; }
   .ga-arrive-text, .ga-cities-text { flex: none; padding-right: 0; }
-  .ga-arrive-photo { height: auto; aspect-ratio: 4 / 5; margin-top: 16px; }
-  .ga-room { height: 200vh; }
+  .ga-tiles { display: flex; gap: 12px; margin: 32px calc(-1 * var(--ga-gutter)) 0; padding-inline: var(--ga-gutter); overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--ga-gutter); scrollbar-width: none; }
+  .ga-tiles::-webkit-scrollbar { display: none; }
+  .ga-tile { flex: 0 0 74vw; height: auto; scroll-snap-align: center; }
+  .ga-tile:nth-child(even) { transform: none; }
+  .ga-room { height: 300vh; }
   .ga-room .ga-sticky { height: calc(100svh - var(--ga-bar)); }
+  .ga-room-tri { grid-template-columns: 1fr; }
+  .ga-room-tri figure:not(:first-child) { display: none; }
 
   .ga-menu-in { grid-template-columns: 1fr; }
+  .ga-menu-film { width: 100%; aspect-ratio: 1 / 1; }
+  .ga-olive-in { grid-template-columns: 1fr; gap: 0; }
+  .ga-olive-text { padding-bottom: 36px; }
+  .ga-olive-arch { height: 118vw; }
   .ga-nums { grid-template-columns: 1fr; }
   .ga-nums li, .ga-nums li:first-child { display: flex; align-items: baseline; justify-content: space-between; padding: 16px 0; border-left: 0; border-bottom: 1px solid var(--ga-line); }
   .ga-nums b { font-size: clamp(66px, 22vw, 120px); }
@@ -168,10 +212,10 @@
   .ga-row-book { min-height: 40px; padding: 0 16px; }
 
   .ga-dusk { height: 86vh; }
-  .ga-closing { display: block; height: 92vh; min-height: 0; padding: 0; }
-  .ga-closing-door { position: absolute; inset: 0; align-self: stretch; height: auto; border-radius: 0; }
-  .ga-closing-shade { display: block; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(10,11,9,.82), rgba(10,11,9,.08) 66%); }
-  .ga-closing-text { position: absolute; left: var(--ga-gutter); right: var(--ga-gutter); bottom: 36px; padding: 0; }
+  .ga-closing { align-items: flex-end; height: 92vh; min-height: 0; }
+  .ga-closing-door video { object-position: 86% 50%; }
+  .ga-closing-shade { background: linear-gradient(0deg, rgba(10,11,9,.82), rgba(10,11,9,.08) 66%); }
+  .ga-closing-text { padding-block: 0 36px; }
   .ga-closing-text .ga-btn { display: none; }
 
   .ga-bar { position: fixed; z-index: 40; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: space-between; gap: 14px; height: var(--ga-bar); padding: 0 16px; background: rgba(247,244,238,.96); backdrop-filter: blur(14px); border-top: 1px solid var(--ga-line); color: var(--ga-ink); }
@@ -201,10 +245,18 @@ body.booking-modal-open .ga-bar { display: none; }
 .ga-page-foot { margin-top: clamp(40px, 5vw, 70px); }
 .ga-page-foot p { margin: 18px 0 0; color: var(--ga-soft); font-size: 15px; }
 .ga-empty { padding-block: 40px; color: var(--ga-soft); }
-.ga-band { height: clamp(280px, 62vh, 720px); overflow: hidden; }
+.ga-band { height: clamp(280px, 62vh, 720px); overflow: hidden; background: var(--ga-ink); }
+.ga-band-face video { object-position: 50% 26%; }
+.ga-band-tri { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; height: clamp(420px, 92vh, 1000px); }
+.ga-band-tri figure { overflow: hidden; }
+.ga-side-film { aspect-ratio: 4 / 5; margin-top: 28px !important; border-radius: 22px; overflow: hidden; background: var(--ga-ink); }
+.ga-side-film video { object-position: 50% 30%; }
 .ga-cta { padding-block: clamp(80px, 10vw, 150px); background: var(--ga-olive); color: #fff; }
 .ga-cta h2 { max-width: 12em; font-size: clamp(40px, 6vw, 96px); }
 .ga-cta p { margin: 22px 0 32px; max-width: 34em; font-size: clamp(17px, 1.4vw, 20px); line-height: 1.5; }
+.ga-cta-film { position: relative; overflow: hidden; }
+.ga-cta-film .ga-wrap { position: relative; }
+.ga-cta-arch { position: absolute; top: clamp(40px, 5vw, 80px); bottom: 0; right: var(--ga-gutter); width: min(32vw, 460px); border-radius: 999px 999px 0 0; overflow: hidden; background: var(--ga-olive-deep); }
 .ga-btn-light { background: #fff; color: var(--ga-ink); }
 .ga-btn-light:hover { background: var(--ga-ivory); }
 .ga .ga-sec-title { margin-bottom: 22px; font-size: clamp(30px, 3.6vw, 56px); }
@@ -261,8 +313,12 @@ body.booking-modal-open .ga-bar { display: none; }
   .ga-contact, .ga-about { grid-template-columns: 1fr; }
   .ga-link { grid-template-columns: 1fr; }
   .ga-link small { text-align: left; }
-  .ga-band { height: 46vh; }
-  .ga-band img { object-position: 22% 50%; }
+  .ga-cta-film { padding-bottom: 0; }
+  .ga-cta-arch { position: relative; top: auto; right: auto; order: 2; width: auto; height: 100vw; margin: 40px var(--ga-gutter) 0 !important; }
+  .ga-cta-film { display: flex; flex-direction: column; }
+  .ga-band { height: 56vh; }
+  .ga-band-tri { grid-template-columns: 1fr; height: 128vw; }
+  .ga-band-tri figure:not(:first-child) { display: none; }
   .ga-coverage { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) { .ga-page-head { animation: none; } }

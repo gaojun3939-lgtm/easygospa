@@ -4,12 +4,13 @@ import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Lenis from 'lenis'
+import Clip from './Clip'
 import ServiceRows from './ServiceRows'
 
 // 全球站首页「The Arrival」（2026-11-03，方案全文在共享笔记夹 窗口5-官网改造/arrival/）。
-// 一路滑下去像看电影：门慢慢打开 → 技师抵达 → 房间变样 → 项目和价格 → 城市。
+// 一路滑下去像看电影：飞进窗户 → 门打开、技师走到面前 → 房间变样 → 项目和价格 → 城市 → 门开着。
 // 字都是真网页文字，不靠动效才显示；系统设了「减少动态效果」就全部不动。价格读后台，不写死。
-// 图和片段全部是公司现有素材（老板 11-03）：技师进门那段裁掉了脸，首页不放真人；不放按摩床。
+// 片子全部是公司现有素材，能放的都放上去，人物露脸（老板 11-03「都花了钱的」）；带按摩床的镜头不用，技师不带床。
 // 只开了菲律宾，其它地方先不显示（老板 11-03）。开第二个国家时改成 true
 const SHOW_MARKETS = false
 const AREAS = ['Makati', 'BGC', 'Taguig', 'Pasay', 'Manila', 'Quezon City', 'Pasig', 'Mandaluyong']
@@ -28,7 +29,80 @@ const FILM = {
   desktop: { dir: '/global/film-d', frames: 104 },
   phone: { dir: '/global/film-m', frames: 64 },
 }
+// 门打开、技师走到面前，也跟着滑动走
+const ARRIVE = {
+  desktop: { dir: '/global/arrive-d', frames: 96 },
+  phone: { dir: '/global/arrive-m', frames: 64 },
+}
+const TILES = [
+  { clip: 'corridor', word: 'Licensed', label: 'A smiling therapist walking down a condo corridor with folded towels and the EasyGoSpa bag' },
+  { clip: 'walkin', word: 'Uniformed', label: 'A therapist in the EasyGoSpa uniform walking in through an open door' },
+  { clip: 'greet', word: 'ID-verified', label: 'A therapist in uniform opening a door and smiling' },
+  { clip: 'closeup', word: 'At your door', label: 'A smiling therapist arriving at a condo door with towels and the EasyGoSpa bag' },
+]
 const INTRO_KEY = 'ga-intro-seen'
+
+// 片子一帧帧画到画布上，第一帧没到之前显示静图。先隔几帧下一张，一滑就有画面；开始滑了才补中间的
+function makeFilm(canvas, film) {
+  const images = []
+  const state = { frame: 0 }
+  const draw = () => {
+    if (!canvas) return
+    // 这一帧还没到就画离它最近的已到的一帧
+    const at = Math.round(state.frame)
+    let img = null
+    for (let gap = 0; gap < film.frames && !img; gap += 1) {
+      for (const candidate of [images[at - gap], images[at + gap]]) {
+        if (candidate?.complete && candidate.naturalWidth) {
+          img = candidate
+          break
+        }
+      }
+    }
+    if (!img) return
+    const ctx = canvas.getContext('2d')
+    const ratio = Math.min(window.devicePixelRatio || 1, 1.5)
+    const w = canvas.clientWidth * ratio
+    const h = canvas.clientHeight * ratio
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width = w
+      canvas.height = h
+    }
+    const scale = Math.max(w / img.naturalWidth, h / img.naturalHeight)
+    const dw = img.naturalWidth * scale
+    const dh = img.naturalHeight * scale
+    ctx.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh)
+    canvas.classList.add('is-on')
+  }
+  const order = []
+  for (let i = 0; i < film.frames; i += 4) order.push(i)
+  const coarse = order.length
+  for (let i = 0; i < film.frames; i += 1) if (i % 4) order.push(i)
+  let next = 0
+  let all = false
+  const loadNext = () => {
+    if (next >= order.length || (next >= coarse && !all)) return
+    const index = order[next]
+    next += 1
+    const img = new Image()
+    img.decoding = 'async'
+    img.onload = () => {
+      draw()
+      loadNext()
+    }
+    img.onerror = loadNext
+    img.src = `${film.dir}/${String(index + 1).padStart(3, '0')}.webp`
+    images[index] = img
+  }
+  const start = () => {
+    for (let i = 0; i < 6; i += 1) loadNext()
+  }
+  const loadAll = () => {
+    all = true
+    start()
+  }
+  return { state, draw, start, loadAll, frames: film.frames }
+}
 
 const peso = (value) => `₱${Number(value).toLocaleString('en-US')}`
 
@@ -73,84 +147,28 @@ export default function GlobalHome({ services = [] }) {
       bodyWatch.observe(document.body, { attributes: true, attributeFilter: ['class', 'style'] })
     }
 
-    // 片子：一帧帧画到画布上，第一帧没到之前显示静图
-    const film = isDesktop ? FILM.desktop : FILM.phone
-    const canvas = root.current?.querySelector('.ga-door canvas')
-    const images = []
-    const state = { frame: 0 }
-    const draw = () => {
-      if (!canvas) return
-      // 这一帧还没到就画离它最近的已到的一帧
-      const at = Math.round(state.frame)
-      let img = null
-      for (let gap = 0; gap < film.frames && !img; gap += 1) {
-        for (const candidate of [images[at - gap], images[at + gap]]) {
-          if (candidate?.complete && candidate.naturalWidth) {
-            img = candidate
-            break
-          }
-        }
-      }
-      if (!img) return
-      const ctx = canvas.getContext('2d')
-      const ratio = Math.min(window.devicePixelRatio || 1, 1.5)
-      const w = canvas.clientWidth * ratio
-      const h = canvas.clientHeight * ratio
-      if (canvas.width !== w || canvas.height !== h) {
-        canvas.width = w
-        canvas.height = h
-      }
-      const scale = Math.max(w / img.naturalWidth, h / img.naturalHeight)
-      const dw = img.naturalWidth * scale
-      const dh = img.naturalHeight * scale
-      ctx.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh)
-      canvas.classList.add('is-on')
+    const heroFilm = makeFilm(root.current?.querySelector('.ga-door canvas'), isDesktop ? FILM.desktop : FILM.phone)
+    const arriveFilm = makeFilm(root.current?.querySelector('.ga-film canvas'), isDesktop ? ARRIVE.desktop : ARRIVE.phone)
+    const redraw = () => {
+      heroFilm.draw()
+      arriveFilm.draw()
     }
-    if (!lite && canvas) {
-      // 先隔几帧下一张，一滑就有画面；开始滑了才补中间的，只看一眼就走的客人不多花流量
-      const order = []
-      for (let i = 0; i < film.frames; i += 4) order.push(i)
-      const coarse = order.length
-      for (let i = 0; i < film.frames; i += 1) if (i % 4) order.push(i)
-      let next = 0
-      let scrolled = false
-      const loadNext = () => {
-        if (next >= order.length || (next >= coarse && !scrolled)) return
-        const index = order[next]
-        next += 1
-        const img = new Image()
-        img.decoding = 'async'
-        img.onload = () => {
-          draw()
-          loadNext()
-        }
-        img.onerror = loadNext
-        img.src = `${film.dir}/${String(index + 1).padStart(3, '0')}.webp`
-        images[index] = img
-      }
-      for (let i = 0; i < 6; i += 1) loadNext()
-      window.addEventListener('scroll', () => {
-        scrolled = true
-        for (let i = 0; i < 6; i += 1) loadNext()
-      }, { once: true, passive: true })
+    let filmNear = null
+    if (lite) {
+      root.current?.classList.add('ga-lite')
+    } else {
+      // 只看一眼就走的客人不多花流量；进门那条快滑到才下载
+      heroFilm.start()
+      window.addEventListener('scroll', heroFilm.loadAll, { once: true, passive: true })
+      filmNear = new IntersectionObserver(([entry]) => {
+        if (!entry.isIntersecting) return
+        filmNear.disconnect()
+        arriveFilm.loadAll()
+      }, { rootMargin: '150% 0px' })
+      const filmSection = root.current?.querySelector('.ga-film')
+      if (filmSection) filmNear.observe(filmSection)
     }
-    window.addEventListener('resize', draw)
-
-    // 片段：滑到才下载才播，播一次停在最后；省流量的手机不播，停在静图
-    let clipWatch = null
-    if (!lite) {
-      clipWatch = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return
-          entry.target.play().catch(() => {})
-          clipWatch.unobserve(entry.target)
-        })
-      }, { threshold: 0.35 })
-      root.current?.querySelectorAll('video[data-clip]').forEach((clip) => {
-        if (clip.dataset.first) clip.poster = clip.dataset.first
-        clipWatch.observe(clip)
-      })
-    }
+    window.addEventListener('resize', redraw)
 
     const ctx = gsap.context(() => {
       // 第一次打开：门缝的光 → 莲花 → 门缝拉开成拱门 → 大字升起。点一下就跳过，这次打开过就不再播
@@ -205,8 +223,14 @@ export default function GlobalHome({ services = [] }) {
         .to('.ga-hero-title', { yPercent: -22, ease: 'none', duration: 0.55 }, 0)
         .to('.ga-hero-title', { autoAlpha: 0, ease: 'none', duration: 0.14 }, 0.42)
       if (lite) hero.to('.ga-door-open', { autoAlpha: 1, ease: 'none', duration: 0.5 }, 0.4)
-      else hero.to(state, { frame: film.frames - 1, ease: 'none', duration: 0.88, onUpdate: draw }, 0.02)
+      else hero.to(heroFilm.state, { frame: heroFilm.frames - 1, ease: 'none', duration: 0.88, onUpdate: heroFilm.draw }, 0.02)
       hero.to('.ga-hero-fade', { autoAlpha: 1, ease: 'none', duration: 0.12 }, 0.88)
+
+      // 进门：滑动带着门打开、技师走到面前；大字先走，人到了只留一行小字
+      const arrive = gsap.timeline({ scrollTrigger: { trigger: '.ga-film', start: 'top top', end: 'bottom bottom', scrub: 0.5 } })
+      if (!lite) arrive.to(arriveFilm.state, { frame: arriveFilm.frames - 1, ease: 'none', duration: 0.92, onUpdate: arriveFilm.draw }, 0)
+      arrive.to('.ga-film-title', { autoAlpha: 0, yPercent: -18, ease: 'none', duration: 0.16 }, 0.14)
+        .fromTo('.ga-film-note', { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, ease: 'none', duration: 0.14 }, 0.72)
 
       // 电脑上：画面跟着鼠标轻轻动，按钮被鼠标吸过去
       if (finePointer) {
@@ -235,21 +259,14 @@ export default function GlobalHome({ services = [] }) {
         })
       }
 
-      // 房间：一条竖线扫过，空着的客厅变成正在按摩的样子
+      // 房间：三条片子先放一会儿，再一条竖线扫过，变成正在按摩的样子
       gsap.timeline({ scrollTrigger: { trigger: '.ga-room', start: 'top top', end: 'bottom bottom', scrub: 0.6 } })
-        .fromTo('.ga-room-after', { clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0 0% 0 0)', ease: 'none' }, 0)
-        .fromTo('.ga-seam', { left: '0%' }, { left: '100%', ease: 'none' }, 0)
+        .fromTo('.ga-room-after', { clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0 0% 0 0)', ease: 'none', duration: 0.6 }, 0.4)
+        .fromTo('.ga-seam', { left: '0%' }, { left: '100%', ease: 'none', duration: 0.6 }, 0.4)
 
-      // 整屏大图随滑动慢慢拉近、推远
-      gsap.utils.toArray('[data-zoom]').forEach((el) => {
-        gsap.fromTo(el, { scale: 1.16 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: el.parentElement, start: 'top bottom', end: 'bottom top', scrub: true } })
-      })
-      gsap.utils.toArray('[data-drift]').forEach((el) => {
-        gsap.fromTo(el, { yPercent: -7 }, { yPercent: 7, ease: 'none', scrollTrigger: { trigger: el.parentElement, start: 'top bottom', end: 'bottom top', scrub: true } })
-      })
       gsap.from('.ga-areas li', { yPercent: 60, autoAlpha: 0, duration: 0.9, ease: 'power3.out', stagger: 0.06, scrollTrigger: { trigger: '.ga-areas', start: 'top 85%', once: true } })
 
-      // 电脑上横向滑：抵达那组画面、六个地方。手机用手指左右滑，不接管滚动
+      // 电脑上横向滑：技师那组片子、六个地方。手机用手指左右滑，不接管滚动
       const mm = gsap.matchMedia()
       mm.add('(min-width: 961px)', () => {
         gsap.utils.toArray('[data-sideways]').forEach((section) => {
@@ -263,9 +280,10 @@ export default function GlobalHome({ services = [] }) {
       })
     }, root)
     return () => {
-      window.removeEventListener('resize', draw)
+      window.removeEventListener('resize', redraw)
+      window.removeEventListener('scroll', heroFilm.loadAll)
       ctx.revert()
-      clipWatch?.disconnect()
+      filmNear?.disconnect()
       bodyWatch?.disconnect()
       if (tick) gsap.ticker.remove(tick)
       lenis?.destroy()
@@ -311,33 +329,56 @@ export default function GlobalHome({ services = [] }) {
         </div>
       </section>
 
-      {/* 第二幕：抵达 */}
+      {/* 第二幕：进门，跟着滑动走 */}
+      <section className="ga-film">
+        <div className="ga-sticky">
+          <picture>
+            <source media="(max-width: 960px)" srcSet="/global/arrive-m/001.webp" />
+            <img src="/global/arrive-d/001.webp" alt="A closed condo door at night" loading="lazy" />
+          </picture>
+          <picture className="ga-film-end">
+            <source media="(max-width: 960px)" srcSet="/global/arrive-m/064.webp" />
+            <img src="/global/arrive-d/096.webp" alt="A smiling therapist in the EasyGoSpa uniform at the door, carrying folded towels and the EasyGoSpa bag" loading="lazy" />
+          </picture>
+          <canvas aria-hidden="true" />
+          <div className="ga-film-shade" aria-hidden="true" />
+          <div className="ga-film-title ga-wrap"><Words className="ga-big">A considered arrival.</Words></div>
+          <p className="ga-film-note ga-wrap">Licensed, uniformed and ID-verified. Your therapist comes to your home, condo or hotel.</p>
+        </div>
+      </section>
+
+      {/* 第三幕：三步和一组片子 */}
       <section className="ga-arrive" data-sideways>
         <div className="ga-sticky">
           <div className="ga-track" data-track>
             <div className="ga-arrive-text">
-              <Words>A considered arrival.</Words>
-              <p className="ga-lead" data-reveal>Licensed, uniformed and ID-verified. Your therapist comes to your home, condo or hotel.</p>
+              <Words>Book in three steps.</Words>
               <ol className="ga-steps" data-reveal>
                 <li><i className="ga-n">1</i><b>Choose your therapist</b><span>See each profile when you book.</span></li>
                 <li><i className="ga-n">2</i><b>Choose your time</b><span>Now, or book for later.</span></li>
                 <li><i className="ga-n">3</i><b>Pay cash on arrival</b><span>No deposit, nothing to pay upfront.</span></li>
               </ol>
             </div>
-            <figure className="ga-arrive-photo">
-              <video data-clip data-first="/global/arrive-first.jpg" src="/global/arrive.mp4" poster="/global/arrive-still.jpg" muted playsInline preload="none" aria-label="A therapist in uniform walking through a condo door, carrying folded towels and the EasyGoSpa bag" />
-            </figure>
-            <figure className="ga-arrive-photo">
-              <img src="/global/hotel.jpg" alt="The EasyGoSpa bag on a hotel bed" loading="lazy" />
-            </figure>
+            <div className="ga-tiles">
+              {TILES.map((tile) => (
+                <figure className="ga-tile" key={tile.clip}>
+                  <Clip name={tile.clip} label={tile.label} />
+                  <figcaption>{tile.word}</figcaption>
+                </figure>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* 第三幕：房间 */}
+      {/* 第四幕：房间，三条片子并排，手机只放第一条 */}
       <section className="ga-room">
         <div className="ga-sticky">
-          <img className="ga-room-img" src="/global/window.jpg" alt="A quiet condo living room with a view of the city" loading="lazy" />
+          <div className="ga-room-tri">
+            <figure><Clip name="window" label="Gliding through a lit window into a quiet condo living room" /></figure>
+            <figure><Clip name="lobby" label="A therapist walking in through a condo door, carrying folded towels and the EasyGoSpa bag" /></figure>
+            <figure><Clip name="living" label="A therapist stepping into a condo living room with a view of the city" /></figure>
+          </div>
           <img className="ga-room-img ga-room-after" src="/global/longweek.jpg" alt="A therapist massaging a seated client's shoulders in a condo" loading="lazy" />
           <span className="ga-seam" aria-hidden="true" />
           <div className="ga-room-shade" aria-hidden="true" />
@@ -354,6 +395,7 @@ export default function GlobalHome({ services = [] }) {
           <div className="ga-menu-head">
             <Words>Choose what your body needs.</Words>
             <p className="ga-lead" data-reveal>Every treatment and price, listed. Choose your therapist when you book.</p>
+            <figure className="ga-menu-film"><Clip name="night" label="A therapist walking in through a condo door at night, carrying folded towels" /></figure>
           </div>
           <ServiceRows services={services} />
         </div>
@@ -374,15 +416,18 @@ export default function GlobalHome({ services = [] }) {
 
       {/* 一页一章的绿 */}
       <section className="ga-olive">
-        <div className="ga-wrap">
-          <Words className="ga-big">Strictly professional.</Words>
-          <p className="ga-lead" data-reveal>Licensed, uniformed, ID-verified therapists. Professional massage only.</p>
+        <div className="ga-wrap ga-olive-in">
+          <div className="ga-olive-text">
+            <Words className="ga-big">Strictly professional.</Words>
+            <p className="ga-lead" data-reveal>Licensed, uniformed, ID-verified therapists. Professional massage only.</p>
+          </div>
+          <figure className="ga-olive-arch"><Clip name="uniform" label="A smiling therapist in the EasyGoSpa uniform, carrying folded towels" /></figure>
         </div>
       </section>
 
-      {/* 第六幕：城市 */}
+      {/* 第七幕：城市 */}
       <section className="ga-dusk">
-        <figure><video data-clip src="/global/flyby.mp4" poster="/global/flyby.jpg" muted playsInline preload="none" aria-label="Flying past lit condo towers in Metro Manila at night" /></figure>
+        <figure><Clip name="city-wide" phone="city-tall" label="Flying past lit condo towers in Metro Manila at night" /></figure>
         <div className="ga-dusk-shade" aria-hidden="true" />
         <div className="ga-dusk-text ga-wrap">
           <Words className="ga-big">A calmer hour, across the city.</Words>
@@ -390,7 +435,7 @@ export default function GlobalHome({ services = [] }) {
         </div>
       </section>
 
-      {/* 第七幕：下一扇门（暂不显示，见 SHOW_MARKETS） */}
+      {/* 下一扇门（暂不显示，见 SHOW_MARKETS） */}
       {SHOW_MARKETS ? <section className="ga-cities" data-sideways>
         <div className="ga-sticky">
           <div className="ga-track" data-track>
@@ -409,7 +454,7 @@ export default function GlobalHome({ services = [] }) {
 
       {/* 第八幕：门开着 */}
       <section className="ga-closing">
-        <figure className="ga-closing-door"><img data-zoom src="/global/door-ajar.jpg" alt="A condo door opening onto warm light at night" loading="lazy" /></figure>
+        <figure className="ga-closing-door"><Clip name="door" at={0.6} label="A condo door swinging open onto warm light and the city at night" /></figure>
         <div className="ga-closing-shade" aria-hidden="true" />
         <div className="ga-closing-text ga-wrap">
           <Words className="ga-big">Choose your therapist. Then exhale.</Words>
