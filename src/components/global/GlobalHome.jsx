@@ -56,7 +56,8 @@ const HOURS = [
   { time: '1:00', part: 'pm', line: 'Between checkout and the flight.', src: 'hotel', alt: 'The EasyGoSpa bag on a hotel bed, the city through the window' },
   { time: '6:30', part: 'pm', line: 'After the long week.', src: 'sunset', alt: 'Metro Manila at sunset from a high window' },
   { time: '11:00', part: 'pm', line: 'When the city finally quiets.', src: 'night-hands', alt: 'A therapist massaging a client\'s back at night, a lamp on and the city lit outside' },
-  { time: '2:00', part: 'am', line: 'Yes, even now.', clip: 'window', label: 'Gliding through a lit window into a quiet condo living room at night' },
+  // 竖片在大屏上会糊，电脑用横的那条（飞向亮灯的窗）
+  { time: '2:00', part: 'am', line: 'Yes, even now.', clip: 'drone', phone: 'window', label: 'Flying through the city at night towards one lit window' },
 ]
 const PLACES = [
   { word: 'Home.', clip: 'living', label: 'A therapist stepping into a living room with a view of the city' },
@@ -559,7 +560,7 @@ export default function GlobalHome({ services = [] }) {
           {HOURS.map((item) => (
             <div className="ga-hour-slide" key={item.time + item.part}>
               <div className="ga-hour-pic">
-                {item.clip ? <Clip name={item.clip} label={item.label} manual /> : <img src={`/global/photos/${item.src}.webp`} alt={item.alt} loading="lazy" />}
+                {item.clip ? <Clip name={item.clip} phone={item.phone} label={item.label} manual /> : <img src={`/global/photos/${item.src}.webp`} alt={item.alt} loading="lazy" />}
               </div>
               <div className="ga-hour-shade" aria-hidden="true" />
               <div className="ga-hour-text ga-wrap">
