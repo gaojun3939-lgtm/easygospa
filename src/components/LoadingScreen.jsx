@@ -58,9 +58,9 @@ function LoadingOverlay() {
               transition={{ duration: 0.8, delay: 0.3 }}
               className="text-center mt-6"
             >
-              <h1 className="font-serif text-4xl font-bold text-[#64734F] mb-2">
+              <p className="font-serif text-4xl font-bold text-[#64734F] mb-2">
                 EasyGo Spa
-              </h1>
+              </p>
               <p className="text-sm text-gray-600 tracking-widest uppercase">
                 Premium Home Massage
               </p>
