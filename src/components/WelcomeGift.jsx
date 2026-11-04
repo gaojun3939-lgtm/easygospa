@@ -139,7 +139,7 @@ export default function WelcomeGift() {
         </button>
 
         <p className="mt-3 text-center text-xs leading-5 text-gray-400">
-          No transport fee. No tips. Nothing to pay upfront.
+          No tips. Nothing to pay upfront.
         </p>
 
         {/* 页尾泄压阀:安静的一行字,只接"想先问问正规吗"的人。不做浮窗不弹窗。 */}

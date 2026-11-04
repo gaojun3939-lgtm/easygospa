@@ -83,7 +83,7 @@ export default function ServicesPage({ services = [] }) {
             
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-[1.618]">
               Professional massage at your home, condo or hotel across Metro Manila. Every treatment and
-              price is listed below — no transport fee, no tips.
+              price is listed below — no tips.
             </p>
           </motion.div>
 

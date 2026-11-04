@@ -12,7 +12,7 @@ export const revalidate = 60;
 
 export const metadata = {
   title: 'Pricing | EasyGo Spa Home Massage Manila',
-  description: 'Real prices for home massage in Metro Manila. No transport fee, no tips. Cash when your therapist arrives.'
+  description: 'Real prices for home massage in Metro Manila. No tips. Cash when your therapist arrives.'
 };
 
 export default async function PricingPage() {
@@ -29,7 +29,7 @@ export default async function PricingPage() {
           The therapist comes to your home, condo or hotel.
         </p>
         <p className="text-center text-[#2db83d] font-semibold mb-10">
-          No transport fee · No tips · Cash when she arrives
+          No tips · Cash when she arrives
         </p>
 
         <div className="bg-white rounded-3xl p-5 md:p-8 shadow-lg">

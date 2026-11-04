@@ -831,7 +831,7 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
               <span className="text-[11px] font-bold leading-none">EasyGoSpa Care</span>
             </span>
             <span className="grid gap-1.5 text-sm text-gray-800">
-              <span className="inline-flex items-center gap-2"><Check className="h-4 w-4 shrink-0 text-[#3F7838]" />No tip, no travel fee</span>
+              <span className="inline-flex items-center gap-2"><Check className="h-4 w-4 shrink-0 text-[#3F7838]" />No tip</span>
               <span className="inline-flex items-center gap-2"><Check className="h-4 w-4 shrink-0 text-[#3F7838]" />No sensitive information required</span>
             </span>
           </div>
@@ -2059,7 +2059,7 @@ export default function BookingModal() {
                         First booking? Get {money(promoCampaign.amount)} off
                       </p>
                       <p className="mt-1 text-xs leading-5 text-gray-600">
-                        Enter your mobile number to see your price. No transport fee, no tips.
+                        Enter your mobile number to see your price. No tips.
                       </p>
                       <div className="mt-3 flex gap-2">
                         <input

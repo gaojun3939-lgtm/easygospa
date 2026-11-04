@@ -16,8 +16,8 @@ export default function TermsOfServicePage() {
 
         <div className="mt-8 space-y-6 text-[15px] leading-7 text-gray-700">
           <p>Welcome to EasyGoSpa. By booking or using our website and services, you agree to these Terms of Service. Please read them carefully. If you do not agree, please do not use our services.</p>
-          {/* 2026-11-05 谷歌交易商声明的条款链接指向这一页，要写明适用于 App。App 收车费和夜间费，所以写明 App 里以下单前显示的总价为准 */}
-          <p>These Terms also apply to the EasyGoSpa — Home Massage mobile app on Google Play and the App Store. In the app, the total shown before you book, including any travel or night fee, is the amount you pay.</p>
+          {/* 2026-11-05 谷歌交易商声明的条款链接指向这一页，要写明适用于 App */}
+          <p>These Terms also apply to the EasyGoSpa — Home Massage mobile app on Google Play and the App Store.</p>
 
           <Section title="1. Our services">
             <p>EasyGoSpa arranges professional home massage services delivered by trained therapists to your hotel, condo, home, or office within Metro Manila, Philippines. Service availability depends on therapist schedules, your location, and the time of booking.</p>
@@ -28,8 +28,9 @@ export default function TermsOfServicePage() {
           </Section>
 
           <Section title="3. Pricing and payment">
-            {/* 2026-10-26 老板定:跟网站对齐——不收车费(原来写「车费会提前告知」,跟首页 ₱0 Transport Fee 对不上) */}
-            <p>Service prices are shown before you confirm a booking. There is no transport fee and no tip is expected. Payment is made in cash to the therapist when they arrive, before the service begins.</p>
+            {/* 2026-11-05 老板定:「不是不收费 是5公里内50 10公里100。15公里150」,推翻 10-26 的不收车费。
+                网页下单系统暂时还没加这笔钱,所以写 may apply、以下单前显示的总价为准;夜间费是 App 现有规矩 */}
+            <p>Service prices are shown before you confirm a booking. A travel fee may apply based on distance: ₱50 within 5 km, ₱100 within 10 km and ₱150 within 15 km. In the app, a night fee may also apply to sessions starting between midnight and 6:00 AM. The total shown before you confirm is the amount you pay. No tip is expected. Payment is made in cash to the therapist when they arrive, before the service begins.</p>
           </Section>
 
           {/* 2026-10-26 老板定:退款规则照 App(窗口 3 方案 2.4,照 Grab 菲律宾):出发前全退、出发后收 ₱50/100/150 取消费全给技师、
