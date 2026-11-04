@@ -50,7 +50,7 @@ export default function ServicesPage({ services = [] }) {
     <div className="ga ga-page">
       <PageHead eyebrow="Our Services" title="Premium Home Massage Services in Metro Manila">
         Professional massage at your home, condo or hotel across Metro Manila. Every treatment and
-        price is listed below — no transport fee, no tips.
+        price is listed below — no tips.
       </PageHead>
 
       <section className="ga-band ga-band-tri">

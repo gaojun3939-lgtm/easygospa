@@ -133,7 +133,7 @@ export default function Contact() {
           <section>
             <h3>Service Area</h3>
             <b>Metro Manila</b>
-            <p>Home, condo, hotel, and office massage service. Enter your address during booking to check availability. No transport fee.</p>
+            <p>Home, condo, hotel, and office massage service. Enter your address during booking to check availability.</p>
           </section>
           <section>
             <h3>Booking &amp; WhatsApp</h3>

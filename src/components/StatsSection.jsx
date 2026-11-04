@@ -1,7 +1,7 @@
 "use client"
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Users, Car, Coins, Moon } from "lucide-react";
+import { Users, Banknote, Coins, Moon } from "lucide-react";
 
 // ⚠ 2026-07-29 老板拍板拿掉:这里原来写着 "5000+ Happy Customers"、"24/7"。
 // 真实成交是个位数、营业到凌晨 2 点不是 24 小时——而客人往下滑一屏,
@@ -12,7 +12,8 @@ import { Users, Car, Coins, Moon } from "lucide-react";
 // 同时去掉从 0 往上跳的计数动画——网页原文和动画前的截图里会是「0 AM」,像页面坏了(Xendit 审核会截图)。
 // 现在直接写最终的字,打开就是这样。
 const stats = [
-  { icon: Car, label: "Transport Fee", text: "₱0" },
+  // 2026-11-05 老板定车费不是不收:这一格原来是 Transport Fee ₱0
+  { icon: Banknote, label: "Pay on Arrival", text: "Cash" },
   { icon: Coins, label: "Tips Expected", text: "₱0" },
   { icon: Moon, label: "Available", text: "24/7" },
 ];

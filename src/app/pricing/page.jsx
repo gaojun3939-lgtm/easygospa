@@ -14,7 +14,7 @@ export const revalidate = 60;
 
 export const metadata = {
   title: 'Pricing | EasyGo Spa Home Massage Manila',
-  description: 'Real prices for home massage in Metro Manila. No transport fee, no tips. Cash when your therapist arrives.'
+  description: 'Real prices for home massage in Metro Manila. No tips. Cash when your therapist arrives.'
 };
 
 export default async function PricingPage() {
@@ -24,7 +24,7 @@ export default async function PricingPage() {
     <div className="ga ga-page">
       <PageHead title="Pricing">
         <p>The therapist comes to your home, condo or hotel.</p>
-        <p className="ga-page-note">No transport fee · No tips · Cash when she arrives</p>
+        <p className="ga-page-note">No tips · Cash when she arrives</p>
       </PageHead>
 
       <section className="ga-band ga-band-face"><Clip name="arrival-wide" phone="night" label="A smiling therapist in the EasyGoSpa uniform arriving at a condo door" /></section>

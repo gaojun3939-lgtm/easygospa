@@ -593,7 +593,7 @@ export default function GlobalHome({ services = [] }) {
         <div className="ga-wrap">
           <Words className="ga-big">The price is the price.</Words>
           <ul className="ga-nums">
-            <li data-reveal><b className="ga-n">₱0</b><span>Transport Fee</span></li>
+            <li data-reveal><b className="ga-n">Cash</b><span>Pay on Arrival</span></li>
             <li data-reveal><b className="ga-n">₱0</b><span>Tips Expected</span></li>
             <li data-reveal><b className="ga-n">24/7</b><span>Available</span></li>
           </ul>
