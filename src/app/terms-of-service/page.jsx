@@ -5,7 +5,7 @@ export const metadata = {
   description: "The terms that govern your use of EasyGoSpa home massage booking services in Metro Manila.",
 };
 
-const LAST_UPDATED = "October 26, 2026";
+const LAST_UPDATED = "November 5, 2026";
 
 export default function TermsOfServicePage() {
   return (
@@ -16,6 +16,8 @@ export default function TermsOfServicePage() {
 
         <div className="mt-8 space-y-6 text-[15px] leading-7 text-gray-700">
           <p>Welcome to EasyGoSpa. By booking or using our website and services, you agree to these Terms of Service. Please read them carefully. If you do not agree, please do not use our services.</p>
+          {/* 2026-11-05 谷歌交易商声明的条款链接指向这一页，要写明适用于 App。App 收车费和夜间费，所以写明 App 里以下单前显示的总价为准 */}
+          <p>These Terms also apply to the EasyGoSpa — Home Massage mobile app on Google Play and the App Store. In the app, the total shown before you book, including any travel or night fee, is the amount you pay.</p>
 
           <Section title="1. Our services">
             <p>EasyGoSpa arranges professional home massage services delivered by trained therapists to your hotel, condo, home, or office within Metro Manila, Philippines. Service availability depends on therapist schedules, your location, and the time of booking.</p>
