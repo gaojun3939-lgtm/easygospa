@@ -48,7 +48,9 @@ export default function SiteFooter() {
           <div>
             © 2026 EASYGOSPA HOME MASSAGE SERVICES OPC. All rights reserved.<br />
             SEC Reg. No. 2026060255013-01<br />
-            Unit 706, Medical Towers Makati, 103 Rufino Street, Legazpi Village, Bel-Air, Makati City, Metro Manila 1209
+            Unit 706, Medical Towers Makati, 103 Rufino Street, Legazpi Village, Bel-Air, Makati City, Metro Manila 1209<br />
+            {/* 2026-11-06 老板定(窗口 8 转):链到菲律宾本地站,普通链接,不加 nofollow */}
+            Philippines: <a href="https://easygospa.ph/">easygospa.ph</a>
           </div>
           <nav aria-label="Legal">
             <a href="/privacy-policy">Privacy Policy</a>
