@@ -288,6 +288,8 @@ export default function RootLayout({
               <p>SEC Reg. No. 2026060255013-01</p>
               <p>Unit 706, Medical Towers Makati, 103 Rufino Street,</p>
               <p>Legazpi Village, Bel-Air, Makati City, Metro Manila 1209</p>
+              {/* 2026-11-06 老板定(窗口 8 转):链到菲律宾本地站,普通链接,不加 nofollow */}
+              <p>Philippines: <a href="https://easygospa.ph/" className="text-gray-300 underline underline-offset-2 hover:text-[#2db83d] transition-colors duration-300">easygospa.ph</a></p>
             </div>
             <nav aria-label="Legal links">
               <div className="flex gap-6 text-sm">
