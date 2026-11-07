@@ -37,7 +37,7 @@ export default function PrivacyPolicyPage() {
               <li>Referrals: who you invited with your link or code, who invited you, and the rewards or commissions that result.</li>
               <li>Payout account: when you withdraw (therapist earnings or referral commissions), the GCash number and account name, or the bank name, account name and account number you enter — used only to pay you.</li>
               {/* 2026-11-07 安卓 0.7.137 换手机恢复登录(谷歌 Restore Credentials),跟 App 隐私政策一字不差,英文为准 */}
-              <li>Restore sign-in on a new phone (Android): after you sign in, the app saves a sign-in key in your own Google account backup; our server keeps only its public part and an ID for that phone. If you move to a new phone and restore from your Google backup, the app uses it to sign you back in automatically (phone-number accounts still need a verification code). The key stops working when you sign out or your account is frozen, and keys not used for 180 days on a phone that hasn’t opened the app are cleared.</li>
+              <li>Restore sign-in on a new phone (Android): after you sign in, the app saves a sign-in key in your own Google account backup; our server keeps only its public part and an ID for that phone. If you move to a new phone and restore from your Google backup, the app uses it to sign you back in automatically (phone-number accounts still need a verification code). When you sign out, the key is deleted from that phone; if your account is frozen, all of its keys are revoked; keys not used for 180 days on a phone that hasn’t opened the app are cleared.</li>
             </ul>
             <p>Additionally from therapists:</p>
             <ul className="list-disc pl-5 space-y-1">
