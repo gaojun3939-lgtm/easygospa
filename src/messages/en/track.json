@@ -1,0 +1,122 @@
+{
+  "meta": {
+    "title": "Track My Booking"
+  },
+  "status": {
+    "submitted": "Booking received",
+    "confirmed": "Confirmed, matching therapist",
+    "waitingAcceptance": "Waiting for confirmation",
+    "preparing": "Your therapist is getting ready",
+    "onTheWay": "Therapist on the way",
+    "arrived": "Therapist arrived",
+    "inService": "Service in progress",
+    "completed": "Completed",
+    "cancelled": "Cancelled"
+  },
+  "schedulePending": "Schedule pending",
+  "yourTherapist": "Your therapist",
+  "bookingCancelled": "Booking cancelled",
+  "whatsappButton": "Contact us on WhatsApp",
+  "updatesBanner": "📲 Get booking updates on WhatsApp",
+  "therapistLine": {
+    "named": "💬 Message your therapist {name}",
+    "unnamed": "💬 Message your therapist"
+  },
+  "notify": {
+    "fallbackName": "Your Therapist",
+    "confirmedBanner": "✅ {name} confirmed your booking!",
+    "confirmedPush": "{name} confirmed your booking",
+    "arrivedPush": "Your therapist has arrived"
+  },
+  "headline": {
+    "fallbackName": "Your therapist",
+    "matching": "Matching your therapist",
+    "confirming": "{name} is confirming",
+    "gettingReady": "{name} is getting ready",
+    "onTheWayEta": "{name} is on the way · ~{minutes} min",
+    "onTheWay": "{name} is on the way",
+    "arrived": "{name} has arrived",
+    "inService": "Your massage is in progress",
+    "completed": "Service completed"
+  },
+  "note": {
+    "matching": "We are finding the therapist nearest to you.",
+    "confirming": "Hang tight — confirming your booking now.",
+    "headingScheduled": "She will head to your address in time for your appointment.",
+    "headingSoon": "She will head to your address shortly.",
+    "keepPhone": "Please keep your phone nearby.",
+    "payAtDoor": "Cash payment is collected at the door, before the massage starts.",
+    "enjoy": "Enjoy — relax and unwind.",
+    "review": "Leave a review and get a {amount} cash coupon.",
+    "needHelp": "Message us on WhatsApp if you need help."
+  },
+  "badge": {
+    "photoAlt": "{name} profile",
+    "therapist": "Therapist",
+    "assignedTherapist": "Assigned therapist"
+  },
+  "timeline": {
+    "cancelledBody": "This booking is no longer active. Message us on WhatsApp if you need help.",
+    "eta": "Estimated arrival: {minutes, plural, one {# minute} other {# minutes}}"
+  },
+  "notFound": {
+    "title": "Booking not found",
+    "body": "We couldn't find this booking. Please check the link or message us on WhatsApp."
+  },
+  "loadError": {
+    "title": "We couldn't refresh your booking",
+    "body": "Please check your connection and try again.",
+    "retry": "Try again"
+  },
+  "hero": {
+    "eyebrow": "My booking",
+    "waitingFor": "Waiting for {name} to confirm...",
+    "waitingFallbackName": "your Therapist",
+    "title": "Track your massage",
+    "waitingHint": "Usually confirmed within a few minutes",
+    "liveHint": "Live status updates refresh automatically every {seconds, plural, one {# second} other {# seconds}}."
+  },
+  "summary": {
+    "label": "Booking summary",
+    "service": "Service",
+    "servicePending": "Service pending",
+    "duration": "{minutes, plural, one {# minute} other {# minutes}}",
+    "durationPending": "Duration pending",
+    "appointment": "Your appointment",
+    "bookedForLater": "Booked for later — your therapist arrives for this time.",
+    "area": "Area",
+    "areaPending": "Area pending",
+    "reference": "Booking reference",
+    "copyLabel": "Copy booking reference",
+    "copy": "Copy",
+    "copied": "Copied"
+  },
+  "progress": {
+    "title": "Booking progress",
+    "lastUpdated": "Last updated {time}",
+    "refresh": "Refresh",
+    "cancel": "Cancel booking",
+    "cannotCancel": "Your therapist has already confirmed this booking, so it can no longer be cancelled here. Need to cancel or reschedule? Message us on WhatsApp below — we'll take care of it."
+  },
+  "help": {
+    "title": "Need an update?",
+    "body": "Message our team and include your booking reference."
+  },
+  "cancel": {
+    "title": "Cancel this booking?",
+    "body": "Only a booking still waiting for Therapist confirmation can be cancelled here.",
+    "contactLabel": "Booking email or phone",
+    "keep": "Keep booking",
+    "cancelling": "Cancelling...",
+    "confirm": "Confirm cancellation",
+    "errors": {
+      "enterContact": "Enter the booking email or phone to continue.",
+      "notVerified": "We couldn't verify that booking with those details.",
+      "authRequired": "For security, log in to view your booking or contact us on WhatsApp for help.",
+      "notAllowed": "This booking can no longer be cancelled online. Please contact us on WhatsApp.",
+      "rateLimited": "Too many requests, please try again later.",
+      "failed": "We couldn't cancel it just now. Message us on WhatsApp with your booking reference and we'll cancel it for you.",
+      "unreachable": "We couldn't reach us just now. Check your connection, or message us on WhatsApp with your booking reference."
+    }
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "eyebrow": "サイトナビゲーション",
+  "title": "EasyGo Spa サイトマップ",
+  "lead": "EasyGoSpaウェブサイトのすべてのページを、ここにまとめています。",
+  "main": "メインページ",
+  "treatments": "マッサージメニュー",
+  "pages": {
+    "home": {
+      "name": "ホーム",
+      "description": "Metro Manila全域のプロの訪問マッサージ"
+    },
+    "services": {
+      "name": "メニュー",
+      "description": "すべてのマッサージメニューと料金"
+    },
+    "pricing": {
+      "name": "料金",
+      "description": "各メニュー・各コース時間の料金"
+    },
+    "contact": {
+      "name": "お問い合わせ",
+      "description": "電話、WhatsApp、メール、対応エリア"
+    },
+    "terms": {
+      "name": "利用規約",
+      "description": "予約、支払い、キャンセル、返金のルール"
+    },
+    "privacy": {
+      "name": "プライバシーポリシー",
+      "description": "個人情報の取り扱いについて"
+    }
+  },
+  "treatmentNotes": {
+    "Deep tissue": "しっかりとしたピンポイントの圧で、慢性的な筋肉のこりに",
+    "Hot Stone Massage": "温かいストーンと心地よいマッサージで、こわばった筋肉をほぐす",
+    "Relaxing Premium Aromatherapy Body Massage": "天然エッセンシャルオイルを使った、やさしいマッサージ",
+    "Shiatsu Massage(without Oil)": "指と手のひらで押す日本の伝統的な指圧、オイル不使用",
+    "Swedish Massage": "オイルを使ったやさしい全身マッサージ、初めての方にもおすすめ",
+    "Thai Body Massage": "オイルを使わない深い圧と、全身のストレッチ"
+  },
+  "about": "当サイトについて",
+  "features": "サイトの機能",
+  "featureList": {
+    "responsive": "あらゆるデバイスに対応したレスポンシブデザイン",
+    "booking": "オンライン予約（セラピストをご自身で選べます）",
+    "menu": "料金付きのメニュー一覧",
+    "tracking": "予約状況の確認",
+    "contact": "お問い合わせ先と対応エリアのご案内"
+  },
+  "office": "登記上の所在地",
+  "homeOnly": "訪問サービスのみ。セラピストがお客様のもとへ伺います。",
+  "phone": "電話：{phone}",
+  "ctaTitle": "EasyGo Spaを体験してみませんか？",
+  "ctaText": "今すぐご予約ください。セラピストを選んで、到着時に現金でお支払いいただけます。",
+  "ctaButton": "予約する"
+}

@@ -1,0 +1,80 @@
+{
+  "title": {
+    "orders": "予約一覧",
+    "orderStatus": "予約状況",
+    "couponWallet": "マイクーポン"
+  },
+  "backToOrders": "予約一覧に戻る",
+  "signOut": "ログアウト",
+  "close": "閉じる",
+  "notConfigured": "予約確認用のログイン機能は準備中です。しばらくしてから再度ご確認ください。",
+  "loading": "読み込み中…",
+  "retry": "再試行",
+  "massage": "マッサージ",
+  "arriving": "約{minutes}分で到着",
+  "tabs": {
+    "label": "お客様アカウント",
+    "bookings": "予約",
+    "coupons": "クーポン",
+    "activeCoupon": "使用できるクーポンがあります"
+  },
+  "login": {
+    "tagline": "ご予約をワンタップで確認",
+    "google": "Googleで続ける",
+    "orEmail": "またはメールアドレスで",
+    "sendCode": "コードを送信",
+    "sending": "送信中…",
+    "noPassword": "パスワード不要 · どのメールアドレスでも利用できます",
+    "back": "戻る",
+    "enterCode": "コードを入力",
+    "codeSent": "{email}にコードを送信しました",
+    "verify": "認証する",
+    "verifying": "認証中…",
+    "resendIn": "{seconds}秒後に再送信できます",
+    "resend": "コードを再送信",
+    "errors": {
+      "google": "Googleログインを開けませんでした。もう一度お試しください。",
+      "invalidEmail": "正しいメールアドレスを入力してください。",
+      "sendFailed": "コードを送信できませんでした。少し時間をおいて、もう一度お試しください。",
+      "enterCode": "メールに届いたコードを入力してください。",
+      "wrongCode": "コードが正しくないか、有効期限が切れています。もう一度入力するか、再送信してください。"
+    }
+  },
+  "coupons": {
+    "loading": "クーポンを読み込んでいます…",
+    "loadError": "クーポンを読み込めませんでした。",
+    "errors": {
+      "unavailable": "クーポンを読み込めませんでした",
+      "signIn": "ログインするとクーポンを確認できます"
+    },
+    "emptyTitle": "クーポンはまだありません",
+    "emptyBody": "完了したご予約のレビューを投稿すると、{days, plural, other {#日間}}有効な{amount}のクーポンを受け取れます。",
+    "badge": "クーポン",
+    "autoApplied": "次回のご予約に自動適用",
+    "rewardTitle": "{brand}特典",
+    "terms": "すべてのご予約に利用可 · 1回のご予約につき1枚まで",
+    "status": {
+      "active": "利用可能",
+      "used": "使用済み",
+      "expired": "期限切れ"
+    },
+    "usedOn": "{date}に使用",
+    "expiresOn": "有効期限 {date}",
+    "datePending": "日付未定"
+  },
+  "list": {
+    "loading": "予約を読み込んでいます…",
+    "loadError": "予約を読み込めませんでした。",
+    "emptyTitle": "予約はまだありません",
+    "emptyBody": "セラピストを予約すると、ここに表示されます。",
+    "duration": "{minutes}分"
+  },
+  "detail": {
+    "cancelled": "このご予約はキャンセルされました。",
+    "minAway": "あと約{minutes}分",
+    "cancel": "この予約をキャンセル",
+    "needCancel": "キャンセルをご希望の場合はご連絡ください",
+    "whatsapp": "WhatsAppでメッセージを送る",
+    "report": "問題を報告"
+  }
+}

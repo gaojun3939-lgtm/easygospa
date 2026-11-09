@@ -1,8 +1,9 @@
 "use client";
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { ArrowRight, BadgeCheck, Gift, ShieldCheck, Star, UserCheck, Zap } from 'lucide-react';
 import { whatsappLink } from '@/lib/contactConfig';
+import { useRouter } from '@/i18n/navigation';
 
 // 广告落地页 v3(2026-08-02 老板拍板,两位外部专家复核一致):
 // "领券卡是假步骤"——下单流程里手机号当场查/发 ₱150(2026-07-29 起就不依赖预领),
@@ -17,9 +18,10 @@ const MESSENGER_URL = 'https://m.me/607203729144956';
 // 评分显示规则(老板 2026-08-01 拍板,满分扣分制,星级配分母):
 // 没有评价 → 只挂 NEW,不亮裸 5.0;有评价 → 星级 + 条数一起亮。
 function TherapistBadge({ therapist }) {
+  const t = useTranslations('welcome');
   const reviews = Number(therapist.reviewCount || 0);
   if (!reviews) {
-    return <span className="rounded-full bg-[#E9ECE1] px-2 py-0.5 text-[10px] font-bold text-[#55633F]">NEW</span>;
+    return <span className="rounded-full bg-[#E9ECE1] px-2 py-0.5 text-[10px] font-bold text-[#55633F]">{t('new')}</span>;
   }
   return (
     <span className="flex items-center gap-1 text-[11px] font-semibold text-[#854F0B]">
@@ -31,13 +33,18 @@ function TherapistBadge({ therapist }) {
 
 // 三条卖点:每条正面拆一个"怕"(怕来路不明/怕骗押金/怕不正经)。
 // 文案两位专家过审、老板逐句拍板(2026-08-02)。
+// 文字在 src/messages/<语言>/welcome.json 的 points 下面
 const SELLING_POINTS = [
-  { icon: UserCheck, text: <><strong>You choose who comes to your door</strong> — real therapists, real photos</> },
-  { icon: ShieldCheck, text: <><strong>No deposit, no prepayment</strong> — just book, and she&apos;s on her way</> },
-  { icon: BadgeCheck, text: <><strong>Strictly professional massage</strong> — licensed, uniformed, ID-verified therapists</> }
+  { icon: UserCheck, key: 'points.choose' },
+  { icon: ShieldCheck, key: 'points.noDeposit' },
+  { icon: BadgeCheck, key: 'points.professional' }
 ];
 
+// 首单优惠的钱数(价格数字不进文字文件)
+const FIRST_BOOKING_OFF = '₱150';
+
 export default function WelcomeGift() {
+  const t = useTranslations('welcome');
   const router = useRouter();
   const [therapists, setTherapists] = useState([]);
 
@@ -76,21 +83,21 @@ export default function WelcomeGift() {
       <div className="mx-auto w-full max-w-md">
 
         <h1 className="font-serif text-[26px] font-bold leading-tight text-[#171A17]">
-          Pick who comes to you
+          {t('title')}
         </h1>
 
         {/* 速度承诺(老板 2026-08-02 拍板加上):写"最快 30 分钟"不写死必达——
             在岗+10km 内才做得到,"as fast as" 客人照样兴奋,做不到不算食言 */}
         <p className="mt-2 flex items-center gap-1.5 text-[15px] font-bold text-[#55633F]">
           <Zap className="fill-[#EF9F27] text-[#EF9F27]" size={17} />
-          As fast as 30 minutes to your door
+          {t('speed')}
         </p>
 
         <ul className="mt-4 space-y-2.5">
-          {SELLING_POINTS.map(({ icon: Icon, text }, index) => (
+          {SELLING_POINTS.map(({ icon: Icon, key }, index) => (
             <li className="flex items-start gap-2.5 text-[13.5px] leading-5 text-gray-600" key={index}>
               <Icon className="mt-0.5 shrink-0 text-[#55633F]" size={16} />
-              <span>{text}</span>
+              <span>{t.rich(key, { b: (chunks) => <strong>{chunks}</strong> })}</span>
             </li>
           ))}
         </ul>
@@ -116,7 +123,7 @@ export default function WelcomeGift() {
                   <p className="truncate text-[13px] font-bold text-[#171A17]">{therapist.name}</p>
                   <div className="mt-0.5 flex items-center justify-between">
                     <TherapistBadge therapist={therapist} />
-                    {therapist.onShift ? <span className="h-2 w-2 rounded-full bg-[#64734F]" title="On shift now" /> : null}
+                    {therapist.onShift ? <span className="h-2 w-2 rounded-full bg-[#64734F]" title={t('onShift')} /> : null}
                   </div>
                 </div>
               </button>
@@ -128,26 +135,27 @@ export default function WelcomeGift() {
             犹豫发生在按下按钮前一秒,优惠放这里比挂页面顶上管用 */}
         <p className="mt-5 flex items-center justify-center gap-2 text-[15px] font-extrabold text-[#D42B2A]">
           <Gift className="shrink-0" size={18} />
-          ₱150 OFF your first booking
+          {t('firstBookingOff', { amount: FIRST_BOOKING_OFF })}
         </p>
         <button
           className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-[#64734F] py-3.5 text-lg font-semibold text-white"
           onClick={goBook}
           type="button"
         >
-          Pick your therapist <ArrowRight size={20} />
+          {t('pickTherapist')} <ArrowRight size={20} />
         </button>
 
         <p className="mt-3 text-center text-xs leading-5 text-gray-400">
-          No tips. Nothing to pay upfront.
+          {t('noTips')}
         </p>
 
         {/* 页尾泄压阀:安静的一行字,只接"想先问问正规吗"的人。不做浮窗不弹窗。 */}
         <p className="mt-10 text-center text-xs text-gray-400">
-          Questions first?{' '}
-          <a className="font-semibold text-gray-500 underline underline-offset-2" href={MESSENGER_URL} rel="noopener noreferrer" target="_blank">Chat on Messenger</a>
-          {' '}·{' '}
-          <a className="font-semibold text-gray-500 underline underline-offset-2" href={whatsappLink('Hi! I have a question about booking a massage.')} rel="noopener noreferrer" target="_blank">WhatsApp</a>
+          {/* 给公司 WhatsApp 的预填话是发给我们看的,不翻译 */}
+          {t.rich('questions', {
+            messenger: (chunks) => <a className="font-semibold text-gray-500 underline underline-offset-2" href={MESSENGER_URL} rel="noopener noreferrer" target="_blank">{chunks}</a>,
+            whatsapp: (chunks) => <a className="font-semibold text-gray-500 underline underline-offset-2" href={whatsappLink('Hi! I have a question about booking a massage.')} rel="noopener noreferrer" target="_blank">{chunks}</a>
+          })}
         </p>
 
       </div>

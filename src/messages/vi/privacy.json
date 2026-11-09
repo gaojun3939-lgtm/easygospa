@@ -1,0 +1,119 @@
+{
+  "title": "Chính sách quyền riêng tư",
+  "metaDescription": "Cách {brand} thu thập, sử dụng và bảo vệ thông tin cá nhân của bạn trên trang web và trong ứng dụng {brand}.",
+  "lastUpdated": "Cập nhật lần cuối: {date}",
+  "updatedDate": "7 tháng 11 năm 2026",
+  "languageNotice": "Trang này là bản dịch. Nếu có khác biệt giữa bản tiếng Anh và bản dịch, bản tiếng Anh được ưu tiên áp dụng.",
+  "intro": "{company} (“{brand}”, “chúng tôi”, “của chúng tôi”) vận hành trang web {brand}, ứng dụng {brand} và dịch vụ massage tại nhà tại Metro Manila, Philippines. Chính sách này giải thích chúng tôi thu thập những thông tin cá nhân nào, vì sao thu thập, ai có thể xem, lưu giữ trong bao lâu và bạn có những quyền gì. Chính sách áp dụng cho cả trang web và ứng dụng. Chúng tôi tuân thủ Đạo luật Quyền riêng tư dữ liệu năm 2012 của Philippines (Đạo luật Cộng hòa số 10173).",
+  "collect": {
+    "title": "1. Thông tin chúng tôi thu thập",
+    "everyoneIntro": "Từ tất cả những người đặt lịch với chúng tôi hoặc sử dụng ứng dụng:",
+    "everyone": {
+      "account": "Tài khoản: số điện thoại hoặc email; nếu bạn đăng nhập bằng Google, tên và ảnh đại diện Google của bạn.",
+      "profile": "Hồ sơ: tên bạn muốn được gọi, ảnh đại diện bạn tải lên, giới tính và quốc tịch (không bắt buộc).",
+      "addresses": "Địa chỉ và vị trí: các địa chỉ phục vụ bạn cung cấp hoặc lưu lại, và vị trí thiết bị của bạn khi bạn cho phép.",
+      "bookings": "Đơn đặt lịch: dịch vụ, thời gian, giá và trạng thái đơn, cùng các bản ghi thanh toán, hoàn tiền và số dư.",
+      "messages": "Tin nhắn và đánh giá: tin nhắn trong ứng dụng về một đơn đặt lịch, cuộc trò chuyện của bạn với bộ phận hỗ trợ, cùng điểm đánh giá, nhận xét hoặc báo cáo bạn gửi.",
+      "device": "Thiết bị: mã nhận thông báo, phiên bản ứng dụng và nhật ký lỗi cơ bản.",
+      "usage": "Sử dụng ứng dụng và quảng cáo: các màn hình bạn mở và các thao tác chính (đăng nhập, xem kỹ thuật viên, đặt lịch và số tiền của đơn), mã nhận dạng thiết bị và mã nhận dạng quảng cáo của bạn, cùng quảng cáo hoặc liên kết đã đưa bạn đến ứng dụng hoặc trang web. Chúng tôi dùng thông tin này để đo lường hiệu quả quảng cáo và cải thiện dịch vụ; thông tin này không bao gồm tên, số điện thoại hoặc địa chỉ của bạn.",
+      "referrals": "Giới thiệu: những người bạn đã mời bằng liên kết hoặc mã của bạn, người đã mời bạn, cùng phần thưởng hoặc hoa hồng phát sinh từ đó.",
+      "payout": "Tài khoản nhận tiền: khi bạn rút tiền (thu nhập của kỹ thuật viên hoặc hoa hồng giới thiệu), số GCash và tên chủ tài khoản, hoặc tên ngân hàng, tên chủ tài khoản và số tài khoản bạn nhập — chỉ dùng để chuyển tiền cho bạn.",
+      "restoreSignIn": "Khôi phục đăng nhập trên điện thoại mới (Android): sau khi bạn đăng nhập, ứng dụng lưu một khóa đăng nhập trong bản sao lưu tài khoản Google của chính bạn; máy chủ của chúng tôi chỉ giữ phần công khai của khóa và một mã nhận dạng cho điện thoại đó. Nếu bạn chuyển sang điện thoại mới và khôi phục từ bản sao lưu Google, ứng dụng sẽ dùng khóa này để tự động đăng nhập lại cho bạn (tài khoản đăng ký bằng số điện thoại vẫn cần mã xác minh). Khi bạn đăng xuất, khóa sẽ bị xóa khỏi điện thoại đó; nếu tài khoản của bạn bị đóng băng, mọi khóa của tài khoản đều bị thu hồi; các khóa không được sử dụng trong 180 ngày trên điện thoại không còn mở ứng dụng sẽ bị xóa."
+    },
+    "therapistsIntro": "Ngoài ra, đối với kỹ thuật viên:",
+    "therapists": {
+      "serviceProfile": "Hồ sơ dịch vụ: ảnh hồ sơ, ảnh làm việc, phần giới thiệu, số năm kinh nghiệm, dịch vụ, khu vực phục vụ và giờ làm việc.",
+      "identity": "Xác minh danh tính: loại giấy tờ, số giấy tờ (chúng tôi chỉ giữ 4 chữ số cuối và một mã băm một chiều để ngăn một giấy tờ bị dùng cho nhiều tài khoản), ngày hết hạn, họ tên pháp lý, ảnh mặt trước và mặt sau giấy tờ, và một ảnh selfie.",
+      "jobRecords": "Lịch sử công việc: thời gian và vị trí đến nơi, tiến độ công việc, thu nhập, phí nền tảng, số dư đã nạp và giao dịch ví, cùng bản ghi điểm tín nhiệm (chẳng hạn các đơn đã từ chối hoặc bỏ lỡ).",
+      "liveLocation": "Vị trí trực tiếp trên đường đi: từ lúc chạm “Khởi hành” cho đến khi đến nơi, vị trí của kỹ thuật viên được chia sẻ với khách hàng của đơn đó, kể cả khi ứng dụng chạy nền (trong thời gian này có thông báo hiển thị). Việc chia sẻ dừng khi đến nơi và chúng tôi chỉ giữ vị trí gần nhất, không giữ lộ trình.",
+      "safety": "An toàn: người liên hệ khẩn cấp bạn thêm (tên, số điện thoại và mối quan hệ) — chúng tôi chỉ có thể gọi cho người này khi bạn phát cảnh báo an toàn, và không bao giờ nhắn tin cho họ; nếu bạn giữ nút “Báo động khẩn cấp”, vị trí của bạn sẽ liên tục được gửi đến {brand} — không gửi cho khách hàng — cho đến khi đội ngũ của chúng tôi đóng cảnh báo."
+    }
+  },
+  "use": {
+    "title": "2. Vì sao chúng tôi sử dụng thông tin",
+    "provide": "Để cung cấp dịch vụ: hiển thị kỹ thuật viên ở gần, ghép và điều phối đơn, và dẫn đường cho kỹ thuật viên đến địa chỉ của bạn.",
+    "safety": "Vì sự an toàn: xác minh danh tính kỹ thuật viên và xử lý tranh chấp hoặc sự cố.",
+    "communicate": "Để liên lạc: gửi mã xác minh, cập nhật về đơn và các thông báo qua thông báo ứng dụng, SMS, điện thoại hoặc WhatsApp. Bạn có thể yêu cầu chúng tôi ngừng gửi tin nhắn quảng cáo bất cứ lúc nào.",
+    "payments": "Cho thanh toán và lưu trữ hồ sơ: tính thu nhập và phí nền tảng, và lưu giữ hồ sơ.",
+    "support": "Để hỗ trợ: giải đáp câu hỏi và khiếu nại của bạn.",
+    "improve": "Để đo lường hiệu quả quảng cáo, cải thiện dịch vụ và thực hiện các nghĩa vụ pháp lý."
+  },
+  "access": {
+    "title": "3. Ai có thể xem thông tin của bạn",
+    "customers": "Khách hàng có thể xem hồ sơ công khai của kỹ thuật viên: tên, ảnh, phần giới thiệu, dịch vụ, điểm đánh giá và khoảng cách ước tính.",
+    "therapists": "Kỹ thuật viên chỉ thấy địa chỉ phục vụ và thông tin liên hệ của khách hàng sau khi đã nhận đơn đó.",
+    "staff": "Ảnh giấy tờ và tài khoản nhận tiền chỉ hiển thị với nhân viên {brand} phụ trách xét duyệt xác minh và chuyển tiền — không bao giờ hiển thị với khách hàng hay người dùng khác.",
+    "chats": "Tin nhắn về một đơn, cùng bản ghi thời điểm nút gọi được chạm, có thể được nhân viên {brand} được ủy quyền xem xét vì lý do an toàn và để xử lý tranh chấp. Chúng tôi không ghi âm cuộc gọi.",
+    "law": "Chúng tôi có thể tiết lộ thông tin nếu pháp luật yêu cầu hoặc để bảo vệ sự an toàn của khách hàng, kỹ thuật viên và nhân viên của chúng tôi.",
+    "noSale": "Chúng tôi không bán thông tin cá nhân của bạn."
+  },
+  "providers": {
+    "title": "4. Các nhà cung cấp dịch vụ chúng tôi sử dụng",
+    "intro": "Các nhà cung cấp này chỉ xử lý thông tin cần thiết cho phần việc của họ trong dịch vụ:",
+    "supabase": "Supabase — đăng nhập tài khoản và lưu trữ dữ liệu (máy chủ tại Singapore).",
+    "google": "Google — đăng nhập Google, bản đồ và dịch vụ định vị.",
+    "semaphore": "Semaphore — mã xác minh qua SMS tại Philippines.",
+    "push": "Google Firebase Cloud Messaging và Apple Push Notification service — thông báo của ứng dụng.",
+    "analytics": "Google Analytics for Firebase — thống kê sử dụng ứng dụng.",
+    "crashlytics": "Firebase Crashlytics — báo cáo sự cố ứng dụng (kiểu máy, phiên bản ứng dụng, chi tiết lỗi) để chúng tôi khắc phục sự cố.",
+    "appsflyer": "AppsFlyer — đo lường quảng cáo và liên kết nào mang lại lượt cài đặt ứng dụng và đơn đặt lịch.",
+    "meta": "Meta (Meta Pixel trên trang web của chúng tôi) — đo lường quảng cáo nào mang lại đơn đặt lịch trên trang web.",
+    "xendit": "Xendit — xử lý việc kỹ thuật viên thanh toán phí nền tảng qua QR Ph."
+  },
+  "storage": {
+    "title": "5. Lưu trữ ngoài Philippines",
+    "body": "Dữ liệu của chúng tôi được lưu trên máy chủ tại Singapore. Chúng tôi sử dụng các nhà cung cấp bảo vệ dữ liệu bằng mã hóa và kiểm soát truy cập, theo yêu cầu của pháp luật Philippines."
+  },
+  "retention": {
+    "title": "6. Chúng tôi lưu giữ thông tin trong bao lâu",
+    "account": "Chúng tôi lưu giữ thông tin của bạn trong thời gian tài khoản của bạn còn hoạt động hoặc khi chúng tôi cần thông tin đó cho các đơn đặt lịch của bạn. Sau khi bạn xóa tài khoản, chúng tôi sẽ xóa hoặc ẩn danh hóa thông tin cá nhân của bạn, trừ những hồ sơ chúng tôi phải lưu giữ theo quy định pháp luật, vì mục đích thuế hoặc để giải quyết tranh chấp.",
+    "chats": "Tin nhắn trong ứng dụng về một đơn được lưu giữ trong 1 năm và ảnh gửi trong tin nhắn được lưu giữ trong 180 ngày; sau thời hạn này, chúng sẽ tự động bị xóa.",
+    "fingerprint": "Để ngăn một người đăng ký lặp đi lặp lại nhằm nhận thưởng giới thiệu, chúng tôi lưu giữ một mã băm một chiều của số điện thoại và email (không thể khôi phục lại thành số điện thoại) cho đến khi mã này không xuất hiện trong 1 năm, hoặc cho đến khi dữ liệu tài khoản của bạn bị xóa sau khi bạn xóa tài khoản, tùy điều kiện nào đến trước."
+  },
+  "protect": {
+    "title": "7. Cách chúng tôi bảo vệ thông tin",
+    "encrypted": "Dữ liệu được mã hóa khi truyền tải.",
+    "limited": "Quyền truy cập chỉ giới hạn cho những nhân viên cần đến thông tin đó trong công việc.",
+    "idPhotos": "Ảnh giấy tờ được lưu trong một không gian riêng tư tách biệt, không thể mở từ Internet.",
+    "outro": "Không có phương thức truyền tải hay lưu trữ nào an toàn tuyệt đối, nhưng chúng tôi luôn nỗ lực bảo vệ dữ liệu của bạn."
+  },
+  "location": {
+    "title": "8. Vị trí",
+    "body": "Chúng tôi chỉ sử dụng vị trí của bạn khi bạn cho phép — để hiển thị kỹ thuật viên ở gần và điền địa chỉ cho bạn. Bạn có thể tắt định vị bất cứ lúc nào trong cài đặt điện thoại hoặc trình duyệt; bạn vẫn có thể đặt lịch bằng cách nhập địa chỉ. Vị trí trực tiếp của kỹ thuật viên chỉ được chia sẻ như mô tả tại mục 1."
+  },
+  "cookies": {
+    "title": "9. Cookie và các công nghệ tương tự",
+    "body": "Trang web của chúng tôi sử dụng cookie cơ bản hoặc bộ nhớ cục bộ để ghi nhớ tùy chọn của bạn và giúp quá trình đặt lịch hoạt động bình thường, cùng Meta Pixel để đo lường hiệu quả quảng cáo. Ứng dụng sử dụng mã nhận dạng thiết bị và mã nhận dạng quảng cáo cho cùng mục đích. Bạn có thể kiểm soát cookie trong cài đặt trình duyệt, và đặt lại hoặc giới hạn mã nhận dạng quảng cáo trong cài đặt điện thoại."
+  },
+  "rights": {
+    "title": "10. Quyền của bạn",
+    "intro": "Theo Đạo luật Quyền riêng tư dữ liệu, bạn có quyền:",
+    "informed": "Được thông báo về cách dữ liệu của bạn được sử dụng;",
+    "access": "Truy cập thông tin cá nhân của bạn;",
+    "correct": "Chỉnh sửa thông tin không chính xác;",
+    "delete": "Yêu cầu chúng tôi xóa hoặc chặn thông tin của bạn;",
+    "object": "Phản đối việc xử lý dữ liệu;",
+    "copy": "Nhận bản sao dữ liệu của bạn;",
+    "complaint": "Khiếu nại lên Ủy ban Quyền riêng tư Quốc gia (National Privacy Commission).",
+    "outro": "Để thực hiện các quyền này, vui lòng liên hệ chúng tôi theo thông tin bên dưới hoặc qua “Trung tâm trợ giúp” trong ứng dụng."
+  },
+  "deletion": {
+    "title": "11. Xóa tài khoản",
+    "body": "Bạn có thể yêu cầu xóa tài khoản {brand} và dữ liệu của tài khoản trong ứng dụng, hoặc trên trang xóa tài khoản của chúng tôi: <link>{url}</link>. Kỹ thuật viên sẽ ngừng nhận việc ngay khi gửi yêu cầu, và có thể liên hệ chúng tôi để rút lại yêu cầu cho đến khi chúng tôi xử lý xong."
+  },
+  "minors": {
+    "title": "12. Người chưa thành niên",
+    "body": "Dịch vụ của chúng tôi chỉ dành cho người từ 18 tuổi trở lên. Chúng tôi không cố ý thu thập thông tin của bất kỳ ai dưới 18 tuổi."
+  },
+  "changes": {
+    "title": "13. Thay đổi chính sách",
+    "body": "Chúng tôi có thể cập nhật chính sách này theo thời gian. Phiên bản mới nhất luôn được đăng trên trang này kèm ngày “Cập nhật lần cuối” mới, và chúng tôi sẽ thông báo cho bạn trong ứng dụng trước khi các thay đổi quan trọng có hiệu lực."
+  },
+  "contact": {
+    "title": "14. Liên hệ chúng tôi",
+    "intro": "Nếu có bất kỳ câu hỏi hoặc yêu cầu nào về quyền riêng tư, vui lòng liên hệ chúng tôi qua:",
+    "email": "Email: <link>{email}</link>",
+    "phone": "Điện thoại / WhatsApp: {phone}"
+  },
+  "finalInterpretation": "{company} có quyền giải thích cuối cùng đối với Chính sách này."
+}

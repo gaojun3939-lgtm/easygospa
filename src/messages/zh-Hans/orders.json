@@ -1,0 +1,80 @@
+{
+  "title": {
+    "orders": "我的订单",
+    "orderStatus": "订单状态",
+    "couponWallet": "我的优惠券"
+  },
+  "backToOrders": "返回订单",
+  "signOut": "退出登录",
+  "close": "关闭",
+  "notConfigured": "订单登录功能正在配置中，请稍后再来查看。",
+  "loading": "加载中……",
+  "retry": "重试",
+  "massage": "按摩",
+  "arriving": "约 {minutes} 分钟后到达",
+  "tabs": {
+    "label": "客户账户",
+    "bookings": "预约",
+    "coupons": "优惠券",
+    "activeCoupon": "有可用优惠券"
+  },
+  "login": {
+    "tagline": "一键查看您的预约",
+    "google": "使用 Google 继续",
+    "orEmail": "或使用邮箱",
+    "sendCode": "发送验证码",
+    "sending": "发送中……",
+    "noPassword": "无需密码 · 任何邮箱均可",
+    "back": "返回",
+    "enterCode": "输入验证码",
+    "codeSent": "验证码已发送至 {email}",
+    "verify": "验证",
+    "verifying": "验证中……",
+    "resendIn": "{seconds} 秒后可重新发送",
+    "resend": "重新发送验证码",
+    "errors": {
+      "google": "无法打开 Google 登录，请重试。",
+      "invalidEmail": "请输入有效的邮箱地址。",
+      "sendFailed": "验证码发送失败，请稍后再试。",
+      "enterCode": "请输入邮件中的验证码。",
+      "wrongCode": "验证码错误或已过期。请重试或重新发送。"
+    }
+  },
+  "coupons": {
+    "loading": "正在加载您的优惠券……",
+    "loadError": "优惠券加载失败。",
+    "errors": {
+      "unavailable": "无法加载您的优惠券",
+      "signIn": "登录后查看您的优惠券"
+    },
+    "emptyTitle": "暂无优惠券",
+    "emptyBody": "评价一笔已完成的预约，即可获得一张 {amount} 优惠券，有效期 {days, plural, other {# 天}}。",
+    "badge": "优惠券",
+    "autoApplied": "下次预约自动使用",
+    "rewardTitle": "{brand} 奖励",
+    "terms": "适用于任意预约 · 每笔预约限用一张",
+    "status": {
+      "active": "可使用",
+      "used": "已使用",
+      "expired": "已过期"
+    },
+    "usedOn": "使用于 {date}",
+    "expiresOn": "{date} 到期",
+    "datePending": "日期待定"
+  },
+  "list": {
+    "loading": "正在加载您的订单……",
+    "loadError": "订单加载失败。",
+    "emptyTitle": "暂无预约",
+    "emptyBody": "预约技师后，您的预约会显示在这里。",
+    "duration": "{minutes} 分钟"
+  },
+  "detail": {
+    "cancelled": "该预约已取消。",
+    "minAway": "约 {minutes} 分钟路程",
+    "cancel": "取消该预约",
+    "needCancel": "需要取消？给我们发消息",
+    "whatsapp": "通过 WhatsApp 联系我们",
+    "report": "反馈问题"
+  }
+}

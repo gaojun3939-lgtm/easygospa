@@ -1,0 +1,29 @@
+{
+  "home": "홈",
+  "services": "서비스",
+  "pricing": "가격",
+  "contact": "문의",
+  "myOrders": "내 예약",
+  "bookNow": "예약하기",
+  "bookAppointment": "예약하기",
+  "homeAria": "EasyGoSpa - 방문 마사지 서비스",
+  "mainAria": "주 메뉴",
+  "mobileAria": "모바일 메뉴",
+  "openMenu": "메뉴 열기",
+  "closeMenu": "메뉴 닫기",
+  "openOrders": "내 예약 열기",
+  "openBooking": "예약 창 열기",
+  "language": "언어",
+  "region": "지역",
+  "philippines": "필리핀",
+  "nowServing": "서비스 중",
+  "comingSoon": "오픈 예정",
+  "regions": {
+    "Philippines": "필리핀",
+    "Taiwan": "대만",
+    "Vietnam": "베트남",
+    "Malaysia": "말레이시아",
+    "Thailand": "태국",
+    "Singapore": "싱가포르"
+  }
+}

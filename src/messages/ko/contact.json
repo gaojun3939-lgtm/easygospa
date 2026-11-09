@@ -1,0 +1,57 @@
+{
+  "eyebrow": "문의하기",
+  "title": "EasyGoSpa 문의 - Metro Manila 전문 방문 마사지",
+  "lead": "호텔, 아파트, 집, 사무실로 숙련된 마사지 테라피스트를 예약하세요. 예약 가능 여부, 서비스 안내, 예약 도움이 필요하시면 메시지를 보내 주세요.",
+  "area": {
+    "title": "서비스 지역",
+    "value": "Metro Manila",
+    "note": "집, 아파트, 호텔, 사무실 방문 마사지 서비스입니다. 예약 시 주소를 입력하면 이용 가능 여부를 확인할 수 있습니다."
+  },
+  "whatsapp": {
+    "title": "예약 및 WhatsApp",
+    "note": "예약이나 테라피스트 예약 가능 여부는 언제든 메시지로 문의해 주세요."
+  },
+  "email": {
+    "title": "이메일 문의",
+    "note": "예약 문의, 서비스 안내, 비즈니스 문의를 받습니다."
+  },
+  "hours": {
+    "title": "운영 시간",
+    "value": "24시간 / 연중무휴",
+    "note": "온라인 예약과 메시지 상담은 24/7 이용할 수 있습니다. 테라피스트 예약 가능 여부는 지역과 시간대에 따라 다를 수 있습니다."
+  },
+  "follow": {
+    "title": "팔로우하기",
+    "instagram": "Instagram에서 팔로우하기",
+    "facebook": "Facebook에서 팔로우하기"
+  },
+  "photoAlt": "EasyGoSpa 유니폼을 입은 테라피스트가 문을 열며 미소 짓는 모습",
+  "sent": {
+    "title": "감사합니다!",
+    "text": "메시지가 전송되었습니다. 2시간 이내에 답변드리겠습니다."
+  },
+  "form": {
+    "title": "메시지 보내기",
+    "firstName": "이름 *",
+    "firstNamePlaceholder": "이름을 입력하세요",
+    "lastName": "성 *",
+    "lastNamePlaceholder": "성을 입력하세요",
+    "email": "이메일 주소 *",
+    "phone": "전화번호 *",
+    "service": "관심 있는 서비스",
+    "selectService": "서비스 선택",
+    "consultation": "상담",
+    "message": "메시지 *",
+    "messagePlaceholder": "원하시는 서비스, 장소, 날짜, 시간을 알려 주세요.",
+    "sending": "전송 중...",
+    "send": "메시지 보내기"
+  },
+  "errors": {
+    "firstName": "이름을 입력해 주세요",
+    "lastName": "성을 입력해 주세요",
+    "email": "이메일을 입력해 주세요",
+    "emailInvalid": "올바른 이메일 주소를 입력해 주세요",
+    "phone": "전화번호를 입력해 주세요",
+    "message": "메시지를 입력해 주세요"
+  }
+}

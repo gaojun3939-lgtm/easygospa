@@ -1,0 +1,29 @@
+{
+  "home": "首页",
+  "services": "服务项目",
+  "pricing": "价格",
+  "contact": "联系我们",
+  "myOrders": "我的订单",
+  "bookNow": "立即预约",
+  "bookAppointment": "预约服务",
+  "homeAria": "EasyGoSpa - 上门按摩服务",
+  "mainAria": "主导航",
+  "mobileAria": "移动端导航菜单",
+  "openMenu": "打开菜单",
+  "closeMenu": "关闭菜单",
+  "openOrders": "打开我的订单",
+  "openBooking": "打开预约窗口",
+  "language": "语言",
+  "region": "地区",
+  "philippines": "菲律宾",
+  "nowServing": "现已开通",
+  "comingSoon": "即将开通",
+  "regions": {
+    "Philippines": "菲律宾",
+    "Taiwan": "台湾",
+    "Vietnam": "越南",
+    "Malaysia": "马来西亚",
+    "Thailand": "泰国",
+    "Singapore": "新加坡"
+  }
+}

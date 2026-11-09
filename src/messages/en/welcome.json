@@ -1,0 +1,19 @@
+{
+  "meta": {
+    "title": "Pick your therapist · {amount} off | {site}",
+    "description": "Choose your therapist, book in 60 seconds. {amount} off your first booking, applied automatically. No deposit, nothing upfront."
+  },
+  "title": "Pick who comes to you",
+  "speed": "As fast as 30 minutes to your door",
+  "points": {
+    "choose": "<b>You choose who comes to your door</b> — real therapists, real photos",
+    "noDeposit": "<b>No deposit, no prepayment</b> — just book, and she's on her way",
+    "professional": "<b>Strictly professional massage</b> — licensed, uniformed, ID-verified therapists"
+  },
+  "new": "NEW",
+  "onShift": "On shift now",
+  "firstBookingOff": "{amount} OFF your first booking",
+  "pickTherapist": "Pick your therapist",
+  "noTips": "No tips. Nothing to pay upfront.",
+  "questions": "Questions first? <messenger>Chat on Messenger</messenger> · <whatsapp>WhatsApp</whatsapp>"
+}

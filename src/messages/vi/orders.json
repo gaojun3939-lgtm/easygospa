@@ -1,0 +1,80 @@
+{
+  "title": {
+    "orders": "Đơn của tôi",
+    "orderStatus": "Trạng thái đơn",
+    "couponWallet": "Ví phiếu giảm giá"
+  },
+  "backToOrders": "Quay lại danh sách đơn",
+  "signOut": "Đăng xuất",
+  "close": "Đóng",
+  "notConfigured": "Tính năng đăng nhập xem đơn đang được thiết lập. Vui lòng quay lại sau.",
+  "loading": "Đang tải…",
+  "retry": "Thử lại",
+  "massage": "Massage",
+  "arriving": "Đến sau khoảng {minutes} phút",
+  "tabs": {
+    "label": "Tài khoản khách hàng",
+    "bookings": "Đơn đặt lịch",
+    "coupons": "Phiếu giảm giá",
+    "activeCoupon": "Có phiếu giảm giá dùng được"
+  },
+  "login": {
+    "tagline": "Đơn của bạn, chỉ một chạm",
+    "google": "Tiếp tục với Google",
+    "orEmail": "hoặc dùng email",
+    "sendCode": "Gửi mã",
+    "sending": "Đang gửi…",
+    "noPassword": "Không cần mật khẩu · email nào cũng được",
+    "back": "Quay lại",
+    "enterCode": "Nhập mã",
+    "codeSent": "Chúng tôi đã gửi mã đến {email}",
+    "verify": "Xác minh",
+    "verifying": "Đang xác minh…",
+    "resendIn": "Gửi lại mã sau {seconds} giây",
+    "resend": "Gửi lại mã",
+    "errors": {
+      "google": "Không mở được đăng nhập Google. Vui lòng thử lại.",
+      "invalidEmail": "Vui lòng nhập địa chỉ email hợp lệ.",
+      "sendFailed": "Không gửi được mã. Vui lòng thử lại sau giây lát.",
+      "enterCode": "Nhập mã trong email của bạn.",
+      "wrongCode": "Mã không đúng hoặc đã hết hạn. Hãy thử lại hoặc gửi lại mã."
+    }
+  },
+  "coupons": {
+    "loading": "Đang tải ví phiếu giảm giá…",
+    "loadError": "Không tải được phiếu giảm giá của bạn.",
+    "errors": {
+      "unavailable": "Không tải được phiếu giảm giá",
+      "signIn": "Đăng nhập để xem phiếu giảm giá"
+    },
+    "emptyTitle": "Chưa có phiếu giảm giá",
+    "emptyBody": "Đánh giá một đơn đã hoàn tất để nhận phiếu giảm giá {amount}, có hiệu lực trong {days, plural, other {# ngày}}.",
+    "badge": "Phiếu giảm giá",
+    "autoApplied": "Tự động áp dụng cho đơn tiếp theo",
+    "rewardTitle": "Quà tặng từ {brand}",
+    "terms": "Dùng cho mọi đơn · mỗi đơn một phiếu",
+    "status": {
+      "active": "Dùng được",
+      "used": "Đã dùng",
+      "expired": "Hết hạn"
+    },
+    "usedOn": "Đã dùng ngày {date}",
+    "expiresOn": "Hết hạn ngày {date}",
+    "datePending": "chưa có ngày"
+  },
+  "list": {
+    "loading": "Đang tải đơn của bạn…",
+    "loadError": "Không tải được đơn của bạn.",
+    "emptyTitle": "Chưa có đơn nào",
+    "emptyBody": "Đơn của bạn sẽ hiện ở đây sau khi bạn đặt lịch với kỹ thuật viên.",
+    "duration": "{minutes} phút"
+  },
+  "detail": {
+    "cancelled": "Đơn này đã bị hủy.",
+    "minAway": "Còn khoảng {minutes} phút",
+    "cancel": "Hủy đơn này",
+    "needCancel": "Cần hủy? Nhắn tin cho chúng tôi",
+    "whatsapp": "Nhắn tin cho chúng tôi qua WhatsApp",
+    "report": "Báo cáo sự cố"
+  }
+}

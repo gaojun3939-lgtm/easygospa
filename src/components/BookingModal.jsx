@@ -1,7 +1,9 @@
 'use client';
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useLocale, useTranslations } from 'next-intl';
+import { useRouter } from '@/i18n/navigation';
+import { intlLocale, routing } from '@/i18n/routing';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AlertTriangle, ArrowLeft, Calendar, Check, Clock, Mail, MapPin, MessageSquare, Phone, Search, ShieldCheck, Star, User, X } from 'lucide-react';
 import {
@@ -95,10 +97,8 @@ const areaOptions = ['BGC', 'Makati', 'Taguig', 'Pasay', 'Ortigas', 'Metro Manil
 const allServiceAreasValue = 'all_service_areas';
 // 后台广播用的租户频道名(与 ai-office-admin 的 DEFAULT_TENANT_ID 一致);可用环境变量覆盖
 const LIVE_TENANT_ID = process.env.NEXT_PUBLIC_LIVE_TENANT_ID || 'brand-a';
-const catalogUnavailableNotice = 'No specific therapist is available right now.';
-const catalogUnavailableFollowUp = 'Please try again in a few minutes, or message us on WhatsApp to book.';
-const missingProfileIntroduction = 'No profile introduction has been provided yet.';
-const phoneErrorMessage = 'Please enter a valid phone number for the selected country.';
+// 品牌名不进文字文件,用变量塞进去(src/i18n/做法.md)
+const BRAND_NAME = 'EasyGoSpa';
 const bookingInputClass = 'h-12 w-full rounded-2xl border border-gray-300 bg-white px-4 font-medium text-[#171A17] caret-[#171A17] placeholder:text-gray-500 focus:border-[#64734F] focus:outline-none';
 const bookingTextareaClass = `${bookingInputClass} min-h-28 resize-none py-3`;
 const bookingLabelClass = 'mb-2 block text-sm font-semibold text-slate-800';
@@ -137,15 +137,17 @@ function manilaAsapSlot() {
 // half-hours regardless of her shift, which is how customers booked times nobody
 // could work. Every time shown here comes from the backend availability check.
 
-function manilaDayLabel(dateKey = '', dayOffset = 0) {
-  if (dayOffset === 0) return 'Today';
-  if (dayOffset === 1) return 'Tomorrow';
+function manilaDayLabel(dateKey = '', dayOffset = 0, t, locale) {
+  if (dayOffset === 0) return t('time.today');
+  if (dayOffset === 1) return t('time.tomorrow');
   // 老板 2026-07-30 抓的 BUG:原来用 getUTCDay() 算星期,马尼拉+8 被倒推成前一天,
   // 8月1号(周六)显示成 "Fri 01"。星期必须按马尼拉时区取。
   const parsed = new Date(`${dateKey}T12:00:00+08:00`);
   if (!Number.isFinite(parsed.getTime())) return dateKey;
-  const weekday = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Manila', weekday: 'short' }).format(parsed);
-  return `${weekday} ${dateKey.slice(8, 10)}`;
+  const weekday = new Intl.DateTimeFormat(intlLocale(locale), { timeZone: 'Asia/Manila', weekday: 'short' }).format(parsed);
+  // 英文照旧写两位数（Sat 08）；中日韩等写「8日」不补零
+  const day = locale === 'en' ? dateKey.slice(8, 10) : String(Number(dateKey.slice(8, 10)));
+  return t('time.weekdayDay', { weekday, day });
 }
 
 // 技师墙"约稍后"要给客人挑今天/明天/后天——后台档期扫描也只看 3 天。
@@ -158,15 +160,90 @@ function manilaDateKeyWithOffset(offset = 0) {
 // 真正的档期校验在选完技师和服务后(表单的按人时段表 + 后端 verifyScheduledSlot)还会各把一道关。
 const WALL_TIME_MATCH_DURATION_MINUTES = 60;
 
-function formatScheduleLabel(dateKey = '', time = '') {
+function formatScheduleLabel(dateKey = '', time = '', t) {
   if (!dateKey || !time) return '';
   const today = manilaToday();
-  if (dateKey === today) return `Today ${time}`;
+  if (dateKey === today) return t('time.todayAt', { time });
   const parsed = new Date(`${dateKey}T00:00:00+08:00`);
   const tomorrow = new Date(`${today}T00:00:00+08:00`);
   tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
-  if (parsed.toISOString().slice(0, 10) === tomorrow.toISOString().slice(0, 10)) return `Tomorrow ${time}`;
+  if (parsed.toISOString().slice(0, 10) === tomorrow.toISOString().slice(0, 10)) return t('time.tomorrowAt', { time });
   return `${dateKey} ${time}`;
+}
+
+// 技师卡上的「最早可约」是后台给的英文短语:"HH:MM" / "Tomorrow HH:MM" / "Jul 20, 09:00"。
+// 只为显示换成当前语言;英文原样不动(月份缩写交给浏览器可能写成 "Sept",跟后台不一致)。
+const EARLIEST_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+function localizeEarliestAvailable(text = '', t, locale) {
+  const value = String(text || '');
+  const tomorrowMatch = /^Tomorrow (\d{2}:\d{2})$/.exec(value);
+  if (tomorrowMatch) return t('time.tomorrowAt', { time: tomorrowMatch[1] });
+  const dateMatch = /^([A-Z][a-z]{2}) (\d{1,2}), (\d{2}:\d{2})$/.exec(value);
+  if (!dateMatch || locale === routing.defaultLocale) return value;
+  const monthIndex = EARLIEST_MONTHS.indexOf(dateMatch[1]);
+  if (monthIndex < 0) return value;
+  const [yearText, monthText] = manilaToday().split('-');
+  const currentMonthIndex = Number(monthText) - 1;
+  // 12 月看到 "Jan 02" = 明年
+  const year = Number(yearText) + (monthIndex < currentMonthIndex - 6 ? 1 : 0);
+  const parsed = new Date(`${year}-${String(monthIndex + 1).padStart(2, '0')}-${dateMatch[2].padStart(2, '0')}T12:00:00+08:00`);
+  if (!Number.isFinite(parsed.getTime())) return value;
+  const date = new Intl.DateTimeFormat(intlLocale(locale), { timeZone: 'Asia/Manila', month: 'short', day: 'numeric' }).format(parsed);
+  return t('time.dateAt', { date, time: dateMatch[3] });
+}
+
+// 服务名是后台给的英文(也是发给服务器的值,不能改);只在显示时查 serviceNames 换成当前语言,查不到就原样。
+function useServiceLabel() {
+  const tn = useTranslations('serviceNames');
+  return useCallback(name => (name && tn.has(name) ? tn(name) : name), [tn]);
+}
+
+// 服务半径闸门的三句话在 therapistServiceBookingFlow.mjs 里是英文常量(别的检查脚本也认它们),
+// 显示时按常量对应成当前语言。
+function radiusMessageText(message, t) {
+  if (message === SERVICE_RADIUS_LOCATION_REQUIRED_MESSAGE) return t('wall.card.locationHint');
+  if (message === SERVICE_RADIUS_TOO_FAR_MESSAGE) return t('wall.card.tooFarHint', { km: MAX_SERVICE_DISTANCE_KM });
+  if (message === THERAPIST_TEMPORARILY_UNAVAILABLE_MESSAGE) return t('wall.card.unavailableHint');
+  return message;
+}
+
+// 下单接口(/api/booking-request)回来的报错:代码固定、英文固定的那些按代码翻;
+// 其余(没有代码或代码对应多种英文)原样显示服务器那句英文。
+function serverErrorText(payload, fallback, t) {
+  if (!payload?.error) return fallback;
+  switch (payload.code) {
+    case 'OUTSIDE_SERVICE_AREA': return t('server.outsideServiceArea');
+    case 'PREFERRED_TIME_REQUIRED': return t('server.preferredTimeRequired');
+    case 'CUSTOMER_NAME_REQUIRED': return t('server.customerNameRequired');
+    case 'PEOPLE_COUNT_INVALID': return t('server.peopleCountInvalid');
+    case 'THERAPIST_PREFERENCE_INVALID': return t('server.therapistPreferenceInvalid');
+    case 'PUBLIC_BOOKING_CURRENCY_CONFLICT': return t('server.currencyConflict');
+    case 'PUBLIC_BOOKING_OPTION_NOT_AVAILABLE': return t('server.optionNotAvailable');
+    case 'PUBLIC_BOOKING_PRICE_INVALID': return t('server.priceInvalid');
+    case 'PUBLIC_BOOKING_SERVICE_NOT_AVAILABLE': return t('server.serviceNotAvailable');
+    case 'RATE_LIMITED': return t('errors.rateLimited');
+    case 'RATE_LIMITER_UNAVAILABLE': return t('server.rateLimiterUnavailable');
+    case 'AIOFFICE_BOOKING_REQUEST_FAILED': return t('errors.submitFailed');
+    case 'INVALID_BOOKING_REQUEST': return t('server.invalidRequest');
+    case 'AIOFFICE_BOOKING_RECOVERY_CREDENTIAL_MISSING':
+    case 'AIOFFICE_BOOKING_CANCEL_TOKEN_MISSING': return t('server.credentialMissing');
+    case 'AIOFFICE_BOOKING_REFERENCE_MISSING': return t('errors.notConfirmed');
+    case 'AIOFFICE_BOOKING_API_UNAVAILABLE': return t('server.apiUnavailable');
+    default: return payload.error;
+  }
+}
+
+// 取消接口的报错在 publicBookingCancel.mjs 里按 code 固定,这里按 code 翻(那个文件别人也在用,英文不动)。
+function cancelErrorText(result, t) {
+  switch (result?.code) {
+    case 'INVALID_CANCELLATION': return t('active.errors.contactRequired');
+    case 'CANCEL_AUTH_REQUIRED': return t('active.errors.authRequired');
+    case 'CANCEL_NOT_ALLOWED': return t('active.errors.notAllowed');
+    case 'RATE_LIMITED': return t('errors.rateLimited');
+    case 'BOOKING_CANCEL_FAILED': return t('active.errors.failed');
+    case 'BOOKING_CANCEL_UNAVAILABLE': return t('active.errors.unreachable');
+    default: return result?.error || t('active.errors.unavailable');
+  }
 }
 
 // Area is inferred from the typed address / map pin instead of a manual dropdown.
@@ -243,6 +320,7 @@ export function PriceWithDiscount({ amount = 0, discount = 0, mainClassName = ''
 }
 
 export function BookingCouponAmounts({ couponPreview, selectedTotalAmount, promoDiscount = 0 }) {
+  const t = useTranslations('booking');
   // ⚠ 2026-07-29 这里炸过一次,整站白屏:
   // 我加了"服务器预览还没回来时先用技师墙的折扣顶着",于是 discount 可能 > 0
   // 而 couponPreview 还是 null —— 下面直接读 couponPreview.cashToCollect 就抛
@@ -256,15 +334,15 @@ export function BookingCouponAmounts({ couponPreview, selectedTotalAmount, promo
   return (
     <>
       <div className="flex justify-between gap-4">
-        <strong className={summaryLabelClass}>Total</strong>
+        <strong className={summaryLabelClass}>{t('common.total')}</strong>
         <span className={discount > 0 ? 'text-base font-semibold text-gray-400 line-through' : summaryMoneyClass}>
           {peso(gross)}
         </span>
       </div>
       {discount > 0 ? (
         <>
-          <div className="flex justify-between gap-4 text-[#55633F]" data-testid="booking-coupon-discount"><strong>Discount</strong><span className="font-bold">− {peso(discount)} (Automatically applied)</span></div>
-          <div className="flex items-baseline justify-between gap-4 border-t border-[#64734F]/20 pt-3" data-testid="booking-cash-to-collect"><strong className="text-base text-[#171A17]">Cash payment</strong><span className="text-2xl font-extrabold text-[#171A17]">{peso(cashToCollect)}</span></div>
+          <div className="flex justify-between gap-4 text-[#55633F]" data-testid="booking-coupon-discount"><strong>{t('confirm.discount')}</strong><span className="font-bold">{t('confirm.discountAuto', { amount: peso(discount) })}</span></div>
+          <div className="flex items-baseline justify-between gap-4 border-t border-[#64734F]/20 pt-3" data-testid="booking-cash-to-collect"><strong className="text-base text-[#171A17]">{t('confirm.cashPayment')}</strong><span className="text-2xl font-extrabold text-[#171A17]">{peso(cashToCollect)}</span></div>
         </>
       ) : null}
     </>
@@ -279,16 +357,17 @@ export function BookingCouponSelector({
   onOptOut,
   onUseCoupon
 }) {
+  const t = useTranslations('booking');
   return (
     <section className="rounded-[1.5rem] border border-gray-200 bg-white p-5" data-testid="booking-coupon-selector">
-      <h4 className="font-bold text-[#171A17]">Coupon</h4>
-      <p className="mt-1 text-xs leading-5 text-gray-500">We securely match active coupons from the signed-in account for this booking email.</p>
+      <h4 className="font-bold text-[#171A17]">{t('coupon.title')}</h4>
+      <p className="mt-1 text-xs leading-5 text-gray-500">{t('coupon.intro')}</p>
       <div className="mt-4" aria-live="polite">
-        {couponPreviewState === 'loading' ? <p className="text-sm text-gray-500">Checking for an active coupon…</p> : null}
+        {couponPreviewState === 'loading' ? <p className="text-sm text-gray-500">{t('coupon.checking')}</p> : null}
         {couponPreviewState === 'error' ? (
           <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-            <p className="text-sm text-amber-800">We could not confirm your coupon and cash total.</p>
-            <button type="button" onClick={onRetry} className="mt-2 text-sm font-bold text-[#55633F]">Try again</button>
+            <p className="text-sm text-amber-800">{t('coupon.error')}</p>
+            <button type="button" onClick={onRetry} className="mt-2 text-sm font-bold text-[#55633F]">{t('coupon.retry')}</button>
           </div>
         ) : null}
         {/* ⚠ 2026-07-29:下面几条原来全按 couponApplied 分支,而新客活动券那个标志永远是 false,
@@ -297,23 +376,23 @@ export function BookingCouponSelector({
             「不用券」那个开关只对账号券有意义,活动券不给这个选项(它是广告给的,没人想退掉)。 */}
         {couponPreviewState === 'ready' && couponDiscountAmount(couponPreview) > 0 ? (
           <div className="rounded-2xl bg-[#F2F4EC] p-4">
-            <p className="text-sm font-bold text-[#55633F]">{peso(couponDiscountAmount(couponPreview))} off — automatically applied</p>
-            <p className="mt-1 text-xs leading-5 text-gray-600">Your discount is already in the cash total below. Nothing else to do.</p>
+            <p className="text-sm font-bold text-[#55633F]">{t('coupon.appliedTitle', { amount: peso(couponDiscountAmount(couponPreview)) })}</p>
+            <p className="mt-1 text-xs leading-5 text-gray-600">{t('coupon.appliedBody')}</p>
             {couponPreview?.couponApplied === true ? (
-              <button type="button" onClick={onOptOut} className="mt-3 text-xs font-bold text-gray-500 underline decoration-gray-300 underline-offset-4">Don&apos;t use coupon</button>
+              <button type="button" onClick={onOptOut} className="mt-3 text-xs font-bold text-gray-500 underline decoration-gray-300 underline-offset-4">{t('coupon.optOut')}</button>
             ) : null}
           </div>
         ) : null}
         {couponPreviewState === 'ready' && couponDiscountAmount(couponPreview) === 0 && couponOptOut ? (
           <div className="rounded-2xl bg-gray-50 p-4">
-            <p className="text-sm font-semibold text-gray-600">Coupon not applied. You will pay the full amount.</p>
-            <button type="button" onClick={onUseCoupon} className="mt-3 text-xs font-bold text-[#55633F] underline decoration-[#64734F]/40 underline-offset-4">Use coupon automatically</button>
+            <p className="text-sm font-semibold text-gray-600">{t('coupon.notApplied')}</p>
+            <button type="button" onClick={onUseCoupon} className="mt-3 text-xs font-bold text-[#55633F] underline decoration-[#64734F]/40 underline-offset-4">{t('coupon.useAuto')}</button>
           </div>
         ) : null}
         {couponPreviewState === 'ready' && couponDiscountAmount(couponPreview) === 0 && !couponOptOut ? (
           couponPreview?.customerIdentityVerified === true
-            ? <p className="text-sm text-gray-500">No active coupon was found. This booking stays at the full amount.</p>
-            : <p className="text-sm text-gray-500">No discount on this booking. If you claimed a welcome gift, use the same mobile number below.</p>
+            ? <p className="text-sm text-gray-500">{t('coupon.noneVerified')}</p>
+            : <p className="text-sm text-gray-500">{t('coupon.noneGuest')}</p>
         ) : null}
       </div>
     </section>
@@ -324,37 +403,42 @@ export function BookingCouponSelector({
 // 这里只做两件事:①把墙上选好的时间念回来给客人确认 ②万一这位技师接不了那个点
 // (墙上按 60 分钟估的,她的真档期在这里才知道),就地给她的真实空档重选,不用回墙。
 function ScheduleChooser({ mode, slot, onSlotChange, days, loading, loadFailed, earliestLabel, therapistName, onChangeOnWall }) {
+  const t = useTranslations('booking');
+  const locale = useLocale();
+  const strong = chunks => <strong>{chunks}</strong>;
   const activeDate = slot?.date || days[0]?.date || '';
   const activeDay = days.find(day => day.date === activeDate) || days[0] || null;
   const slotConfirmed = Boolean(slot?.time) && days.some(day => day.date === slot.date && day.times.includes(slot.time));
 
   return (
     <div className="space-y-3" data-testid="schedule-chooser">
-      <label className={bookingLabelClass}><Clock className="mr-2 inline h-4 w-4" />When would you like your massage?</label>
+      <label className={bookingLabelClass}><Clock className="mr-2 inline h-4 w-4" />{t('schedule.question')}</label>
 
       {mode === 'asap' ? (
         <div className="flex items-center justify-between gap-3 rounded-2xl bg-[#E9ECE1] px-4 py-3 text-sm font-medium text-[#55633F]">
-          <span><Clock className="mr-2 inline h-4 w-4" />⚡ As soon as possible — your therapist departs right after accepting.</span>
-          <button type="button" onClick={onChangeOnWall} data-testid="schedule-change-on-wall" className="shrink-0 text-sm font-bold underline underline-offset-2">Change</button>
+          <span><Clock className="mr-2 inline h-4 w-4" />{t('schedule.asap')}</span>
+          <button type="button" onClick={onChangeOnWall} data-testid="schedule-change-on-wall" className="shrink-0 text-sm font-bold underline underline-offset-2">{t('schedule.change')}</button>
         </div>
       ) : slotConfirmed ? (
         <div className="flex items-center justify-between gap-3 rounded-2xl bg-[#E9ECE1] px-4 py-3 text-sm font-medium text-[#55633F]" data-testid="schedule-summary">
-          <span><Clock className="mr-2 inline h-4 w-4" />🕘 Your appointment: <strong>{formatScheduleLabel(slot.date, slot.time)}</strong>{therapistName ? ` with ${therapistName}` : ''}</span>
-          <button type="button" onClick={onChangeOnWall} data-testid="schedule-change-on-wall" className="shrink-0 text-sm font-bold underline underline-offset-2">Change</button>
+          <span><Clock className="mr-2 inline h-4 w-4" />{therapistName
+            ? t.rich('schedule.appointmentWith', { b: strong, when: formatScheduleLabel(slot.date, slot.time, t), name: therapistName })
+            : t.rich('schedule.appointment', { b: strong, when: formatScheduleLabel(slot.date, slot.time, t) })}</span>
+          <button type="button" onClick={onChangeOnWall} data-testid="schedule-change-on-wall" className="shrink-0 text-sm font-bold underline underline-offset-2">{t('schedule.change')}</button>
         </div>
       ) : loading ? (
-        <div className="rounded-2xl border border-gray-200 px-4 py-3 text-sm font-medium text-gray-600">Checking {therapistName || 'her'} schedule…</div>
+        <div className="rounded-2xl border border-gray-200 px-4 py-3 text-sm font-medium text-gray-600">{therapistName ? t('schedule.checkingNamed', { name: therapistName }) : t('schedule.checkingHer')}</div>
       ) : loadFailed ? (
         <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-900" data-testid="schedule-load-failed">
-          We could not load her free times just now. Choose <strong>As soon as possible</strong>, or message us on WhatsApp and we will book the time you want.
+          {t.rich('schedule.loadFailed', { b: strong })}
         </div>
       ) : !days.length ? (
         // Fail loudly rather than showing an empty list — an empty picker is exactly
         // what sent the 2026-07-29 guest to WhatsApp asking "is there any time?".
         <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-900" data-testid="schedule-no-slots">
-          {therapistName || 'This therapist'} has no open times in the next three days
-          {earliestLabel ? <> — her next opening is <strong>{earliestLabel}</strong></> : null}.
-          Pick <strong>As soon as possible</strong>, choose another therapist, or message us on WhatsApp and we will arrange it.
+          {earliestLabel
+            ? t.rich('schedule.noSlotsEarliest', { b: strong, name: therapistName || t('common.thisTherapist'), earliest: earliestLabel })
+            : t.rich('schedule.noSlots', { b: strong, name: therapistName || t('common.thisTherapist') })}
         </div>
       ) : (
         <div className="space-y-3">
@@ -362,7 +446,7 @@ function ScheduleChooser({ mode, slot, onSlotChange, days, loading, loadFailed, 
               这位技师这个时长接不了(墙按60分钟估,她的真档期这里才知道)。
               就地用她的真实空档选,不逼客人回墙从头来。 */}
           <p className="text-sm font-medium text-gray-600" data-testid="schedule-repick-note">
-            Pick one of {therapistName || 'her'}&rsquo;s open times:
+            {therapistName ? t('schedule.repickNamed', { name: therapistName }) : t('schedule.repickHer')}
           </p>
           <div className="flex flex-wrap gap-2">
             {days.map(day => (
@@ -374,7 +458,7 @@ function ScheduleChooser({ mode, slot, onSlotChange, days, loading, loadFailed, 
                   ? 'border-[#64734F] bg-[#64734F] text-white'
                   : 'border-gray-300 bg-white text-gray-700 hover:border-[#64734F]'}`}
               >
-                {manilaDayLabel(day.date, day.dayOffset)}
+                {manilaDayLabel(day.date, day.dayOffset, t, locale)}
               </button>
             ))}
           </div>
@@ -393,19 +477,19 @@ function ScheduleChooser({ mode, slot, onSlotChange, days, loading, loadFailed, 
               </button>
             ))}
           </div>
-          <p className="text-xs text-gray-500">Only times {therapistName || 'she'} can actually take are shown.</p>
+          <p className="text-xs text-gray-500">{therapistName ? t('schedule.onlyTimesNamed', { name: therapistName }) : t('schedule.onlyTimesShe')}</p>
         </div>
       )}
     </div>
   );
 }
 
-function formatReviewDate(value) {
-  if (!value) return 'Recently';
+function formatReviewDate(value, t, locale) {
+  if (!value) return t('time.recently');
   try {
-    return new Intl.DateTimeFormat('en-PH', { timeZone: 'Asia/Manila', month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(value));
+    return new Intl.DateTimeFormat(intlLocale(locale), { timeZone: 'Asia/Manila', month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(value));
   } catch {
-    return 'Recently';
+    return t('time.recently');
   }
 }
 
@@ -414,6 +498,7 @@ function formatReviewDate(value) {
 // 不再显示 "(0 reviews)":裸 5.0 配零条数,在精明客人眼里反而像假的。
 // 攒够真评价后 rating/reviewCount 有值,自动切成真实平均分。
 function TherapistRating({ therapist = {} }) {
+  const t = useTranslations('booking');
   const ratingRaw = Number(therapist.rating);
   const countRaw = Number(therapist.reviewCount);
   const hasReviews = Number.isFinite(ratingRaw) && ratingRaw > 0 && Number.isFinite(countRaw) && countRaw > 0;
@@ -424,13 +509,13 @@ function TherapistRating({ therapist = {} }) {
     <span
       className="inline-flex items-center gap-1"
       role="img"
-      aria-label={hasReviews ? `${rating.toFixed(1)} out of 5 stars from ${reviewCount} verified reviews` : 'New therapist, 5.0 starting rating'}
+      aria-label={hasReviews ? t('therapist.ratingAria', { rating: rating.toFixed(1), count: reviewCount }) : t('therapist.ratingAriaNew')}
     >
       <Star className="h-4 w-4 shrink-0 fill-[#f0a41c] text-[#f0a41c]" aria-hidden="true" />
       <span className="font-bold text-[#e08700]">{rating.toFixed(1)}</span>
       {hasReviews
-        ? <span className="font-medium text-gray-500">({reviewCount} {reviewCount === 1 ? 'review' : 'reviews'})</span>
-        : <span className="rounded-full bg-sky-50 px-1.5 py-0.5 text-[10px] font-extrabold tracking-wider text-sky-700">NEW</span>}
+        ? <span className="font-medium text-gray-500">{t('therapist.reviewCount', { count: reviewCount })}</span>
+        : <span className="rounded-full bg-sky-50 px-1.5 py-0.5 text-[10px] font-extrabold tracking-wider text-sky-700">{t('therapist.newBadge')}</span>}
     </span>
   );
 }
@@ -525,6 +610,7 @@ function resolveTherapistImageUrl(therapist = {}, mode = 'wall') {
 }
 
 function TherapistAvatar({ therapist, mode = 'wall' }) {
+  const t = useTranslations('booking');
   const imageUrl = resolveTherapistImageUrl(therapist, mode);
   const isFallback = imageUrl === DEFAULT_THERAPIST_IMAGE_URL;
   // 老板 2026-07-24:88px 小方块把竖构图人像裁得看不全、挤。改大的竖版(4:5),
@@ -542,7 +628,7 @@ function TherapistAvatar({ therapist, mode = 'wall' }) {
   return (
     <img
       src={imageUrl}
-      alt={`${therapist.name} therapist`}
+      alt={t('therapist.avatarAlt', { name: therapist.name })}
       loading="lazy"
       decoding="async"
       data-testid={mode === 'detail' ? 'therapist-detail-image' : 'therapist-list-image'}
@@ -552,6 +638,8 @@ function TherapistAvatar({ therapist, mode = 'wall' }) {
 }
 
 function TherapistWallCard({ therapist, selected, onSelect, onRequireLocation, customerLocated = false }) {
+  const t = useTranslations('booking');
+  const locale = useLocale();
   // 超出 10km 或距离未知:卡片照常显示(墙不能空),但点不动。
   const distanceKm = therapistDistanceKm(therapist);
   const rangeBlockMessage = getTherapistServiceRadiusBlockMessage(therapist);
@@ -594,14 +682,14 @@ function TherapistWallCard({ therapist, selected, onSelect, onRequireLocation, c
       data-testid={`therapist-card-${therapist.id}`}
       className={`relative w-full cursor-pointer overflow-hidden rounded-[1.5rem] border bg-white p-3 text-left shadow-sm transition-all ${selected ? 'border-[#64734F] shadow-md' : 'border-gray-100 hover:border-[#64734F]/60 hover:shadow-md'}`}
     >
-      {therapist.isNew === true ? <span className="pointer-events-none absolute left-3 top-3 z-10 rounded-md bg-sky-600 px-2 py-1 text-[10px] font-extrabold leading-none tracking-[0.12em] text-white shadow-sm" data-testid="therapist-new-badge">NEW</span> : null}
+      {therapist.isNew === true ? <span className="pointer-events-none absolute left-3 top-3 z-10 rounded-md bg-sky-600 px-2 py-1 text-[10px] font-extrabold leading-none tracking-[0.12em] text-white shadow-sm" data-testid="therapist-new-badge">{t('therapist.newBadge')}</span> : null}
       {showRangeHint ? (
         <span
           role="status"
           data-testid={`therapist-card-out-of-range-hint-${therapist.id}`}
           className="pointer-events-none absolute left-1/2 top-1/2 z-20 w-[86%] -translate-x-1/2 -translate-y-1/2 rounded-xl bg-black/85 px-4 py-3 text-center text-sm font-semibold leading-5 text-white shadow-lg"
         >
-          {distanceKm !== null ? SERVICE_RADIUS_TOO_FAR_MESSAGE : customerLocated ? THERAPIST_TEMPORARILY_UNAVAILABLE_MESSAGE : SERVICE_RADIUS_LOCATION_REQUIRED_MESSAGE}
+          {radiusMessageText(distanceKm !== null ? SERVICE_RADIUS_TOO_FAR_MESSAGE : customerLocated ? THERAPIST_TEMPORARILY_UNAVAILABLE_MESSAGE : SERVICE_RADIUS_LOCATION_REQUIRED_MESSAGE, t)}
         </span>
       ) : null}
       <div className="flex min-h-[152px] gap-4">
@@ -613,7 +701,7 @@ function TherapistWallCard({ therapist, selected, onSelect, onRequireLocation, c
                 the backend now sends cross-day values like "Tomorrow 09:00". */}
             {therapist.earliestAvailable ? (
               <span className="flex shrink-0 items-center gap-1 text-xs font-semibold leading-5 text-[#55633F]" data-testid="therapist-earliest-availability">
-                <Clock className="h-3.5 w-3.5 shrink-0" />Earliest {therapist.earliestAvailable}
+                <Clock className="h-3.5 w-3.5 shrink-0" />{t('wall.card.earliest', { time: localizeEarliestAvailable(therapist.earliestAvailable, t, locale) })}
               </span>
             ) : null}
             {selected ? <Check className="h-4 w-4 shrink-0 text-[#64734F]" /> : null}
@@ -625,12 +713,12 @@ function TherapistWallCard({ therapist, selected, onSelect, onRequireLocation, c
             <p className={`mt-2 flex items-center gap-1 text-xs font-semibold ${outOfRange ? 'text-gray-400' : 'text-[#55633F]'}`} data-testid="therapist-distance">
               <MapPin className="h-3.5 w-3.5 shrink-0" />
               {distanceKm < 10 ? distanceKm.toFixed(1) : Math.round(distanceKm)} km
-              {outOfRange ? <span data-testid="therapist-out-of-range-tag"> · Too far</span> : null}
+              {outOfRange ? <span data-testid="therapist-out-of-range-tag"> · {t('wall.card.tooFar')}</span> : null}
             </p>
           ) : null}
           <div className="mt-auto flex min-h-11 items-center justify-end gap-3 pt-2">
             {therapist.isMannequin ? (
-              <span className="ml-auto inline-flex h-11 shrink-0 items-center justify-center rounded-full bg-gray-100 px-4 text-sm font-bold text-gray-500" data-testid={`therapist-card-resting-${therapist.id}`}>Resting</span>
+              <span className="ml-auto inline-flex h-11 shrink-0 items-center justify-center rounded-full bg-gray-100 px-4 text-sm font-bold text-gray-500" data-testid={`therapist-card-resting-${therapist.id}`}>{t('wall.card.resting')}</span>
             ) : (
             <button
               type="button"
@@ -642,7 +730,7 @@ function TherapistWallCard({ therapist, selected, onSelect, onRequireLocation, c
               aria-disabled={rangeBlocked || undefined}
               className={`ml-auto inline-flex h-11 min-w-20 shrink-0 items-center justify-center rounded-full px-4 text-sm font-bold transition ${rangeBlocked ? 'cursor-not-allowed bg-gray-200 text-gray-500' : 'bg-[#64734F] text-white hover:bg-[#55633F]'}`}
             >
-              Book
+              {t('common.book')}
             </button>
             )}
           </div>
@@ -661,6 +749,8 @@ function defaultDurationOption(service) {
 }
 
 function ServiceCard({ service, selected, selectedDuration, onSelectService, onSelectDuration, onBook, promoDiscount = 0 }) {
+  const t = useTranslations('booking');
+  const serviceLabel = useServiceLabel();
   // 档位药丸常驻卡面(老板 2026-07-21 参考打车式竞品):没选中的卡也能看到
   // 60/90/120 全档,点任意档 = 同时选中该服务和该档;价格大字实时跟着档位走。
   const selectedOption = selected
@@ -676,13 +766,13 @@ function ServiceCard({ service, selected, selectedDuration, onSelectService, onS
     >
       <div className="p-4">
         <div className="flex items-start justify-between gap-3">
-          <span className="block min-w-0 flex-1 text-lg font-bold text-[#171A17]">{service.name}</span>
+          <span className="block min-w-0 flex-1 text-lg font-bold text-[#171A17]">{serviceLabel(service.name)}</span>
           <button
             type="button"
             onClick={event => { event.stopPropagation(); onSelectService(service); }}
             data-testid={`service-select-${service.id}`}
             aria-pressed={selected}
-            aria-label={`Select ${service.name}`}
+            aria-label={t('therapist.selectService', { service: serviceLabel(service.name) })}
             className={`mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border transition ${selected ? 'border-[#64734F] bg-[#64734F] text-white' : 'border-gray-300 bg-white text-transparent'}`}
           >
             <Check className="h-4 w-4" />
@@ -701,7 +791,7 @@ function ServiceCard({ service, selected, selectedDuration, onSelectService, onS
                 aria-pressed={durationSelected}
                 className={`inline-flex h-10 items-center gap-1.5 rounded-full border px-4 text-sm font-bold transition-all ${durationSelected ? 'border-[#64734F] bg-[#E9ECE1] text-[#55633F]' : 'border-gray-200 bg-white text-gray-700 hover:border-[#64734F]/60'}`}
               >
-                {option.durationMinutes} mins
+                {t('common.mins', { minutes: option.durationMinutes })}
                 {durationSelected ? <Check className="h-4 w-4" /> : null}
               </button>
             );
@@ -714,7 +804,7 @@ function ServiceCard({ service, selected, selectedDuration, onSelectService, onS
                 这一刻就看见自己省了多少,不能等到最后一步才揭晓。 */}
             <div className="flex items-baseline gap-1.5" data-testid={`service-price-${service.id}`}>
               <PriceWithDiscount amount={priceOption.price} discount={promoDiscount} mainClassName="text-2xl font-extrabold text-[#171A17]" />
-              <span className="text-xs font-semibold text-gray-500">/ {priceOption.durationMinutes} mins</span>
+              <span className="text-xs font-semibold text-gray-500">/ {t('common.mins', { minutes: priceOption.durationMinutes })}</span>
             </div>
             {/* Book 长在选中的卡片里(老板 2026-07-21:底部长条挡视野,不要了)。 */}
             {selected && selectedOption ? (
@@ -724,7 +814,7 @@ function ServiceCard({ service, selected, selectedDuration, onSelectService, onS
                 data-testid="detail-book"
                 className="inline-flex h-11 min-w-24 shrink-0 items-center justify-center rounded-full bg-[#64734F] px-6 font-bold text-white transition hover:bg-[#55633F]"
               >
-                Book
+                {t('common.book')}
               </button>
             ) : null}
           </div>
@@ -735,10 +825,12 @@ function ServiceCard({ service, selected, selectedDuration, onSelectService, onS
 }
 
 function TherapistDetail({ therapist, availableServices, selectedServiceName, selectedDuration, totalAmount, onSelectService, onSelectDuration, onBack, onBook, promoDiscount = 0 }) {
+  const t = useTranslations('booking');
+  const locale = useLocale();
   const [showFullAbout, setShowFullAbout] = useState(false);
   const [showAllReviews, setShowAllReviews] = useState(false);
   const [lightboxUrl, setLightboxUrl] = useState('');
-  const aboutText = String(therapist.profileIntroduction || '').trim() || missingProfileIntroduction;
+  const aboutText = String(therapist.profileIntroduction || '').trim() || t('therapist.noIntro');
   const shouldClampAbout = aboutText.length > 170;
   const detailImageUrl = resolveTherapistImageUrl(therapist, 'detail');
   const usesFallbackImage = detailImageUrl === DEFAULT_THERAPIST_IMAGE_URL;
@@ -780,22 +872,22 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
               <div ref={heroScrollRef} onScroll={onHeroScroll} className="flex h-full w-full snap-x snap-mandatory overflow-x-auto scroll-smooth" data-testid="therapist-hero-carousel" style={{ scrollbarWidth: 'none' }}>
                 {heroPhotos.map((url, index) => (
                   <button key={url} type="button" onClick={() => setLightboxUrl(url)} className="flex h-full w-full shrink-0 snap-center items-center justify-center">
-                    <img src={url} alt={`${therapist.name} photo ${index + 1}`} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" className="h-full w-full object-cover object-top" />
+                    <img src={url} alt={t('therapist.photoAlt', { name: therapist.name, number: index + 1 })} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" className="h-full w-full object-cover object-top" />
                   </button>
                 ))}
               </div>
-              {photoIndex > 0 ? <button type="button" onClick={() => goToPhoto(photoIndex - 1)} aria-label="Previous photo" data-testid="hero-prev" className="absolute left-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-gray-700 shadow"><ArrowLeft className="h-5 w-5" /></button> : null}
-              {photoIndex < heroPhotos.length - 1 ? <button type="button" onClick={() => goToPhoto(photoIndex + 1)} aria-label="Next photo" data-testid="hero-next" className="absolute right-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-gray-700 shadow"><ArrowLeft className="h-5 w-5 rotate-180" /></button> : null}
+              {photoIndex > 0 ? <button type="button" onClick={() => goToPhoto(photoIndex - 1)} aria-label={t('therapist.prevPhoto')} data-testid="hero-prev" className="absolute left-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-gray-700 shadow"><ArrowLeft className="h-5 w-5" /></button> : null}
+              {photoIndex < heroPhotos.length - 1 ? <button type="button" onClick={() => goToPhoto(photoIndex + 1)} aria-label={t('therapist.nextPhoto')} data-testid="hero-next" className="absolute right-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-gray-700 shadow"><ArrowLeft className="h-5 w-5 rotate-180" /></button> : null}
               <span className="pointer-events-none absolute bottom-3 right-3 rounded-full bg-black/55 px-2.5 py-1 text-xs font-bold text-white" data-testid="therapist-hero-counter">{photoIndex + 1}/{heroPhotos.length}</span>
               <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
-                {heroPhotos.map((url, index) => <button key={url} type="button" aria-label={`Go to photo ${index + 1}`} onClick={() => goToPhoto(index)} className={`h-1.5 rounded-full transition-all ${index === photoIndex ? 'w-4 bg-white' : 'w-1.5 bg-white/60'}`} />)}
+                {heroPhotos.map((url, index) => <button key={url} type="button" aria-label={t('therapist.goToPhoto', { number: index + 1 })} onClick={() => goToPhoto(index)} className={`h-1.5 rounded-full transition-all ${index === photoIndex ? 'w-4 bg-white' : 'w-1.5 bg-white/60'}`} />)}
               </div>
             </>
           ) : (
             <TherapistAvatar therapist={therapist} mode="detail" />
           )}
-          <button type="button" onClick={onBack} className="absolute left-3 top-3 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-gray-700 shadow-sm" aria-label="Back to therapist list"><ArrowLeft className="h-5 w-5" /></button>
-          {usesFallbackImage && heroPhotos.length === 0 ? <span className="absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-[#55633F]">EasyGoSpa therapist profile</span> : null}
+          <button type="button" onClick={onBack} className="absolute left-3 top-3 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-gray-700 shadow-sm" aria-label={t('therapist.backToList')}><ArrowLeft className="h-5 w-5" /></button>
+          {usesFallbackImage && heroPhotos.length === 0 ? <span className="absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-[#55633F]">{t('therapist.profileBadge', { brand: BRAND_NAME })}</span> : null}
         </div>
         <div className="p-5">
           <h3 className="text-3xl font-bold tracking-normal text-[#171A17]">{therapist.name}</h3>
@@ -828,11 +920,11 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
           <div className="mt-4 flex items-center gap-4 rounded-2xl border border-[#64734F]/35 bg-[#F7FCF8] px-4 py-3" data-testid="therapist-care">
             <span className="flex flex-col items-center gap-1 text-[#55633F]">
               <ShieldCheck className="h-7 w-7" />
-              <span className="text-[11px] font-bold leading-none">EasyGoSpa Care</span>
+              <span className="text-[11px] font-bold leading-none">{t('therapist.care', { brand: BRAND_NAME })}</span>
             </span>
             <span className="grid gap-1.5 text-sm text-gray-800">
-              <span className="inline-flex items-center gap-2"><Check className="h-4 w-4 shrink-0 text-[#55633F]" />No tip</span>
-              <span className="inline-flex items-center gap-2"><Check className="h-4 w-4 shrink-0 text-[#55633F]" />No sensitive information required</span>
+              <span className="inline-flex items-center gap-2"><Check className="h-4 w-4 shrink-0 text-[#55633F]" />{t('therapist.noTip')}</span>
+              <span className="inline-flex items-center gap-2"><Check className="h-4 w-4 shrink-0 text-[#55633F]" />{t('therapist.noSensitiveInfo')}</span>
             </span>
           </div>
         </div>
@@ -840,22 +932,22 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
       {/* 老板 2026-07-19:原单独的"Photos"块已合进顶部相册,这里不再重复展示。 */}
       {lightboxUrl ? (
         <div className="fixed inset-0 z-[70] grid place-items-center bg-black/85 p-4" role="dialog" aria-modal="true" onClick={() => setLightboxUrl('')}>
-          <button type="button" aria-label="Close" onClick={() => setLightboxUrl('')} className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white"><X className="h-5 w-5" /></button>
-          <img src={lightboxUrl} alt={`${therapist.name} photo`} className="max-h-[85vh] max-w-full rounded-2xl object-contain" onClick={event => event.stopPropagation()} />
+          <button type="button" aria-label={t('common.close')} onClick={() => setLightboxUrl('')} className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white"><X className="h-5 w-5" /></button>
+          <img src={lightboxUrl} alt={t('therapist.lightboxAlt', { name: therapist.name })} className="max-h-[85vh] max-w-full rounded-2xl object-contain" onClick={event => event.stopPropagation()} />
         </div>
       ) : null}
       <section className="rounded-[1.5rem] border border-gray-200 bg-white p-5 shadow-sm" data-testid="therapist-about">
-        <h3 className="mb-2 text-xl font-bold text-[#171A17]">About {therapist.name}</h3>
+        <h3 className="mb-2 text-xl font-bold text-[#171A17]">{t('therapist.about', { name: therapist.name })}</h3>
         <p className={`text-sm leading-7 text-gray-700 ${shouldClampAbout && !showFullAbout ? 'line-clamp-4' : ''}`}>{aboutText}</p>
         {shouldClampAbout ? (
           <button type="button" onClick={() => setShowFullAbout(current => !current)} className="mt-2 text-sm font-bold text-[#55633F]">
-            {showFullAbout ? 'Show less' : 'Show more'}
+            {showFullAbout ? t('therapist.showLess') : t('therapist.showMore')}
           </button>
         ) : null}
       </section>
       <div data-testid="therapist-services">
-        <h3 className="text-2xl font-bold text-[#171A17]">My Services</h3>
-        <p className="mt-1 text-sm text-gray-600">Real bookable services and prices from the public catalog.</p>
+        <h3 className="text-2xl font-bold text-[#171A17]">{t('therapist.myServices')}</h3>
+        <p className="mt-1 text-sm text-gray-600">{t('therapist.myServicesBody')}</p>
         <div className="mt-4 grid gap-4 lg:grid-cols-2">
           {availableServices.map(service => <ServiceCard key={service.id} service={service} selected={selectedServiceName === service.name} selectedDuration={selectedServiceName === service.name ? Number(selectedDuration) : 0} onSelectService={onSelectService} onSelectDuration={onSelectDuration} onBook={onBook} promoDiscount={promoDiscount} />)}
         </div>
@@ -868,20 +960,20 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
           <div>
             <div className="flex items-center gap-2">
               <Star className="h-5 w-5 fill-[#f0a41c] text-[#f0a41c]" />
-              <h4 className="font-bold text-[#171A17]">Verified reviews</h4>
+              <h4 className="font-bold text-[#171A17]">{t('therapist.verifiedReviews')}</h4>
             </div>
             <div className="mt-3 flex items-baseline gap-2">
               <strong className="text-4xl font-extrabold text-[#171A17]">{averageRating.toFixed(1)}</strong>
-              <span className="text-sm font-semibold text-gray-500">({reviewCount} {reviewCount === 1 ? 'review' : 'reviews'})</span>
+              <span className="text-sm font-semibold text-gray-500">{t('therapist.reviewCount', { count: reviewCount })}</span>
             </div>
           </div>
           {verifiedReviews.length > 3 ? (
             <button type="button" onClick={() => setShowAllReviews(current => !current)} className="text-sm font-bold text-[#55633F]">
-              {showAllReviews ? 'Show recent' : 'View all'}
+              {showAllReviews ? t('therapist.showRecent') : t('therapist.viewAll')}
             </button>
           ) : null}
         </div>
-        <div className="mt-4 space-y-2" aria-label="Rating distribution">
+        <div className="mt-4 space-y-2" aria-label={t('therapist.ratingDistribution')}>
           {[5, 4, 3, 2, 1].map(stars => {
             const count = Math.max(0, Number(reviewDistribution[stars]) || 0);
             const percentage = reviewCount > 0 ? Math.min(100, (count / reviewCount) * 100) : 0;
@@ -899,21 +991,22 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
             {visibleReviews.map(review => (
               <article key={review.id} className="py-4 first:pt-0" data-testid="verified-review">
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <strong className="text-sm text-[#171A17]">{review.maskedCustomerName || 'Verified customer'}</strong>
-                  <span className="text-xs text-gray-400">{formatReviewDate(review.createdAt)}</span>
+                  {/* 'Verified customer' 是 bookingCatalogNormalizer 打码时填的英文占位,显示时换成当前语言 */}
+                  <strong className="text-sm text-[#171A17]">{!review.maskedCustomerName || review.maskedCustomerName === 'Verified customer' ? t('therapist.verifiedCustomer') : review.maskedCustomerName}</strong>
+                  <span className="text-xs text-gray-400">{formatReviewDate(review.createdAt, t, locale)}</span>
                 </div>
-                <p className="mt-1 text-sm tracking-[0.08em] text-[#e08700]" aria-label={`${review.stars} out of 5 stars`}>{'★'.repeat(review.stars)}{'☆'.repeat(5 - review.stars)}</p>
-                {review.text ? <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-gray-700">{review.text}</p> : <p className="mt-2 text-sm italic text-gray-400">Star rating only</p>}
+                <p className="mt-1 text-sm tracking-[0.08em] text-[#e08700]" aria-label={t('therapist.starsAria', { stars: review.stars })}>{'★'.repeat(review.stars)}{'☆'.repeat(5 - review.stars)}</p>
+                {review.text ? <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-gray-700">{review.text}</p> : <p className="mt-2 text-sm italic text-gray-400">{t('therapist.starOnly')}</p>}
                 {review.reply?.text ? (
                   <div className="mt-3 rounded-xl bg-[#F2F4EC] p-3">
-                    <p className="text-xs font-bold uppercase tracking-wide text-[#55633F]">EasyGoSpa reply</p>
+                    <p className="text-xs font-bold uppercase tracking-wide text-[#55633F]">{t('therapist.reply', { brand: BRAND_NAME })}</p>
                     <p className="mt-1 text-sm leading-6 text-gray-700">{review.reply.text}</p>
                   </div>
                 ) : null}
               </article>
             ))}
           </div>
-        ) : <p className="mt-5 text-sm text-gray-600">No verified reviews yet.</p>}
+        ) : <p className="mt-5 text-sm text-gray-600">{t('therapist.noReviews')}</p>}
       </section>
       ) : null}
       {/* 底部账单条已拆(老板 2026-07-21):Book 按钮直接长在选中的服务卡里。 */}
@@ -922,6 +1015,10 @@ function TherapistDetail({ therapist, availableServices, selectedServiceName, se
 }
 
 export default function BookingModal() {
+  const t = useTranslations('booking');
+  const locale = useLocale();
+  const serviceLabel = useServiceLabel();
+  const strong = chunks => <strong>{chunks}</strong>;
   const router = useRouter();
   const [bookingCatalog, setBookingCatalog] = useState(() => getFallbackWebsiteBookingCatalog());
   const [catalogStatus, setCatalogStatus] = useState('loading');
@@ -1218,7 +1315,7 @@ export default function BookingModal() {
     event.preventDefault();
     const digits = wallPromoPhone.replace(/\D/g, '');
     if (digits.length < 10) {
-      setPromoState(current => ({ ...current, error: 'Please enter your mobile number.' }));
+      setPromoState(current => ({ ...current, error: t('wall.promo.enterMobile') }));
       return;
     }
     setPromoState(current => ({ ...current, loading: true, error: '' }));
@@ -1231,7 +1328,7 @@ export default function BookingModal() {
       const amount = Number(payload?.coupon?.amount) || 0;
       if (!payload?.ok || amount <= 0) {
         // 已经用过券的老客人也走这里 —— 不报错,只是没有折扣,别让他觉得系统坏了
-        setPromoState({ discount: 0, phone: digits, loading: false, error: 'No first-booking discount on this number.' });
+        setPromoState({ discount: 0, phone: digits, loading: false, error: t('wall.promo.noDiscount') });
         return;
       }
       setPromoState({ discount: amount, phone: digits, loading: false, error: '' });
@@ -1240,7 +1337,7 @@ export default function BookingModal() {
       setEmailDraft(current => ({ ...current, phone: local }));
       setFormData(current => ({ ...current, phone: local }));
     } catch {
-      setPromoState(current => ({ ...current, loading: false, error: 'Could not apply. Please try again.' }));
+      setPromoState(current => ({ ...current, loading: false, error: t('wall.promo.failed') }));
     }
   };
 
@@ -1425,14 +1522,14 @@ export default function BookingModal() {
 
   const validatePhoneField = () => {
     const valid = isValidBookingPhone(phoneCountry, formData.phone);
-    setPhoneError(valid ? '' : phoneErrorMessage);
+    setPhoneError(valid ? '' : t('errors.phoneInvalidForCountry'));
     return valid;
   };
 
   const handlePreferredDateChange = value => {
     const today = manilaToday();
     const preferredDate = value && value < today ? today : value;
-    setDateError(value && value < today ? 'Please pick today or a future date.' : '');
+    setDateError(value && value < today ? t('errors.pastDate') : '');
     setFormData(current => ({
       ...current,
       preferredDate,
@@ -1487,7 +1584,7 @@ export default function BookingModal() {
     }
     const therapist = findWebsiteTherapist(therapistId, bookingTherapists);
     if (!therapist) {
-      setError('Current service profiles are temporarily unavailable. Please try again later.');
+      setError(t('errors.profilesUnavailable'));
       return;
     }
     if (therapist.onShift !== true) {
@@ -1505,7 +1602,7 @@ export default function BookingModal() {
     const therapist = findWebsiteTherapist(pendingRestingTherapistId, bookingTherapists);
     setPendingRestingTherapistId('');
     if (!therapist) {
-      setError('Current service profiles are temporarily unavailable. Please try again later.');
+      setError(t('errors.profilesUnavailable'));
       return;
     }
     enterTherapistDetail(therapist);
@@ -1549,7 +1646,7 @@ export default function BookingModal() {
       phone: session.phone ? formatBookingPhoneE164(sessionPhone.countryIso, sessionPhone.localNumber) : ''
     };
     if (!session.phone || !isValidBookingPhone(sessionPhone.countryIso, sessionPhone.localNumber)) {
-      setError('Please enter a valid WhatsApp or phone number.');
+      setError(t('errors.phoneInvalid'));
       return;
     }
     saveStoredSession(normalizedSession);
@@ -1574,27 +1671,27 @@ export default function BookingModal() {
   };
 
   const validateDetails = () => {
-    if (!selectedTherapist) return 'Current service profiles are temporarily unavailable. Please try again later.';
-    if (!formData.service || !selectedServiceOption) return 'Please select a valid service duration and price before continuing.';
+    if (!selectedTherapist) return t('errors.profilesUnavailable');
+    if (!formData.service || !selectedServiceOption) return t('errors.selectDuration');
     // 2026-08-01 去邮箱:身份=手机号,邮箱不再是必填(下面的手机号校验才是身份闸)
-    if (!formData.customerName.trim()) return 'Please enter your full name.';
+    if (!formData.customerName.trim()) return t('errors.nameRequired');
     if (!formData.phone.trim()) {
-      setPhoneError(phoneErrorMessage);
-      return 'Please enter your WhatsApp or phone number.';
+      setPhoneError(t('errors.phoneInvalidForCountry'));
+      return t('errors.phoneRequired');
     }
     if (!isValidBookingPhone(phoneCountry, formData.phone)) {
-      setPhoneError(phoneErrorMessage);
-      return phoneErrorMessage;
+      setPhoneError(t('errors.phoneInvalidForCountry'));
+      return t('errors.phoneInvalidForCountry');
     }
     setPhoneError('');
     // Area is still auto-derived from the address. The schedule is auto-stamped for
     // "as soon as possible" and explicitly chosen for "book for later".
     if (scheduleMode === 'scheduled' && !scheduleSlot?.time) {
       return availability.status === 'ready' && !availability.days.length
-        ? 'She has no open times in the next three days — please choose "As soon as possible" or another therapist.'
-        : 'Please pick a time for your booking.';
+        ? t('errors.noOpenTimes')
+        : t('errors.pickTime');
     }
-    if (!formData.addressNote.trim()) return 'Please enter your building, condo, hotel, or exact address details.';
+    if (!formData.addressNote.trim()) return t('errors.addressRequired');
     return null;
   };
 
@@ -1752,7 +1849,7 @@ export default function BookingModal() {
       return;
     }
     if (!activeCancelContact.trim()) {
-      setActiveCancelError('Enter the booking email or phone to continue.');
+      setActiveCancelError(t('active.errors.contactRequired'));
       return;
     }
     setActiveCancelPending(true);
@@ -1780,10 +1877,10 @@ export default function BookingModal() {
         setActiveCancelContact('');
         return;
       }
-      setActiveCancelError("We couldn't verify that booking with those details.");
+      setActiveCancelError(t('active.errors.notVerified'));
       return;
     }
-    setActiveCancelError(result.error || 'Booking cancellation is temporarily unavailable. Please try again.');
+    setActiveCancelError(cancelErrorText(result, t));
   };
 
   const handleSubmit = async event => {
@@ -1794,7 +1891,7 @@ export default function BookingModal() {
       return;
     }
     if (couponPreviewState !== 'ready') {
-      setError('Please wait while we confirm your coupon and cash total.');
+      setError(t('errors.waitCoupon'));
       return;
     }
 
@@ -1804,7 +1901,7 @@ export default function BookingModal() {
     const requestPayload = buildBookingRequestPayload({ skipCoupon: couponOptOut });
     if (!requestPayload) {
       setIsSubmitting(false);
-      setError('Please select a valid service duration and price before submitting.');
+      setError(t('errors.selectDurationSubmit'));
       return;
     }
 
@@ -1820,7 +1917,7 @@ export default function BookingModal() {
           body: JSON.stringify(requestPayload)
         })
       });
-      if (!guardedSubmission.ok) throw new Error(guardedSubmission.error);
+      if (!guardedSubmission.ok) throw new Error(radiusMessageText(guardedSubmission.error, t));
       const response = guardedSubmission.response;
       const payload = await response.json().catch(() => null);
       if (
@@ -1833,12 +1930,14 @@ export default function BookingModal() {
           && isPublicBookingCancelToken(payload.cancelToken)
         ) {
           const recoveryMarker = writeActiveBooking(recoveryReference, { cancelToken: payload.cancelToken });
-          setError(payload.error || 'Your booking was received, but its schedule needs assistance. Do not submit again; contact us on WhatsApp.');
+          // 这个代码对应的英文是固定一句(publicBookingResponse.mjs),按代码换成当前语言
+          const recoveryText = t('errors.recoveryPending');
+          setError(recoveryText);
           showActiveBookingDialog(recoveryReference, {
             contactHint: formData.customerEmail || formData.phone,
             cancelToken: payload.cancelToken,
             persisted: Boolean(recoveryMarker),
-            notice: payload.error
+            notice: payload.error ? recoveryText : payload.error
           });
           return;
         }
@@ -1847,7 +1946,7 @@ export default function BookingModal() {
         response.status === 409
         && (payload?.code === 'COUPON_PREVIEW_CHANGED' || payload?.code === 'COUPON_PREVIEW_REQUIRED')
       ) {
-        setError('Your coupon or cash total changed. Please review the refreshed amount before submitting again.');
+        setError(t('errors.couponChanged'));
         setCouponPreview(null);
         setCouponPreviewState('loading');
         await requestCouponPreview(couponOptOut);
@@ -1857,35 +1956,36 @@ export default function BookingModal() {
         response.status === 409
         && payload?.code === 'ACTIVE_BOOKING_EXISTS'
       ) {
-        setError('A booking already exists for these details. Log in to My Orders to view it or contact us on WhatsApp.');
+        setError(t('errors.bookingExists'));
         return;
       }
       // 老板 2026-07-29 定的规矩:她接不了这个点,就当面说清楚 + 给下一步,
       // 绝不能像以前那样悄悄把订单改成别的时间(客人页面写 22:30、技师 19:30 敲门)。
       if (response.status === 409 && payload?.code === 'SCHEDULED_SLOT_UNAVAILABLE') {
-        const therapistName = selectedTherapist?.name || 'This therapist';
+        const therapistName = selectedTherapist?.name || t('common.thisTherapist');
         const earliest = payload.earliestDate && payload.earliestTime
-          ? formatScheduleLabel(payload.earliestDate, payload.earliestTime)
+          ? formatScheduleLabel(payload.earliestDate, payload.earliestTime, t)
           : '';
-        const wanted = scheduleSlot?.time ? formatScheduleLabel(scheduleSlot.date, scheduleSlot.time) : 'that time';
+        const wanted = scheduleSlot?.time ? formatScheduleLabel(scheduleSlot.date, scheduleSlot.time, t) : t('errors.slot.thatTime');
+        const slotMessageValues = { name: therapistName, wanted, earliest };
         setError(payload.reason === 'OFF_SHIFT'
-          ? `${therapistName} is not working at ${wanted}.${earliest ? ` Her next opening is ${earliest}.` : ''} Pick another time below, or choose a therapist who is free then.`
-          : `${therapistName} was just booked for ${wanted}.${earliest ? ` Her earliest is now ${earliest}.` : ''} Pick another time below, or choose a therapist who is free then.`);
+          ? t(earliest ? 'errors.slot.offShiftEarliest' : 'errors.slot.offShift', slotMessageValues)
+          : t(earliest ? 'errors.slot.justBookedEarliest' : 'errors.slot.justBooked', slotMessageValues));
         // Someone took the slot while this customer was typing — reload the real list.
         setScheduleSlot(null);
         setAvailabilityNonce(value => value + 1);
         setStep('details');
         return;
       }
-      if (!response.ok || payload?.ok !== true) throw new Error(payload?.error || 'Booking request could not be submitted.');
+      if (!response.ok || payload?.ok !== true) throw new Error(serverErrorText(payload, t('errors.submitFailed'), t));
       const reference = String(payload.reference || payload.bookingRequest?.id || '').trim();
       if (!/^mbr-brand-a-[a-z0-9]+$/i.test(reference)) {
-        throw new Error('Booking request was not confirmed by the intake service. Please try again or contact us on WhatsApp.');
+        throw new Error(t('errors.notConfirmed'));
       }
 
       const activeBookingMarker = writeActiveBooking(reference, { cancelToken: payload.cancelToken });
       if (!activeBookingMarker) {
-        setError('Your booking was created, but this browser could not save its cancellation credential. Keep this page open and contact us on WhatsApp if you need help.');
+        setError(t('errors.credentialNotSaved'));
         showActiveBookingDialog(reference, {
           contactHint: formData.customerEmail || formData.phone,
           cancelToken: payload.cancelToken,
@@ -1910,7 +2010,7 @@ export default function BookingModal() {
       setIsOpen(false);
       router.push(`/track/${encodeURIComponent(reference)}`);
     } catch (submitError) {
-      setError(submitError instanceof Error ? submitError.message : 'Booking request could not be submitted.');
+      setError(submitError instanceof Error ? submitError.message : t('errors.submitFailed'));
     } finally {
       setIsSubmitting(false);
     }
@@ -1931,26 +2031,26 @@ export default function BookingModal() {
             {step === 'wall' ? (
               <div className="border-b border-gray-100 bg-white p-4 sm:p-5" data-testid="booking-wall-toolbar">
                 <div className="flex items-center justify-between gap-3">
-                  <button type="button" onClick={handleClose} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200" aria-label="Close booking modal"><ArrowLeft className="h-5 w-5 text-gray-600" /></button>
+                  <button type="button" onClick={handleClose} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200" aria-label={t('common.closeModal')}><ArrowLeft className="h-5 w-5 text-gray-600" /></button>
                   <div className="min-w-0 flex-1">
-                    <h2 className="truncate text-xl font-bold text-[#171A17]">Choose therapist</h2>
+                    <h2 className="truncate text-xl font-bold text-[#171A17]">{t('wall.title')}</h2>
                     <p className="mt-1 inline-flex max-w-full items-center gap-1 text-xs font-bold text-[#55633F]" data-testid="therapist-area-label">
                       <MapPin className="h-3.5 w-3.5 shrink-0" />
-                      <span className="truncate">Serving within {MAX_SERVICE_DISTANCE_KM} km</span>
+                      <span className="truncate">{t('wall.servingWithin', { km: MAX_SERVICE_DISTANCE_KM })}</span>
                     </p>
                   </div>
-                  <button type="button" onClick={handleClose} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200" aria-label="Close booking modal"><X className="h-5 w-5 text-gray-700" /></button>
+                  <button type="button" onClick={handleClose} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200" aria-label={t('common.closeModal')}><X className="h-5 w-5 text-gray-700" /></button>
                 </div>
                 <div className="mt-3 flex items-center gap-2">
                   <div className="flex h-11 min-w-0 flex-1 items-center gap-2 rounded-2xl bg-gray-100 px-3">
                     <Search className="h-4 w-4 shrink-0 text-gray-400" />
-                    <input value={wallSearch} onChange={event => setWallSearch(event.target.value)} className="w-full bg-transparent text-sm font-medium outline-none placeholder:text-gray-500" placeholder="Search therapist..." />
+                    <input value={wallSearch} onChange={event => setWallSearch(event.target.value)} className="w-full bg-transparent text-sm font-medium outline-none placeholder:text-gray-500" placeholder={t('wall.searchPlaceholder')} />
                   </div>
                 </div>
                 {/* 老板 2026-07-20:删掉区域下拉——我们只服务 10km 内,按区域名筛选没意义还会误导;
                     Service type 顶上原来的位置,排序保留 Nearby / Most booked。 */}
                 <div className="mt-2.5 flex flex-nowrap items-center gap-2 overflow-x-auto" data-testid="booking-wall-filters">
-                  <label className="sr-only" htmlFor="therapist-servicetype-filter">Filter therapists by service type</label>
+                  <label className="sr-only" htmlFor="therapist-servicetype-filter">{t('wall.filterLabel')}</label>
                   <select
                     id="therapist-servicetype-filter"
                     value={serviceTypeFilter}
@@ -1958,23 +2058,23 @@ export default function BookingModal() {
                     data-testid="therapist-servicetype-filter"
                     className="h-10 shrink-0 rounded-full border border-gray-200 bg-white px-3.5 text-sm font-bold text-gray-700 outline-none focus:border-[#64734F]"
                   >
-                    <option value={ALL_SERVICE_TYPES_VALUE}>Service type</option>
-                    {serviceTypeOptions.map(name => <option key={name} value={name}>{name}</option>)}
+                    <option value={ALL_SERVICE_TYPES_VALUE}>{t('wall.serviceType')}</option>
+                    {serviceTypeOptions.map(name => <option key={name} value={name}>{serviceLabel(name)}</option>)}
                   </select>
-                  <button type="button" onClick={() => setWallSort('nearby')} aria-pressed={wallSort === 'nearby'} data-testid="wall-sort-nearby" className={`h-10 shrink-0 rounded-full border px-3.5 text-sm font-bold ${wallSort === 'nearby' ? 'border-[#64734F] bg-[#64734F] text-white' : 'border-gray-200 bg-white text-gray-700'}`}>Nearby</button>
-                  <button type="button" onClick={() => setWallSort('recommended')} aria-pressed={wallSort === 'recommended'} data-testid="wall-sort-popular" className={`h-10 shrink-0 rounded-full border px-3.5 text-sm font-bold ${wallSort === 'recommended' ? 'border-[#64734F] bg-[#64734F] text-white' : 'border-gray-200 bg-white text-gray-700'}`}>Most booked</button>
+                  <button type="button" onClick={() => setWallSort('nearby')} aria-pressed={wallSort === 'nearby'} data-testid="wall-sort-nearby" className={`h-10 shrink-0 rounded-full border px-3.5 text-sm font-bold ${wallSort === 'nearby' ? 'border-[#64734F] bg-[#64734F] text-white' : 'border-gray-200 bg-white text-gray-700'}`}>{t('wall.sortNearby')}</button>
+                  <button type="button" onClick={() => setWallSort('recommended')} aria-pressed={wallSort === 'recommended'} data-testid="wall-sort-popular" className={`h-10 shrink-0 rounded-full border px-3.5 text-sm font-bold ${wallSort === 'recommended' ? 'border-[#64734F] bg-[#64734F] text-white' : 'border-gray-200 bg-white text-gray-700'}`}>{t('wall.sortPopular')}</button>
                 </div>
               </div>
             ) : step !== 'detail' ? (
               <div className="sticky top-0 z-30 flex items-center justify-between border-b border-gray-100 bg-white p-4 sm:p-5">
                 <div className="flex min-w-0 items-center gap-3">
-                  <button type="button" onClick={goBack} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200" aria-label="Back"><ArrowLeft className="h-5 w-5 text-gray-600" /></button>
+                  <button type="button" onClick={goBack} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200" aria-label={t('common.back')}><ArrowLeft className="h-5 w-5 text-gray-600" /></button>
                   <div className="min-w-0">
-                    <h2 className="text-xl font-bold text-[#171A17] sm:text-2xl">Book EasyGoSpa</h2>
-                    <p className="text-sm text-gray-500">Enter your details to continue.</p>
+                    <h2 className="text-xl font-bold text-[#171A17] sm:text-2xl">{t('header.title', { brand: BRAND_NAME })}</h2>
+                    <p className="text-sm text-gray-500">{t('header.subtitle')}</p>
                   </div>
                 </div>
-                <button type="button" onClick={handleClose} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200" aria-label="Close booking modal"><X className="h-5 w-5 text-gray-600" /></button>
+                <button type="button" onClick={handleClose} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200" aria-label={t('common.closeModal')}><X className="h-5 w-5 text-gray-600" /></button>
               </div>
             ) : null}
 
@@ -1994,14 +2094,14 @@ export default function BookingModal() {
                         aria-pressed={scheduleMode === 'asap'}
                         data-testid="wall-schedule-now"
                         className={`h-10 flex-1 rounded-full border text-sm font-bold transition ${scheduleMode === 'asap' ? 'border-[#64734F] bg-[#64734F] text-white' : 'border-gray-200 bg-white text-gray-700 hover:border-[#64734F]'}`}
-                      >⚡ Now</button>
+                      >{t('wall.now')}</button>
                       <button
                         type="button"
                         onClick={() => setScheduleMode('scheduled')}
                         aria-pressed={scheduleMode === 'scheduled'}
                         data-testid="wall-schedule-later"
                         className={`h-10 flex-1 rounded-full border text-sm font-bold transition ${scheduleMode === 'scheduled' ? 'border-[#64734F] bg-[#64734F] text-white' : 'border-gray-200 bg-white text-gray-700 hover:border-[#64734F]'}`}
-                      >🕘 Book for later</button>
+                      >{t('wall.later')}</button>
                     </div>
                     {scheduleMode === 'scheduled' ? (
                       <div className="mt-3 space-y-2" data-testid="wall-schedule-picker">
@@ -2015,17 +2115,17 @@ export default function BookingModal() {
                                 type="button"
                                 onClick={() => setScheduleSlot({ date: dateKey, time: '' })}
                                 className={`rounded-full border px-3.5 py-1.5 text-xs font-bold transition ${active ? 'border-[#64734F] bg-[#F2F4EC] text-[#55633F]' : 'border-gray-300 bg-white text-gray-700 hover:border-[#64734F]'}`}
-                              >{manilaDayLabel(dateKey, offset)}</button>
+                              >{manilaDayLabel(dateKey, offset, t, locale)}</button>
                             );
                           })}
                           <select
                             value={scheduleSlot?.time || ''}
                             onChange={event => { setScheduleSlot({ date: scheduleSlot?.date || manilaToday(), time: event.target.value }); if (event.target.value) setWallScheduleNudge(false); }}
                             data-testid="wall-schedule-time"
-                            aria-label="Pick a time"
+                            aria-label={t('wall.pickTimeAria')}
                             className="h-9 rounded-full border border-gray-300 bg-white px-3 text-sm font-bold text-gray-700 outline-none focus:border-[#64734F]"
                           >
-                            <option value="">Pick a time…</option>
+                            <option value="">{t('wall.pickTimeOption')}</option>
                             {timeSlots.filter(time => isSelectableManilaTime(scheduleSlot?.date || manilaToday(), time)).map(time => (
                               <option key={time} value={time}>{time}</option>
                             ))}
@@ -2033,14 +2133,14 @@ export default function BookingModal() {
                         </div>
                         {!scheduleSlot?.time ? (
                           <p className={wallScheduleNudge ? 'text-xs font-bold text-amber-700' : 'text-xs font-medium text-gray-500'} data-testid="wall-schedule-hint">
-                            {wallScheduleNudge ? 'Pick a time first — then choose your therapist.' : 'Pick a day and time — we’ll show only the therapists free at that time.'}
+                            {wallScheduleNudge ? t('wall.pickTimeFirst') : t('wall.pickDayHint')}
                           </p>
                         ) : wallTimeMatch.status === 'loading' ? (
-                          <p className="text-xs font-medium text-gray-500">Checking who is free at {formatScheduleLabel(scheduleSlot.date, scheduleSlot.time)}…</p>
+                          <p className="text-xs font-medium text-gray-500">{t('wall.checkingWho', { when: formatScheduleLabel(scheduleSlot.date, scheduleSlot.time, t) })}</p>
                         ) : wallTimeMatch.status === 'failed' ? (
-                          <p className="text-xs font-semibold text-amber-700" data-testid="wall-schedule-check-failed">We could not verify schedules just now — showing everyone. Your time is re-checked when you book.</p>
+                          <p className="text-xs font-semibold text-amber-700" data-testid="wall-schedule-check-failed">{t('wall.checkFailed')}</p>
                         ) : wallTimeMatch.status === 'ready' ? (
-                          <p className="text-xs font-semibold text-[#55633F]" data-testid="wall-schedule-match-note">Showing therapists free at {formatScheduleLabel(scheduleSlot.date, scheduleSlot.time)}.</p>
+                          <p className="text-xs font-semibold text-[#55633F]" data-testid="wall-schedule-match-note">{t('wall.showingFreeAt', { when: formatScheduleLabel(scheduleSlot.date, scheduleSlot.time, t) })}</p>
                         ) : null}
                       </div>
                     ) : null}
@@ -2056,10 +2156,10 @@ export default function BookingModal() {
                       onSubmit={submitWallPromoPhone}
                     >
                       <p className="text-sm font-bold text-[#55633F]">
-                        First booking? Get {money(promoCampaign.amount)} off
+                        {t('wall.promo.title', { amount: money(promoCampaign.amount) })}
                       </p>
                       <p className="mt-1 text-xs leading-5 text-gray-600">
-                        Enter your mobile number to see your price. No tips.
+                        {t('wall.promo.body')}
                       </p>
                       <div className="mt-3 flex gap-2">
                         <input
@@ -2076,7 +2176,7 @@ export default function BookingModal() {
                           disabled={promoState.loading}
                           type="submit"
                         >
-                          {promoState.loading ? '...' : 'Apply'}
+                          {promoState.loading ? '...' : t('wall.promo.apply')}
                         </button>
                       </div>
                       {promoState.error ? <p className="mt-2 text-xs font-semibold text-[#B4463C]">{promoState.error}</p> : null}
@@ -2085,7 +2185,7 @@ export default function BookingModal() {
                   {promoState.discount > 0 ? (
                     <div className="mx-1 flex items-center justify-between gap-3 rounded-full border border-[#64734F]/30 bg-[#F2F4EC] px-4 py-2" data-testid="wall-promo-applied">
                       <p className="truncate text-sm font-bold text-[#55633F]">
-                        {money(promoState.discount)} off applied — prices below are yours
+                        {t('wall.promo.applied', { amount: money(promoState.discount) })}
                       </p>
                     </div>
                   ) : null}
@@ -2093,20 +2193,20 @@ export default function BookingModal() {
                       点"Adjust"才展开地图改 pin。未设定位时才给完整提示面板。 */}
                   {isUsableCustomerLocation(customerCoords) && !showWallLocationPicker ? (
                     <div className="mx-1 flex items-center justify-between gap-3 rounded-full border border-[#64734F]/25 bg-[#E9ECE1] px-4 py-2" data-testid="wall-location-entry">
-                      <p className="flex min-w-0 items-center gap-1.5 truncate text-sm font-semibold text-[#55633F]"><MapPin className="h-4 w-4 shrink-0" />Location confirmed</p>
-                      <button type="button" onClick={() => setShowWallLocationPicker(true)} data-testid="wall-location-entry-toggle" className="shrink-0 text-sm font-bold text-[#55633F] underline underline-offset-2">Adjust</button>
+                      <p className="flex min-w-0 items-center gap-1.5 truncate text-sm font-semibold text-[#55633F]"><MapPin className="h-4 w-4 shrink-0" />{t('wall.location.confirmed')}</p>
+                      <button type="button" onClick={() => setShowWallLocationPicker(true)} data-testid="wall-location-entry-toggle" className="shrink-0 text-sm font-bold text-[#55633F] underline underline-offset-2">{t('wall.location.adjust')}</button>
                     </div>
                   ) : (
                     <div className="mx-1 rounded-[1.5rem] border border-amber-200 bg-amber-50 p-4" data-testid="wall-location-entry">
                       <div className="flex flex-wrap items-center justify-between gap-3">
-                        <p className="min-w-0 flex-1 text-sm font-semibold text-amber-900">{isUsableCustomerLocation(customerCoords) ? 'Adjust your pin, then tap Confirm.' : 'Share your location to see nearby therapists.'}</p>
+                        <p className="min-w-0 flex-1 text-sm font-semibold text-amber-900">{isUsableCustomerLocation(customerCoords) ? t('wall.location.adjustPin') : t('wall.location.share')}</p>
                         <button
                           type="button"
                           onClick={() => setShowWallLocationPicker(current => !current)}
                           data-testid="wall-location-entry-toggle"
                           className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full bg-[#64734F] px-4 text-sm font-bold text-white transition hover:bg-[#55633F]"
                         >
-                          <MapPin className="h-4 w-4" />{showWallLocationPicker ? 'Hide map' : 'Set location'}
+                          <MapPin className="h-4 w-4" />{showWallLocationPicker ? t('wall.location.hideMap') : t('wall.location.setLocation')}
                         </button>
                       </div>
                       {showWallLocationPicker ? (
@@ -2116,36 +2216,38 @@ export default function BookingModal() {
                       ) : null}
                     </div>
                   )}
-                  {catalogStatus === 'ready' ? <p className="px-1 text-sm font-semibold text-gray-600" data-testid="therapist-result-count">{wallTherapistsForTime.length} {wallTherapistsForTime.length === 1 ? 'therapist' : 'therapists'} available{scheduleMode === 'scheduled' && wallTimeMatch.status === 'ready' && wallTimeMatch.requested ? ` at ${formatScheduleLabel(wallTimeMatch.requested.date, wallTimeMatch.requested.time)}` : ''}</p> : null}
+                  {catalogStatus === 'ready' ? <p className="px-1 text-sm font-semibold text-gray-600" data-testid="therapist-result-count">{scheduleMode === 'scheduled' && wallTimeMatch.status === 'ready' && wallTimeMatch.requested
+                    ? t('wall.resultCountAt', { count: wallTherapistsForTime.length, when: formatScheduleLabel(wallTimeMatch.requested.date, wallTimeMatch.requested.time, t) })
+                    : t('wall.resultCount', { count: wallTherapistsForTime.length })}</p> : null}
                   <div className="grid gap-3 px-1 pb-6 sm:grid-cols-2" data-testid="booking-therapist-list">
                     {catalogStatus === 'loading' ? (
                       <div className="rounded-[1.5rem] border border-gray-200 bg-white p-5 text-sm text-gray-700" data-testid="booking-catalog-loading">
-                        <p className="font-bold text-[#171A17]">Loading therapists…</p>
-                        <p className="mt-1">Checking the current public booking catalog.</p>
+                        <p className="font-bold text-[#171A17]">{t('wall.loadingTitle')}</p>
+                        <p className="mt-1">{t('wall.loadingBody')}</p>
                       </div>
                     ) : null}
                     {catalogStatus === 'ready' ? wallTherapistsForTime.map(therapist => <TherapistWallCard key={therapist.id} therapist={therapist} selected={formData.requestedTechnicianId === therapist.id} onSelect={openTherapistDetail} onRequireLocation={() => setShowWallLocationPicker(true)} customerLocated={isUsableCustomerLocation(customerCoords)} />) : null}
                     {catalogUnavailable ? (
                       <div className="rounded-[1.5rem] border border-amber-200 bg-amber-50 p-5 text-sm text-amber-900" data-testid="booking-catalog-unavailable">
-                        <p className="text-base font-bold">{catalogUnavailableNotice}</p>
-                        <p className="mt-2 text-sm">{catalogUnavailableFollowUp}</p>
+                        <p className="text-base font-bold">{t('wall.unavailableTitle')}</p>
+                        <p className="mt-2 text-sm">{t('wall.unavailableBody')}</p>
                       </div>
                     ) : null}
                     {catalogStatus === 'error' ? (
                       <div className="rounded-[1.5rem] border border-red-200 bg-red-50 p-5 text-sm text-red-900" data-testid="booking-catalog-error">
-                        <p className="text-base font-bold">Therapist catalog could not be loaded.</p>
-                        <p className="mt-2">Live therapist results are unavailable. Please try again in a few minutes, or message us on WhatsApp to book.</p>
+                        <p className="text-base font-bold">{t('wall.errorTitle')}</p>
+                        <p className="mt-2">{t('wall.errorBody')}</p>
                         
                       </div>
                     ) : null}
                     {catalogStatus === 'ready' && hasSpecificTherapists && wallTherapistsForTime.length === 0 ? (
                       scheduleMode === 'scheduled' && wallTimeMatch.status === 'ready' && wallTherapists.length > 0 ? (
                         <div className="rounded-[1.5rem] border border-amber-200 bg-amber-50 p-5 text-sm text-amber-900" data-testid="booking-time-no-results">
-                          <p className="font-bold">No therapist is free at {wallTimeMatch.requested ? formatScheduleLabel(wallTimeMatch.requested.date, wallTimeMatch.requested.time) : 'that time'}.</p>
-                          <p className="mt-1">Try another time, or switch to <strong>⚡ Now</strong> to see who can come soonest.</p>
+                          <p className="font-bold">{wallTimeMatch.requested ? t('wall.noneFreeAt', { when: formatScheduleLabel(wallTimeMatch.requested.date, wallTimeMatch.requested.time, t) }) : t('wall.noneFreeThatTime')}</p>
+                          <p className="mt-1">{t.rich('wall.noneFreeHint', { b: strong })}</p>
                         </div>
                       ) : (
-                        <div className="rounded-[1.5rem] border border-gray-200 bg-white p-5 text-sm text-gray-600" data-testid="booking-search-no-results"><p className="font-bold text-[#171A17]">No therapists match your search.</p><p className="mt-1">Try a different name, area, or service filter.</p></div>
+                        <div className="rounded-[1.5rem] border border-gray-200 bg-white p-5 text-sm text-gray-600" data-testid="booking-search-no-results"><p className="font-bold text-[#171A17]">{t('wall.noMatchTitle')}</p><p className="mt-1">{t('wall.noMatchBody')}</p></div>
                       )
                     ) : null}
                   </div>
@@ -2160,24 +2262,24 @@ export default function BookingModal() {
                    券按它发、订单按它查、确认走 WhatsApp。邮箱字段整个拿掉。 */
                 <form onSubmit={handleEmailContinue} className="space-y-5">
                   <div>
-                    <h3 className="text-2xl font-bold text-[#171A17]">Your mobile number</h3>
-                    <p className="mt-2 text-sm text-gray-600">We confirm your booking on WhatsApp — no email, no account needed.</p>
+                    <h3 className="text-2xl font-bold text-[#171A17]">{t('phone.title')}</h3>
+                    <p className="mt-2 text-sm text-gray-600">{t('phone.body')}</p>
                   </div>
                   <div className={summaryCardClass}>
-                    <div className="flex justify-between gap-4"><span className={summaryLabelClass}>Therapist</span><strong className={summaryValueClass}>{selectedTherapist.name}</strong></div>
-                    <div className="mt-2 flex justify-between gap-4"><span className={summaryLabelClass}>Service</span><strong className={summaryValueClass}>{formData.service} / {formData.durationMinutes} mins</strong></div>
-                    <div className="mt-2 flex justify-between gap-4"><span className={summaryLabelClass}>Total</span><PriceWithDiscount amount={selectedTotalAmount} discount={promoState.discount} mainClassName={summaryMoneyClass} /></div>
+                    <div className="flex justify-between gap-4"><span className={summaryLabelClass}>{t('common.therapist')}</span><strong className={summaryValueClass}>{selectedTherapist.name}</strong></div>
+                    <div className="mt-2 flex justify-between gap-4"><span className={summaryLabelClass}>{t('common.service')}</span><strong className={summaryValueClass}>{t('common.serviceDuration', { service: serviceLabel(formData.service), minutes: formData.durationMinutes })}</strong></div>
+                    <div className="mt-2 flex justify-between gap-4"><span className={summaryLabelClass}>{t('common.total')}</span><PriceWithDiscount amount={selectedTotalAmount} discount={promoState.discount} mainClassName={summaryMoneyClass} /></div>
                   </div>
                   {/* ⚠ 2026-07-29 老板拍板:优惠直接挂在手机号这一格。
                       客人不知道为什么要填手机号,给他一个理由 —— 而且这句话
                       就是广告承诺的兑现点,必须出现在他填号码的那一刻。 */}
                   <div>
-                    <label className={bookingLabelClass}><Phone className="mr-2 inline h-4 w-4" />WhatsApp / Phone *</label>
+                    <label className={bookingLabelClass}><Phone className="mr-2 inline h-4 w-4" />{t('common.phoneLabel')}</label>
                     <p className="-mt-2 mb-2 text-xs font-bold leading-5 text-[#55633F]">
-                      First booking? Enter your mobile to get ₱150 off — applied automatically.
+                      {t('phone.firstBookingHint', { amount: '₱150' })}
                     </p>
                     <div className="flex gap-2">
-                      <select aria-label="Phone country" className="h-12 w-[8.25rem] shrink-0 rounded-2xl border border-gray-300 bg-white px-3 text-sm font-bold text-[#171A17] focus:border-[#64734F] focus:outline-none" value={phoneCountry} onChange={event => setPhoneCountry(event.target.value)}>
+                      <select aria-label={t('common.phoneCountry')} className="h-12 w-[8.25rem] shrink-0 rounded-2xl border border-gray-300 bg-white px-3 text-sm font-bold text-[#171A17] focus:border-[#64734F] focus:outline-none" value={phoneCountry} onChange={event => setPhoneCountry(event.target.value)}>
                         {BOOKING_PHONE_COUNTRIES.map(country => <option key={country.iso} value={country.iso}>{country.flag} +{country.callingCode}</option>)}
                       </select>
                       <div className="relative min-w-0 flex-1">
@@ -2187,28 +2289,28 @@ export default function BookingModal() {
                     </div>
                   </div>
                   <div>
-                    <label className={bookingLabelClass}>Name optional</label>
-                    <input className={bookingInputClass} value={emailDraft.name} onChange={event => setEmailDraft(current => ({ ...current, name: event.target.value }))} placeholder="Your name" data-readability-field="customerName" />
+                    <label className={bookingLabelClass}>{t('phone.nameLabel')}</label>
+                    <input className={bookingInputClass} value={emailDraft.name} onChange={event => setEmailDraft(current => ({ ...current, name: event.target.value }))} placeholder={t('phone.namePlaceholder')} data-readability-field="customerName" />
                   </div>
-                  <button type="submit" className="h-12 w-full rounded-2xl bg-[#64734F] px-6 font-bold text-white hover:bg-[#55633F]">Continue</button>
+                  <button type="submit" className="h-12 w-full rounded-2xl bg-[#64734F] px-6 font-bold text-white hover:bg-[#55633F]">{t('common.continue')}</button>
                 </form>
               ) : null}
 
               {step === 'details' ? (
                 <form onSubmit={handleDetailsContinue} className="space-y-5">
                   <div>
-                    <h3 className="text-2xl font-bold text-[#171A17]">Customer and address details</h3>
-                    <p className="mt-2 text-sm text-gray-600">We only need your contact details, schedule, and exact service location.</p>
+                    <h3 className="text-2xl font-bold text-[#171A17]">{t('details.title')}</h3>
+                    <p className="mt-2 text-sm text-gray-600">{t('details.body')}</p>
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
-                      <label className={bookingLabelClass}><User className="mr-2 inline h-4 w-4" />Full name *</label>
-                      <input className={bookingInputClass} value={formData.customerName} onChange={event => updateField('customerName', event.target.value)} placeholder="Your full name" data-readability-field="customerName" required />
+                      <label className={bookingLabelClass}><User className="mr-2 inline h-4 w-4" />{t('details.fullName')}</label>
+                      <input className={bookingInputClass} value={formData.customerName} onChange={event => updateField('customerName', event.target.value)} placeholder={t('details.fullNamePlaceholder')} data-readability-field="customerName" required />
                     </div>
                     <div>
-                      <label className={bookingLabelClass}><Phone className="mr-2 inline h-4 w-4" />WhatsApp / Phone *</label>
+                      <label className={bookingLabelClass}><Phone className="mr-2 inline h-4 w-4" />{t('common.phoneLabel')}</label>
                       <div className="flex gap-2">
-                        <select aria-label="Phone country" className="h-12 w-[8.25rem] shrink-0 rounded-2xl border border-gray-300 bg-white px-3 text-sm font-bold text-[#171A17] focus:border-[#64734F] focus:outline-none" value={phoneCountry} onChange={event => { setPhoneCountry(event.target.value); setPhoneError(''); }}>
+                        <select aria-label={t('common.phoneCountry')} className="h-12 w-[8.25rem] shrink-0 rounded-2xl border border-gray-300 bg-white px-3 text-sm font-bold text-[#171A17] focus:border-[#64734F] focus:outline-none" value={phoneCountry} onChange={event => { setPhoneCountry(event.target.value); setPhoneError(''); }}>
                           {BOOKING_PHONE_COUNTRIES.map(country => <option key={country.iso} value={country.iso}>{country.flag} +{country.callingCode}</option>)}
                         </select>
                         <div className="relative min-w-0 flex-1">
@@ -2227,50 +2329,50 @@ export default function BookingModal() {
                     days={availability.days}
                     loading={availability.status === 'loading'}
                     loadFailed={availability.status === 'failed'}
-                    earliestLabel={availability.earliest ? formatScheduleLabel(availability.earliest.dateKey, availability.earliest.time) : ''}
+                    earliestLabel={availability.earliest ? formatScheduleLabel(availability.earliest.dateKey, availability.earliest.time, t) : ''}
                     therapistName={selectedTherapist?.name || ''}
                   />
                   <div className={addressFeedback === 'success' ? 'rounded-2xl ring-4 ring-[#64734F]/20 transition' : 'transition'} data-location-address-feedback={addressFeedback || undefined} ref={addressFieldRef}>
-                    <label className={bookingLabelClass}><MapPin className="mr-2 inline h-4 w-4" />Building, condo, hotel, or exact address *</label>
-                    <p className="mb-2 text-xs text-gray-500">Type or search your building</p>
+                    <label className={bookingLabelClass}><MapPin className="mr-2 inline h-4 w-4" />{t('details.addressLabel')}</label>
+                    <p className="mb-2 text-xs text-gray-500">{t('details.addressHint')}</p>
                     <AddressAutocompleteInput
                       value={formData.addressNote}
                       inputClassName={`${bookingInputClass} ${addressFeedback === 'success' ? 'border-[#64734F] bg-[#F2F4EC]' : ''}`}
-                      placeholder="Start typing your building, condo, or hotel"
+                      placeholder={t('details.addressPlaceholder')}
                       onTextChange={text => { setAddressFeedback(''); updateField('addressNote', text); }}
                       onLocationResolved={updateCustomerLocation}
                     />
-                    {addressFeedback === 'error' ? <p className="mt-2 text-xs font-semibold text-amber-700">Couldn't fetch the address - please type it in</p> : null}
+                    {addressFeedback === 'error' ? <p className="mt-2 text-xs font-semibold text-amber-700">{t('location.addressFetchFailed')}</p> : null}
                   </div>
                   <div>
-                    <label className={bookingLabelClass}><MapPin className="mr-2 inline h-4 w-4" />Pin your location on the map <span className="font-normal text-gray-500">(helps us send the nearest therapist)</span></label>
-                    <p className="mb-2 text-xs text-gray-500">Or use GPS / drag the pin</p>
+                    <label className={bookingLabelClass}><MapPin className="mr-2 inline h-4 w-4" />{t.rich('details.pinLabel', { hint: chunks => <span className="font-normal text-gray-500">{chunks}</span> })}</label>
+                    <p className="mb-2 text-xs text-gray-500">{t('details.pinHint')}</p>
                     <LocationPicker value={formData.customerLocation} onChange={updateCustomerLocation} onAddress={handleResolvedAddress} />
                   </div>
                   <div>
-                    <label className={bookingLabelClass}><MessageSquare className="mr-2 inline h-4 w-4" />Arrival notes (optional)</label>
-                    <textarea className={bookingTextareaClass} rows={3} value={formData.notes} onChange={event => updateField('notes', event.target.value)} placeholder="Building entrance, parking, gate code, or how to find you" data-readability-field="notes" />
+                    <label className={bookingLabelClass}><MessageSquare className="mr-2 inline h-4 w-4" />{t('details.notesLabel')}</label>
+                    <textarea className={bookingTextareaClass} rows={3} value={formData.notes} onChange={event => updateField('notes', event.target.value)} placeholder={t('details.notesPlaceholder')} data-readability-field="notes" />
                   </div>
-                  <button type="submit" data-testid="review-cash-booking" className="h-12 w-full rounded-2xl bg-[#64734F] px-6 font-bold text-white hover:bg-[#55633F]">Review cash booking</button>
+                  <button type="submit" data-testid="review-cash-booking" className="h-12 w-full rounded-2xl bg-[#64734F] px-6 font-bold text-white hover:bg-[#55633F]">{t('details.review')}</button>
                 </form>
               ) : null}
 
               {step === 'confirm' ? (
                 <form onSubmit={handleSubmit} className="space-y-5" data-testid="confirm-step">
                   <div>
-                    <h3 className="text-2xl font-bold text-[#171A17]">Confirm Cash before service</h3>
-                    <p className="mt-2 text-sm text-gray-600">Payment will be collected when the therapist arrives, before the massage starts.</p>
+                    <h3 className="text-2xl font-bold text-[#171A17]">{t('confirm.title')}</h3>
+                    <p className="mt-2 text-sm text-gray-600">{t('confirm.body')}</p>
                   </div>
                   <div className={summaryCardClass}>
                     <div className="grid gap-3">
-                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Therapist</strong><span className={summaryValueClass}>{selectedTherapist.name}</span></div>
-                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Service</strong><span className={summaryValueClass}>{formData.service} / {formData.durationMinutes} mins</span></div>
-                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Schedule</strong><span className={summaryValueClass} data-testid="confirm-schedule">{scheduleMode === 'scheduled' && scheduleSlot?.time
-                        ? formatScheduleLabel(scheduleSlot.date, scheduleSlot.time)
-                        : 'ASAP — therapist departs after accepting'}</span></div>
-                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Address</strong><span className={summaryValueClass}>{inferAreaFromAddress(formData.addressNote)} - {formData.addressNote}</span></div>
+                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>{t('common.therapist')}</strong><span className={summaryValueClass}>{selectedTherapist.name}</span></div>
+                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>{t('common.service')}</strong><span className={summaryValueClass}>{t('common.serviceDuration', { service: serviceLabel(formData.service), minutes: formData.durationMinutes })}</span></div>
+                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>{t('confirm.schedule')}</strong><span className={summaryValueClass} data-testid="confirm-schedule">{scheduleMode === 'scheduled' && scheduleSlot?.time
+                        ? formatScheduleLabel(scheduleSlot.date, scheduleSlot.time, t)
+                        : t('confirm.asap')}</span></div>
+                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>{t('confirm.address')}</strong><span className={summaryValueClass}>{inferAreaFromAddress(formData.addressNote)} - {formData.addressNote}</span></div>
                       <BookingCouponAmounts couponPreview={couponPreview} selectedTotalAmount={selectedTotalAmount} promoDiscount={promoState.discount} />
-                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>Payment</strong><span className={summaryValueClass}>Cash before service</span></div>
+                      <div className="flex justify-between gap-4"><strong className={summaryLabelClass}>{t('confirm.payment')}</strong><span className={summaryValueClass}>{t('confirm.cashBeforeService')}</span></div>
                     </div>
                   </div>
                   <BookingCouponSelector
@@ -2288,7 +2390,7 @@ export default function BookingModal() {
                     }}
                   />
                   <button type="submit" disabled={isSubmitting || couponPreviewState !== 'ready'} className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-[#64734F] px-6 font-bold text-white hover:bg-[#55633F] disabled:cursor-not-allowed disabled:opacity-60">
-                    {isSubmitting ? <><span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />Submitting...</> : 'Submit booking request'}
+                    {isSubmitting ? <><span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />{t('confirm.submitting')}</> : t('confirm.submit')}
                   </button>
                 </form>
               ) : null}
@@ -2318,7 +2420,7 @@ export default function BookingModal() {
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 text-amber-700">
                   <Clock className="h-6 w-6" />
                 </div>
-                <h2 id="active-booking-dialog-title" className="mt-4 text-2xl font-bold text-[#171A17]">You already have a booking waiting for confirmation</h2>
+                <h2 id="active-booking-dialog-title" className="mt-4 text-2xl font-bold text-[#171A17]">{t('active.title')}</h2>
                 <p className="mt-3 break-all font-mono text-xs text-gray-500">{activeBookingDialog.reference}</p>
                 {activeBookingDialog.notice ? (
                   <p className="mt-3 rounded-2xl border border-amber-200 bg-amber-50 p-3 text-sm leading-6 text-amber-900">{activeBookingDialog.notice}</p>
@@ -2336,22 +2438,22 @@ export default function BookingModal() {
                         }}
                         className="h-12 rounded-2xl bg-[#64734F] px-4 font-bold text-white transition hover:bg-[#55633F]"
                       >
-                        View my booking
+                        {t('active.view')}
                       </button>
                     ) : (
                       <p className="rounded-2xl border border-amber-200 bg-amber-50 p-3 text-sm leading-6 text-amber-900">
-                        This browser could not save your cancellation credential. Keep this page open to cancel, or contact us on WhatsApp.
+                        {t('active.notSaved')}
                       </p>
                     )}
                     <button type="submit" className="h-12 rounded-2xl border border-red-200 bg-white px-4 font-bold text-red-700 transition hover:bg-red-50">
-                      Cancel that booking
+                      {t('active.cancelBooking')}
                     </button>
                   </div>
                 ) : (
                   <div className="mt-5 space-y-4">
-                    <p className="text-sm leading-6 text-gray-600">Enter the email or phone used for this booking, then confirm cancellation.</p>
+                    <p className="text-sm leading-6 text-gray-600">{t('active.confirmIntro')}</p>
                     <div>
-                      <label htmlFor="active-booking-contact" className={bookingLabelClass}>Booking email or phone</label>
+                      <label htmlFor="active-booking-contact" className={bookingLabelClass}>{t('active.contactLabel')}</label>
                       <input
                         id="active-booking-contact"
                         value={activeCancelContact}
@@ -2374,10 +2476,10 @@ export default function BookingModal() {
                         }}
                         className="h-12 rounded-2xl border border-gray-200 bg-white px-4 font-bold text-gray-700 transition hover:bg-gray-50"
                       >
-                        Keep booking
+                        {t('active.keep')}
                       </button>
                       <button type="submit" disabled={activeCancelPending} className="h-12 rounded-2xl bg-red-600 px-4 font-bold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60">
-                        {activeCancelPending ? 'Cancelling...' : 'Confirm cancellation'}
+                        {activeCancelPending ? t('active.cancelling') : t('active.confirmCancel')}
                       </button>
                     </div>
                   </div>
@@ -2410,25 +2512,25 @@ export default function BookingModal() {
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 text-amber-700">
                   <AlertTriangle className="h-6 w-6" />
                 </div>
-                <h2 id="resting-therapist-warning-title" className="mt-4 text-2xl font-bold text-[#171A17]">Warning</h2>
+                <h2 id="resting-therapist-warning-title" className="mt-4 text-2xl font-bold text-[#171A17]">{t('resting.title')}</h2>
                 {findWebsiteTherapist(pendingRestingTherapistId, bookingTherapists)?.technicianAccountId ? (
                   <>
-                    <p className="mt-3 text-sm leading-6 text-gray-600">Therapist is currently resting, low chance of accepting orders, do you still want to continue?</p>
+                    <p className="mt-3 text-sm leading-6 text-gray-600">{t('resting.body')}</p>
                     <div className="mt-6 grid gap-3 sm:grid-cols-2">
                       <button type="button" onClick={cancelRestingTherapistSelection} className="h-12 rounded-2xl border border-gray-200 bg-white px-4 font-bold text-gray-700 transition hover:bg-gray-50">
-                        Cancel
+                        {t('common.cancel')}
                       </button>
                       <button type="button" onClick={continueRestingTherapistSelection} className="h-12 rounded-2xl bg-[#64734F] px-4 font-bold text-white transition hover:bg-[#55633F]">
-                        Continue anyway
+                        {t('resting.continueAnyway')}
                       </button>
                     </div>
                   </>
                 ) : (
                   <>
-                    <p className="mt-3 text-sm leading-6 text-gray-600">This therapist is currently resting and not accepting bookings. Please choose another therapist.</p>
+                    <p className="mt-3 text-sm leading-6 text-gray-600">{t('resting.notAccepting')}</p>
                     <div className="mt-6">
                       <button type="button" onClick={cancelRestingTherapistSelection} className="h-12 w-full rounded-2xl bg-[#64734F] px-4 font-bold text-white transition hover:bg-[#55633F]">
-                        Choose another therapist
+                        {t('resting.chooseAnother')}
                       </button>
                     </div>
                   </>

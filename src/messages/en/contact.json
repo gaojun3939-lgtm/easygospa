@@ -1,0 +1,57 @@
+{
+  "eyebrow": "Get In Touch",
+  "title": "Contact EasyGoSpa - Professional Home Massage in Metro Manila",
+  "lead": "Book a trained massage therapist to your hotel, condo, home, or office. Message us for availability, service details, and booking assistance.",
+  "area": {
+    "title": "Service Area",
+    "value": "Metro Manila",
+    "note": "Home, condo, hotel, and office massage service. Enter your address during booking to check availability."
+  },
+  "whatsapp": {
+    "title": "Booking & WhatsApp",
+    "note": "Message us anytime to book or ask about therapist availability."
+  },
+  "email": {
+    "title": "Email Support",
+    "note": "For booking questions, service details, and business inquiries."
+  },
+  "hours": {
+    "title": "Service Hours",
+    "value": "24 Hours / 7 Days",
+    "note": "Online booking and message support are available 24/7. Therapist availability may vary by area and time."
+  },
+  "follow": {
+    "title": "Follow Us",
+    "instagram": "Follow us on Instagram",
+    "facebook": "Follow us on Facebook"
+  },
+  "photoAlt": "A therapist in the EasyGoSpa uniform opening a door and smiling",
+  "sent": {
+    "title": "Thank You!",
+    "text": "Your message has been sent successfully. We’ll get back to you within 2 hours."
+  },
+  "form": {
+    "title": "Send Us a Message",
+    "firstName": "First Name *",
+    "firstNamePlaceholder": "Your first name",
+    "lastName": "Last Name *",
+    "lastNamePlaceholder": "Your last name",
+    "email": "Email Address *",
+    "phone": "Phone Number *",
+    "service": "Interested Service",
+    "selectService": "Select a service",
+    "consultation": "Consultation",
+    "message": "Message *",
+    "messagePlaceholder": "Tell us your preferred service, location, date, and time.",
+    "sending": "Sending...",
+    "send": "Send Message"
+  },
+  "errors": {
+    "firstName": "First name is required",
+    "lastName": "Last name is required",
+    "email": "Email is required",
+    "emailInvalid": "Please enter a valid email address",
+    "phone": "Phone number is required",
+    "message": "Message is required"
+  }
+}

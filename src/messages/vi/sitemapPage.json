@@ -1,0 +1,56 @@
+{
+  "eyebrow": "Điều hướng trang web",
+  "title": "Sơ đồ trang web EasyGo Spa",
+  "lead": "Tìm mọi trang của website EasyGoSpa tại một nơi.",
+  "main": "Trang chính",
+  "treatments": "Liệu trình massage",
+  "pages": {
+    "home": {
+      "name": "Trang chủ",
+      "description": "Massage tại nhà chuyên nghiệp khắp Metro Manila"
+    },
+    "services": {
+      "name": "Dịch vụ",
+      "description": "Tất cả liệu trình massage kèm bảng giá"
+    },
+    "pricing": {
+      "name": "Bảng giá",
+      "description": "Giá cho từng liệu trình và thời lượng"
+    },
+    "contact": {
+      "name": "Liên hệ",
+      "description": "Điện thoại, WhatsApp, email và khu vực phục vụ"
+    },
+    "terms": {
+      "name": "Điều khoản dịch vụ",
+      "description": "Quy định về đặt lịch, thanh toán, hủy và hoàn tiền"
+    },
+    "privacy": {
+      "name": "Chính sách quyền riêng tư",
+      "description": "Cách chúng tôi xử lý thông tin cá nhân của bạn"
+    }
+  },
+  "treatmentNotes": {
+    "Deep tissue": "Lực ấn mạnh, tập trung vào vùng cơ căng cứng lâu ngày",
+    "Hot Stone Massage": "Đá ấm kết hợp massage êm dịu giúp thư giãn cơ căng cứng",
+    "Relaxing Premium Aromatherapy Body Massage": "Massage nhẹ nhàng với tinh dầu thiên nhiên",
+    "Shiatsu Massage(without Oil)": "Kỹ thuật ấn bằng ngón tay và lòng bàn tay truyền thống Nhật Bản, không dùng dầu",
+    "Swedish Massage": "Massage toàn thân nhẹ nhàng với dầu, phù hợp cho người mới bắt đầu",
+    "Thai Body Massage": "Lực ấn sâu không dùng dầu, kết hợp kéo giãn toàn thân"
+  },
+  "about": "Về trang web của chúng tôi",
+  "features": "Tính năng trang web",
+  "featureList": {
+    "responsive": "Thiết kế tương thích với mọi thiết bị",
+    "booking": "Đặt lịch trực tuyến — tự chọn kỹ thuật viên",
+    "menu": "Danh mục dịch vụ kèm bảng giá",
+    "tracking": "Theo dõi đơn",
+    "contact": "Thông tin liên hệ và khu vực phục vụ"
+  },
+  "office": "Văn phòng đăng ký",
+  "homeOnly": "Chỉ phục vụ tận nơi — kỹ thuật viên của chúng tôi đến với bạn.",
+  "phone": "Điện thoại: {phone}",
+  "ctaTitle": "Sẵn sàng trải nghiệm EasyGo Spa?",
+  "ctaText": "Đặt lịch ngay hôm nay — chọn kỹ thuật viên và trả tiền mặt khi kỹ thuật viên đến.",
+  "ctaButton": "Đặt lịch trải nghiệm"
+}

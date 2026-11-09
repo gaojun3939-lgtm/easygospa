@@ -1,0 +1,23 @@
+{
+  "title": "{brand}에 초대되었습니다",
+  "description": "Metro Manila에서 자격을 갖춘 마사지 테라피스트를 집이나 호텔로 예약하세요.",
+  "descriptionGetApp": "Metro Manila에서 자격을 갖춘 마사지 테라피스트를 집이나 호텔로 예약하세요. 앱을 받아 예약하세요 — 초대 정보는 자동으로 저장됩니다.",
+  "badges": {
+    "comingSoon": "출시 예정",
+    "googlePlay": {
+      "get": "다운로드하기",
+      "soon": "출시 예정"
+    },
+    "appStore": {
+      "get": "다운로드하기",
+      "soon": "출시 예정"
+    }
+  },
+  "points": {
+    "verified": "인증된 테라피스트",
+    "coverage": "Metro Manila 전역 집·아파트·호텔 방문 서비스",
+    "allDay": "24/7 이용 가능"
+  },
+  "openApp": "{brand} 열기",
+  "bookOnWebsite": "웹사이트에서 예약하기"
+}

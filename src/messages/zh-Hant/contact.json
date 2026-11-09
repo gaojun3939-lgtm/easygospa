@@ -1,0 +1,57 @@
+{
+  "eyebrow": "聯絡我們",
+  "title": "聯絡 EasyGoSpa｜Metro Manila 專業到府按摩",
+  "lead": "預約受過專業訓練的按摩技師，到您的飯店、公寓、住家或辦公室服務。歡迎傳訊息詢問技師檔期、服務內容，或請我們協助預約。",
+  "area": {
+    "title": "服務範圍",
+    "value": "Metro Manila",
+    "note": "提供住家、公寓、飯店及辦公室到府按摩。預約時輸入地址，即可確認是否在服務範圍內。"
+  },
+  "whatsapp": {
+    "title": "預約與 WhatsApp",
+    "note": "歡迎隨時傳訊息給我們，預約或詢問技師檔期。"
+  },
+  "email": {
+    "title": "電子郵件客服",
+    "note": "預約問題、服務內容與商務合作洽詢。"
+  },
+  "hours": {
+    "title": "服務時間",
+    "value": "24 小時／全年無休",
+    "note": "線上預約與訊息客服 24/7 全天候服務。技師檔期依地區與時段而有所不同。"
+  },
+  "follow": {
+    "title": "追蹤我們",
+    "instagram": "在 Instagram 追蹤我們",
+    "facebook": "在 Facebook 追蹤我們"
+  },
+  "photoAlt": "身穿 EasyGoSpa 制服的技師打開門，面帶微笑",
+  "sent": {
+    "title": "謝謝您！",
+    "text": "您的訊息已成功送出，我們會在 2 小時內回覆您。"
+  },
+  "form": {
+    "title": "傳送訊息給我們",
+    "firstName": "名字 *",
+    "firstNamePlaceholder": "您的名字",
+    "lastName": "姓氏 *",
+    "lastNamePlaceholder": "您的姓氏",
+    "email": "電子郵件 *",
+    "phone": "電話號碼 *",
+    "service": "想了解的服務",
+    "selectService": "請選擇服務",
+    "consultation": "諮詢",
+    "message": "訊息內容 *",
+    "messagePlaceholder": "請告訴我們您想要的服務、地點、日期與時間。",
+    "sending": "傳送中……",
+    "send": "傳送訊息"
+  },
+  "errors": {
+    "firstName": "請輸入名字",
+    "lastName": "請輸入姓氏",
+    "email": "請輸入電子郵件",
+    "emailInvalid": "請輸入有效的電子郵件地址",
+    "phone": "請輸入電話號碼",
+    "message": "請輸入訊息內容"
+  }
+}

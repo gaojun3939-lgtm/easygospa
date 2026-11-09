@@ -1,0 +1,34 @@
+{
+  "fallbackName": "您的技师",
+  "reviewedLabel": "已评价",
+  "reviewedBadge": "★★★★★ 已评价 · 已发放 {amount} 优惠券",
+  "cta": "评价本次按摩 · 领 {amount} 优惠券",
+  "eyebrow": "评价即得 {amount} 优惠券",
+  "heading": "{name} 的服务怎么样？",
+  "starsLabel": "星级评分",
+  "starOption": "{count, plural, other {# 星}}",
+  "commentLabel": "补充说明 <muted>（选填）</muted>",
+  "commentPlaceholder": "这次按摩有哪些让您印象深刻的地方？",
+  "notNow": "暂不评价",
+  "submitting": "提交中……",
+  "submit": "提交评价",
+  "successWallet": "感谢您！{amount} 优惠券已存入“我的优惠券”",
+  "errors": {
+    "chooseStars": "请先选择星级。",
+    "signInAgain": "无法验证您登录的预约邮箱，请重新登录。",
+    "enterContact": "请输入该预约使用的电话号码或邮箱。",
+    "submitFailed": "评价提交失败，请重试。",
+    "notCompleted": "预约完成后才能评价。",
+    "notVerified": "无法用此邮箱核实该预约。",
+    "alreadyReviewed": "该预约已评价过。",
+    "invalid": "请输入预约邮箱并选择星级。",
+    "unavailable": "评价服务暂时不可用，请重试。"
+  },
+  "trackPage": {
+    "thanks": "感谢您！{stars}",
+    "couponInWallet": "一张 {amount} 优惠券已存入“我的优惠券”。",
+    "onceOnly": "每笔已完成的预约只能评价一次。",
+    "contactLabel": "预约电话或邮箱",
+    "contactHint": "仅用于核实这笔已完成的预约属于您。"
+  }
+}

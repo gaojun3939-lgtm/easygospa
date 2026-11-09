@@ -1,0 +1,119 @@
+{
+  "title": "Privacy Policy",
+  "metaDescription": "How {brand} collects, uses, and protects your personal information on our website and in the {brand} app.",
+  "lastUpdated": "Last updated: {date}",
+  "updatedDate": "November 7, 2026",
+  "languageNotice": "This page is a translation. If there is any difference between the English version and a translation, the English version applies.",
+  "intro": "{company} (“{brand}”, “we”, “us”, “our”) runs the {brand} website, the {brand} app and its home massage services in Metro Manila, Philippines. This policy explains what personal information we collect, why we collect it, who can see it, how long we keep it, and your rights. It applies to both the website and the app. We follow the Philippine Data Privacy Act of 2012 (Republic Act No. 10173).",
+  "collect": {
+    "title": "1. Information we collect",
+    "everyoneIntro": "From everyone who books with us or uses the app:",
+    "everyone": {
+      "account": "Account: phone number or email; if you sign in with Google, your Google name and profile photo.",
+      "profile": "Profile: the name you want to be called, a profile photo you upload, gender and nationality (optional).",
+      "addresses": "Addresses and location: service addresses you give or save, and your device location when you allow it.",
+      "bookings": "Bookings: services, times, prices and booking status, plus payment, refund and balance records.",
+      "messages": "Messages and reviews: in-app chats about a booking, your conversations with our support team, and ratings, reviews or reports you leave.",
+      "device": "Device: notification token, app version and basic error logs.",
+      "usage": "App usage and advertising: which screens you open and key actions (signing in, viewing a therapist, placing a booking and its amount), your device and advertising identifiers, and which ad or link brought you to the app or website. We use this to measure our ads and improve our services; it does not include your name, phone number or address.",
+      "referrals": "Referrals: who you invited with your link or code, who invited you, and the rewards or commissions that result.",
+      "payout": "Payout account: when you withdraw (therapist earnings or referral commissions), the GCash number and account name, or the bank name, account name and account number you enter — used only to pay you.",
+      "restoreSignIn": "Restore sign-in on a new phone (Android): after you sign in, the app saves a sign-in key in your own Google account backup; our server keeps only its public part and an ID for that phone. If you move to a new phone and restore from your Google backup, the app uses it to sign you back in automatically (phone-number accounts still need a verification code). When you sign out, the key is deleted from that phone; if your account is frozen, all of its keys are revoked; keys not used for 180 days on a phone that hasn’t opened the app are cleared."
+    },
+    "therapistsIntro": "Additionally from therapists:",
+    "therapists": {
+      "serviceProfile": "Service profile: profile photo, work photos, introduction, years of experience, services, service area and working hours.",
+      "identity": "Identity verification: ID type, ID number (we keep only the last 4 digits and a one-way fingerprint that stops one ID being used for several accounts), expiry date, legal name, photos of the front and back of the ID, and a selfie.",
+      "jobRecords": "Job records: the time and location of arrival, job progress, earnings, platform fees, prepaid balance and wallet transactions, and credit score records (such as declined or missed offers).",
+      "liveLocation": "Live location on the way: from tapping “Depart” until arrival, the therapist’s location is shared with that booking’s customer, including while the app is in the background (a notification shows while this is on). It stops on arrival and we keep only the latest point, not a route.",
+      "safety": "Safety: the emergency contact you add (name, phone number and relationship) — we may call them only if you raise a safety alert, and we never text them; and if you hold the “Safety” button, your location keeps being sent to {brand} — not to the customer — until our team closes the alert."
+    }
+  },
+  "use": {
+    "title": "2. Why we use it",
+    "provide": "To provide the service: show nearby therapists, match and dispatch bookings, and guide the therapist to your address.",
+    "safety": "For safety: verify therapists’ identities and handle disputes or incidents.",
+    "communicate": "To communicate: send verification codes, booking updates and notices by app notification, SMS, phone or WhatsApp. You can ask us to stop promotional messages at any time.",
+    "payments": "For payments and records: calculate earnings and platform fees, and keep records.",
+    "support": "For support: answer your questions and complaints.",
+    "improve": "To measure our ads, improve the service and meet legal obligations."
+  },
+  "access": {
+    "title": "3. Who can see your information",
+    "customers": "Customers can see a therapist’s public profile: name, photos, introduction, services, rating and approximate distance.",
+    "therapists": "A therapist sees a customer’s service address and contact details only after accepting that booking.",
+    "staff": "ID photos and payout accounts are visible only to the {brand} staff who review verifications and make payouts — never to customers or other users.",
+    "chats": "Chats about a booking, and a record of when the call button is tapped, may be reviewed by authorized {brand} staff for safety and to handle disputes. We do not record phone calls.",
+    "law": "We may disclose information if required by law or to protect the safety of our customers, therapists and staff.",
+    "noSale": "We do not sell your personal information."
+  },
+  "providers": {
+    "title": "4. Service providers we use",
+    "intro": "These providers process only the information needed for their part of the service:",
+    "supabase": "Supabase — account sign-in and data storage (servers in Singapore).",
+    "google": "Google — Google sign-in, maps and location services.",
+    "semaphore": "Semaphore — SMS verification codes in the Philippines.",
+    "push": "Google Firebase Cloud Messaging and Apple Push Notification service — app notifications.",
+    "analytics": "Google Analytics for Firebase — app usage statistics.",
+    "crashlytics": "Firebase Crashlytics — crash reports (device model, app version, error details) so we can fix problems.",
+    "appsflyer": "AppsFlyer — measuring which ads and links bring app installs and bookings.",
+    "meta": "Meta (Meta Pixel on our website) — measuring which ads bring website bookings.",
+    "xendit": "Xendit — QR Ph payments of platform fees by therapists."
+  },
+  "storage": {
+    "title": "5. Storage outside the Philippines",
+    "body": "Our data is stored on servers in Singapore. We use providers that protect data with encryption and access controls, as required by Philippine law."
+  },
+  "retention": {
+    "title": "6. How long we keep it",
+    "account": "We keep your information while your account is active or while we need it for your bookings. After you delete your account, we delete or anonymize your personal information, except records we must keep by law, for tax, or to resolve disputes.",
+    "chats": "In-app chats about a booking are kept for 1 year and photos sent in a chat for 180 days; after that they are deleted automatically.",
+    "fingerprint": "To stop the same person signing up again and again for referral rewards, we keep a one-way fingerprint of the phone number and email (it cannot be turned back into the number) until it has not appeared for 1 year, or until your account data is deleted after you delete your account, whichever comes first."
+  },
+  "protect": {
+    "title": "7. How we protect it",
+    "encrypted": "Data is encrypted in transit.",
+    "limited": "Access is limited to staff who need it for their work.",
+    "idPhotos": "ID photos are kept in a separate private space that cannot be opened from the internet.",
+    "outro": "No method of transmission or storage is completely secure, but we work to safeguard your data."
+  },
+  "location": {
+    "title": "8. Location",
+    "body": "We use your location only when you allow it — to show nearby therapists and to fill in your address. You can turn location off anytime in your phone or browser settings; you can still book by entering an address. Therapists’ live location is shared only as described in section 1."
+  },
+  "cookies": {
+    "title": "9. Cookies and similar technologies",
+    "body": "Our website uses basic cookies or local storage to remember your preferences and keep the booking experience working, and the Meta Pixel to measure our ads. The app uses device and advertising identifiers for the same purpose. You can control cookies in your browser settings, and reset or limit your advertising identifier in your phone settings."
+  },
+  "rights": {
+    "title": "10. Your rights",
+    "intro": "Under the Data Privacy Act, you have the right to:",
+    "informed": "Be informed about how your data is used;",
+    "access": "Access your personal information;",
+    "correct": "Correct information that is wrong;",
+    "delete": "Ask us to delete or block your information;",
+    "object": "Object to processing;",
+    "copy": "Get a copy of your data;",
+    "complaint": "File a complaint with the National Privacy Commission.",
+    "outro": "To use these rights, contact us using the details below or through Get help in the app."
+  },
+  "deletion": {
+    "title": "11. Deleting your account",
+    "body": "You can request deletion of your {brand} account and its data in the app, or on our account deletion page: <link>{url}</link>. Therapists stop receiving jobs as soon as the request is submitted, and can contact us to withdraw it until we finish processing."
+  },
+  "minors": {
+    "title": "12. Minors",
+    "body": "Our services are only for people aged 18 and over. We do not knowingly collect information from anyone under 18."
+  },
+  "changes": {
+    "title": "13. Changes to this policy",
+    "body": "We may update this policy from time to time. The latest version is always posted on this page with a new “Last updated” date, and we will tell you in the app before important changes take effect."
+  },
+  "contact": {
+    "title": "14. Contact us",
+    "intro": "For any privacy questions or requests, contact us at:",
+    "email": "Email: <link>{email}</link>",
+    "phone": "Phone / WhatsApp: {phone}"
+  },
+  "finalInterpretation": "{company} reserves the right of final interpretation of this Policy."
+}

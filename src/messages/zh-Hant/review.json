@@ -1,0 +1,34 @@
+{
+  "fallbackName": "您的技師",
+  "reviewedLabel": "已評價",
+  "reviewedBadge": "★★★★★ 已評價 · 已送出 {amount} 優惠券",
+  "cta": "為這次按摩評分 · 獲得 {amount} 優惠券",
+  "eyebrow": "評價即可獲得 {amount} 優惠券",
+  "heading": "{name} 的服務如何？",
+  "starsLabel": "星等評分",
+  "starOption": "{count, plural, other {# 顆星}}",
+  "commentLabel": "告訴我們更多 <muted>（選填）</muted>",
+  "commentPlaceholder": "這次按摩有什麼讓您印象深刻的地方？",
+  "notNow": "稍後再說",
+  "submitting": "送出中……",
+  "submit": "送出評價",
+  "successWallet": "謝謝您！{amount} 優惠券已加入「我的優惠券」",
+  "errors": {
+    "chooseStars": "請先選擇星等。",
+    "signInAgain": "無法核實您登入時使用的預約電子郵件，請重新登入。",
+    "enterContact": "請輸入此預約使用的電話號碼或電子郵件。",
+    "submitFailed": "評價送出失敗，請再試一次。",
+    "notCompleted": "此預約完成後才能評價。",
+    "notVerified": "無法用此電子郵件核實該筆預約。",
+    "alreadyReviewed": "此預約已經評價過了。",
+    "invalid": "請輸入預約時的電子郵件，並選擇星等。",
+    "unavailable": "評價服務暫時無法使用，請再試一次。"
+  },
+  "trackPage": {
+    "thanks": "謝謝您！{stars}",
+    "couponInWallet": "一張 {amount} 優惠券已加入「我的優惠券」。",
+    "onceOnly": "每筆已完成的預約只能評價一次。",
+    "contactLabel": "預約時的電話或電子郵件",
+    "contactHint": "僅用於核實這筆已完成的預約是您本人的。"
+  }
+}

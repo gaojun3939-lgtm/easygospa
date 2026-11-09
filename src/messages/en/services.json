@@ -1,0 +1,24 @@
+{
+  "eyebrow": "Our Services",
+  "title": "Premium Home Massage Services in Metro Manila",
+  "lead": "Professional massage at your home, condo or hotel across Metro Manila. Every treatment and price is listed below — no tips.",
+  "all": "All Services",
+  "massage": "Massage Therapy",
+  "ctaTitle": "Ready for Your Transformation?",
+  "ctaText": "Book your appointment today — choose your therapist and pay in cash when they arrive.",
+  "ctaButton": "Book Your Experience",
+  "bandAlt": {
+    "foot": "A therapist in the EasyGoSpa uniform massaging a client’s foot beside the sofa",
+    "walkin": "A therapist in the EasyGoSpa uniform walking in through an open door",
+    "stone": "A therapist gliding a warm stone along a client’s forearm"
+  },
+  "photoAlt": {
+    "deep": "A therapist in the EasyGoSpa uniform working into a client’s back through a soft towel",
+    "stone": "Warm black stones placed along a client’s back",
+    "aroma": "Small bottles of essential oil with eucalyptus on white linen",
+    "shiatsu": "A therapist pressing a clothed client’s shoulders in a bright condo",
+    "swedish": "A client resting under a towel while a therapist in uniform massages her back",
+    "thai": "A therapist guiding a seated client through a Thai stretch at home",
+    "other": "Fresh rolled and folded towels on a dark wood bench"
+  }
+}

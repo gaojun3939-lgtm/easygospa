@@ -1,0 +1,24 @@
+{
+  "eyebrow": "Dịch vụ của chúng tôi",
+  "title": "Dịch vụ massage tại nhà cao cấp ở Metro Manila",
+  "lead": "Massage chuyên nghiệp tại nhà riêng, căn hộ hoặc khách sạn của bạn khắp Metro Manila. Mọi liệu trình và mức giá đều được liệt kê bên dưới — không cần tiền tip.",
+  "all": "Tất cả dịch vụ",
+  "massage": "Massage trị liệu",
+  "ctaTitle": "Sẵn sàng làm mới chính mình?",
+  "ctaText": "Đặt lịch ngay hôm nay — chọn kỹ thuật viên và trả tiền mặt khi kỹ thuật viên đến.",
+  "ctaButton": "Đặt lịch trải nghiệm",
+  "bandAlt": {
+    "foot": "Kỹ thuật viên mặc đồng phục EasyGoSpa massage chân cho khách bên cạnh ghế sofa",
+    "walkin": "Kỹ thuật viên mặc đồng phục EasyGoSpa bước vào qua cánh cửa đang mở",
+    "stone": "Kỹ thuật viên lướt viên đá ấm dọc cẳng tay của khách"
+  },
+  "photoAlt": {
+    "deep": "Kỹ thuật viên mặc đồng phục EasyGoSpa ấn sâu vào lưng khách qua lớp khăn mềm",
+    "stone": "Những viên đá đen ấm đặt dọc lưng khách",
+    "aroma": "Những lọ tinh dầu nhỏ cùng lá khuynh diệp trên tấm vải lanh trắng",
+    "shiatsu": "Kỹ thuật viên ấn vai cho khách đang mặc quần áo trong một căn hộ sáng sủa",
+    "swedish": "Khách nằm thư giãn dưới tấm khăn trong khi kỹ thuật viên mặc đồng phục massage lưng",
+    "thai": "Kỹ thuật viên hướng dẫn khách ngồi thực hiện động tác kéo giãn kiểu Thái tại nhà",
+    "other": "Khăn sạch cuộn và gấp gọn trên băng ghế gỗ sẫm màu"
+  }
+}

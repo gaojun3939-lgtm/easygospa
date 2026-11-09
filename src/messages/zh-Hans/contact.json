@@ -1,0 +1,57 @@
+{
+  "eyebrow": "联系我们",
+  "title": "联系 EasyGoSpa · Metro Manila 专业上门按摩",
+  "lead": "预约专业按摩技师，上门到您的酒店、公寓、家中或办公室。欢迎给我们留言，咨询可约时间、服务详情或预约协助。",
+  "area": {
+    "title": "服务区域",
+    "value": "Metro Manila",
+    "note": "提供家中、公寓、酒店及办公室上门按摩。预约时输入地址，即可查看能否预约。"
+  },
+  "whatsapp": {
+    "title": "预约与 WhatsApp",
+    "note": "随时给我们发消息预约，或咨询技师可约时间。"
+  },
+  "email": {
+    "title": "邮件咨询",
+    "note": "预约问题、服务详情及商务合作咨询。"
+  },
+  "hours": {
+    "title": "服务时间",
+    "value": "24 小时 / 每周 7 天",
+    "note": "在线预约和留言咨询 24/7 全天候开放。技师可约情况因区域和时段而异。"
+  },
+  "follow": {
+    "title": "关注我们",
+    "instagram": "在 Instagram 关注我们",
+    "facebook": "在 Facebook 关注我们"
+  },
+  "photoAlt": "身穿 EasyGoSpa 制服的技师打开门，面带微笑",
+  "sent": {
+    "title": "感谢您！",
+    "text": "您的留言已成功发送，我们会在 2 小时内回复您。"
+  },
+  "form": {
+    "title": "给我们留言",
+    "firstName": "名字 *",
+    "firstNamePlaceholder": "您的名字",
+    "lastName": "姓氏 *",
+    "lastNamePlaceholder": "您的姓氏",
+    "email": "电子邮箱 *",
+    "phone": "电话号码 *",
+    "service": "意向服务",
+    "selectService": "请选择服务",
+    "consultation": "咨询",
+    "message": "留言内容 *",
+    "messagePlaceholder": "请告诉我们您想要的服务、地点、日期和时间。",
+    "sending": "发送中……",
+    "send": "发送留言"
+  },
+  "errors": {
+    "firstName": "请填写名字",
+    "lastName": "请填写姓氏",
+    "email": "请填写电子邮箱",
+    "emailInvalid": "请输入有效的电子邮箱地址",
+    "phone": "请填写电话号码",
+    "message": "请填写留言内容"
+  }
+}

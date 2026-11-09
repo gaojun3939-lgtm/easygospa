@@ -1,0 +1,122 @@
+{
+  "meta": {
+    "title": "Theo dõi đơn của tôi"
+  },
+  "status": {
+    "submitted": "Đã nhận yêu cầu đặt lịch",
+    "confirmed": "Đã xác nhận, đang tìm kỹ thuật viên",
+    "waitingAcceptance": "Chờ xác nhận",
+    "preparing": "Kỹ thuật viên đang chuẩn bị",
+    "onTheWay": "Kỹ thuật viên đang trên đường đến",
+    "arrived": "Kỹ thuật viên đã đến nơi",
+    "inService": "Đang phục vụ",
+    "completed": "Đã hoàn tất",
+    "cancelled": "Đã hủy"
+  },
+  "schedulePending": "Đang chờ xếp lịch",
+  "yourTherapist": "Kỹ thuật viên của bạn",
+  "bookingCancelled": "Đã hủy đặt lịch",
+  "whatsappButton": "Liên hệ chúng tôi qua WhatsApp",
+  "updatesBanner": "📲 Nhận cập nhật đơn qua WhatsApp",
+  "therapistLine": {
+    "named": "💬 Nhắn tin cho kỹ thuật viên {name}",
+    "unnamed": "💬 Nhắn tin cho kỹ thuật viên"
+  },
+  "notify": {
+    "fallbackName": "Kỹ thuật viên",
+    "confirmedBanner": "✅ {name} đã xác nhận đơn của bạn!",
+    "confirmedPush": "{name} đã xác nhận đơn của bạn",
+    "arrivedPush": "Kỹ thuật viên đã đến nơi"
+  },
+  "headline": {
+    "fallbackName": "Kỹ thuật viên",
+    "matching": "Đang tìm kỹ thuật viên cho bạn",
+    "confirming": "{name} đang xác nhận",
+    "gettingReady": "{name} đang chuẩn bị",
+    "onTheWayEta": "{name} đang trên đường đến · ~{minutes} phút",
+    "onTheWay": "{name} đang trên đường đến",
+    "arrived": "{name} đã đến nơi",
+    "inService": "Buổi massage đang diễn ra",
+    "completed": "Đã hoàn tất dịch vụ"
+  },
+  "note": {
+    "matching": "Chúng tôi đang tìm kỹ thuật viên gần bạn nhất.",
+    "confirming": "Vui lòng chờ một chút — đang xác nhận đơn của bạn.",
+    "headingScheduled": "Kỹ thuật viên sẽ đến địa chỉ của bạn kịp giờ hẹn.",
+    "headingSoon": "Kỹ thuật viên sẽ sớm lên đường đến địa chỉ của bạn.",
+    "keepPhone": "Vui lòng để điện thoại ở gần bạn.",
+    "payAtDoor": "Thanh toán tiền mặt tại cửa, trước khi bắt đầu massage.",
+    "enjoy": "Hãy tận hưởng — thư giãn và nghỉ ngơi.",
+    "review": "Để lại đánh giá và nhận phiếu giảm giá trị giá {amount}.",
+    "needHelp": "Nhắn tin cho chúng tôi qua WhatsApp nếu bạn cần hỗ trợ."
+  },
+  "badge": {
+    "photoAlt": "Hồ sơ của {name}",
+    "therapist": "Kỹ thuật viên",
+    "assignedTherapist": "Kỹ thuật viên được phân công"
+  },
+  "timeline": {
+    "cancelledBody": "Đơn này không còn hiệu lực. Nhắn tin cho chúng tôi qua WhatsApp nếu bạn cần hỗ trợ.",
+    "eta": "Dự kiến đến nơi: {minutes, plural, other {# phút}}"
+  },
+  "notFound": {
+    "title": "Không tìm thấy đơn",
+    "body": "Chúng tôi không tìm thấy đơn này. Vui lòng kiểm tra lại liên kết hoặc nhắn tin cho chúng tôi qua WhatsApp."
+  },
+  "loadError": {
+    "title": "Không thể làm mới đơn của bạn",
+    "body": "Vui lòng kiểm tra kết nối mạng và thử lại.",
+    "retry": "Thử lại"
+  },
+  "hero": {
+    "eyebrow": "Đơn của tôi",
+    "waitingFor": "Đang chờ {name} xác nhận...",
+    "waitingFallbackName": "kỹ thuật viên",
+    "title": "Theo dõi buổi massage",
+    "waitingHint": "Thường được xác nhận trong vài phút",
+    "liveHint": "Trạng thái được tự động cập nhật mỗi {seconds, plural, other {# giây}}."
+  },
+  "summary": {
+    "label": "Tóm tắt đơn",
+    "service": "Dịch vụ",
+    "servicePending": "Đang cập nhật dịch vụ",
+    "duration": "{minutes, plural, other {# phút}}",
+    "durationPending": "Đang cập nhật thời lượng",
+    "appointment": "Lịch hẹn của bạn",
+    "bookedForLater": "Đã hẹn giờ — kỹ thuật viên sẽ đến vào thời điểm này.",
+    "area": "Khu vực",
+    "areaPending": "Đang cập nhật khu vực",
+    "reference": "Mã đơn",
+    "copyLabel": "Sao chép mã đơn",
+    "copy": "Sao chép",
+    "copied": "Đã sao chép"
+  },
+  "progress": {
+    "title": "Tiến độ đặt lịch",
+    "lastUpdated": "Cập nhật lúc {time}",
+    "refresh": "Làm mới",
+    "cancel": "Hủy đặt lịch",
+    "cannotCancel": "Kỹ thuật viên đã xác nhận đơn này nên bạn không thể hủy tại đây nữa. Cần hủy hoặc đổi lịch? Hãy nhắn tin cho chúng tôi qua WhatsApp bên dưới — chúng tôi sẽ xử lý giúp bạn."
+  },
+  "help": {
+    "title": "Cần thêm thông tin?",
+    "body": "Nhắn tin cho đội ngũ của chúng tôi kèm mã đơn của bạn."
+  },
+  "cancel": {
+    "title": "Hủy đơn này?",
+    "body": "Chỉ có thể hủy tại đây khi đơn vẫn đang chờ kỹ thuật viên xác nhận.",
+    "contactLabel": "Email hoặc số điện thoại đặt lịch",
+    "keep": "Giữ đơn",
+    "cancelling": "Đang hủy...",
+    "confirm": "Xác nhận hủy",
+    "errors": {
+      "enterContact": "Nhập email hoặc số điện thoại đặt lịch để tiếp tục.",
+      "notVerified": "Chúng tôi không xác minh được đơn với thông tin này.",
+      "authRequired": "Vì lý do bảo mật, hãy đăng nhập để xem đơn hoặc liên hệ chúng tôi qua WhatsApp để được hỗ trợ.",
+      "notAllowed": "Đơn này không thể hủy trực tuyến nữa. Vui lòng liên hệ chúng tôi qua WhatsApp.",
+      "rateLimited": "Quá nhiều yêu cầu, vui lòng thử lại sau.",
+      "failed": "Hiện chưa thể hủy đơn. Hãy nhắn tin cho chúng tôi qua WhatsApp kèm mã đơn, chúng tôi sẽ hủy giúp bạn.",
+      "unreachable": "Hiện không kết nối được với chúng tôi. Hãy kiểm tra kết nối mạng, hoặc nhắn tin cho chúng tôi qua WhatsApp kèm mã đơn."
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "meta": {
+    "title": "セラピストを選ぶ · {amount}オフ | {site}",
+    "description": "セラピストを選んで、60秒で予約完了。初回のご予約は{amount}オフ（自動適用）。予約金なし、事前のお支払いも不要です。"
+  },
+  "title": "来てもらうセラピストを選べます",
+  "speed": "最短30分でお伺いします",
+  "points": {
+    "choose": "<b>伺うセラピストは、ご自身で選べます</b>。実在のセラピスト、本人の写真です",
+    "noDeposit": "<b>予約金・前払いは不要</b>。ご予約いただければ、すぐに向かいます",
+    "professional": "<b>プロのマッサージのみ</b>。有資格・制服着用・本人確認済みのセラピストです"
+  },
+  "new": "新人",
+  "onShift": "出勤中",
+  "firstBookingOff": "初回のご予約が{amount}オフ",
+  "pickTherapist": "セラピストを選ぶ",
+  "noTips": "チップ不要。事前のお支払いもありません。",
+  "questions": "ご質問はこちら：<messenger>Messengerでチャット</messenger> · <whatsapp>WhatsApp</whatsapp>"
+}

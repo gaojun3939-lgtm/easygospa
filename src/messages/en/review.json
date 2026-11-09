@@ -1,0 +1,34 @@
+{
+  "fallbackName": "your therapist",
+  "reviewedLabel": "Booking reviewed",
+  "reviewedBadge": "★★★★★ Reviewed · {amount} coupon sent",
+  "cta": "Rate your massage · Get {amount} coupon",
+  "eyebrow": "Review & get a {amount} coupon",
+  "heading": "How was {name}?",
+  "starsLabel": "Star rating",
+  "starOption": "{count, plural, one {# star} other {# stars}}",
+  "commentLabel": "Tell us more <muted>(optional)</muted>",
+  "commentPlaceholder": "What stood out about your massage?",
+  "notNow": "Not now",
+  "submitting": "Submitting…",
+  "submit": "Submit review",
+  "successWallet": "Thanks! {amount} coupon added to your wallet",
+  "errors": {
+    "chooseStars": "Choose a star rating first.",
+    "signInAgain": "Your signed-in booking email could not be verified. Please sign in again.",
+    "enterContact": "Enter the phone number or email used for this booking.",
+    "submitFailed": "Your review could not be submitted. Please try again.",
+    "notCompleted": "This booking can be reviewed after it is completed.",
+    "notVerified": "We could not verify that booking with this email.",
+    "alreadyReviewed": "This booking has already been reviewed.",
+    "invalid": "Enter the booking email and choose a star rating.",
+    "unavailable": "Review service is temporarily unavailable. Please try again."
+  },
+  "trackPage": {
+    "thanks": "Thanks! {stars}",
+    "couponInWallet": "A {amount} coupon is now in your wallet.",
+    "onceOnly": "Each completed booking can be reviewed once.",
+    "contactLabel": "Booking phone or email",
+    "contactHint": "Used only to verify that this completed booking is yours."
+  }
+}

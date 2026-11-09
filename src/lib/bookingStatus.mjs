@@ -1,5 +1,6 @@
 export const DEFAULT_PUBLIC_WHATSAPP = '+63 964 857 0967';
 
+// label 是接口回给客人的英文底稿(statusLabel 兜底用),页面上显示的字按状态代码去 track 文字文件里查。
 export const BOOKING_STATUS_STEPS = Object.freeze([
   { status: 'submitted', label: 'Booking received' },
   { status: 'confirmed', label: 'Confirmed, matching therapist' },
@@ -10,6 +11,24 @@ export const BOOKING_STATUS_STEPS = Object.freeze([
   { status: 'in_service', label: 'Service in progress' },
   { status: 'completed', label: 'Completed' }
 ]);
+
+// 状态代码 → 文字文件 track.json 里的键(页面用 useTranslations('track') 翻)。代码本身不变,接口照旧用英文代码比对。
+const BOOKING_STATUS_MESSAGE_KEYS = Object.freeze({
+  submitted: 'status.submitted',
+  confirmed: 'status.confirmed',
+  waiting_acceptance: 'status.waitingAcceptance',
+  preparing: 'status.preparing',
+  on_the_way: 'status.onTheWay',
+  arrived: 'status.arrived',
+  in_service: 'status.inService',
+  completed: 'status.completed',
+  cancelled: 'status.cancelled'
+});
+
+export function bookingStatusMessageKey(status) {
+  const key = typeof status === 'string' ? status.trim() : '';
+  return Object.prototype.hasOwnProperty.call(BOOKING_STATUS_MESSAGE_KEYS, key) ? BOOKING_STATUS_MESSAGE_KEYS[key] : null;
+}
 
 export const WAITING_ACCEPTANCE_POLL_MS = 3000;
 export const DEFAULT_BOOKING_POLL_MS = 25000;
@@ -99,11 +118,13 @@ export function normalizeBookingStatusPayload(payload = {}) {
   };
 }
 
-export function formatManilaBookingDateTime(value) {
-  if (!value) return 'Schedule pending';
+// 没有时间或时间读不出来时回空字符串,页面自己显示翻好的「Schedule pending」。
+// locale 传 intlLocale(当前语言);不传按英文。
+export function formatManilaBookingDateTime(value, locale = 'en-US') {
+  if (!value) return '';
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return 'Schedule pending';
-  return new Intl.DateTimeFormat('en-US', {
+  if (Number.isNaN(date.getTime())) return '';
+  return new Intl.DateTimeFormat(locale, {
     timeZone: 'Asia/Manila',
     dateStyle: 'medium',
     timeStyle: 'short'

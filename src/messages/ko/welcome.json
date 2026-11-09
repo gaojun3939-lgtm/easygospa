@@ -1,0 +1,19 @@
+{
+  "meta": {
+    "title": "테라피스트 직접 선택 · {amount} 할인 | {site}",
+    "description": "테라피스트를 직접 고르고 60초 만에 예약하세요. 첫 예약 {amount} 할인이 자동 적용됩니다. 예약금도, 선결제도 없습니다."
+  },
+  "title": "찾아올 테라피스트를 직접 고르세요",
+  "speed": "빠르면 30분 안에 도착",
+  "points": {
+    "choose": "<b>찾아올 테라피스트를 직접 선택</b> — 실제 테라피스트, 실제 사진",
+    "noDeposit": "<b>예약금도, 선결제도 없습니다</b> — 예약만 하시면 바로 출발합니다",
+    "professional": "<b>정식 마사지만 제공</b> — 자격을 갖추고 유니폼을 착용한, 본인 인증을 마친 테라피스트"
+  },
+  "new": "신규",
+  "onShift": "지금 근무 중",
+  "firstBookingOff": "첫 예약 {amount} 할인",
+  "pickTherapist": "테라피스트 선택하기",
+  "noTips": "팁 없음. 선결제도 없습니다.",
+  "questions": "먼저 문의하시겠어요? <messenger>Messenger로 채팅</messenger> · <whatsapp>WhatsApp</whatsapp>"
+}

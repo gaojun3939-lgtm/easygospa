@@ -1,0 +1,56 @@
+{
+  "eyebrow": "Site Navigation",
+  "title": "EasyGo Spa Website Sitemap",
+  "lead": "Find every page of the EasyGoSpa website in one place.",
+  "main": "Main Pages",
+  "treatments": "Massage Treatments",
+  "pages": {
+    "home": {
+      "name": "Home",
+      "description": "Professional home massage across Metro Manila"
+    },
+    "services": {
+      "name": "Services",
+      "description": "All massage treatments with prices"
+    },
+    "pricing": {
+      "name": "Pricing",
+      "description": "Prices for every treatment and duration"
+    },
+    "contact": {
+      "name": "Contact",
+      "description": "Phone, WhatsApp, email and service area"
+    },
+    "terms": {
+      "name": "Terms of Service",
+      "description": "Booking, payment, cancellation and refund rules"
+    },
+    "privacy": {
+      "name": "Privacy Policy",
+      "description": "How we handle your personal information"
+    }
+  },
+  "treatmentNotes": {
+    "Deep tissue": "Firm, targeted pressure for chronic muscle tension",
+    "Hot Stone Massage": "Warm stones and soothing massage to relax tight muscles",
+    "Relaxing Premium Aromatherapy Body Massage": "Gentle massage with natural essential oils",
+    "Shiatsu Massage(without Oil)": "Traditional Japanese finger and palm pressure, no oil",
+    "Swedish Massage": "Gentle full-body massage with oil, great for beginners",
+    "Thai Body Massage": "Oil-free deep pressure with full-body stretching"
+  },
+  "about": "About Our Website",
+  "features": "Website Features",
+  "featureList": {
+    "responsive": "Responsive design for all devices",
+    "booking": "Online booking — choose your own therapist",
+    "menu": "Service menu with prices",
+    "tracking": "Order tracking",
+    "contact": "Contact and service area information"
+  },
+  "office": "Registered Office",
+  "homeOnly": "Home service only — our therapists come to you.",
+  "phone": "Phone: {phone}",
+  "ctaTitle": "Ready to Experience EasyGo Spa?",
+  "ctaText": "Book your appointment today — choose your therapist and pay in cash when they arrive.",
+  "ctaButton": "Book Your Experience"
+}

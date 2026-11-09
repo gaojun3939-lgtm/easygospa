@@ -1,0 +1,64 @@
+{
+  "title": "Terms of Service",
+  "metaDescription": "The terms that govern your use of {brand} home massage booking services in Metro Manila.",
+  "lastUpdated": "Last updated: {date}",
+  "updatedDate": "November 5, 2026",
+  "languageNotice": "This page is a translation. If there is any difference between the English version and a translation, the English version applies.",
+  "intro": "Welcome to {brand}. By booking or using our website and services, you agree to these Terms of Service. Please read them carefully. If you do not agree, please do not use our services.",
+  "appliesToApp": "These Terms also apply to the {appName} mobile app on Google Play and the App Store.",
+  "services": {
+    "title": "1. Our services",
+    "body": "{brand} arranges professional home massage services delivered by trained therapists to your hotel, condo, home, or office within Metro Manila, Philippines. Service availability depends on therapist schedules, your location, and the time of booking."
+  },
+  "booking": {
+    "title": "2. Booking and confirmation",
+    "body": "A booking request is not guaranteed until we confirm it and assign a therapist. We will contact you to confirm the therapist and schedule. Estimated arrival times shown on the site are indicative and may change based on traffic and therapist availability."
+  },
+  "pricing": {
+    "title": "3. Pricing and payment",
+    "body": "Service prices are shown before you confirm a booking. A travel fee may apply based on distance: ₱50 within 5 km, ₱100 within 10 km and ₱150 within 15 km. In the app, a night fee may also apply to sessions starting between midnight and 6:00 AM. The total shown before you confirm is the amount you pay. No tip is expected. Payment is made in cash to the therapist when they arrive, before the service begins."
+  },
+  "refunds": {
+    "title": "4. Cancellations and refunds",
+    "intro": "If you need to cancel or reschedule, please tell us as early as possible so we can free up the therapist.",
+    "beforeSetOff": "<b>Before your therapist sets off:</b> you can cancel free of charge. If you paid online, you get a full refund.",
+    "afterSetOff": "<b>After your therapist has set off:</b> a cancellation fee of ₱50, ₱100 or ₱150 applies, depending on the distance. The fee goes to the therapist. If you paid online, the rest is refunded.",
+    "noShow": "<b>No-show:</b> if your therapist arrives and you are not there after 10 minutes, the same cancellation fee applies, once per booking.",
+    "therapistFault": "<b>No fee when it is the therapist's fault</b>, for example arriving more than 15 minutes later than estimated, not heading to you, or marking arrival without being there.",
+    "cash": "<b>Cash bookings:</b> if you pay in cash, a cancellation fee is added to your next booking.",
+    "howPaid": "<b>How refunds are paid:</b> back to the original payment method where possible (GCash or Maya, usually within 1–3 days). Payments that cannot be reversed, such as QR Ph, are refunded to your {brand} balance, which you can use on your next booking or withdraw.",
+    "mistake": "<b>Charged by mistake?</b> Contact us within 48 hours and we will review it.",
+    "outro": "Repeated late cancellations or no-shows may affect future bookings. If a therapist is unable to attend, we will notify you and help arrange an alternative."
+  },
+  "conduct": {
+    "title": "5. Professional service and conduct",
+    "body": "{brand} provides strictly professional, non-sexual therapeutic massage. Any request for sexual services, harassment, or abusive behaviour toward a therapist is strictly prohibited and will result in immediate cancellation without refund and possible refusal of future service. Our therapists may end a session if they feel unsafe or disrespected."
+  },
+  "health": {
+    "title": "6. Health and safety",
+    "body": "Please inform us of any medical conditions, injuries, allergies, or pregnancy before your session so the therapist can adjust the treatment. Massage is not a substitute for medical care. You are responsible for providing accurate information and a safe, clean space for the service."
+  },
+  "availability": {
+    "title": "7. Therapist availability",
+    "body": "Therapists are independent service providers scheduled through our platform. Specific therapists cannot always be guaranteed; if your chosen therapist becomes unavailable, we will offer a suitable alternative or reschedule."
+  },
+  "liability": {
+    "title": "8. Limitation of liability",
+    "body": "To the extent permitted by law, {brand} is not liable for indirect or incidental damages arising from the use of our services. Our total liability for any claim is limited to the amount paid for the specific booking concerned."
+  },
+  "changes": {
+    "title": "9. Changes to these terms",
+    "body": "We may update these Terms of Service from time to time. The latest version will always be posted on this page with a new “Last updated” date. Continued use of our services means you accept the updated terms."
+  },
+  "law": {
+    "title": "10. Governing law",
+    "body": "These terms are governed by the laws of the Republic of the Philippines. Any dispute will be handled in the appropriate courts of Metro Manila."
+  },
+  "contact": {
+    "title": "11. Contact us",
+    "intro": "For questions about these terms, contact us at:",
+    "email": "Email: <link>{email}</link>",
+    "phone": "Phone / WhatsApp: {phone}"
+  },
+  "finalInterpretation": "{company} reserves the right of final interpretation of these Terms."
+}

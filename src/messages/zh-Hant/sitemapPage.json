@@ -1,0 +1,56 @@
+{
+  "eyebrow": "網站導覽",
+  "title": "EasyGo Spa 網站地圖",
+  "lead": "在這裡找到 EasyGoSpa 網站的所有頁面。",
+  "main": "主要頁面",
+  "treatments": "按摩項目",
+  "pages": {
+    "home": {
+      "name": "首頁",
+      "description": "Metro Manila 各地專業到府按摩"
+    },
+    "services": {
+      "name": "服務項目",
+      "description": "所有按摩項目與價格"
+    },
+    "pricing": {
+      "name": "價格",
+      "description": "各項目、各時長的價格"
+    },
+    "contact": {
+      "name": "聯絡我們",
+      "description": "電話、WhatsApp、電子郵件與服務範圍"
+    },
+    "terms": {
+      "name": "服務條款",
+      "description": "預約、付款、取消與退款規則"
+    },
+    "privacy": {
+      "name": "隱私權政策",
+      "description": "我們如何處理您的個人資料"
+    }
+  },
+  "treatmentNotes": {
+    "Deep tissue": "紮實、精準的力道，舒緩長期肌肉緊繃",
+    "Hot Stone Massage": "溫熱石頭搭配舒緩按摩，放鬆緊繃肌肉",
+    "Relaxing Premium Aromatherapy Body Massage": "天然精油搭配輕柔按摩",
+    "Shiatsu Massage(without Oil)": "傳統日式手指與手掌按壓，不用油",
+    "Swedish Massage": "使用按摩油的輕柔全身按摩，適合初次體驗",
+    "Thai Body Massage": "不用油的深層按壓，搭配全身伸展"
+  },
+  "about": "關於我們的網站",
+  "features": "網站功能",
+  "featureList": {
+    "responsive": "各種裝置皆能順暢瀏覽",
+    "booking": "線上預約——技師由您親自挑選",
+    "menu": "服務項目與價格",
+    "tracking": "訂單追蹤",
+    "contact": "聯絡方式與服務範圍資訊"
+  },
+  "office": "公司登記地址",
+  "homeOnly": "僅提供到府服務——由技師前往您所在的地點。",
+  "phone": "電話：{phone}",
+  "ctaTitle": "準備好體驗 EasyGo Spa 了嗎？",
+  "ctaText": "立即預約——挑選您的技師，技師到場後再付現金。",
+  "ctaButton": "立即預約體驗"
+}

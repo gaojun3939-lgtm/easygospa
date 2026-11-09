@@ -1,0 +1,34 @@
+{
+  "fallbackName": "セラピスト",
+  "reviewedLabel": "レビュー投稿済み",
+  "reviewedBadge": "★★★★★ レビュー済み · {amount}のクーポンを送付しました",
+  "cta": "マッサージを評価 · {amount}のクーポンをプレゼント",
+  "eyebrow": "レビューで{amount}のクーポンをプレゼント",
+  "heading": "{name}さんはいかがでしたか？",
+  "starsLabel": "星評価",
+  "starOption": "{count, plural, other {星#つ}}",
+  "commentLabel": "詳しく教えてください <muted>（任意）</muted>",
+  "commentPlaceholder": "マッサージで特に良かった点は何ですか？",
+  "notNow": "あとで",
+  "submitting": "送信中…",
+  "submit": "レビューを送信",
+  "successWallet": "ありがとうございます！{amount}のクーポンをマイクーポンに追加しました",
+  "errors": {
+    "chooseStars": "先に星評価をお選びください。",
+    "signInAgain": "ログイン中の予約メールアドレスを確認できませんでした。もう一度ログインしてください。",
+    "enterContact": "このご予約に使用した電話番号またはメールアドレスを入力してください。",
+    "submitFailed": "レビューを送信できませんでした。もう一度お試しください。",
+    "notCompleted": "このご予約は、完了後にレビューできます。",
+    "notVerified": "このメールアドレスでは、そのご予約を確認できませんでした。",
+    "alreadyReviewed": "このご予約はレビュー済みです。",
+    "invalid": "予約時のメールアドレスを入力し、星評価をお選びください。",
+    "unavailable": "レビュー機能は一時的にご利用いただけません。もう一度お試しください。"
+  },
+  "trackPage": {
+    "thanks": "ありがとうございます！{stars}",
+    "couponInWallet": "{amount}のクーポンがマイクーポンに追加されました。",
+    "onceOnly": "完了したご予約1件につき、レビューは1回までです。",
+    "contactLabel": "予約時の電話番号またはメールアドレス",
+    "contactHint": "この完了済みのご予約がお客様のものであることの確認にのみ使用します。"
+  }
+}

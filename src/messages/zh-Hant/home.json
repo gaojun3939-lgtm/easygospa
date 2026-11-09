@@ -1,0 +1,87 @@
+{
+  "hero": {
+    "title": "Metro Manila 24/7 到府按摩",
+    "lead": "專業按摩，直接到您的住家、公寓或飯店。持有證照、身穿制服、實名認證的技師親自到府服務。",
+    "prices": "查看價格",
+    "note": "{price} 起 · 免小費 · 到場付現",
+    "imageAlt": "身穿 EasyGoSpa 制服的技師面帶微笑，帶著毛巾與 EasyGoSpa 提袋來到公寓門口"
+  },
+  "highlights": {
+    "available": "24/7 全天候服務",
+    "verified": "持有證照、實名認證",
+    "coverage": "服務遍及 Metro Manila",
+    "cash": "到場付現"
+  },
+  "menu": {
+    "title": "服務項目與價格",
+    "lead": "所有項目與價格一目了然。預約時即可挑選技師。",
+    "all": "查看全部價格"
+  },
+  "steps": {
+    "title": "預約流程",
+    "one": {
+      "title": "挑選技師",
+      "note": "預約時可查看每位技師的資料。",
+      "alt": "身穿制服的技師打開門，面帶微笑"
+    },
+    "two": {
+      "title": "選擇時間",
+      "note": "現在就來，或預約稍後的時段。",
+      "alt": "從高樓窗戶眺望夕陽下的 Metro Manila"
+    },
+    "three": {
+      "title": "到場付現",
+      "note": "免訂金，無需預付任何費用。",
+      "alt": "夜晚，技師捧著摺好的毛巾走進公寓大門"
+    }
+  },
+  "places": {
+    "title": "讓您的房間化身 SPA。",
+    "lead": "技師到府服務，您哪裡都不用去。",
+    "home": "住家",
+    "homeAlt": "技師走進可眺望城市景色的客廳",
+    "condo": "公寓",
+    "condoAlt": "技師捧著摺好的毛巾、提著 EasyGoSpa 提袋，走進公寓大門",
+    "hotel": "飯店",
+    "hotelAlt": "飯店床上的 EasyGoSpa 提袋，窗外是城市景色"
+  },
+  "trust": {
+    "title": "只提供正規專業按摩。",
+    "lead": "持有證照、身穿制服、實名認證的技師。",
+    "imageAlt": "身穿 EasyGoSpa 制服的技師舉起她的證件",
+    "licensed": {
+      "title": "持有證照",
+      "note": "受過專業訓練、持有證照的按摩技師。"
+    },
+    "uniformed": {
+      "title": "統一制服",
+      "note": "全程身穿 EasyGoSpa 制服。"
+    },
+    "verified": {
+      "title": "實名認證",
+      "note": "每位技師的證件都經過核實。"
+    },
+    "door": {
+      "title": "到府服務",
+      "note": "住家、公寓或飯店，任何時段都能服務。"
+    }
+  },
+  "price": {
+    "title": "標價就是實價。",
+    "cash": "現金",
+    "cashLabel": "到場付現",
+    "tipsLabel": "小費",
+    "allDay": "24/7",
+    "allDayLabel": "全天候服務",
+    "note": "技師到場後再以現金付款。"
+  },
+  "areas": {
+    "title": "城市各處，都能享受靜好的一小時。",
+    "lead": "我們在 Metro Manila 的以下地區提供到府服務。",
+    "link": "查看服務範圍"
+  },
+  "closing": {
+    "title": "讓城市等一等。",
+    "lead": "預約前即可查看技師資料與價格。全天候隨時為您服務。"
+  }
+}

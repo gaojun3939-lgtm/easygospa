@@ -1,0 +1,80 @@
+{
+  "title": {
+    "orders": "我的訂單",
+    "orderStatus": "訂單狀態",
+    "couponWallet": "我的優惠券"
+  },
+  "backToOrders": "返回訂單",
+  "signOut": "登出",
+  "close": "關閉",
+  "notConfigured": "訂單登入功能設定中，請稍後再回來看看。",
+  "loading": "載入中……",
+  "retry": "再試一次",
+  "massage": "按摩",
+  "arriving": "約 {minutes} 分鐘後抵達",
+  "tabs": {
+    "label": "客戶帳號",
+    "bookings": "預約",
+    "coupons": "優惠券",
+    "activeCoupon": "有可用的優惠券"
+  },
+  "login": {
+    "tagline": "您的預約，一鍵查看",
+    "google": "使用 Google 帳戶繼續",
+    "orEmail": "或使用電子郵件",
+    "sendCode": "傳送驗證碼",
+    "sending": "傳送中……",
+    "noPassword": "不需要密碼 · 任何電子郵件皆可使用",
+    "back": "返回",
+    "enterCode": "輸入驗證碼",
+    "codeSent": "我們已將驗證碼寄到 {email}",
+    "verify": "驗證",
+    "verifying": "驗證中……",
+    "resendIn": "{seconds} 秒後可重新傳送",
+    "resend": "重新傳送驗證碼",
+    "errors": {
+      "google": "無法開啟 Google 登入，請再試一次。",
+      "invalidEmail": "請輸入有效的電子郵件地址。",
+      "sendFailed": "驗證碼傳送失敗，請稍後再試。",
+      "enterCode": "請輸入電子郵件中的驗證碼。",
+      "wrongCode": "驗證碼錯誤或已過期。請再試一次，或重新傳送。"
+    }
+  },
+  "coupons": {
+    "loading": "正在載入您的優惠券……",
+    "loadError": "無法載入您的優惠券。",
+    "errors": {
+      "unavailable": "無法載入您的優惠券",
+      "signIn": "登入後即可查看您的優惠券"
+    },
+    "emptyTitle": "目前還沒有優惠券",
+    "emptyBody": "評價已完成的預約，即可獲得一張 {amount} 優惠券，效期 {days, plural, other {# 天}}。",
+    "badge": "優惠券",
+    "autoApplied": "下次預約時自動折抵",
+    "rewardTitle": "{brand} 獎勵",
+    "terms": "所有預約皆適用 · 每筆預約限用一張",
+    "status": {
+      "active": "可使用",
+      "used": "已使用",
+      "expired": "已過期"
+    },
+    "usedOn": "{date} 已使用",
+    "expiresOn": "{date} 到期",
+    "datePending": "日期待定"
+  },
+  "list": {
+    "loading": "正在載入您的訂單……",
+    "loadError": "無法載入您的訂單。",
+    "emptyTitle": "目前還沒有預約",
+    "emptyBody": "預約技師後，您的預約就會顯示在這裡。",
+    "duration": "{minutes} 分鐘"
+  },
+  "detail": {
+    "cancelled": "這筆預約已取消。",
+    "minAway": "約 {minutes} 分鐘路程",
+    "cancel": "取消這筆預約",
+    "needCancel": "需要取消嗎？請傳訊息給我們",
+    "whatsapp": "透過 WhatsApp 傳訊息給我們",
+    "report": "回報問題"
+  }
+}

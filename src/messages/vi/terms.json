@@ -1,0 +1,64 @@
+{
+  "title": "Điều khoản dịch vụ",
+  "metaDescription": "Các điều khoản áp dụng khi bạn sử dụng dịch vụ đặt lịch massage tại nhà của {brand} ở Metro Manila.",
+  "lastUpdated": "Cập nhật lần cuối: {date}",
+  "updatedDate": "5 tháng 11 năm 2026",
+  "languageNotice": "Trang này là bản dịch. Nếu có khác biệt giữa bản tiếng Anh và bản dịch, bản tiếng Anh được ưu tiên áp dụng.",
+  "intro": "Chào mừng bạn đến với {brand}. Khi đặt lịch hoặc sử dụng trang web và dịch vụ của chúng tôi, bạn đồng ý với các Điều khoản dịch vụ này. Vui lòng đọc kỹ. Nếu bạn không đồng ý, vui lòng không sử dụng dịch vụ của chúng tôi.",
+  "appliesToApp": "Các Điều khoản này cũng áp dụng cho ứng dụng di động {appName} trên Google Play và App Store.",
+  "services": {
+    "title": "1. Dịch vụ của chúng tôi",
+    "body": "{brand} sắp xếp dịch vụ massage tại nhà chuyên nghiệp do các kỹ thuật viên được đào tạo thực hiện tại khách sạn, căn hộ, nhà riêng hoặc văn phòng của bạn trong phạm vi Metro Manila, Philippines. Khả năng phục vụ phụ thuộc vào lịch làm việc của kỹ thuật viên, vị trí của bạn và thời điểm đặt lịch."
+  },
+  "booking": {
+    "title": "2. Đặt lịch và xác nhận",
+    "body": "Yêu cầu đặt lịch chưa được bảo đảm cho đến khi chúng tôi xác nhận và phân công kỹ thuật viên. Chúng tôi sẽ liên hệ với bạn để xác nhận kỹ thuật viên và lịch hẹn. Thời gian đến dự kiến hiển thị trên trang web chỉ mang tính tham khảo và có thể thay đổi tùy theo tình hình giao thông và lịch trống của kỹ thuật viên."
+  },
+  "pricing": {
+    "title": "3. Giá và thanh toán",
+    "body": "Giá dịch vụ được hiển thị trước khi bạn xác nhận đặt lịch. Có thể áp dụng phí di chuyển theo khoảng cách: ₱50 trong phạm vi 5 km, ₱100 trong phạm vi 10 km và ₱150 trong phạm vi 15 km. Trong ứng dụng, phụ phí ban đêm cũng có thể áp dụng cho các buổi dịch vụ bắt đầu từ nửa đêm đến 6:00 sáng. Tổng số tiền hiển thị trước khi bạn xác nhận chính là số tiền bạn phải trả. Không yêu cầu tiền tip. Bạn thanh toán bằng tiền mặt cho kỹ thuật viên khi kỹ thuật viên đến nơi, trước khi bắt đầu dịch vụ."
+  },
+  "refunds": {
+    "title": "4. Hủy và hoàn tiền",
+    "intro": "Nếu bạn cần hủy hoặc đổi lịch, vui lòng báo cho chúng tôi càng sớm càng tốt để chúng tôi kịp sắp xếp lại lịch cho kỹ thuật viên.",
+    "beforeSetOff": "<b>Trước khi kỹ thuật viên khởi hành:</b> bạn có thể hủy miễn phí. Nếu bạn đã thanh toán trực tuyến, bạn được hoàn tiền toàn bộ.",
+    "afterSetOff": "<b>Sau khi kỹ thuật viên đã khởi hành:</b> áp dụng phí hủy ₱50, ₱100 hoặc ₱150, tùy theo khoảng cách. Khoản phí này được trả cho kỹ thuật viên. Nếu bạn đã thanh toán trực tuyến, phần còn lại sẽ được hoàn lại.",
+    "noShow": "<b>Vắng mặt:</b> nếu kỹ thuật viên đã đến nơi mà sau 10 phút bạn vẫn không có mặt, phí hủy tương tự sẽ được áp dụng, một lần cho mỗi đơn.",
+    "therapistFault": "<b>Không thu phí khi lỗi thuộc về kỹ thuật viên</b>, ví dụ đến muộn hơn thời gian dự kiến quá 15 phút, không di chuyển đến chỗ bạn, hoặc báo đã đến nơi khi chưa thực sự có mặt.",
+    "cash": "<b>Đơn thanh toán bằng tiền mặt:</b> nếu bạn thanh toán bằng tiền mặt, phí hủy sẽ được cộng vào đơn tiếp theo của bạn.",
+    "howPaid": "<b>Cách hoàn tiền:</b> hoàn về phương thức thanh toán ban đầu khi có thể (GCash hoặc Maya, thường trong vòng 1–3 ngày). Các khoản thanh toán không thể hoàn ngược, chẳng hạn QR Ph, sẽ được hoàn vào số dư {brand} của bạn; bạn có thể dùng số dư này cho đơn tiếp theo hoặc rút ra.",
+    "mistake": "<b>Bị tính phí nhầm?</b> Hãy liên hệ chúng tôi trong vòng 48 giờ, chúng tôi sẽ xem xét.",
+    "outro": "Việc hủy muộn hoặc vắng mặt nhiều lần có thể ảnh hưởng đến các lần đặt lịch sau. Nếu kỹ thuật viên không thể đến, chúng tôi sẽ thông báo cho bạn và hỗ trợ sắp xếp phương án thay thế."
+  },
+  "conduct": {
+    "title": "5. Dịch vụ chuyên nghiệp và quy tắc ứng xử",
+    "body": "{brand} chỉ cung cấp dịch vụ massage trị liệu chuyên nghiệp, không mang tính tình dục. Mọi yêu cầu dịch vụ tình dục, hành vi quấy rối hoặc xúc phạm đối với kỹ thuật viên đều bị nghiêm cấm và sẽ dẫn đến việc hủy dịch vụ ngay lập tức mà không hoàn tiền, đồng thời có thể bị từ chối phục vụ trong tương lai. Kỹ thuật viên của chúng tôi có thể kết thúc buổi dịch vụ nếu cảm thấy không an toàn hoặc không được tôn trọng."
+  },
+  "health": {
+    "title": "6. Sức khỏe và an toàn",
+    "body": "Vui lòng thông báo cho chúng tôi về mọi bệnh lý, chấn thương, dị ứng hoặc tình trạng mang thai trước buổi dịch vụ để kỹ thuật viên điều chỉnh liệu trình phù hợp. Massage không thay thế cho việc chăm sóc y tế. Bạn có trách nhiệm cung cấp thông tin chính xác và một không gian an toàn, sạch sẽ cho buổi dịch vụ."
+  },
+  "availability": {
+    "title": "7. Khả năng phục vụ của kỹ thuật viên",
+    "body": "Kỹ thuật viên là nhà cung cấp dịch vụ độc lập, được sắp lịch thông qua nền tảng của chúng tôi. Không phải lúc nào chúng tôi cũng có thể bảo đảm một kỹ thuật viên cụ thể; nếu kỹ thuật viên bạn chọn không thể phục vụ, chúng tôi sẽ đề xuất một kỹ thuật viên thay thế phù hợp hoặc đổi lịch."
+  },
+  "liability": {
+    "title": "8. Giới hạn trách nhiệm",
+    "body": "Trong phạm vi pháp luật cho phép, {brand} không chịu trách nhiệm đối với các thiệt hại gián tiếp hoặc ngẫu nhiên phát sinh từ việc sử dụng dịch vụ của chúng tôi. Tổng trách nhiệm của chúng tôi đối với bất kỳ khiếu nại nào được giới hạn ở số tiền đã thanh toán cho đơn đặt lịch cụ thể có liên quan."
+  },
+  "changes": {
+    "title": "9. Thay đổi điều khoản",
+    "body": "Chúng tôi có thể cập nhật các Điều khoản dịch vụ này theo thời gian. Phiên bản mới nhất luôn được đăng trên trang này kèm ngày “Cập nhật lần cuối” mới. Việc bạn tiếp tục sử dụng dịch vụ đồng nghĩa với việc bạn chấp nhận các điều khoản đã cập nhật."
+  },
+  "law": {
+    "title": "10. Luật điều chỉnh",
+    "body": "Các điều khoản này được điều chỉnh bởi pháp luật của Cộng hòa Philippines. Mọi tranh chấp sẽ được giải quyết tại tòa án có thẩm quyền ở Metro Manila."
+  },
+  "contact": {
+    "title": "11. Liên hệ chúng tôi",
+    "intro": "Nếu có câu hỏi về các điều khoản này, vui lòng liên hệ chúng tôi qua:",
+    "email": "Email: <link>{email}</link>",
+    "phone": "Điện thoại / WhatsApp: {phone}"
+  },
+  "finalInterpretation": "{company} có quyền giải thích cuối cùng đối với các Điều khoản này."
+}

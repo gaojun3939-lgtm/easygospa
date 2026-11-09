@@ -1,7 +1,8 @@
 "use client"
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { usePathname } from "@/i18n/navigation";
 import BrandMark from "./BrandMark";
 
 export default function LoadingScreen() {
@@ -12,6 +13,7 @@ export default function LoadingScreen() {
 }
 
 function LoadingOverlay() {
+  const t = useTranslations("common");
   const [progress, setProgress] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
 
@@ -62,7 +64,7 @@ function LoadingOverlay() {
                 EasyGo Spa
               </p>
               <p className="text-sm text-gray-600 tracking-widest uppercase">
-                Premium Home Massage
+                {t("tagline")}
               </p>
             </motion.div>
           </motion.div>
@@ -87,7 +89,7 @@ function LoadingOverlay() {
             transition={{ duration: 0.5, delay: 0.7 }}
             className="text-sm text-gray-500 mt-4 font-medium"
           >
-            Preparing your luxury experience...
+            {t("loading")}
           </motion.p>
         </motion.div>
       )}

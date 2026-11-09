@@ -13,11 +13,13 @@ import {
   ShieldCheck,
   Star
 } from 'lucide-react';
+import { useLocale, useTranslations } from 'next-intl';
 import {
   BOOKING_STATUS_STEPS,
   DEFAULT_BOOKING_POLL_MS,
   WAITING_ACCEPTANCE_POLL_MS,
   buildBookingUpdatesWhatsAppUrl,
+  bookingStatusMessageKey,
   buildBookingWhatsAppUrl,
   formatManilaBookingDateTime,
   getBookingPollingIntervalMs,
@@ -30,6 +32,8 @@ import { apiUrl } from '../lib/apiUrl.js';
 import { clearActiveBooking, readActiveBooking } from '../lib/activeBooking.mjs';
 import { cancelPublicBooking } from '../lib/publicBookingCancel.mjs';
 import { BOOKING_FLOW_STORAGE_KEY } from '../lib/therapistServiceBookingFlow.mjs';
+import { intlLocale } from '@/i18n/routing';
+import { REVIEW_COUPON_AMOUNT, reviewErrorText } from './BookingReviewCard.jsx';
 
 // 2026-08-01 去邮箱:身份主键改手机号。优先取 session 里的手机号,老 session 只有邮箱的也认。
 function readStoredBookingContact() {
@@ -47,6 +51,7 @@ function reviewStorageKey(reference) {
 }
 
 function CompletedBookingReview({ reference, therapistName }) {
+  const tReview = useTranslations('review');
   const [stars, setStars] = useState(0);
   const [comment, setComment] = useState('');
   const [email, setEmail] = useState('');
@@ -68,7 +73,7 @@ function CompletedBookingReview({ reference, therapistName }) {
     event.preventDefault();
     if (state === 'submitting' || state === 'submitted') return;
     if (stars < 1 || stars > 5) {
-      setError('Choose a star rating first.');
+      setError(tReview('errors.chooseStars'));
       return;
     }
     // 2026-08-01 去邮箱:一个框收"手机号或邮箱"——含 @ 当邮箱发,否则当手机号发。
@@ -76,7 +81,7 @@ function CompletedBookingReview({ reference, therapistName }) {
     const contact = email.trim();
     const isEmailContact = contact.includes('@');
     if (isEmailContact ? !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact) : contact.replace(/\D/g, '').length < 7) {
-      setError('Enter the phone number or email used for this booking.');
+      setError(tReview('errors.enterContact'));
       return;
     }
     setState('submitting');
@@ -100,13 +105,13 @@ function CompletedBookingReview({ reference, therapistName }) {
         return;
       }
       if (!response.ok || payload?.ok !== true || !payload?.coupon?.id) {
-        throw new Error(payload?.error || 'Your review could not be submitted. Please try again.');
+        throw new Error(reviewErrorText(tReview, payload));
       }
       window.localStorage.setItem(reviewStorageKey(reference), JSON.stringify({ submitted: true, stars }));
       setState('submitted');
     } catch (submitError) {
       setState('ready');
-      setError(submitError instanceof Error ? submitError.message : 'Your review could not be submitted. Please try again.');
+      setError(submitError instanceof Error ? submitError.message : tReview('errors.submitFailed'));
     }
   };
 
@@ -115,22 +120,22 @@ function CompletedBookingReview({ reference, therapistName }) {
       {state === 'submitted' ? (
         <div className="text-center">
           <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#E9ECE1] text-[#55633F]"><Check className="h-7 w-7" /></span>
-          <h2 className="mt-4 text-2xl font-bold text-[#171A17]">Thanks! {'★'.repeat(stars)}</h2>
-          <p className="mt-2 text-sm font-semibold text-[#55633F]">A ₱50 coupon is now in your wallet.</p>
-          <p className="mt-2 text-xs text-slate-500">Each completed booking can be reviewed once.</p>
+          <h2 className="mt-4 text-2xl font-bold text-[#171A17]">{tReview('trackPage.thanks', { stars: '★'.repeat(stars) })}</h2>
+          <p className="mt-2 text-sm font-semibold text-[#55633F]">{tReview('trackPage.couponInWallet', { amount: REVIEW_COUPON_AMOUNT })}</p>
+          <p className="mt-2 text-xs text-slate-500">{tReview('trackPage.onceOnly')}</p>
         </div>
       ) : (
         <form onSubmit={submitReview}>
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#55633F]">Review &amp; get a ₱50 coupon</p>
-          <h2 className="mt-2 text-2xl font-bold text-[#171A17]">How was {therapistName}?</h2>
-          <div className="mt-4 flex flex-wrap gap-1" role="radiogroup" aria-label="Star rating">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#55633F]">{tReview('eyebrow', { amount: REVIEW_COUPON_AMOUNT })}</p>
+          <h2 className="mt-2 text-2xl font-bold text-[#171A17]">{tReview('heading', { name: therapistName || tReview('fallbackName') })}</h2>
+          <div className="mt-4 flex flex-wrap gap-1" role="radiogroup" aria-label={tReview('starsLabel')}>
             {[1, 2, 3, 4, 5].map(value => (
               <button
                 key={value}
                 type="button"
                 role="radio"
                 aria-checked={stars === value}
-                aria-label={`${value} star${value === 1 ? '' : 's'}`}
+                aria-label={tReview('starOption', { count: value })}
                 onClick={() => { setStars(value); setError(''); }}
                 className="flex h-11 w-11 items-center justify-center rounded-xl transition hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-[#64734F]"
               >
@@ -141,16 +146,16 @@ function CompletedBookingReview({ reference, therapistName }) {
           <div className={`grid overflow-hidden transition-[grid-template-rows,opacity] duration-300 ${stars ? 'mt-4 grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
             <div className="min-h-0 space-y-4">
               <div>
-                <label htmlFor="review-comment" className="mb-2 block text-sm font-semibold text-slate-800">Tell us more <span className="font-normal text-slate-400">(optional)</span></label>
-                <textarea id="review-comment" value={comment} onChange={event => setComment(event.target.value.slice(0, 1000))} rows={4} className="w-full resize-none rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-[#171A17] outline-none focus:border-[#64734F]" placeholder="What stood out about your massage?" />
+                <label htmlFor="review-comment" className="mb-2 block text-sm font-semibold text-slate-800">{tReview.rich('commentLabel', { muted: chunks => <span className="font-normal text-slate-400">{chunks}</span> })}</label>
+                <textarea id="review-comment" value={comment} onChange={event => setComment(event.target.value.slice(0, 1000))} rows={4} className="w-full resize-none rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-[#171A17] outline-none focus:border-[#64734F]" placeholder={tReview('commentPlaceholder')} />
               </div>
               <div>
-                <label htmlFor="review-email" className="mb-2 block text-sm font-semibold text-slate-800">Booking phone or email</label>
+                <label htmlFor="review-email" className="mb-2 block text-sm font-semibold text-slate-800">{tReview('trackPage.contactLabel')}</label>
                 <input id="review-email" type="text" autoComplete="tel" value={email} onChange={event => setEmail(event.target.value)} className="h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm text-[#171A17] outline-none focus:border-[#64734F]" placeholder="09XX XXX XXXX" required />
-                <p className="mt-1 text-xs text-slate-500">Used only to verify that this completed booking is yours.</p>
+                <p className="mt-1 text-xs text-slate-500">{tReview('trackPage.contactHint')}</p>
               </div>
               {error ? <p className="rounded-2xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</p> : null}
-              <button type="submit" disabled={state === 'submitting'} className="h-12 w-full rounded-2xl bg-[#171A17] px-6 font-bold text-white hover:bg-[#171A17] disabled:opacity-60">{state === 'submitting' ? 'Submitting…' : 'Submit review'}</button>
+              <button type="submit" disabled={state === 'submitting'} className="h-12 w-full rounded-2xl bg-[#171A17] px-6 font-bold text-white hover:bg-[#171A17] disabled:opacity-60">{state === 'submitting' ? tReview('submitting') : tReview('submit')}</button>
             </div>
           </div>
         </form>
@@ -159,13 +164,13 @@ function CompletedBookingReview({ reference, therapistName }) {
   );
 }
 
-function notifyTherapistConfirmed(therapistName) {
+function notifyTherapistConfirmed(message) {
   try {
     if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') navigator.vibrate(200);
   } catch {}
   try {
     if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
-    const notification = new Notification('EasyGoSpa', { body: `${therapistName} confirmed your booking` });
+    const notification = new Notification('EasyGoSpa', { body: message });
     notification.onclick = () => {
       window.focus();
       notification.close();
@@ -173,10 +178,10 @@ function notifyTherapistConfirmed(therapistName) {
   } catch {}
 }
 
-function notifyTherapistArrived() {
+function notifyTherapistArrived(message) {
   try {
     if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
-    const notification = new Notification('EasyGoSpa', { body: 'Your therapist has arrived' });
+    const notification = new Notification('EasyGoSpa', { body: message });
     notification.onclick = () => {
       window.focus();
       notification.close();
@@ -185,6 +190,7 @@ function notifyTherapistArrived() {
 }
 
 function WhatsAppButton({ reference, whatsapp, compact = false }) {
+  const t = useTranslations('track');
   return (
     <a
       href={buildBookingWhatsAppUrl(whatsapp, reference)}
@@ -193,7 +199,7 @@ function WhatsAppButton({ reference, whatsapp, compact = false }) {
       className={`inline-flex items-center justify-center gap-2 rounded-2xl bg-[#1F9D55] font-bold text-white shadow-sm transition hover:bg-[#188548] ${compact ? 'h-11 px-5 text-sm' : 'h-12 w-full px-6'}`}
     >
       <MessageCircle className="h-5 w-5" />
-      Contact us on WhatsApp
+      {t('whatsappButton')}
     </a>
   );
 }
@@ -222,79 +228,102 @@ function StateCard({ icon, title, body, action }) {
 
 // 订单页是给客人看的:他只想知道"人什么时候到",不想看我们内部的排班档位。
 // 大字说人在哪一步,小字说下一步会发生什么。技师有名字就直呼其名,更像真人服务。
-function therapistArrivalHeadline(booking = {}) {
+function therapistArrivalHeadline(t, booking = {}) {
   const name = booking.therapist?.name?.trim();
-  const who = name || 'Your therapist';
+  const who = name || t('headline.fallbackName');
   switch (booking.status) {
     case 'submitted':
     case 'confirmed':
-      return 'Matching your therapist';
+      return t('headline.matching');
     case 'waiting_acceptance':
-      return `${who} is confirming`;
+      return t('headline.confirming', { name: who });
     case 'preparing':
-      return `${who} is getting ready`;
+      return t('headline.gettingReady', { name: who });
     case 'on_the_way':
-      return Number.isFinite(booking.etaMinutes) ? `${who} is on the way · ~${booking.etaMinutes} min` : `${who} is on the way`;
+      return Number.isFinite(booking.etaMinutes) ? t('headline.onTheWayEta', { name: who, minutes: String(booking.etaMinutes) }) : t('headline.onTheWay', { name: who });
     case 'arrived':
-      return `${who} has arrived`;
+      return t('headline.arrived', { name: who });
     case 'in_service':
-      return 'Your massage is in progress';
+      return t('headline.inService');
     case 'completed':
-      return 'Service completed';
+      return t('headline.completed');
     case 'cancelled':
-      return 'Booking cancelled';
+      return t('bookingCancelled');
     default:
-      return `${who} is on the way`;
+      return t('headline.onTheWay', { name: who });
   }
 }
 
-function therapistArrivalNote(booking = {}) {
+function therapistArrivalNote(t, booking = {}) {
   switch (booking.status) {
     case 'submitted':
     case 'confirmed':
-      return 'We are finding the therapist nearest to you.';
+      return t('note.matching');
     case 'waiting_acceptance':
-      return 'Hang tight — confirming your booking now.';
+      return t('note.confirming');
     case 'preparing':
       // 预约单:技师接了单,但要等约的时间才出发,别让客人以为马上有人敲门。
       return booking.scheduleMode === 'scheduled'
-        ? 'She will head to your address in time for your appointment.'
-        : 'She will head to your address shortly.';
+        ? t('note.headingScheduled')
+        : t('note.headingSoon');
     case 'on_the_way':
-      return 'Please keep your phone nearby.';
+      return t('note.keepPhone');
     case 'arrived':
-      return 'Cash payment is collected at the door, before the massage starts.';
+      return t('note.payAtDoor');
     case 'in_service':
-      return 'Enjoy — relax and unwind.';
+      return t('note.enjoy');
     case 'completed':
-      return 'Leave a review and get a ₱50 cash coupon.';
+      return t('note.review', { amount: REVIEW_COUPON_AMOUNT });
     case 'cancelled':
-      return 'Message us on WhatsApp if you need help.';
+      return t('note.needHelp');
     default:
-      return 'Please keep your phone nearby.';
+      return t('note.keepPhone');
+  }
+}
+
+// 取消接口(publicBookingCancel)回来的报错按代码翻;认不出的代码,原样显示它给的英文。
+function cancelErrorText(t, result) {
+  switch (String(result?.code || '')) {
+    case 'INVALID_CANCELLATION':
+      return t('cancel.errors.enterContact');
+    case 'CANCEL_AUTH_REQUIRED':
+      return t('cancel.errors.authRequired');
+    case 'CANCEL_NOT_ALLOWED':
+      return t('cancel.errors.notAllowed');
+    case 'RATE_LIMITED':
+      return t('cancel.errors.rateLimited');
+    case 'BOOKING_CANCEL_FAILED':
+      return t('cancel.errors.failed');
+    case 'BOOKING_CANCEL_UNAVAILABLE':
+      return t('cancel.errors.unreachable');
+    default:
+      // 兜底文案也要给出路(老板 2026-07-28:客人不该对着一句'暂时不可用'干瞪眼)
+      return result?.error || t('cancel.errors.failed');
   }
 }
 
 function TherapistBadge({ therapist }) {
+  const t = useTranslations('track');
   if (!therapist) return null;
   const initial = therapist.name?.charAt(0)?.toUpperCase() || 'T';
 
   return (
     <div className="mt-3 flex min-w-0 items-center gap-3 rounded-2xl border border-[#64734F]/25 bg-[#F7F4EE] p-3">
       {therapist.avatarUrl ? (
-        <img src={therapist.avatarUrl} alt={`${therapist.name || 'Therapist'} profile`} className="h-11 w-11 shrink-0 rounded-full object-cover" />
+        <img src={therapist.avatarUrl} alt={t('badge.photoAlt', { name: therapist.name || t('badge.therapist') })} className="h-11 w-11 shrink-0 rounded-full object-cover" />
       ) : (
         <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#171A17] font-bold text-[#DDE3CF]">{initial}</span>
       )}
       <div className="min-w-0">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Your therapist</p>
-        <p className="truncate font-bold text-[#171A17]">{therapist.name || 'Assigned therapist'}</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">{t('yourTherapist')}</p>
+        <p className="truncate font-bold text-[#171A17]">{therapist.name || t('badge.assignedTherapist')}</p>
       </div>
     </div>
   );
 }
 
 function BookingStatusTimeline({ booking }) {
+  const t = useTranslations('track');
   const currentIndex = getBookingStatusStepIndex(booking.status);
 
   if (booking.status === 'cancelled') {
@@ -303,8 +332,8 @@ function BookingStatusTimeline({ booking }) {
         <div className="flex items-start gap-4">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-red-600 text-white"><AlertTriangle className="h-5 w-5" /></div>
           <div>
-            <h2 className="text-xl font-bold text-red-900">Booking cancelled</h2>
-            <p className="mt-2 text-sm leading-6 text-red-800">This booking is no longer active. Message us on WhatsApp if you need help.</p>
+            <h2 className="text-xl font-bold text-red-900">{t('bookingCancelled')}</h2>
+            <p className="mt-2 text-sm leading-6 text-red-800">{t('timeline.cancelledBody')}</p>
           </div>
         </div>
       </div>
@@ -312,7 +341,7 @@ function BookingStatusTimeline({ booking }) {
   }
 
   return (
-    <ol className="space-y-0" aria-label="Booking progress" data-testid="booking-status-timeline">
+    <ol className="space-y-0" aria-label={t('progress.title')} data-testid="booking-status-timeline">
       {BOOKING_STATUS_STEPS.map((step, index) => {
         const isPast = index < currentIndex;
         const isCurrent = index === currentIndex;
@@ -328,8 +357,8 @@ function BookingStatusTimeline({ booking }) {
               {isPast ? <Check className="h-5 w-5" /> : isCurrent ? <Clock3 className="h-5 w-5" /> : <span className="h-2.5 w-2.5 rounded-full bg-current" />}
             </span>
             <div className={`min-w-0 flex-1 pt-1.5 ${isCurrent ? 'text-[#171A17]' : isPast ? 'text-slate-700' : 'text-slate-400'}`}>
-              <p className="font-bold">{step.label}</p>
-              {showEta ? <p className="mt-1 text-sm font-semibold text-[#55633F]">Estimated arrival: {Math.round(booking.etaMinutes)} minutes</p> : null}
+              <p className="font-bold">{t(bookingStatusMessageKey(step.status))}</p>
+              {showEta ? <p className="mt-1 text-sm font-semibold text-[#55633F]">{t('timeline.eta', { minutes: Math.round(booking.etaMinutes) })}</p> : null}
               {showTherapist ? <TherapistBadge therapist={booking.therapist} /> : null}
             </div>
           </li>
@@ -340,6 +369,12 @@ function BookingStatusTimeline({ booking }) {
 }
 
 export default function BookingTrackingPage({ reference }) {
+  const t = useTranslations('track');
+  const tn = useTranslations('serviceNames');
+  const dateLocale = intlLocale(useLocale());
+  // 轮询回调里要用当前语言的文字,但不能让它变成 loadBooking 的依赖(会多拉一次接口)
+  const tRef = useRef(t);
+  useEffect(() => { tRef.current = t; }, [t]);
   const [viewState, setViewState] = useState('loading');
   const [booking, setBooking] = useState(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -378,16 +413,16 @@ export default function BookingTrackingPage({ reference }) {
       if (!response.ok || payload?.ok !== true) throw new Error('BOOKING_STATUS_LOAD_FAILED');
       const previousStatus = previousStatusRef.current;
       const nextStatus = payload.status;
-      const therapistName = payload.therapist?.name || lastTherapistNameRef.current || 'Your Therapist';
+      const therapistName = payload.therapist?.name || lastTherapistNameRef.current || tRef.current('notify.fallbackName');
       if (payload.therapist?.name) lastTherapistNameRef.current = payload.therapist.name;
       if (isTherapistConfirmationTransition(previousStatus, nextStatus) && !confirmationNotifiedRef.current) {
         confirmationNotifiedRef.current = true;
-        setConfirmationNotice(`✅ ${therapistName} confirmed your booking!`);
-        notifyTherapistConfirmed(therapistName);
+        setConfirmationNotice(tRef.current('notify.confirmedBanner', { name: therapistName }));
+        notifyTherapistConfirmed(tRef.current('notify.confirmedPush', { name: therapistName }));
       }
       if (isTherapistArrivalTransition(previousStatus, nextStatus) && !arrivalNotifiedRef.current) {
         arrivalNotifiedRef.current = true;
-        notifyTherapistArrived();
+        notifyTherapistArrived(tRef.current('notify.arrivedPush'));
       }
       previousStatusRef.current = nextStatus;
       // ⚠ 2026-07-29 改:原来只要不是"等接单"就把指针删掉,结果客人一关标签页,
@@ -472,7 +507,7 @@ export default function BookingTrackingPage({ reference }) {
     event.preventDefault();
     if (cancelPending) return;
     if (!cancelContact.trim()) {
-      setCancelError('Enter the booking email or phone to continue.');
+      setCancelError(t('cancel.errors.enterContact'));
       return;
     }
     setCancelPending(true);
@@ -492,11 +527,10 @@ export default function BookingTrackingPage({ reference }) {
       return;
     }
     if (result.httpStatus === 404) {
-      setCancelError("We couldn't verify that booking with those details.");
+      setCancelError(t('cancel.errors.notVerified'));
       return;
     }
-    // 兜底文案也要给出路(老板 2026-07-28:客人不该对着一句'暂时不可用'干瞪眼)
-    setCancelError(result.error || "We couldn't cancel it just now. Message us on WhatsApp with your booking reference and we'll cancel it for you.");
+    setCancelError(cancelErrorText(t, result));
   };
 
   const copyReference = async () => {
@@ -510,7 +544,12 @@ export default function BookingTrackingPage({ reference }) {
   };
 
   const whatsappButton = <WhatsAppButton reference={reference} whatsapp={booking?.whatsapp} />;
-  const therapistDisplayName = booking?.therapist?.name || 'your Therapist';
+  const therapistDisplayName = booking?.therapist?.name || t('hero.waitingFallbackName');
+  const statusText = status => {
+    const key = bookingStatusMessageKey(status);
+    return key ? t(key) : '';
+  };
+  const serviceText = name => (tn.has(name) ? tn(name) : name);
 
   return (
     <main className="min-h-screen overflow-x-hidden bg-[linear-gradient(180deg,#f5f0e7_0%,#fbfaf7_42%,#f3f5f4_100%)] px-4 pb-20 pt-28 sm:px-6 sm:pt-32">
@@ -519,8 +558,8 @@ export default function BookingTrackingPage({ reference }) {
       {viewState === 'not_found' ? (
         <StateCard
           icon={<AlertTriangle className="h-6 w-6" />}
-          title="Booking not found"
-          body="We couldn't find this booking. Please check the link or message us on WhatsApp."
+          title={t('notFound.title')}
+          body={t('notFound.body')}
           action={whatsappButton}
         />
       ) : null}
@@ -528,11 +567,11 @@ export default function BookingTrackingPage({ reference }) {
       {viewState === 'error' ? (
         <StateCard
           icon={<RefreshCw className="h-6 w-6" />}
-          title="We couldn't refresh your booking"
-          body="Please check your connection and try again."
+          title={t('loadError.title')}
+          body={t('loadError.body')}
           action={(
             <div className="grid gap-3">
-              <button type="button" onClick={() => loadBooking()} className="h-12 rounded-2xl bg-[#171A17] px-6 font-bold text-white hover:bg-[#171A17]">Try again</button>
+              <button type="button" onClick={() => loadBooking()} className="h-12 rounded-2xl bg-[#171A17] px-6 font-bold text-white hover:bg-[#171A17]">{t('loadError.retry')}</button>
               {whatsappButton}
             </div>
           )}
@@ -544,19 +583,19 @@ export default function BookingTrackingPage({ reference }) {
           <section data-booking-primary-status className="overflow-hidden rounded-[2rem] border border-[#64734F]/30 bg-[#171A17] p-6 text-white shadow-xl shadow-[#171A17]/10 sm:p-8">
             <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0">
-                <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#DDE3CF]">My booking</p>
+                <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#DDE3CF]">{t('hero.eyebrow')}</p>
                 <h1 className="mt-3 text-3xl font-bold sm:text-4xl">
                   {confirmationNotice || (booking.status === 'waiting_acceptance'
-                    ? `Waiting for ${therapistDisplayName} to confirm...`
-                    : 'Track your massage')}
+                    ? t('hero.waitingFor', { name: therapistDisplayName })
+                    : t('hero.title'))}
                 </h1>
                 <p className="mt-3 text-sm leading-6 text-white/70">
                   {booking.status === 'waiting_acceptance'
-                    ? 'Usually confirmed within a few minutes'
-                    : `Live status updates refresh automatically every ${pollingSeconds} seconds.`}
+                    ? t('hero.waitingHint')
+                    : t('hero.liveHint', { seconds: pollingSeconds })}
                 </p>
               </div>
-              <span className="w-fit rounded-full border border-[#DDE3CF]/35 bg-[#DDE3CF]/10 px-4 py-2 text-sm font-bold text-[#DDE3CF]">{booking.statusLabel}</span>
+              <span className="w-fit rounded-full border border-[#DDE3CF]/35 bg-[#DDE3CF]/10 px-4 py-2 text-sm font-bold text-[#DDE3CF]">{statusText(booking.status) || booking.statusLabel}</span>
             </div>
           </section>
 
@@ -575,7 +614,7 @@ export default function BookingTrackingPage({ reference }) {
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
                 <span className="relative inline-flex h-3 w-3 rounded-full bg-white" />
               </span>
-              <span className="text-base font-extrabold text-white sm:text-lg">💬 Message your therapist{booking.therapist?.name ? ` ${booking.therapist.name}` : ''}</span>
+              <span className="text-base font-extrabold text-white sm:text-lg">{booking.therapist?.name ? t('therapistLine.named', { name: booking.therapist.name }) : t('therapistLine.unnamed')}</span>
             </a>
           ) : shouldShowBookingUpdatesBanner(booking.status) ? (
             <a
@@ -589,20 +628,20 @@ export default function BookingTrackingPage({ reference }) {
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
                 <span className="relative inline-flex h-3 w-3 rounded-full bg-white" />
               </span>
-              <span className="text-base font-extrabold text-white sm:text-lg">📲 Get booking updates on WhatsApp</span>
+              <span className="text-base font-extrabold text-white sm:text-lg">{t('updatesBanner')}</span>
             </a>
           ) : null}
 
           {booking.status === 'completed' ? (
-            <CompletedBookingReview reference={reference} therapistName={booking.therapist?.name || 'your therapist'} />
+            <CompletedBookingReview reference={reference} therapistName={booking.therapist?.name || ''} />
           ) : null}
 
-          <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm sm:p-7" aria-label="Booking summary">
+          <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm sm:p-7" aria-label={t('summary.label')}>
             <div className="grid gap-5 sm:grid-cols-2">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">Service</p>
-                <p className="mt-1 font-bold text-[#171A17]">{booking.serviceName || 'Service pending'}</p>
-                <p className="mt-1 text-sm text-slate-600">{Number.isFinite(booking.durationMinutes) ? `${booking.durationMinutes} minutes` : 'Duration pending'}</p>
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">{t('summary.service')}</p>
+                <p className="mt-1 font-bold text-[#171A17]">{booking.serviceName ? serviceText(booking.serviceName) : t('summary.servicePending')}</p>
+                <p className="mt-1 text-sm text-slate-600">{Number.isFinite(booking.durationMinutes) ? t('summary.duration', { minutes: booking.durationMinutes }) : t('summary.durationPending')}</p>
               </div>
               {/* 客人只关心"技师什么时候到",不关心内部排班(2026-07-28 老板拍板)。
                   原来这里印内部排期时间戳,技师 20 分钟就到门口了,页面却写着明天凌晨,把客人看懵。
@@ -610,26 +649,26 @@ export default function BookingTrackingPage({ reference }) {
                   那是他亲手选的,不是内部排班。scheduleMode 区分这两种单。 */}
               {booking.scheduleMode === 'scheduled' && booking.scheduledAt ? (
                 <div data-booking-appointment-time>
-                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500"><CalendarClock className="mr-1 inline h-4 w-4" />Your appointment</p>
-                  <p className="mt-1 font-bold text-[#171A17]">{formatManilaBookingDateTime(booking.scheduledAt)}</p>
-                  <p className="mt-1 text-sm text-slate-600">Booked for later — your therapist arrives for this time.</p>
+                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500"><CalendarClock className="mr-1 inline h-4 w-4" />{t('summary.appointment')}</p>
+                  <p className="mt-1 font-bold text-[#171A17]">{formatManilaBookingDateTime(booking.scheduledAt, dateLocale) || t('schedulePending')}</p>
+                  <p className="mt-1 text-sm text-slate-600">{t('summary.bookedForLater')}</p>
                 </div>
               ) : null}
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500"><CalendarClock className="mr-1 inline h-4 w-4" />Your therapist</p>
-                <p className="mt-1 font-bold text-[#171A17]">{therapistArrivalHeadline(booking)}</p>
-                <p className="mt-1 text-sm text-slate-600">{therapistArrivalNote(booking)}</p>
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500"><CalendarClock className="mr-1 inline h-4 w-4" />{t('yourTherapist')}</p>
+                <p className="mt-1 font-bold text-[#171A17]">{therapistArrivalHeadline(t, booking)}</p>
+                <p className="mt-1 text-sm text-slate-600">{therapistArrivalNote(t, booking)}</p>
               </div>
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500"><MapPin className="mr-1 inline h-4 w-4" />Area</p>
-                <p className="mt-1 font-bold text-[#171A17]">{booking.areaName || 'Area pending'}</p>
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500"><MapPin className="mr-1 inline h-4 w-4" />{t('summary.area')}</p>
+                <p className="mt-1 font-bold text-[#171A17]">{booking.areaName || t('summary.areaPending')}</p>
               </div>
               <div className="min-w-0">
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">Booking reference</p>
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">{t('summary.reference')}</p>
                 <div className="mt-1 flex min-w-0 items-center gap-2">
                   <code className="min-w-0 flex-1 break-all text-sm font-bold text-[#171A17]">{booking.reference}</code>
-                  <button type="button" onClick={copyReference} className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-xl bg-slate-100 px-3 text-xs font-bold text-slate-700 hover:bg-slate-200" aria-label="Copy booking reference">
-                    <Copy className="h-3.5 w-3.5" />{copied ? 'Copied' : 'Copy'}
+                  <button type="button" onClick={copyReference} className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-xl bg-slate-100 px-3 text-xs font-bold text-slate-700 hover:bg-slate-200" aria-label={t('summary.copyLabel')}>
+                    <Copy className="h-3.5 w-3.5" />{copied ? t('summary.copied') : t('summary.copy')}
                   </button>
                 </div>
               </div>
@@ -639,24 +678,23 @@ export default function BookingTrackingPage({ reference }) {
           <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
             <div className="mb-7 flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h2 className="text-xl font-bold text-[#171A17]">Booking progress</h2>
-                <p className="mt-1 text-xs text-slate-500">Last updated {formatManilaBookingDateTime(booking.updatedAt)}</p>
+                <h2 className="text-xl font-bold text-[#171A17]">{t('progress.title')}</h2>
+                <p className="mt-1 text-xs text-slate-500">{t('progress.lastUpdated', { time: formatManilaBookingDateTime(booking.updatedAt, dateLocale) || t('schedulePending') })}</p>
               </div>
               <button type="button" onClick={() => loadBooking({ silent: true })} disabled={isRefreshing} className="inline-flex h-10 items-center gap-2 rounded-xl border border-slate-200 px-4 text-sm font-bold text-slate-700 hover:bg-slate-50 disabled:opacity-60">
-                <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />Refresh
+                <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />{t('progress.refresh')}
               </button>
             </div>
             <BookingStatusTimeline booking={booking} />
             {booking.status === 'waiting_acceptance' ? (
               <button type="button" onClick={openCancellationDialog} className="mt-7 h-12 w-full rounded-2xl border border-red-200 bg-white px-5 font-bold text-red-700 transition hover:bg-red-50">
-                Cancel booking
+                {t('progress.cancel')}
               </button>
             ) : booking.status !== 'cancelled' && booking.status !== 'completed' ? (
               // 老板 2026-07-28:客人找不到取消入口会以为是 bug。接单后不能自助取消是规矩
               // (技师可能已在路上),但必须说清楚 + 给出口,不能空着。
               <p className="mt-7 rounded-2xl bg-slate-50 px-5 py-4 text-sm leading-6 text-slate-500">
-                Your therapist has already confirmed this booking, so it can no longer be cancelled here.
-                Need to cancel or reschedule? Message us on WhatsApp below — we&apos;ll take care of it.
+                {t('progress.cannotCancel')}
               </p>
             ) : null}
           </section>
@@ -665,8 +703,8 @@ export default function BookingTrackingPage({ reference }) {
             <div className="flex items-start gap-3">
               <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-[#55633F]" />
               <div>
-                <h2 className="font-bold text-[#171A17]">Need an update?</h2>
-                <p className="mt-1 text-sm leading-6 text-slate-600">Message our team and include your booking reference.</p>
+                <h2 className="font-bold text-[#171A17]">{t('help.title')}</h2>
+                <p className="mt-1 text-sm leading-6 text-slate-600">{t('help.body')}</p>
               </div>
             </div>
             <div className="mt-5"><WhatsAppButton reference={reference} whatsapp={booking.whatsapp} /></div>
@@ -685,10 +723,10 @@ export default function BookingTrackingPage({ reference }) {
             onSubmit={handleCancellation}
             onClick={event => event.stopPropagation()}
           >
-            <h2 id="booking-cancel-dialog-title" className="text-2xl font-bold text-[#171A17]">Cancel this booking?</h2>
-            <p className="mt-3 text-sm leading-6 text-slate-600">Only a booking still waiting for Therapist confirmation can be cancelled here.</p>
+            <h2 id="booking-cancel-dialog-title" className="text-2xl font-bold text-[#171A17]">{t('cancel.title')}</h2>
+            <p className="mt-3 text-sm leading-6 text-slate-600">{t('cancel.body')}</p>
             <div className="mt-5">
-              <label htmlFor="booking-cancel-contact" className="mb-2 block text-sm font-semibold text-slate-800">Booking email or phone</label>
+              <label htmlFor="booking-cancel-contact" className="mb-2 block text-sm font-semibold text-slate-800">{t('cancel.contactLabel')}</label>
               <input
                 id="booking-cancel-contact"
                 value={cancelContact}
@@ -703,9 +741,9 @@ export default function BookingTrackingPage({ reference }) {
             </div>
             {cancelError ? <p className="mt-4 rounded-2xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">{cancelError}</p> : null}
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
-              <button type="button" disabled={cancelPending} onClick={() => setCancelDialogOpen(false)} className="h-12 rounded-2xl border border-slate-200 bg-white px-4 font-bold text-slate-700 hover:bg-slate-50 disabled:opacity-60">Keep booking</button>
+              <button type="button" disabled={cancelPending} onClick={() => setCancelDialogOpen(false)} className="h-12 rounded-2xl border border-slate-200 bg-white px-4 font-bold text-slate-700 hover:bg-slate-50 disabled:opacity-60">{t('cancel.keep')}</button>
               <button type="submit" disabled={cancelPending} className="h-12 rounded-2xl bg-red-600 px-4 font-bold text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60">
-                {cancelPending ? 'Cancelling...' : 'Confirm cancellation'}
+                {cancelPending ? t('cancel.cancelling') : t('cancel.confirm')}
               </button>
             </div>
           </form>

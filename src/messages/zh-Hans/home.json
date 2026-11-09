@@ -1,0 +1,87 @@
+{
+  "hero": {
+    "title": "Metro Manila 24/7 上门按摩",
+    "lead": "在家中、公寓或酒店享受专业按摩。技师均持证上岗、统一着装、实名认证，上门为您服务。",
+    "prices": "查看价格",
+    "note": "{price} 起 · 无需小费 · 到场付现金",
+    "imageAlt": "身穿 EasyGoSpa 制服的技师面带微笑，带着毛巾和 EasyGoSpa 包来到公寓门口"
+  },
+  "highlights": {
+    "available": "24/7 全天候服务",
+    "verified": "持证上岗，实名认证",
+    "coverage": "覆盖 Metro Manila",
+    "cash": "到场付现金"
+  },
+  "menu": {
+    "title": "项目与价格",
+    "lead": "所有项目和价格一目了然。预约时可自选技师。",
+    "all": "查看全部价格"
+  },
+  "steps": {
+    "title": "预约流程",
+    "one": {
+      "title": "选择技师",
+      "note": "预约时可查看每位技师的资料。",
+      "alt": "身穿制服的技师打开门，面带微笑"
+    },
+    "two": {
+      "title": "选择时间",
+      "note": "现在就来，或约个时间。",
+      "alt": "从高处窗口望见日落时分的 Metro Manila"
+    },
+    "three": {
+      "title": "到场付现金",
+      "note": "无需定金，无需预付任何费用。",
+      "alt": "夜晚，技师抱着叠好的毛巾走进公寓门"
+    }
+  },
+  "places": {
+    "title": "您的房间，化身水疗馆。",
+    "lead": "技师上门服务，您无需出门。",
+    "home": "家中",
+    "homeAlt": "技师走进可以俯瞰城市景色的客厅",
+    "condo": "公寓",
+    "condoAlt": "技师抱着叠好的毛巾、拎着 EasyGoSpa 包走进公寓门",
+    "hotel": "酒店",
+    "hotelAlt": "酒店床上放着 EasyGoSpa 包，窗外是城市景色"
+  },
+  "trust": {
+    "title": "仅提供专业按摩。",
+    "lead": "持证上岗、统一着装、实名认证的技师。",
+    "imageAlt": "身穿 EasyGoSpa 制服的技师举着自己的证件",
+    "licensed": {
+      "title": "持证上岗",
+      "note": "受过专业培训、持证的按摩技师。"
+    },
+    "uniformed": {
+      "title": "统一着装",
+      "note": "始终身穿 EasyGoSpa 制服。"
+    },
+    "verified": {
+      "title": "实名认证",
+      "note": "每位技师的证件均经过核验。"
+    },
+    "door": {
+      "title": "上门服务",
+      "note": "家中、公寓或酒店，随时上门。"
+    }
+  },
+  "price": {
+    "title": "明码标价。",
+    "cash": "现金",
+    "cashLabel": "到场支付",
+    "tipsLabel": "小费",
+    "allDay": "24/7",
+    "allDayLabel": "全天候服务",
+    "note": "技师到达后，以现金付款。"
+  },
+  "areas": {
+    "title": "城市各处，一小时的静谧。",
+    "lead": "我们可上门服务 Metro Manila 的以下区域。",
+    "link": "查看服务范围"
+  },
+  "closing": {
+    "title": "让城市稍等片刻。",
+    "lead": "预约前即可查看技师资料和价格。全天候服务。"
+  }
+}

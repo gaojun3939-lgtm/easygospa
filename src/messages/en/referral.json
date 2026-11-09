@@ -1,0 +1,23 @@
+{
+  "title": "You're invited to {brand}",
+  "description": "Book a licensed massage therapist to your home or hotel in Metro Manila.",
+  "descriptionGetApp": "Book a licensed massage therapist to your home or hotel in Metro Manila. Get the app to book — your invite is saved automatically.",
+  "badges": {
+    "comingSoon": "Coming soon",
+    "googlePlay": {
+      "get": "GET IT ON",
+      "soon": "COMING SOON ON"
+    },
+    "appStore": {
+      "get": "Download on the",
+      "soon": "Coming soon on the"
+    }
+  },
+  "points": {
+    "verified": "Verified therapists",
+    "coverage": "Home, condo and hotel service across Metro Manila",
+    "allDay": "Available 24/7"
+  },
+  "openApp": "Open {brand}",
+  "bookOnWebsite": "Book on the website"
+}

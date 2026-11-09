@@ -1,0 +1,19 @@
+{
+  "meta": {
+    "title": "Chọn kỹ thuật viên · Giảm {amount} | {site}",
+    "description": "Chọn kỹ thuật viên, đặt lịch trong 60 giây. Giảm {amount} cho đơn đầu tiên, tự động áp dụng. Không đặt cọc, không trả trước."
+  },
+  "title": "Chọn người đến với bạn",
+  "speed": "Đến tận cửa nhanh nhất trong 30 phút",
+  "points": {
+    "choose": "<b>Bạn tự chọn người đến tận cửa</b> — kỹ thuật viên thật, ảnh thật",
+    "noDeposit": "<b>Không đặt cọc, không trả trước</b> — chỉ cần đặt lịch, kỹ thuật viên sẽ lên đường ngay",
+    "professional": "<b>Chỉ massage chuyên nghiệp</b> — kỹ thuật viên có chứng chỉ, mặc đồng phục, đã xác minh danh tính"
+  },
+  "new": "MỚI",
+  "onShift": "Đang trong ca",
+  "firstBookingOff": "GIẢM {amount} cho đơn đầu tiên",
+  "pickTherapist": "Chọn kỹ thuật viên",
+  "noTips": "Không cần tiền tip. Không trả trước.",
+  "questions": "Có câu hỏi? <messenger>Nhắn tin qua Messenger</messenger> · <whatsapp>WhatsApp</whatsapp>"
+}

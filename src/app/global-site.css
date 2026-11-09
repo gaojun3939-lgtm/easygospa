@@ -1,5 +1,5 @@
-/* 全球站新样式（2026-11-03）。全部以 ga- 开头，不影响旧页面。
-   主题色橄榄绿 #64734F，大面积象牙白和墨色，绿只当强调，一页一大块。 */
+/* 全球站样式（2026-11-09 改简单：老板「改简单 这个太花哨了」）。全部以 ga- 开头。
+   主题色橄榄绿 #64734F 不换；象牙白底、墨色字，绿只当强调。一块一块往下排，不再有跟着滑动播放的画面。 */
 :root {
   --ga-olive: #64734f;
   --ga-olive-deep: #55633f;
@@ -10,343 +10,168 @@
   --ga-line: #dad8ce;
   --ga-serif: var(--font-ga-serif), Georgia, serif;
   --ga-sans: var(--font-ga-sans), -apple-system, "Helvetica Neue", Arial, sans-serif;
-  --ga-gutter: clamp(20px, 5vw, 80px);
+  --ga-gutter: clamp(20px, 5vw, 72px);
   --ga-bar: 76px;
-  --ga-stage: 100svh;
+  --ga-radius: 18px;
 }
-@media (max-width: 960px) { :root { --ga-stage: calc(100svh - var(--ga-bar)); } }
+/* 中日韩泰文：Playfair 和 Inter 没有这些字，标题和正文都改用各系统自带的黑体，粗细收一档 */
+:lang(zh-Hans) { --ga-serif: var(--font-ga-serif), "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", "Noto Sans CJK SC", sans-serif; --ga-sans: var(--font-ga-sans), "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", "Noto Sans CJK SC", sans-serif; }
+:lang(zh-Hant) { --ga-serif: var(--font-ga-serif), "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", "Noto Sans CJK TC", sans-serif; --ga-sans: var(--font-ga-sans), "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", "Noto Sans CJK TC", sans-serif; }
+:lang(ja) { --ga-serif: var(--font-ga-serif), "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", "Noto Sans JP", "Noto Sans CJK JP", sans-serif; --ga-sans: var(--font-ga-sans), "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", "Noto Sans JP", "Noto Sans CJK JP", sans-serif; }
+:lang(ko) { --ga-serif: var(--font-ga-serif), "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", "Noto Sans CJK KR", sans-serif; --ga-sans: var(--font-ga-sans), "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", "Noto Sans CJK KR", sans-serif; }
+:lang(th) { --ga-serif: var(--font-ga-serif), "Thonburi", "Leelawadee UI", "Noto Sans Thai", sans-serif; --ga-sans: var(--font-ga-sans), "Thonburi", "Leelawadee UI", "Noto Sans Thai", sans-serif; }
+:lang(zh-Hans) .ga-cjk-tight, :lang(zh-Hant) .ga-cjk-tight, :lang(ja) .ga-cjk-tight, :lang(ko) .ga-cjk-tight { letter-spacing: 0; }
+:is(:lang(zh-Hans), :lang(zh-Hant), :lang(ja), :lang(ko), :lang(th)) :is(.ga h1, .ga h2, .ga h3, .ga-page-title, .ga-legal-title, .ga-legal-h2, .ga-sheet a, .ga-sheet button, .ga-footer h2, .ga-logo) { letter-spacing: 0; font-weight: 500; }
 
 .ga { background: var(--ga-ivory); color: var(--ga-ink); font-family: var(--ga-sans); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: clip; }
-.ga img, .ga video { display: block; width: 100%; height: 100%; object-fit: cover; }
+.ga img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .ga figure { margin: 0; }
 .ga ul, .ga ol { list-style: none; margin: 0; padding: 0; }
-.ga h2, .ga-big { margin: 0; font: 400 clamp(46px, 7.4vw, 124px)/1.02 var(--ga-serif); letter-spacing: -0.02em; }
-.ga-wrap { padding-inline: var(--ga-gutter); max-width: 1680px; margin-inline: auto; width: 100%; box-sizing: border-box; }
+.ga h2 { margin: 0; font: 400 clamp(32px, 3.6vw, 52px)/1.12 var(--ga-serif); letter-spacing: -0.01em; }
+.ga h3 { margin: 0; font: 400 clamp(21px, 1.7vw, 25px)/1.25 var(--ga-serif); }
+.ga-wrap { padding-inline: var(--ga-gutter); max-width: 1320px; margin-inline: auto; width: 100%; box-sizing: border-box; }
 /* Playfair 的数字是老式写法（0 像 o），数字和 ₱ 一律用 Inter */
-.ga-n { font-family: var(--ga-sans); font-weight: 500; font-style: normal; letter-spacing: -0.01em; font-size: .94em; }
-.ga-lead { margin: 22px 0 0; max-width: 32em; font-size: clamp(17px, 1.5vw, 22px); line-height: 1.5; }
-.ga-word { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: .12em; margin-bottom: -.12em; }
-.ga-word-in { display: inline-block; }
-.ga-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 30px; border: 0; border-radius: 999px; background: var(--ga-olive); color: #fff; font: 500 15px/1 var(--ga-sans); cursor: pointer; transition: background .3s, transform .3s; }
-.ga-btn:hover { background: var(--ga-olive-deep); transform: translateY(-2px); }
-.ga-btn-big { min-height: 60px; padding: 0 46px; font-size: 17px; }
-.ga-sticky { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
-
-/* 第一幕：门 */
-.ga-hero { height: 400vh; background: var(--ga-ink); }
-.ga-hero-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; color: #fff; }
-.ga-door-reveal { position: absolute; inset: 0; }
-.ga-door { position: absolute; inset: 0; overflow: hidden; clip-path: inset(15% 37% 0% 37% round 260px 260px 0px 0px); will-change: clip-path; }
-.ga-door-inner { position: absolute; inset: -2.5%; }
-.ga-door-inner img, .ga-door-inner canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; }
-.ga-door-open { opacity: 0; visibility: hidden; }
-.ga-door-inner canvas { opacity: 0; }
-.ga-door-inner canvas.is-on { opacity: 1; }
-.ga-intro { position: fixed; inset: 0; z-index: 70; display: flex; align-items: center; justify-content: center; background: var(--ga-ink); cursor: pointer; animation: ga-intro-out .4s linear 2.4s forwards; }
-@keyframes ga-intro-out { to { opacity: 0; visibility: hidden; } }
-.ga-seen .ga-intro { display: none; }
-.ga-slit { position: absolute; left: 50%; top: 15%; bottom: 0; width: 2px; margin-left: -1px; background: #f2c58a; box-shadow: 0 0 24px 4px rgba(242,197,138,.75); transform-origin: 50% 100%; }
-.ga-intro-lotus { position: relative; width: 96px !important; height: auto !important; object-fit: contain; visibility: hidden; }
-.ga-hero-shade { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(10,11,9,.66), rgba(10,11,9,0) 42%), linear-gradient(180deg, rgba(10,11,9,.42), rgba(10,11,9,0) 58%); pointer-events: none; }
-.ga-hero-fade { position: absolute; inset: 0; z-index: 3; background: var(--ga-ink); opacity: 0; visibility: hidden; pointer-events: none; }
-.ga-hero-title { position: absolute; left: 0; right: 0; top: 37%; margin: 0; transform: translateY(-50%); text-align: center; font: 400 clamp(58px, 12.2vw, 230px)/.96 var(--ga-serif); letter-spacing: -0.03em; pointer-events: none; }
-.ga-hero-foot { position: absolute; left: 0; right: 0; bottom: clamp(26px, 5vh, 56px); margin-inline: auto; display: flex; align-items: flex-end; justify-content: space-between; gap: 28px; }
-.ga-eyebrow { margin: 0; font: 500 12.5px/1.4 var(--ga-sans); letter-spacing: .17em; text-transform: uppercase; }
-.ga-hero-line { margin: 12px 0 0; max-width: 26em; font-size: clamp(16px, 1.4vw, 20px); line-height: 1.45; }
-
-/* 第二幕：进门，跟着滑动走 */
-.ga-film { height: 320vh; background: var(--ga-ink); color: #fff; }
-.ga-film img, .ga-film canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.ga-film canvas { opacity: 0; }
-.ga-film canvas.is-on { opacity: 1; }
-.ga-film-end { opacity: 0; visibility: hidden; }
-.ga-lite .ga-film-end, .ga-still .ga-film-end { opacity: 1; visibility: visible; }
-.ga-film-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,11,9,.62), rgba(10,11,9,0) 46%), linear-gradient(0deg, rgba(10,11,9,.7), rgba(10,11,9,0) 30%); pointer-events: none; }
-.ga-film-title { position: absolute; left: 0; right: 0; top: clamp(96px, 15vh, 150px); margin-inline: auto; }
-.ga-film-title .ga-big { max-width: 9em; }
-.ga-film-note { position: absolute; left: 0; right: 0; bottom: clamp(30px, 6vh, 64px); margin: 0 auto; font-size: clamp(17px, 1.5vw, 22px); line-height: 1.5; }
-.ga-still .ga-film { height: 100svh; }
-
-/* 第三幕：正在按摩。整屏一张缩回左上角，周围的图露出来；下面写的是缩回去之后的位置 */
-.ga-spa { height: 340vh; background: var(--ga-ivory); }
-.ga-spa .ga-sticky { height: var(--ga-stage); }
-.ga-spa-main, .ga-spa-tile { position: absolute; overflow: hidden; border-radius: 18px; background: var(--ga-tint); }
-.ga-spa-main { z-index: 2; left: 4%; top: 11%; width: 25%; height: 48%; }
-.ga-spa-main-shade { position: absolute; inset: 0; background: rgba(10,11,9,.42); opacity: 0; }
-.ga-spa-tile.is-a { left: 9%; top: 64%; width: 18%; height: 29%; }
-.ga-spa-tile.is-b { left: 71%; top: 9%; width: 25%; height: 40%; }
-.ga-spa-tile.is-c { left: 69%; top: 56%; width: 21%; height: 36%; }
-.ga-spa-tile.is-d { left: 33%; top: 6%; width: 14%; height: 21%; }
-.ga-spa-tile.is-e { left: 34%; top: 76%; width: 15%; height: 20%; }
-.ga-spa-tile.is-f { left: 52%; top: 5%; width: 14%; height: 25%; }
-.ga-spa-tile.is-g { left: 53%; top: 74%; width: 12%; height: 21%; }
-.ga-spa-text { position: absolute; z-index: 3; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: var(--ga-ink); pointer-events: none; }
-.ga-spa-text > * { max-width: min(36vw, 620px); }
-.ga .ga-spa-text .ga-big { font-size: clamp(40px, 4.7vw, 86px); }
-.ga-spa-text .ga-lead { margin-inline: auto; font-size: clamp(16px, 1.25vw, 20px); }
-
-/* 第四幕：项目和价格，旁边一扇拱门 */
-.ga-menu { padding-block: clamp(80px, 11vw, 170px); background: var(--ga-ink); color: var(--ga-ivory); }
-.ga-menu-head { margin-bottom: clamp(36px, 5vw, 80px); }
-.ga-menu-head h2 { max-width: 11em; font-size: clamp(44px, 6vw, 104px); }
-.ga-menu-head .ga-lead { color: #c9c7bc; }
-.ga-menu-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(32px, 6vw, 110px); align-items: start; }
-.ga-menu-arch { position: sticky; top: 12vh; height: 76vh; border-radius: 999px 999px 0 0; overflow: hidden; background: #241f18; }
-.ga-menu-arch img { position: absolute; inset: 0; opacity: 0; transform: scale(1.07); transition: opacity .9s ease, transform 1.5s cubic-bezier(.2,.7,.2,1); }
-.ga-menu-arch img.is-on { opacity: 1; transform: none; }
-.ga-rows { --row-line: rgba(247,244,238,.2); --row-soft: #a9a89d; --row-ink: var(--ga-ivory); --row-accent: #9fb07f; color: var(--row-ink); }
-.ga-rows.is-light { --row-line: var(--ga-line); --row-soft: var(--ga-soft); --row-ink: var(--ga-ink); --row-accent: var(--ga-olive); }
-.ga-row { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px 28px; padding-block: 28px; border-top: 1px solid var(--row-line); align-items: start; }
-.ga-row::before { content: ""; position: absolute; left: 0; top: -1px; height: 1px; width: 100%; background: var(--row-accent); transform: scaleX(0); transform-origin: left; transition: transform .7s cubic-bezier(.2,.7,.2,1); }
-.ga-row:hover::before, .ga-row.is-on::before { transform: scaleX(1); }
-.ga-row-photo { display: none; }
-.ga-row-name h3 { margin: 0; font: 400 clamp(26px, 2.6vw, 40px)/1.12 var(--ga-serif); transition: transform .6s cubic-bezier(.2,.7,.2,1); }
-.ga-row:hover .ga-row-name h3, .ga-row.is-on .ga-row-name h3 { transform: translateX(12px); }
-.ga-row-name p { margin: 10px 0 0; max-width: 34em; color: var(--row-soft); font-size: 14.5px; line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.ga-row-name p.is-full { display: block; overflow: visible; }
-.ga-row-book { grid-column: 2; grid-row: 1; align-self: start; min-height: 44px; padding: 0 22px; border: 1px solid var(--row-ink); border-radius: 999px; background: none; color: var(--row-ink); font: 500 14px/1 var(--ga-sans); cursor: pointer; transition: background .3s, border-color .3s, color .3s; white-space: nowrap; }
-.ga-row-book:hover, .ga-row:hover .ga-row-book { background: var(--ga-olive); border-color: var(--ga-olive); color: #fff; }
-.ga-row-prices { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, 1fr); }
-.ga-row-prices div { padding-left: 14px; border-left: 1px solid var(--row-line); }
-.ga-row-prices span { display: block; color: var(--row-soft); font-size: 13px; }
-.ga-row-prices b { display: block; margin-top: 2px; font-size: clamp(19px, 1.7vw, 25px); }
-
-/* 第五幕：三步，一张卡盖上一张卡 */
-.ga-stack { background: var(--ga-ivory); }
-.ga-stack-head { padding-block: clamp(90px, 12vw, 190px) clamp(36px, 5vw, 80px); }
-.ga-stack-card { position: sticky; top: 0; height: var(--ga-stage); overflow: hidden; border-radius: 28px 28px 0 0; background: var(--ga-ivory); box-shadow: 0 -14px 44px rgba(23,26,23,.1); }
-.ga-stack-card.is-1 { box-shadow: none; border-radius: 0; }
-.ga-stack-card.is-2 { background: var(--ga-tint); }
-.ga-stack-card.is-3 { background: var(--ga-ink); color: var(--ga-ivory); }
-.ga-stack-in { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: clamp(24px, 5vw, 90px); align-items: center; height: 100%; transform-origin: 50% 0; }
-.ga-stack-text i { display: block; color: var(--ga-olive); font: 200 clamp(120px, 17vw, 300px)/.86 var(--ga-sans); letter-spacing: -.05em; }
-.ga-stack-card.is-3 .ga-stack-text i { color: #9fb07f; }
-.ga-stack-text h3 { margin: clamp(18px, 2.4vw, 36px) 0 0; font: 400 clamp(38px, 5vw, 88px)/1.04 var(--ga-serif); letter-spacing: -.02em; }
-.ga-stack-text p { margin: 16px 0 0; color: var(--ga-soft); font-size: clamp(17px, 1.5vw, 22px); line-height: 1.5; }
-.ga-stack-card.is-3 .ga-stack-text p { color: #c9c7bc; }
-.ga-stack-film { justify-self: end; width: 100%; max-width: 62vh; height: 88%; align-self: end; border-radius: 999px 999px 0 0; overflow: hidden; background: #241f18; }
-.ga-stack-film video { object-position: 50% 26%; }
-
-/* 第六幕：一天任何钟点 */
-.ga-hour { height: 560vh; background: var(--ga-ink); color: #fff; }
-.ga-hour .ga-sticky { height: var(--ga-stage); }
-.ga-hour-slide { position: absolute; inset: 0; overflow: hidden; background: var(--ga-ink); }
-.ga-hour-pic { position: absolute; inset: 0; }
-.ga-hour-pic img[src*="hotel"] { object-position: 50% 72%; }
-.ga-hour-shade { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(10,11,9,.72), rgba(10,11,9,.08) 58%), linear-gradient(180deg, rgba(10,11,9,.34), rgba(10,11,9,0) 26%); }
-.ga-hour-text { position: absolute; left: 0; right: 0; bottom: clamp(30px, 7vh, 76px); margin-inline: auto; }
-.ga-hour-text b { display: block; font: 200 clamp(92px, 15.5vw, 280px)/.9 var(--ga-sans); letter-spacing: -.05em; }
-.ga-hour-text small { margin-left: .1em; font-size: .24em; font-weight: 300; letter-spacing: 0; }
-.ga-hour-text p { margin: 10px 0 0; font: 400 clamp(28px, 4vw, 66px)/1.1 var(--ga-serif); letter-spacing: -.01em; }
-.ga-hour-tag { position: absolute; z-index: 2; top: clamp(88px, 13vh, 130px); left: 0; right: 0; margin: 0 auto; text-align: right; }
-.ga-hour-tag b { font: 300 clamp(26px, 2.6vw, 44px)/1 var(--ga-sans); letter-spacing: -.02em; }
-.ga-hour-rail { position: absolute; z-index: 2; right: var(--ga-gutter); bottom: clamp(38px, 8vh, 84px); display: flex; gap: 8px; }
-.ga-hour-rail li { width: clamp(22px, 3vw, 46px); height: 2px; background: rgba(255,255,255,.3); transition: background .4s; }
-.ga-hour-rail li.is-on { background: #fff; }
-
-/* 第七幕：家、公寓、酒店 */
-.ga-places { height: 320vh; background: var(--ga-ink); }
-.ga-places .ga-sticky { height: var(--ga-stage); }
-.ga-places-row { display: flex; gap: 3px; height: 100%; }
-.ga-place { position: relative; flex: 1 1 0; min-width: 0; min-height: 0; overflow: hidden; background: #241f18; }
-.ga-place:first-child { flex-grow: 3.4; }
-.ga-place video { object-position: 50% 28%; }
-.ga-place::after { content: ""; position: absolute; inset: 50% 0 0; background: linear-gradient(0deg, rgba(10,11,9,.66), rgba(10,11,9,0)); }
-.ga-place figcaption { position: absolute; z-index: 1; left: clamp(18px, 2.4vw, 40px); bottom: clamp(16px, 3vh, 36px); color: #fff; font: 400 clamp(38px, 5.4vw, 96px)/1 var(--ga-serif); letter-spacing: -.02em; white-space: nowrap; }
-
-/* 第五幕：价格就是价格 */
-.ga-price { padding-block: clamp(90px, 12vw, 190px); overflow: hidden; }
-.ga-nums { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: clamp(44px, 6vw, 96px) !important; border-top: 1px solid var(--ga-line); }
-.ga-nums li { padding: clamp(22px, 2.6vw, 40px) clamp(14px, 2vw, 32px) 0; border-left: 1px solid var(--ga-line); }
-.ga-nums li:first-child { padding-left: 0; border-left: 0; }
-.ga-nums b { display: block; color: var(--ga-olive); font: 300 clamp(76px, 12.4vw, 220px)/1 var(--ga-sans); letter-spacing: -.05em; }
-.ga-nums span { display: block; margin-top: 14px; font-size: clamp(15px, 1.4vw, 20px); }
-.ga-price-note { margin: clamp(36px, 4vw, 60px) 0 0; font: 400 clamp(24px, 2.6vw, 42px)/1.2 var(--ga-serif); }
-
-/* 价格下面一条静物，跟着滑动往左走 */
-.ga-strip { display: flex; gap: clamp(10px, 1.4vw, 22px); width: max-content; margin-top: clamp(56px, 7vw, 110px); padding-inline: var(--ga-gutter); will-change: transform; }
-.ga-strip figure { flex: 0 0 auto; width: clamp(220px, 25vw, 440px); aspect-ratio: 4 / 3; border-radius: 16px; overflow: hidden; background: var(--ga-tint); }
-.ga-strip figure:nth-child(even) { aspect-ratio: 3 / 4; width: clamp(170px, 19vw, 330px); }
-.ga-strip { align-items: flex-end; }
-
-/* 绿：四扇拱门 */
-.ga-olive { padding-block: clamp(70px, 8vw, 130px) clamp(80px, 9vw, 140px); background: var(--ga-olive); color: #fff; overflow: hidden; }
-.ga-olive-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(12px, 2vw, 30px); margin-top: clamp(40px, 5vw, 80px); padding-inline: var(--ga-gutter); }
-.ga-olive-door { aspect-ratio: 9 / 15; border-radius: 999px 999px 0 0; overflow: hidden; background: var(--ga-olive-deep); }
-.ga-olive-door video, .ga-olive-door img { object-position: 50% 20%; }
-.ga-olive-arch figcaption { margin-top: 14px; font: 400 clamp(22px, 2.2vw, 36px)/1.15 var(--ga-serif); }
-
-/* 第九幕：城市，从 Manila 几个字里透出来 */
-.ga-dusk { position: relative; height: 300vh; color: #fff; background: #0d0f0c; }
-.ga-dusk .ga-sticky { height: var(--ga-stage); }
-.ga-dusk-film { position: absolute; inset: 0; overflow: hidden; }
-.ga-dusk-shade { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(10,11,9,.84), rgba(10,11,9,.34) 48%, rgba(10,11,9,.06) 76%); }
-.ga-dusk-text { position: absolute; left: 0; right: 0; bottom: clamp(40px, 9vh, 96px); margin-inline: auto; }
-.ga-dusk-text .ga-big { max-width: 12em; }
-.ga-areas { display: flex; flex-wrap: wrap; gap: 6px 26px; margin-top: 30px !important; font-size: clamp(17px, 1.6vw, 24px); }
-.ga-dusk-mask { position: absolute; z-index: 2; inset: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #0d0f0c; color: #fff; mix-blend-mode: multiply; pointer-events: none; }
-.ga-dusk-word { display: block; font: 400 clamp(112px, 26vw, 520px)/1 var(--ga-serif); letter-spacing: -.03em; white-space: nowrap; }
-.ga-dusk-word em { font-style: normal; }
-
-/* 下一扇门（暂不显示） */
-.ga-cities { height: 320vh; background: var(--ga-ivory); }
-.ga-cities .ga-sticky { display: flex; align-items: center; }
-.ga-track { display: flex; align-items: center; gap: clamp(16px, 2vw, 32px); padding-inline: var(--ga-gutter); will-change: transform; }
-.ga-cities-text { flex: 0 0 min(44vw, 720px); padding-right: 4vw; }
-.ga-city { position: relative; flex: 0 0 min(25vw, 400px); height: 76vh; border-radius: 22px; overflow: hidden; background: var(--ga-tint); }
-.ga-city:nth-child(odd) { transform: translateY(3vh); }
-.ga-city figcaption { position: absolute; left: 22px; right: 22px; bottom: 20px; color: #fff; text-shadow: 0 1px 14px rgba(0,0,0,.5); }
-.ga-city::after { content: ""; position: absolute; inset: 55% 0 0; background: linear-gradient(0deg, rgba(0,0,0,.62), transparent); }
-.ga-city figcaption { z-index: 1; }
-.ga-city b { display: block; font: 400 clamp(26px, 2.4vw, 38px)/1.1 var(--ga-serif); }
-.ga-city span { display: block; margin-top: 4px; font-size: 14px; }
-.ga-city.is-live span::before { content: ""; display: inline-block; width: 8px; height: 8px; margin-right: 7px; border-radius: 50%; background: #b8d39a; }
-
-/* 第八幕：门开着 */
-.ga-closing { position: relative; display: flex; align-items: center; min-height: 100vh; overflow: hidden; color: #fff; background: var(--ga-ink); }
-.ga-closing-door { position: absolute; inset: 0; overflow: hidden; }
-.ga-closing-shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(10,11,9,.7), rgba(10,11,9,.28) 44%, rgba(10,11,9,0) 62%); }
-.ga-closing-text { position: relative; padding-block: clamp(70px, 10vh, 110px); }
-.ga-closing-text .ga-big { max-width: 9em; }
-.ga-closing-text .ga-btn { margin-top: 34px; }
-
-.ga-bar { display: none; }
-
-/* 还原动效：字和图直接显示 */
-.ga-still .ga-door { clip-path: none; }
-.ga-still .ga-intro { display: none; }
-@media (prefers-reduced-motion: reduce) { .ga-intro { display: none; } }
-.ga-still .ga-hero { height: 100svh; }
-.ga-still .ga-spa, .ga-still .ga-places, .ga-still .ga-dusk { height: auto; }
-.ga-still .ga-spa .ga-sticky { position: relative; height: max(100svh, 720px); }
-.ga-still .ga-spa-text { color: var(--ga-ink); }
-.ga-still .ga-stack-card { position: relative; }
-.ga-still .ga-hour { height: auto; }
-.ga-still .ga-hour .ga-sticky { position: static; height: auto; overflow: visible; }
-.ga-still .ga-hour-slide { position: relative; height: 80svh; }
-.ga-still .ga-hour-tag, .ga-still .ga-hour-rail { display: none; }
-.ga-still .ga-places .ga-sticky { position: static; height: 90svh; }
-.ga-still .ga-dusk .ga-sticky { position: relative; height: 100svh; }
-.ga-still .ga-dusk-mask { display: none; }
-
-@media (max-width: 960px) {
-  .ga-hero { height: 320vh; }
-  .ga-hero-stage { height: calc(100svh - var(--ga-bar)); }
-  .ga-door { clip-path: inset(13% 15% 0% 15% round 170px 170px 0px 0px); }
-  .ga-slit { top: 13%; }
-  .ga-hero-title { top: 31%; font-size: clamp(56px, 17vw, 110px); padding-inline: 12px; }
-  .ga-hero-foot .ga-btn { display: none; }
-  .ga-hero-foot { bottom: 22px; }
-
-  .ga-film { height: 280vh; }
-  .ga-film .ga-sticky { height: calc(100svh - var(--ga-bar)); }
-  .ga-film-title { top: 84px; }
-  .ga-film-note { bottom: 20px; }
-  .ga-film-shade { background: linear-gradient(180deg, rgba(10,11,9,.62), rgba(10,11,9,0) 40%), linear-gradient(0deg, rgba(10,11,9,.86), rgba(10,11,9,0) 30%); }
-
-  .ga-cities { height: auto; padding-block: clamp(70px, 16vw, 110px); }
-  .ga-cities .ga-sticky { position: static; height: auto; overflow: visible; display: block; }
-  .ga-cities-text { flex: none; padding-right: 0; }
-
-  .ga-spa { height: 300vh; }
-  .ga-spa-main { left: 5%; top: 9%; width: 50%; height: 27%; }
-  .ga-spa-tile.is-b { left: 59%; top: 14%; width: 36%; height: 20%; }
-  .ga-spa-tile.is-a { left: 5%; top: 67%; width: 39%; height: 25%; }
-  .ga-spa-tile.is-c { left: 48%; top: 65%; width: 47%; height: 20%; }
-  .ga-spa-tile.is-f { left: 76%; top: 86%; width: 19%; height: 11%; }
-  .ga-spa-tile.is-g { left: 48%; top: 86%; width: 26%; height: 11%; }
-  .ga-spa-tile.is-d, .ga-spa-tile.is-e { display: none; }
-  .ga-spa-text { padding-inline: var(--ga-gutter); padding-top: 2%; }
-  .ga-spa-text > * { max-width: none; }
-  .ga .ga-spa-text .ga-big { font-size: clamp(36px, 10.6vw, 64px); }
-  .ga-spa-text .ga-lead { margin-top: 12px; font-size: 15.5px; }
-
-  .ga-menu-grid { grid-template-columns: 1fr; }
-  .ga-menu-arch { display: none; }
-  .ga-row-photo { display: block; grid-column: 1 / -1; grid-row: 1; aspect-ratio: 16 / 10; border-radius: 16px; overflow: hidden; background: #241f18; }
-  .ga-row:has(.ga-row-photo) .ga-row-name { grid-row: 2; grid-column: 1; }
-  .ga-row:has(.ga-row-photo) .ga-row-book { grid-row: 2; }
-  .ga-row:hover .ga-row-name h3, .ga-row.is-on .ga-row-name h3 { transform: none; }
-  .ga-row::before { display: none; }
-
-  .ga-stack-in { display: flex; flex-direction: column; align-items: stretch; gap: 18px; padding-top: 22px; }
-  .ga-stack-text { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 16px; align-items: center; }
-  .ga-stack-text i { grid-row: span 2; font-size: clamp(92px, 27vw, 150px); }
-  .ga-stack-text h3 { margin: 0; font-size: clamp(30px, 8.6vw, 52px); }
-  .ga-stack-text p { margin-top: 6px; font-size: 15.5px; }
-  .ga-stack-film { flex: 1 1 0; min-height: 0; width: 100%; max-width: none; height: auto; }
-
-  .ga-hour { height: 480vh; }
-  .ga-hour-text b { font-size: clamp(92px, 28vw, 190px); }
-  .ga-hour-text { bottom: 44px; }
-  .ga-hour-tag { top: 76px; }
-  .ga-hour-rail { left: var(--ga-gutter); right: auto; bottom: 22px; }
-
-  .ga-places { height: 280vh; }
-  .ga-places-row { flex-direction: column; }
-
-  .ga-nums { grid-template-columns: 1fr; }
-  .ga-nums li, .ga-nums li:first-child { display: flex; align-items: baseline; justify-content: space-between; padding: 16px 0; border-left: 0; border-bottom: 1px solid var(--ga-line); }
-  .ga-nums b { font-size: clamp(66px, 22vw, 120px); }
-  .ga-nums span { margin: 0; text-align: right; }
-  .ga-row { grid-template-columns: 1fr auto; padding-block: 22px; }
-  .ga-row-book { min-height: 40px; padding: 0 16px; }
-
-  .ga-olive-row { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--ga-gutter); scrollbar-width: none; }
-  .ga-olive-row::-webkit-scrollbar { display: none; }
-  .ga-olive-arch { flex: 0 0 68vw; scroll-snap-align: center; }
-  .ga-dusk { height: 270vh; }
-  .ga-dusk-word { font-size: 27vw; }
-  .ga-closing { align-items: flex-end; height: 92vh; min-height: 0; }
-  .ga-closing-door video { object-position: 86% 50%; }
-  .ga-closing-shade { background: linear-gradient(0deg, rgba(10,11,9,.82), rgba(10,11,9,.08) 66%); }
-  .ga-closing-text { padding-block: 0 36px; }
-  .ga-closing-text .ga-btn { display: none; }
-
-  .ga-bar { position: fixed; z-index: 40; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: space-between; gap: 14px; height: var(--ga-bar); padding: 0 16px; background: rgba(247,244,238,.96); backdrop-filter: blur(14px); border-top: 1px solid var(--ga-line); color: var(--ga-ink); }
-  .ga-bar b { font: 400 22px/1 var(--ga-serif); }
-  .ga-bar .ga-btn { flex: 0 0 56%; min-height: 50px; }
-}
-body.booking-modal-open .ga-bar { display: none; }
-
-/* 手机：六个地方用手指左右滑 */
-@media (max-width: 960px) {
-  .ga-cities .ga-track { display: flex; flex-wrap: nowrap; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--ga-gutter); gap: 12px; padding-inline: var(--ga-gutter); scrollbar-width: none; will-change: auto; }
-  .ga-cities .ga-track::-webkit-scrollbar { display: none; }
-  .ga-cities-text { position: static; flex: 0 0 calc(100vw - 2 * var(--ga-gutter)); margin: 0; padding: 0; align-self: center; scroll-snap-align: start; }
-  .ga-city { flex: 0 0 72vw; height: 110vw; scroll-snap-align: center; }
-  .ga-city:nth-child(odd) { transform: none; }
-}
-
-/* 里面各页 */
-@keyframes ga-rise { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
-.ga-page { min-height: 70vh; padding-top: 76px; }
-.ga-page-head { padding-block: clamp(56px, 8vw, 130px) clamp(36px, 5vw, 72px); animation: ga-rise .9s cubic-bezier(.2,.7,.2,1) both; }
-.ga-page-title { margin: 16px 0 0; max-width: 15em; font: 400 clamp(42px, 6.6vw, 112px)/1.03 var(--ga-serif); letter-spacing: -.02em; }
-.ga-page-lead { margin-top: 26px; max-width: 36em; color: var(--ga-soft); font-size: clamp(17px, 1.5vw, 22px); line-height: 1.5; }
-.ga-page-lead p { margin: 0; }
-.ga-page-note { margin-top: 10px !important; color: var(--ga-olive-deep); font-weight: 500; }
-.ga-page-sec { padding-block: clamp(32px, 5vw, 80px) clamp(70px, 9vw, 140px); }
-.ga-page-foot { margin-top: clamp(40px, 5vw, 70px); }
-.ga-page-foot p { margin: 18px 0 0; color: var(--ga-soft); font-size: 15px; }
-.ga-empty { padding-block: 40px; color: var(--ga-soft); }
-.ga-band { height: clamp(280px, 62vh, 720px); overflow: hidden; background: var(--ga-ink); }
-.ga-band-face video { object-position: 50% 26%; }
-.ga-band-tri { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; height: clamp(420px, 92vh, 1000px); }
-.ga-band-tri figure { overflow: hidden; }
-.ga-side-film { aspect-ratio: 4 / 5; margin-top: 28px !important; border-radius: 22px; overflow: hidden; background: var(--ga-ink); }
-.ga-side-film video { object-position: 50% 30%; }
-.ga-cta { padding-block: clamp(80px, 10vw, 150px); background: var(--ga-olive); color: #fff; }
-.ga-cta h2 { max-width: 12em; font-size: clamp(40px, 6vw, 96px); }
-.ga-cta p { margin: 22px 0 32px; max-width: 34em; font-size: clamp(17px, 1.4vw, 20px); line-height: 1.5; }
-.ga-cta-film { position: relative; overflow: hidden; }
-.ga-cta-film .ga-wrap { position: relative; }
-.ga-cta-arch { position: absolute; top: clamp(40px, 5vw, 80px); bottom: 0; right: var(--ga-gutter); width: min(32vw, 460px); border-radius: 999px 999px 0 0; overflow: hidden; background: var(--ga-olive-deep); }
+.ga-n { font-family: var(--ga-sans); font-weight: 500; font-style: normal; letter-spacing: -0.01em; }
+.ga-lead { margin: 14px 0 0; max-width: 36em; color: var(--ga-soft); font-size: clamp(16px, 1.25vw, 19px); line-height: 1.55; }
+.ga-eyebrow { margin: 0; color: var(--ga-olive-deep); font: 500 12.5px/1.4 var(--ga-sans); letter-spacing: .14em; text-transform: uppercase; }
+.ga-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 28px; border: 0; border-radius: 999px; background: var(--ga-olive); color: #fff; font: 500 15px/1 var(--ga-sans); text-decoration: none; cursor: pointer; transition: background .25s; }
+.ga-btn:hover { background: var(--ga-olive-deep); }
+.ga-btn-big { min-height: 54px; padding: 0 34px; font-size: 16px; }
+.ga-btn-line { background: none; color: var(--ga-ink); box-shadow: inset 0 0 0 1px var(--ga-ink); }
+.ga-btn-line:hover { background: var(--ga-ink); color: #fff; }
 .ga-btn-light { background: #fff; color: var(--ga-ink); }
 .ga-btn-light:hover { background: var(--ga-ivory); }
-.ga .ga-sec-title { margin-bottom: 22px; font-size: clamp(30px, 3.6vw, 56px); }
+.ga-more { color: var(--ga-olive-deep); font-weight: 500; text-decoration: none; white-space: nowrap; }
+.ga-more:hover { text-decoration: underline; }
+
+/* 首页 */
+.ga-sec { padding-block: clamp(64px, 8vw, 112px); }
+.ga-sec-tint { background: #fff; }
+.ga-sec-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 32px; margin-bottom: clamp(28px, 3.4vw, 48px); }
+.ga-sec-head > div { max-width: 40em; }
+
+.ga-hero { padding-top: calc(var(--ga-bar) + clamp(24px, 4vw, 56px)); padding-bottom: clamp(40px, 5vw, 72px); }
+.ga-hero-in { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(28px, 5vw, 80px); align-items: center; }
+.ga-hero h1 { margin: 14px 0 0; font: 400 clamp(40px, 5vw, 70px)/1.06 var(--ga-serif); letter-spacing: -0.02em; }
+.ga-hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+.ga-hero-note { margin: 18px 0 0; color: var(--ga-soft); font-size: 14.5px; }
+.ga-hero-pic { aspect-ratio: 5 / 4; border-radius: 24px; overflow: hidden; background: var(--ga-tint); }
+.ga-hero-pic img { object-position: 50% 30%; }
+
+.ga-highlights { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-block: 1px solid var(--ga-line); }
+.ga-highlights li { display: flex; align-items: center; gap: 12px; padding: 22px 18px; font-size: 15px; font-weight: 500; }
+.ga-highlights li + li { border-left: 1px solid var(--ga-line); }
+.ga-highlights svg { flex: none; color: var(--ga-olive); }
+
+.ga-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2vw, 28px); }
+.ga-card { display: flex; flex-direction: column; border: 1px solid var(--ga-line); border-radius: var(--ga-radius); background: #fff; overflow: hidden; }
+.ga-card figure { flex: none; aspect-ratio: 4 / 3; overflow: hidden; background: var(--ga-tint); }
+.ga-card-body { display: flex; flex: 1; flex-direction: column; padding: 22px 22px 24px; }
+.ga-card-body p { margin: 10px 0 0; color: var(--ga-soft); font-size: 14.5px; line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.ga-card-body p.is-full { display: block; overflow: visible; }
+.ga-card-prices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 20px 0 0; padding-top: 16px; border-top: 1px solid var(--ga-line); }
+.ga-card-prices div + div { padding-left: 12px; border-left: 1px solid var(--ga-line); }
+.ga-card-prices span { display: block; color: var(--ga-soft); font-size: 12.5px; }
+.ga-card-prices b { display: block; margin-top: 2px; font-size: 19px; }
+.ga-card .ga-btn { margin-top: 20px; width: 100%; }
+.ga-card-gap { flex: 1; }
+
+.ga-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2vw, 28px); counter-reset: step; }
+.ga-steps li { counter-increment: step; }
+.ga-steps figure { aspect-ratio: 4 / 3; border-radius: var(--ga-radius); overflow: hidden; background: var(--ga-tint); }
+.ga-steps h3 { margin-top: 20px; }
+.ga-steps h3::before { content: counter(step); display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; margin-right: 12px; border-radius: 50%; background: var(--ga-olive); color: #fff; font: 500 14px/1 var(--ga-sans); vertical-align: 3px; }
+.ga-steps p { margin: 8px 0 0; color: var(--ga-soft); }
+
+.ga-places { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2vw, 28px); }
+.ga-places figure { position: relative; aspect-ratio: 3 / 4; border-radius: var(--ga-radius); overflow: hidden; background: var(--ga-tint); }
+.ga-places figcaption { position: absolute; left: 16px; bottom: 16px; padding: 8px 18px; border-radius: 999px; background: rgba(247,244,238,.94); font: 500 15px/1.2 var(--ga-sans); }
+
+.ga-trust { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(28px, 5vw, 80px); align-items: center; }
+.ga-trust-pic { aspect-ratio: 1 / 1; border-radius: 24px; overflow: hidden; background: var(--ga-tint); }
+.ga-trust-pic img { object-position: 50% 30%; }
+.ga-trust ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 32px; margin-top: 34px; }
+.ga-trust li svg { color: var(--ga-olive); }
+.ga-trust li b { display: block; margin-top: 10px; font: 400 21px/1.25 var(--ga-serif); }
+.ga-trust li span { display: block; margin-top: 4px; color: var(--ga-soft); font-size: 15px; }
+
+.ga-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: clamp(24px, 3vw, 40px); }
+.ga-stats li { padding: 28px 24px; border-radius: var(--ga-radius); background: var(--ga-tint); }
+.ga-stats b { display: block; font-size: clamp(34px, 3.4vw, 48px); line-height: 1.1; color: var(--ga-olive-deep); }
+.ga-stats span { display: block; margin-top: 6px; color: var(--ga-ink); font-weight: 500; }
+.ga-stats-note { margin: 18px 0 0; color: var(--ga-soft); }
+
+.ga-chips { display: flex; flex-wrap: wrap; gap: 10px; }
+.ga-chips li { padding: 10px 18px; border: 1px solid var(--ga-line); border-radius: 999px; background: #fff; font-size: 15px; }
+.ga-areas { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 80px); align-items: center; }
+.ga-areas .ga-chips { margin-top: 26px; }
+.ga-areas .ga-more { display: inline-block; margin-top: 22px; }
+.ga-areas figure { aspect-ratio: 16 / 10; border-radius: var(--ga-radius); overflow: hidden; background: var(--ga-ink); }
+
+.ga-cta { padding-block: clamp(64px, 8vw, 112px); background: var(--ga-olive); color: #fff; text-align: center; }
+.ga-cta h2 { margin-inline: auto; max-width: 16em; }
+.ga-cta p { margin: 16px auto 30px; max-width: 34em; color: rgba(255,255,255,.86); font-size: clamp(16px, 1.3vw, 19px); line-height: 1.5; }
+
+/* 手机：首页底部一直有下单条 */
+.ga-bar { display: none; }
+
+/* 项目和价格一行行（价目页用） */
+.ga-rows { border-top: 1px solid var(--ga-line); }
+.ga-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px 28px; padding-block: 26px; border-bottom: 1px solid var(--ga-line); align-items: start; }
+.ga-row-name h3 { font-size: clamp(22px, 2vw, 28px); }
+.ga-row-name p { margin: 8px 0 0; max-width: 40em; color: var(--ga-soft); font-size: 14.5px; line-height: 1.55; }
+.ga-row-book { grid-column: 2; grid-row: 1; min-height: 42px; padding: 0 22px; border: 1px solid var(--ga-ink); border-radius: 999px; background: none; color: var(--ga-ink); font: 500 14px/1 var(--ga-sans); cursor: pointer; transition: background .25s, color .25s, border-color .25s; }
+.ga-row-book:hover { background: var(--ga-olive); border-color: var(--ga-olive); color: #fff; }
+.ga-row-prices { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 160px)); }
+.ga-row-prices div { padding-left: 14px; border-left: 1px solid var(--ga-line); }
+.ga-row-prices span { display: block; color: var(--ga-soft); font-size: 13px; }
+.ga-row-prices b { display: block; margin-top: 2px; font-size: clamp(18px, 1.5vw, 22px); }
+
+/* 里面各页 */
+.ga-page { min-height: 70vh; padding-top: var(--ga-bar); }
+.ga-page-head { padding-block: clamp(44px, 6vw, 88px) clamp(24px, 3vw, 44px); }
+.ga-page-title { margin: 12px 0 0; max-width: 18em; font: 400 clamp(36px, 4.6vw, 64px)/1.08 var(--ga-serif); letter-spacing: -.02em; }
+.ga-page-lead { margin-top: 18px; max-width: 40em; color: var(--ga-soft); font-size: clamp(16px, 1.3vw, 19px); line-height: 1.55; }
+.ga-page-lead p { margin: 0; }
+.ga-page-note { margin-top: 8px !important; color: var(--ga-olive-deep); font-weight: 500; }
+.ga-page-sec { padding-block: clamp(20px, 3vw, 44px) clamp(64px, 8vw, 112px); }
+.ga-page-foot { margin-top: clamp(32px, 4vw, 56px); }
+.ga-page-foot p { margin: 14px 0 0; color: var(--ga-soft); font-size: 15px; }
+.ga-empty { padding-block: 40px; color: var(--ga-soft); }
+.ga-side-pic { aspect-ratio: 4 / 3; margin-top: 28px !important; border-radius: var(--ga-radius); overflow: hidden; background: var(--ga-tint); }
+.ga .ga-sec-title { margin-bottom: 20px; font-size: clamp(28px, 3vw, 42px); }
 .ga-coverage { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: clamp(24px, 5vw, 80px); border-top: 1px solid var(--ga-line); }
-.ga-coverage li { padding-block: clamp(14px, 1.7vw, 26px); border-bottom: 1px solid var(--ga-line); font: 400 clamp(26px, 3.4vw, 54px)/1.15 var(--ga-serif); }
+.ga-coverage li { padding-block: clamp(14px, 1.6vw, 22px); border-bottom: 1px solid var(--ga-line); font: 400 clamp(22px, 2.4vw, 34px)/1.2 var(--ga-serif); }
+.ga-coverage-pic { aspect-ratio: 21 / 9; margin-top: clamp(32px, 4vw, 56px); border-radius: var(--ga-radius); overflow: hidden; background: var(--ga-ink); }
+
+@media (max-width: 960px) {
+  .ga-hero { padding-top: calc(60px + 20px); }
+  .ga-hero-in, .ga-trust, .ga-areas { grid-template-columns: 1fr; }
+  .ga-hero-pic { order: -1; aspect-ratio: 4 / 3; border-radius: var(--ga-radius); }
+  .ga-hero-actions .ga-btn { flex: 1 1 140px; }
+  .ga-highlights { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ga-highlights li { padding: 16px 12px; font-size: 14px; }
+  .ga-highlights li:nth-child(3) { border-left: 0; }
+  .ga-highlights li:nth-child(n+3) { border-top: 1px solid var(--ga-line); }
+  .ga-cards, .ga-steps { grid-template-columns: 1fr; }
+  .ga-card figure, .ga-steps figure { aspect-ratio: 16 / 10; }
+  .ga-places { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .ga-places figcaption { left: 8px; bottom: 8px; padding: 6px 12px; font-size: 13px; }
+  .ga-trust-pic { aspect-ratio: 4 / 3; }
+  .ga-trust ul { gap: 22px 18px; }
+  .ga-stats { grid-template-columns: 1fr; }
+  .ga-stats li { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 20px; }
+  .ga-stats span { margin: 0; text-align: right; }
+  .ga-bar { position: fixed; z-index: 40; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: space-between; gap: 14px; height: var(--ga-bar); padding: 0 16px; background: rgba(247,244,238,.96); backdrop-filter: blur(12px); border-top: 1px solid var(--ga-line); box-sizing: border-box; }
+  .ga-bar b { font-size: 17px; }
+  .ga-bar .ga-btn { flex: 0 0 52%; min-height: 50px; }
+  .ga-home + .ga-footer { padding-bottom: calc(var(--ga-bar) + 26px); }
+  .ga-row-prices { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .ga-page { padding-top: 60px; }
+  .ga-coverage { grid-template-columns: 1fr; }
+  .ga-coverage-pic { aspect-ratio: 4 / 3; }
+}
+body.booking-modal-open .ga-bar { display: none; }
 
 /* 联系页 */
 .ga-contact { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(32px, 6vw, 100px); align-items: start; }
@@ -394,19 +219,10 @@ body.booking-modal-open .ga-bar { display: none; }
 .ga-legal-h2 { margin: 34px 0 10px; font: 400 clamp(22px, 2vw, 28px)/1.25 var(--ga-serif); }
 
 @media (max-width: 960px) {
-  .ga-page { padding-top: 60px; }
   .ga-contact, .ga-about { grid-template-columns: 1fr; }
   .ga-link { grid-template-columns: 1fr; }
   .ga-link small { text-align: left; }
-  .ga-cta-film { padding-bottom: 0; }
-  .ga-cta-arch { position: relative; top: auto; right: auto; order: 2; width: auto; height: 100vw; margin: 40px var(--ga-gutter) 0 !important; }
-  .ga-cta-film { display: flex; flex-direction: column; }
-  .ga-band { height: 56vh; }
-  .ga-band-tri { grid-template-columns: 1fr; height: 128vw; }
-  .ga-band-tri figure:not(:first-child) { display: none; }
-  .ga-coverage { grid-template-columns: 1fr; }
 }
-@media (prefers-reduced-motion: reduce) { .ga-page-head { animation: none; } }
 
 /* 菜单 */
 .ga-nav { position: fixed; z-index: 50; top: 0; left: 0; right: 0; color: #fff; font-family: var(--ga-sans); transition: background .35s, color .35s, border-color .35s; border-bottom: 1px solid transparent; }
@@ -427,13 +243,22 @@ body.booking-modal-open .ga-bar { display: none; }
 .ga-region-btn { display: flex; align-items: center; gap: 6px; }
 .ga-region-btn svg { transition: transform .25s; }
 .ga-region.is-open .ga-region-btn svg { transform: rotate(180deg); }
-.ga-region-panel { position: absolute; top: calc(100% + 16px); right: 0; width: 260px; padding: 8px; border: 1px solid var(--ga-line); border-radius: 14px; background: #fff; color: var(--ga-ink); box-shadow: 0 18px 48px rgba(23,26,23,.14); opacity: 0; visibility: hidden; transform: translateY(-6px); transition: .2s; }
+.ga-region-panel { position: absolute; top: calc(100% + 16px); right: 0; width: 240px; padding: 8px; border: 1px solid var(--ga-line); border-radius: 14px; background: #fff; color: var(--ga-ink); box-shadow: 0 18px 48px rgba(23,26,23,.14); opacity: 0; visibility: hidden; transform: translateY(-6px); transition: .2s; }
 .ga-region.is-open .ga-region-panel { opacity: 1; visibility: visible; transform: none; }
 .ga-region-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 12px; border-radius: 9px; font-size: 14px; }
 .ga-region-row span:last-child { color: var(--ga-soft); font-size: 13px; }
 .ga-region-row.is-on { background: var(--ga-tint); }
 .ga-region-row.is-on span:last-child { color: var(--ga-olive-deep); font-weight: 500; }
 .ga-region-short { display: none; }
+.ga-region-panel { max-height: calc(100svh - 96px); overflow-y: auto; }
+.ga-region-title { margin: 6px 12px 4px; color: var(--ga-soft); font-size: 12px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; }
+.ga-region-title + .ga-region-title, .ga-region-row + .ga-region-title { margin-top: 12px; }
+.ga-region-here { display: flex; align-items: center; gap: 8px; margin: 4px 0 8px; padding: 10px 12px 14px; border-bottom: 1px solid var(--ga-line); color: var(--ga-soft); font-size: 14px; }
+.ga-region-here + .ga-region-title { margin-top: 8px; }
+.ga-lang-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border-radius: 9px; color: var(--ga-ink); font-size: 15px; text-decoration: none; }
+.ga-lang-row:hover { background: var(--ga-ivory); }
+.ga-lang-row.is-on { background: var(--ga-tint); color: var(--ga-olive-deep); font-weight: 500; }
+.ga-nav.is-scrolled { box-shadow: 0 6px 24px rgba(23,26,23,.06); }
 .ga-burger { display: none; width: 30px; height: 30px; }
 .ga-sheet { position: fixed; z-index: 45; inset: 0; padding: 92px var(--ga-gutter) 24px; background: var(--ga-ivory); color: var(--ga-ink); font-family: var(--ga-sans); }
 .ga-sheet a, .ga-sheet button { display: block; width: 100%; padding: 16px 0; border: 0; border-bottom: 1px solid var(--ga-line); background: none; text-align: left; color: inherit; text-decoration: none; font: 400 28px/1.2 var(--ga-serif); cursor: pointer; }
@@ -461,7 +286,6 @@ body.booking-modal-open .ga-bar { display: none; }
 .ga-foot-brand b { display: block; margin-bottom: 12px; font: 400 25px/1 var(--ga-serif); }
 .ga-foot-social { display: flex; gap: 16px; }
 .ga-foot-follow { display: inline-flex; margin-top: 8px; padding: 9px 18px; border: 1px solid rgba(247,244,238,.4); border-radius: 999px; }
-.ga-foot-word { margin: clamp(40px, 6vw, 80px) 0 0; font: 400 clamp(64px, 16.4vw, 300px)/.9 var(--ga-serif); letter-spacing: -0.03em; color: var(--ga-olive); white-space: nowrap; }
 .ga-foot-legal { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 18px; margin-top: 34px; padding-top: 22px; border-top: 1px solid rgba(247,244,238,.2); color: #a9a89d; font-size: 13px; }
 .ga-foot-legal nav { display: flex; gap: 22px; white-space: nowrap; }
 @media (max-width: 960px) {

@@ -1,0 +1,29 @@
+{
+  "home": "Home",
+  "services": "Services",
+  "pricing": "Pricing",
+  "contact": "Contact",
+  "myOrders": "My orders",
+  "bookNow": "Book Now",
+  "bookAppointment": "Book Appointment",
+  "homeAria": "EasyGoSpa - Home Massage Service",
+  "mainAria": "Main navigation",
+  "mobileAria": "Mobile navigation menu",
+  "openMenu": "Open menu",
+  "closeMenu": "Close menu",
+  "openOrders": "Open my orders",
+  "openBooking": "Open booking appointment modal",
+  "language": "Language",
+  "region": "Region",
+  "philippines": "Philippines",
+  "nowServing": "Now serving",
+  "comingSoon": "Coming soon",
+  "regions": {
+    "Philippines": "Philippines",
+    "Taiwan": "Taiwan",
+    "Vietnam": "Vietnam",
+    "Malaysia": "Malaysia",
+    "Thailand": "Thailand",
+    "Singapore": "Singapore"
+  }
+}

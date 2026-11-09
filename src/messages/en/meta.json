@@ -1,0 +1,32 @@
+{
+  "site": {
+    "title": "EasyGo Spa | Premium Home Massage Service in Manila",
+    "description": "EasyGo Spa provides professional home massage services across Metro Manila. Book trusted therapists for hotel, condo and home massage treatments.",
+    "keywords": "home massage Manila, hotel massage Manila, Swedish massage, deep tissue massage, EasyGo Spa, mobile massage service",
+    "ogTitle": "EasyGo Spa | Professional Home Massage in Manila",
+    "ogDescription": "Professional home massage services across Metro Manila. Book trusted therapists for hotel, condo and home visits.",
+    "twitterTitle": "EasyGo Spa | Home Massage Manila",
+    "twitterDescription": "Book professional home massage services in Metro Manila."
+  },
+  "services": {
+    "title": "Premium Services | EasyGo Spa Premium Home Massage",
+    "description": "Home massage in Metro Manila with prices for every treatment: Swedish, deep tissue, shiatsu, Thai, hot stone and aromatherapy massage, delivered to your hotel, condo or home by verified therapists, 24/7.",
+    "ogDescription": "Professional home massage in Metro Manila — see every treatment and price."
+  },
+  "pricing": {
+    "title": "Pricing | EasyGo Spa Home Massage Manila",
+    "description": "Real prices for home massage in Metro Manila. No tips. Cash when your therapist arrives."
+  },
+  "contact": {
+    "title": "Contact"
+  },
+  "coverage": {
+    "title": "Service Coverage"
+  },
+  "sitemap": {
+    "title": "Sitemap"
+  },
+  "notFound": {
+    "title": "Page not found | EasyGoSpa"
+  }
+}

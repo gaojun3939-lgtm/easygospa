@@ -1,0 +1,122 @@
+{
+  "meta": {
+    "title": "予約状況の確認"
+  },
+  "status": {
+    "submitted": "予約受付済み",
+    "confirmed": "確定済み · セラピスト手配中",
+    "waitingAcceptance": "確認待ち",
+    "preparing": "セラピストが出発準備中",
+    "onTheWay": "セラピストが移動中",
+    "arrived": "セラピスト到着",
+    "inService": "施術中",
+    "completed": "完了",
+    "cancelled": "キャンセル済み"
+  },
+  "schedulePending": "日時未定",
+  "yourTherapist": "担当セラピスト",
+  "bookingCancelled": "予約キャンセル済み",
+  "whatsappButton": "WhatsAppでお問い合わせ",
+  "updatesBanner": "📲 予約の最新情報をWhatsAppで受け取る",
+  "therapistLine": {
+    "named": "💬 セラピストの{name}さんにメッセージ",
+    "unnamed": "💬 セラピストにメッセージ"
+  },
+  "notify": {
+    "fallbackName": "セラピスト",
+    "confirmedBanner": "✅ {name}さんがご予約を承諾しました！",
+    "confirmedPush": "{name}さんがご予約を承諾しました",
+    "arrivedPush": "セラピストが到着しました"
+  },
+  "headline": {
+    "fallbackName": "セラピスト",
+    "matching": "セラピストを手配しています",
+    "confirming": "{name}さんが確認しています",
+    "gettingReady": "{name}さんが出発の準備をしています",
+    "onTheWayEta": "{name}さんが向かっています · 約{minutes}分",
+    "onTheWay": "{name}さんが向かっています",
+    "arrived": "{name}さんが到着しました",
+    "inService": "施術中です",
+    "completed": "サービス完了"
+  },
+  "note": {
+    "matching": "お客様に最も近いセラピストを探しています。",
+    "confirming": "少々お待ちください。ただいまご予約を確認しています。",
+    "headingScheduled": "ご予約の時間に間に合うよう、セラピストが訪問先へ向かいます。",
+    "headingSoon": "まもなくセラピストが訪問先へ向かいます。",
+    "keepPhone": "スマホをお手元に置いておいてください。",
+    "payAtDoor": "お支払いは、マッサージ開始前に玄関先で現金でお受け取りします。",
+    "enjoy": "ごゆっくりおくつろぎください。",
+    "review": "レビューを投稿すると、{amount}の割引クーポンをプレゼントします。",
+    "needHelp": "お困りの場合は、WhatsAppでメッセージをお送りください。"
+  },
+  "badge": {
+    "photoAlt": "{name}さんのプロフィール",
+    "therapist": "セラピスト",
+    "assignedTherapist": "担当セラピスト"
+  },
+  "timeline": {
+    "cancelledBody": "このご予約は無効になりました。お困りの場合は、WhatsAppでメッセージをお送りください。",
+    "eta": "到着予定：あと{minutes, plural, other {#分}}"
+  },
+  "notFound": {
+    "title": "予約が見つかりません",
+    "body": "このご予約が見つかりませんでした。リンクをご確認いただくか、WhatsAppでメッセージをお送りください。"
+  },
+  "loadError": {
+    "title": "予約情報を更新できませんでした",
+    "body": "通信状況をご確認のうえ、もう一度お試しください。",
+    "retry": "再試行"
+  },
+  "hero": {
+    "eyebrow": "ご予約",
+    "waitingFor": "{name}さんの確認を待っています…",
+    "waitingFallbackName": "セラピスト",
+    "title": "マッサージの状況を確認",
+    "waitingHint": "通常、数分以内に確認されます",
+    "liveHint": "状況は{seconds, plural, other {#秒}}ごとに自動で更新されます。"
+  },
+  "summary": {
+    "label": "予約内容",
+    "service": "メニュー",
+    "servicePending": "メニュー未定",
+    "duration": "{minutes, plural, other {#分}}",
+    "durationPending": "時間未定",
+    "appointment": "ご予約日時",
+    "bookedForLater": "時間指定のご予約です。セラピストはこの時間に到着します。",
+    "area": "エリア",
+    "areaPending": "エリア未定",
+    "reference": "予約番号",
+    "copyLabel": "予約番号をコピー",
+    "copy": "コピー",
+    "copied": "コピーしました"
+  },
+  "progress": {
+    "title": "予約の進行状況",
+    "lastUpdated": "最終更新 {time}",
+    "refresh": "更新",
+    "cancel": "予約をキャンセル",
+    "cannotCancel": "セラピストがすでにこのご予約を承諾したため、ここではキャンセルできません。キャンセルや日時の変更をご希望の場合は、下記のWhatsAppからメッセージをお送りください。こちらで対応いたします。"
+  },
+  "help": {
+    "title": "最新情報が必要ですか？",
+    "body": "予約番号を添えて、スタッフにメッセージをお送りください。"
+  },
+  "cancel": {
+    "title": "この予約をキャンセルしますか？",
+    "body": "ここでキャンセルできるのは、セラピストの確認待ちのご予約のみです。",
+    "contactLabel": "予約時のメールアドレスまたは電話番号",
+    "keep": "キャンセルしない",
+    "cancelling": "キャンセル中…",
+    "confirm": "キャンセルを確定",
+    "errors": {
+      "enterContact": "続けるには、予約時のメールアドレスまたは電話番号を入力してください。",
+      "notVerified": "入力された情報では、そのご予約を確認できませんでした。",
+      "authRequired": "セキュリティのため、ログインしてご予約を確認するか、WhatsAppでお問い合わせください。",
+      "notAllowed": "このご予約は、オンラインではキャンセルできなくなりました。WhatsAppでお問い合わせください。",
+      "rateLimited": "リクエストが多すぎます。しばらくしてからもう一度お試しください。",
+      "failed": "現在キャンセルできませんでした。予約番号を添えてWhatsAppでメッセージをお送りください。こちらでキャンセルいたします。",
+      "unreachable": "現在サーバーに接続できませんでした。通信状況をご確認いただくか、予約番号を添えてWhatsAppでメッセージをお送りください。"
+    }
+  }
+}

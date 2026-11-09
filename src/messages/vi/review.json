@@ -1,0 +1,34 @@
+{
+  "fallbackName": "kỹ thuật viên của bạn",
+  "reviewedLabel": "Đã đánh giá đơn",
+  "reviewedBadge": "★★★★★ Đã đánh giá · đã gửi phiếu giảm giá {amount}",
+  "cta": "Đánh giá buổi massage · Nhận phiếu giảm giá {amount}",
+  "eyebrow": "Đánh giá và nhận phiếu giảm giá {amount}",
+  "heading": "Bạn thấy {name} thế nào?",
+  "starsLabel": "Chấm điểm sao",
+  "starOption": "{count, plural, other {# sao}}",
+  "commentLabel": "Chia sẻ thêm <muted>(không bắt buộc)</muted>",
+  "commentPlaceholder": "Điều gì khiến bạn ấn tượng ở buổi massage?",
+  "notNow": "Để sau",
+  "submitting": "Đang gửi…",
+  "submit": "Gửi đánh giá",
+  "successWallet": "Cảm ơn bạn! Phiếu giảm giá {amount} đã được thêm vào ví",
+  "errors": {
+    "chooseStars": "Vui lòng chọn số sao trước.",
+    "signInAgain": "Không xác minh được email đặt lịch mà bạn đã đăng nhập. Vui lòng đăng nhập lại.",
+    "enterContact": "Nhập số điện thoại hoặc email đã dùng cho đơn này.",
+    "submitFailed": "Không gửi được đánh giá. Vui lòng thử lại.",
+    "notCompleted": "Bạn có thể đánh giá đơn này sau khi đơn hoàn tất.",
+    "notVerified": "Chúng tôi không xác minh được đơn này với email này.",
+    "alreadyReviewed": "Đơn này đã được đánh giá.",
+    "invalid": "Nhập email đặt lịch và chọn số sao.",
+    "unavailable": "Tính năng đánh giá tạm thời không khả dụng. Vui lòng thử lại."
+  },
+  "trackPage": {
+    "thanks": "Cảm ơn bạn! {stars}",
+    "couponInWallet": "Phiếu giảm giá {amount} đã có trong ví của bạn.",
+    "onceOnly": "Mỗi đơn đã hoàn tất chỉ được đánh giá một lần.",
+    "contactLabel": "Số điện thoại hoặc email đặt lịch",
+    "contactHint": "Chỉ dùng để xác minh đơn đã hoàn tất này là của bạn."
+  }
+}

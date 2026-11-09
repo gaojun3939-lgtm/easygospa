@@ -1,0 +1,23 @@
+{
+  "title": "Bạn được mời tham gia {brand}",
+  "description": "Đặt kỹ thuật viên massage có chứng chỉ đến nhà riêng hoặc khách sạn của bạn ở Metro Manila.",
+  "descriptionGetApp": "Đặt kỹ thuật viên massage có chứng chỉ đến nhà riêng hoặc khách sạn của bạn ở Metro Manila. Tải ứng dụng để đặt lịch — lời mời của bạn được lưu tự động.",
+  "badges": {
+    "comingSoon": "Sắp ra mắt",
+    "googlePlay": {
+      "get": "TẢI NỘI DUNG TRÊN",
+      "soon": "SẮP CÓ TRÊN"
+    },
+    "appStore": {
+      "get": "Tải về trên",
+      "soon": "Sắp có trên"
+    }
+  },
+  "points": {
+    "verified": "Kỹ thuật viên đã xác minh",
+    "coverage": "Phục vụ tại nhà riêng, căn hộ và khách sạn khắp Metro Manila",
+    "allDay": "Phục vụ 24/7"
+  },
+  "openApp": "Mở {brand}",
+  "bookOnWebsite": "Đặt lịch trên trang web"
+}

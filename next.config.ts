@@ -1,4 +1,8 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
+
+// 多语言（2026-11-09）：每种语言的文字在 src/messages/<语言>/，怎么读在 src/i18n/request.js
+const withNextIntl = createNextIntlPlugin("./src/i18n/request.js");
 
 // Cross-address permission (CORS) for the public booking APIs.
 // The site is reachable on both easygospa.com and www.easygospa.com (SEO: both
@@ -62,4 +66,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

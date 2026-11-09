@@ -1,0 +1,57 @@
+{
+  "eyebrow": "Liên hệ",
+  "title": "Liên hệ EasyGoSpa - Massage tại nhà chuyên nghiệp ở Metro Manila",
+  "lead": "Đặt kỹ thuật viên massage được đào tạo bài bản đến khách sạn, căn hộ, nhà riêng hoặc văn phòng của bạn. Nhắn tin cho chúng tôi để hỏi lịch trống, thông tin dịch vụ và được hỗ trợ đặt lịch.",
+  "area": {
+    "title": "Khu vực phục vụ",
+    "value": "Metro Manila",
+    "note": "Massage tại nhà riêng, căn hộ, khách sạn và văn phòng. Nhập địa chỉ khi đặt lịch để kiểm tra khả năng phục vụ."
+  },
+  "whatsapp": {
+    "title": "Đặt lịch & WhatsApp",
+    "note": "Nhắn tin bất cứ lúc nào để đặt lịch hoặc hỏi lịch trống của kỹ thuật viên."
+  },
+  "email": {
+    "title": "Hỗ trợ qua email",
+    "note": "Dành cho câu hỏi về đặt lịch, thông tin dịch vụ và hợp tác kinh doanh."
+  },
+  "hours": {
+    "title": "Giờ phục vụ",
+    "value": "24 giờ / 7 ngày",
+    "note": "Đặt lịch trực tuyến và hỗ trợ qua tin nhắn hoạt động 24/7. Lịch trống của kỹ thuật viên có thể khác nhau tùy khu vực và thời điểm."
+  },
+  "follow": {
+    "title": "Theo dõi chúng tôi",
+    "instagram": "Theo dõi chúng tôi trên Instagram",
+    "facebook": "Theo dõi chúng tôi trên Facebook"
+  },
+  "photoAlt": "Kỹ thuật viên mặc đồng phục EasyGoSpa mở cửa và mỉm cười",
+  "sent": {
+    "title": "Cảm ơn bạn!",
+    "text": "Tin nhắn của bạn đã được gửi thành công. Chúng tôi sẽ phản hồi trong vòng 2 giờ."
+  },
+  "form": {
+    "title": "Gửi tin nhắn cho chúng tôi",
+    "firstName": "Tên *",
+    "firstNamePlaceholder": "Tên của bạn",
+    "lastName": "Họ *",
+    "lastNamePlaceholder": "Họ của bạn",
+    "email": "Địa chỉ email *",
+    "phone": "Số điện thoại *",
+    "service": "Dịch vụ quan tâm",
+    "selectService": "Chọn dịch vụ",
+    "consultation": "Tư vấn",
+    "message": "Tin nhắn *",
+    "messagePlaceholder": "Cho chúng tôi biết dịch vụ, địa điểm, ngày và giờ bạn mong muốn.",
+    "sending": "Đang gửi...",
+    "send": "Gửi tin nhắn"
+  },
+  "errors": {
+    "firstName": "Vui lòng nhập tên",
+    "lastName": "Vui lòng nhập họ",
+    "email": "Vui lòng nhập email",
+    "emailInvalid": "Vui lòng nhập địa chỉ email hợp lệ",
+    "phone": "Vui lòng nhập số điện thoại",
+    "message": "Vui lòng nhập tin nhắn"
+  }
+}

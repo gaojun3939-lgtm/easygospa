@@ -1,0 +1,19 @@
+{
+  "meta": {
+    "title": "自选技师 · 立减 {amount} | {site}",
+    "description": "自选技师，60 秒完成预约。首单立减 {amount}，自动抵扣。无需定金，无需预付。"
+  },
+  "title": "上门的技师，由您来选",
+  "speed": "最快 30 分钟上门",
+  "points": {
+    "choose": "<b>上门的技师由您来选</b>：真实技师，真实照片",
+    "noDeposit": "<b>无需定金，无需预付</b>：预约成功，技师即刻出发",
+    "professional": "<b>只提供专业按摩</b>：技师持证上岗、统一着装、实名认证"
+  },
+  "new": "新技师",
+  "onShift": "当前在班",
+  "firstBookingOff": "首单立减 {amount}",
+  "pickTherapist": "选择您的技师",
+  "noTips": "无需小费，无需预付。",
+  "questions": "想先咨询？<messenger>Messenger 咨询</messenger> · <whatsapp>WhatsApp</whatsapp>"
+}

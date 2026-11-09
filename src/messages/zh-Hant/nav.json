@@ -1,0 +1,29 @@
+{
+  "home": "首頁",
+  "services": "服務項目",
+  "pricing": "價格",
+  "contact": "聯絡我們",
+  "myOrders": "我的訂單",
+  "bookNow": "立即預約",
+  "bookAppointment": "預約服務",
+  "homeAria": "EasyGoSpa 到府按摩服務",
+  "mainAria": "主要導覽",
+  "mobileAria": "行動版導覽選單",
+  "openMenu": "開啟選單",
+  "closeMenu": "關閉選單",
+  "openOrders": "開啟我的訂單",
+  "openBooking": "開啟預約視窗",
+  "language": "語言",
+  "region": "地區",
+  "philippines": "菲律賓",
+  "nowServing": "現已開放",
+  "comingSoon": "即將推出",
+  "regions": {
+    "Philippines": "菲律賓",
+    "Taiwan": "台灣",
+    "Vietnam": "越南",
+    "Malaysia": "馬來西亞",
+    "Thailand": "泰國",
+    "Singapore": "新加坡"
+  }
+}

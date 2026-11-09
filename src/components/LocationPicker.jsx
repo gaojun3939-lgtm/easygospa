@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Crosshair, MapPin } from 'lucide-react';
 import { loadGoogleMaps, getGoogleMapsApiKey } from '../lib/googleMapsLoader.mjs';
 import { confirmedLocationAction, resetLocationConfirmation } from '../lib/locationConfirmation.mjs';
@@ -13,6 +14,7 @@ const DEFAULT_CENTER = { lat: 14.5547, lng: 121.0244 };
 // dragging the pin, tapping the map, or Places autocomplete.
 // Degrades gracefully: if Maps fails to load, booking continues without a pin.
 export function LocationPicker({ value, onChange, onAddress }) {
+  const t = useTranslations('booking');
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const markerRef = useRef(null);
@@ -156,7 +158,7 @@ export function LocationPicker({ value, onChange, onAddress }) {
   if (mapState === 'unavailable') {
     return (
       <p className="rounded-2xl bg-gray-50 px-4 py-3 text-xs leading-5 text-gray-500" data-testid="location-picker-unavailable">
-        Map is temporarily unavailable. Your booking still works - just describe your exact address above.
+        {t('location.mapUnavailable')}
       </p>
     );
   }
@@ -182,7 +184,7 @@ export function LocationPicker({ value, onChange, onAddress }) {
           data-testid="confirm-pin-button"
         >
           <MapPin className="h-4 w-4" />
-          {confirmedBy === 'pin' ? '✓ Location confirmed' : finalizing ? 'Confirming...' : 'Confirm this location'}
+          {confirmedBy === 'pin' ? t('location.pinConfirmed') : finalizing ? t('location.confirming') : t('location.confirmButton')}
         </button>
         {locateState !== 'denied' && locateState !== 'unsupported' ? (
           <button
@@ -193,25 +195,25 @@ export function LocationPicker({ value, onChange, onAddress }) {
             data-testid="locate-me-button"
           >
             <Crosshair className="h-4 w-4" />
-            {confirmedBy === 'gps' ? '✓ Using your location' : locateState === 'locating' ? 'Locating...' : 'Use my location'}
+            {confirmedBy === 'gps' ? t('location.usingGps') : locateState === 'locating' ? t('location.locating') : t('location.useGps')}
           </button>
         ) : null}
         {value?.latitude ? (
           <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E9ECE1] px-3 py-1.5 text-xs font-semibold text-[#55633F]" data-testid="location-set-chip">
             <MapPin className="h-3.5 w-3.5" />
-            Location pinned
+            {t('location.pinned')}
           </span>
         ) : (
-          <span className="text-xs text-gray-500">Drag the pin to your exact spot, then confirm.</span>
+          <span className="text-xs text-gray-500">{t('location.dragHint')}</span>
         )}
       </div>
       {locateState === 'denied' ? (
-        <p className="text-xs leading-5 text-amber-700">Location permission was blocked. No problem - drag the pin (or leave it) and tap "Confirm this location".</p>
+        <p className="text-xs leading-5 text-amber-700">{t('location.permissionBlocked', { button: t('location.confirmButton') })}</p>
       ) : null}
       {locateState === 'unsupported' ? (
-        <p className="text-xs leading-5 text-amber-700">This browser does not support location. Tap the map or search your building below.</p>
+        <p className="text-xs leading-5 text-amber-700">{t('location.unsupported')}</p>
       ) : null}
-      {geocodeFailed ? <p className="text-xs font-semibold leading-5 text-amber-700">Couldn't fetch the address - please type it in</p> : null}
+      {geocodeFailed ? <p className="text-xs font-semibold leading-5 text-amber-700">{t('location.addressFetchFailed')}</p> : null}
       <div
         ref={mapContainerRef}
         style={{ height: '13rem' }}

@@ -1,0 +1,29 @@
+{
+  "home": "หน้าแรก",
+  "services": "บริการ",
+  "pricing": "ราคา",
+  "contact": "ติดต่อเรา",
+  "myOrders": "การจองของฉัน",
+  "bookNow": "จองเลย",
+  "bookAppointment": "จองคิว",
+  "homeAria": "EasyGoSpa - บริการนวดถึงบ้าน",
+  "mainAria": "เมนูหลัก",
+  "mobileAria": "เมนูนำทางบนมือถือ",
+  "openMenu": "เปิดเมนู",
+  "closeMenu": "ปิดเมนู",
+  "openOrders": "เปิดการจองของฉัน",
+  "openBooking": "เปิดหน้าต่างการจอง",
+  "language": "ภาษา",
+  "region": "ภูมิภาค",
+  "philippines": "ฟิลิปปินส์",
+  "nowServing": "เปิดให้บริการแล้ว",
+  "comingSoon": "เร็ว ๆ นี้",
+  "regions": {
+    "Philippines": "ฟิลิปปินส์",
+    "Taiwan": "ไต้หวัน",
+    "Vietnam": "เวียดนาม",
+    "Malaysia": "มาเลเซีย",
+    "Thailand": "ไทย",
+    "Singapore": "สิงคโปร์"
+  }
+}

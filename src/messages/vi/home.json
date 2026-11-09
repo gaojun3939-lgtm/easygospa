@@ -1,0 +1,87 @@
+{
+  "hero": {
+    "title": "Massage tại nhà 24/7 ở Metro Manila",
+    "lead": "Massage chuyên nghiệp ngay tại nhà riêng, căn hộ hoặc khách sạn của bạn. Kỹ thuật viên có chứng chỉ, mặc đồng phục và đã xác minh danh tính sẽ đến tận nơi.",
+    "prices": "Bảng giá",
+    "note": "Từ {price} · Không cần tiền tip · Tiền mặt khi đến nơi",
+    "imageAlt": "Kỹ thuật viên mặc đồng phục EasyGoSpa mỉm cười đến cửa căn hộ, mang theo khăn và túi EasyGoSpa"
+  },
+  "highlights": {
+    "available": "Phục vụ 24/7",
+    "verified": "Có chứng chỉ, đã xác minh danh tính",
+    "coverage": "Khắp Metro Manila",
+    "cash": "Trả tiền mặt khi đến nơi"
+  },
+  "menu": {
+    "title": "Liệu trình và bảng giá",
+    "lead": "Mọi liệu trình và mức giá đều được niêm yết rõ ràng. Bạn chọn kỹ thuật viên khi đặt lịch.",
+    "all": "Xem toàn bộ bảng giá"
+  },
+  "steps": {
+    "title": "Quy trình đặt lịch",
+    "one": {
+      "title": "Chọn kỹ thuật viên",
+      "note": "Xem hồ sơ từng người khi đặt lịch.",
+      "alt": "Kỹ thuật viên mặc đồng phục mở cửa và mỉm cười"
+    },
+    "two": {
+      "title": "Chọn thời gian",
+      "note": "Đến ngay, hoặc hẹn giờ sau.",
+      "alt": "Metro Manila lúc hoàng hôn nhìn từ ô cửa sổ trên cao"
+    },
+    "three": {
+      "title": "Trả tiền mặt khi đến nơi",
+      "note": "Không đặt cọc, không trả trước.",
+      "alt": "Kỹ thuật viên bước vào cửa căn hộ về đêm, tay ôm khăn gấp gọn"
+    }
+  },
+  "places": {
+    "title": "Căn phòng của bạn thành spa.",
+    "lead": "Kỹ thuật viên đến với bạn. Bạn cứ ở yên tại chỗ.",
+    "home": "Nhà riêng",
+    "homeAlt": "Kỹ thuật viên bước vào phòng khách có tầm nhìn ra thành phố",
+    "condo": "Căn hộ",
+    "condoAlt": "Kỹ thuật viên bước vào qua cửa căn hộ, mang theo khăn gấp gọn và túi EasyGoSpa",
+    "hotel": "Khách sạn",
+    "hotelAlt": "Túi EasyGoSpa trên giường khách sạn, thành phố hiện qua khung cửa sổ"
+  },
+  "trust": {
+    "title": "Chỉ massage chuyên nghiệp.",
+    "lead": "Kỹ thuật viên có chứng chỉ, mặc đồng phục, đã xác minh danh tính.",
+    "imageAlt": "Kỹ thuật viên mặc đồng phục EasyGoSpa giơ thẻ ID của mình",
+    "licensed": {
+      "title": "Có chứng chỉ",
+      "note": "Kỹ thuật viên massage được đào tạo, có chứng chỉ hành nghề."
+    },
+    "uniformed": {
+      "title": "Mặc đồng phục",
+      "note": "Luôn mặc đồng phục EasyGoSpa."
+    },
+    "verified": {
+      "title": "Đã xác minh danh tính",
+      "note": "Giấy tờ tùy thân của mọi kỹ thuật viên đều được kiểm tra."
+    },
+    "door": {
+      "title": "Đến tận cửa",
+      "note": "Nhà riêng, căn hộ hay khách sạn, bất kể giờ nào."
+    }
+  },
+  "price": {
+    "title": "Giá rõ ràng, không phát sinh.",
+    "cash": "Tiền mặt",
+    "cashLabel": "Trả khi đến nơi",
+    "tipsLabel": "Tiền tip",
+    "allDay": "24/7",
+    "allDayLabel": "Luôn phục vụ",
+    "note": "Trả tiền mặt khi kỹ thuật viên đến nơi."
+  },
+  "areas": {
+    "title": "Một giờ thư thái, khắp thành phố.",
+    "lead": "Chúng tôi phục vụ tận nơi tại các khu vực sau của Metro Manila.",
+    "link": "Xem khu vực phục vụ"
+  },
+  "closing": {
+    "title": "Để thành phố chờ một chút.",
+    "lead": "Xem hồ sơ và bảng giá trước khi đặt lịch. Phục vụ suốt ngày đêm."
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "meta": {
+    "title": "追踪我的预约"
+  },
+  "status": {
+    "submitted": "预约已提交",
+    "confirmed": "已确认，正在匹配技师",
+    "waitingAcceptance": "等待确认",
+    "preparing": "技师正在准备出发",
+    "onTheWay": "技师正在赶来",
+    "arrived": "技师已到达",
+    "inService": "服务中",
+    "completed": "已完成",
+    "cancelled": "已取消"
+  },
+  "schedulePending": "时间待定",
+  "yourTherapist": "您的技师",
+  "bookingCancelled": "预约已取消",
+  "whatsappButton": "通过 WhatsApp 联系我们",
+  "updatesBanner": "📲 通过 WhatsApp 接收预约进度",
+  "therapistLine": {
+    "named": "💬 给您的技师 {name} 发消息",
+    "unnamed": "💬 给您的技师发消息"
+  },
+  "notify": {
+    "fallbackName": "您的技师",
+    "confirmedBanner": "✅ {name} 已确认您的预约！",
+    "confirmedPush": "{name} 已确认您的预约",
+    "arrivedPush": "您的技师已到达"
+  },
+  "headline": {
+    "fallbackName": "您的技师",
+    "matching": "正在为您匹配技师",
+    "confirming": "{name} 正在确认",
+    "gettingReady": "{name} 正在准备出发",
+    "onTheWayEta": "{name} 正在赶来 · 约 {minutes} 分钟",
+    "onTheWay": "{name} 正在赶来",
+    "arrived": "{name} 已到达",
+    "inService": "按摩进行中",
+    "completed": "服务已完成"
+  },
+  "note": {
+    "matching": "我们正在为您寻找离您最近的技师。",
+    "confirming": "请稍候，正在确认您的预约。",
+    "headingScheduled": "技师会按您的预约时间前往您的地址。",
+    "headingSoon": "技师很快就会前往您的地址。",
+    "keepPhone": "请保持手机在身边。",
+    "payAtDoor": "技师到门口后、按摩开始前，以现金付款。",
+    "enjoy": "尽情享受，好好放松。",
+    "review": "留下评价，即可获得一张 {amount} 现金优惠券。",
+    "needHelp": "如需帮助，请通过 WhatsApp 给我们发消息。"
+  },
+  "badge": {
+    "photoAlt": "{name} 的头像",
+    "therapist": "技师",
+    "assignedTherapist": "指派技师"
+  },
+  "timeline": {
+    "cancelledBody": "该预约已失效。如需帮助，请通过 WhatsApp 给我们发消息。",
+    "eta": "预计到达：{minutes, plural, other {# 分钟}}"
+  },
+  "notFound": {
+    "title": "未找到预约",
+    "body": "找不到这笔预约。请检查链接，或通过 WhatsApp 给我们发消息。"
+  },
+  "loadError": {
+    "title": "预约信息刷新失败",
+    "body": "请检查网络连接后重试。",
+    "retry": "重试"
+  },
+  "hero": {
+    "eyebrow": "我的预约",
+    "waitingFor": "正在等待 {name} 确认……",
+    "waitingFallbackName": "您的技师",
+    "title": "追踪您的按摩",
+    "waitingHint": "通常几分钟内确认",
+    "liveHint": "状态实时更新，每 {seconds, plural, other {# 秒}}自动刷新一次。"
+  },
+  "summary": {
+    "label": "预约摘要",
+    "service": "项目",
+    "servicePending": "项目待定",
+    "duration": "{minutes, plural, other {# 分钟}}",
+    "durationPending": "时长待定",
+    "appointment": "预约时间",
+    "bookedForLater": "已预约稍后时间，技师会按时到达。",
+    "area": "区域",
+    "areaPending": "区域待定",
+    "reference": "预约编号",
+    "copyLabel": "复制预约编号",
+    "copy": "复制",
+    "copied": "已复制"
+  },
+  "progress": {
+    "title": "预约进度",
+    "lastUpdated": "最后更新 {time}",
+    "refresh": "刷新",
+    "cancel": "取消预约",
+    "cannotCancel": "技师已确认这笔预约，因此无法在此取消。需要取消或改期？请通过下方 WhatsApp 给我们发消息，我们会为您处理。"
+  },
+  "help": {
+    "title": "需要了解最新进度？",
+    "body": "请给我们的团队发消息，并附上您的预约编号。"
+  },
+  "cancel": {
+    "title": "取消这笔预约？",
+    "body": "只有仍在等待技师确认的预约才能在此取消。",
+    "contactLabel": "预约邮箱或电话",
+    "keep": "保留预约",
+    "cancelling": "取消中……",
+    "confirm": "确认取消",
+    "errors": {
+      "enterContact": "请输入预约邮箱或电话以继续。",
+      "notVerified": "无法用这些信息核实该预约。",
+      "authRequired": "为了安全，请登录查看您的预约，或通过 WhatsApp 联系我们寻求帮助。",
+      "notAllowed": "该预约已无法在线取消，请通过 WhatsApp 联系我们。",
+      "rateLimited": "请求过于频繁，请稍后再试。",
+      "failed": "暂时无法取消。请通过 WhatsApp 发送您的预约编号，我们会为您取消。",
+      "unreachable": "暂时无法连接到我们的服务。请检查网络，或通过 WhatsApp 发送您的预约编号联系我们。"
+    }
+  }
+}

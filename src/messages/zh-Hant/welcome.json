@@ -1,0 +1,19 @@
+{
+  "meta": {
+    "title": "挑選您的技師 · 現折 {amount}｜{site}",
+    "description": "挑選您的技師，60 秒完成預約。首次預約自動現折 {amount}。免訂金，無需預付。"
+  },
+  "title": "誰來服務，由您決定",
+  "speed": "最快 30 分鐘到府",
+  "points": {
+    "choose": "<b>誰來到府，由您決定</b>——真實技師、真實照片",
+    "noDeposit": "<b>免訂金、免預付</b>——預約完成，技師馬上出發",
+    "professional": "<b>只提供正規專業按摩</b>——持有證照、身穿制服、實名認證的技師"
+  },
+  "new": "新人",
+  "onShift": "上班中",
+  "firstBookingOff": "首次預約現折 {amount}",
+  "pickTherapist": "挑選您的技師",
+  "noTips": "免小費，無需預付任何費用。",
+  "questions": "想先問問題？<messenger>透過 Messenger 聊聊</messenger> · <whatsapp>WhatsApp</whatsapp>"
+}

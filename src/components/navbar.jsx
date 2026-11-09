@@ -1,17 +1,10 @@
 "use client"
-import BrandMark from "./BrandMark";
-import {
-    Phone,
-    Mail,
-    Instagram,
-    Facebook,
-    MapPin,
-    X,
-    Menu,
-  } from "lucide-react";
+import { Check, Globe, MapPin, X, Menu } from "lucide-react";
 import React from 'react'
-import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
+import { Link, usePathname } from "@/i18n/navigation";
+import { LANGUAGES } from "@/i18n/routing";
 
 // 全球站预留的 6 个地方（老板 2026-11-03 战略规划）。现在只开了菲律宾，他定先不显示其它地方，开第二个国家时改成 true
 const SHOW_REGION_MENU = false;
@@ -34,17 +27,18 @@ export default function Navbar() {
   const [isLoading, setIsLoading] = React.useState(true);
 
   const lastScrollY = React.useRef(0);
+  // usePathname 来自多语言那一层：给的是不带语言前缀的网址（/ja/services 给 /services）
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  // 菜单「实底」样式(米色玻璃底 + 深色字 + 彩色莲花):往下滚、打开手机菜单时用;
-  // 只有首页顶上是深色大图，其它页顶上都是浅色，透明底白字看不见，所以一直用实底
-  const solidNav = isScrolled || isMenuOpen || pathname !== "/";
+  const locale = useLocale();
+  const t = useTranslations("nav");
+  const query = searchParams.toString();
+  const here = query ? `${pathname}?${query}` : pathname;
+  const current = LANGUAGES.find((lang) => lang.code === locale) || LANGUAGES[0];
 
   React.useEffect(() => {
-    // 首页第一幕是整屏夜景，滑过之后菜单才变实底
     const handleScroll = () => {
-      const hero = document.querySelector(".ga-hero");
-      setIsScrolled(window.scrollY > (hero ? hero.offsetHeight - window.innerHeight - 40 : 80));
+      setIsScrolled(window.scrollY > 8);
       // 往下滑藏起来，往上滑出现
       const y = window.scrollY;
       if (Math.abs(y - lastScrollY.current) > 6) {
@@ -106,61 +100,82 @@ export default function Navbar() {
 
   const currentNavItems = React.useMemo(
     () => [
-      { name: "Home", url: "/" },
-      { name: "Services", url:"/services" },
+      { key: "home", url: "/" },
+      { key: "services", url: "/services" },
       // 2026-10-26 老板定:价目表页挂进菜单,Xendit 审核员和客人一进站就找得到价格
-      { name: "Pricing", url: "/pricing" },
-      { name: "Contact", url: "/contact" },
+      { key: "pricing", url: "/pricing" },
+      { key: "contact", url: "/contact" },
     ],
     []
   );
 
+  // 语言菜单：同一页换语言，网址后面的参数（例如 ?book=）原样带上
+  const languageMenu = (
+    <div className={`ga-region${isRegionOpen ? " is-open" : ""}`}>
+      <button type="button" className="ga-region-btn" aria-expanded={isRegionOpen} aria-label={t("language")} onClick={() => setIsRegionOpen((open) => !open)}>
+        <Globe size={17} aria-hidden="true" />
+        <span className="ga-region-long">{current.label}</span>
+        <span className="ga-region-short">{current.short}</span>
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg>
+      </button>
+      <div className="ga-region-panel">
+        {SHOW_REGION_MENU ? (
+          <>
+            <p className="ga-region-title">{t("region")}</p>
+            {REGIONS.map((region) => (
+              <div key={region.name} className={`ga-region-row${region.live ? " is-on" : ""}`}>
+                <span>{t(`regions.${region.name}`)}</span>
+                <span>{region.live ? t("nowServing") : t("comingSoon")}</span>
+              </div>
+            ))}
+          </>
+        ) : (
+          <p className="ga-region-here"><MapPin size={15} aria-hidden="true" />{t("philippines")}</p>
+        )}
+        <p className="ga-region-title">{t("language")}</p>
+        {LANGUAGES.map((lang) => (
+          <Link
+            key={lang.code}
+            href={here}
+            locale={lang.code}
+            hrefLang={lang.hreflang}
+            lang={lang.hreflang}
+            className={`ga-lang-row${lang.code === locale ? " is-on" : ""}`}
+            aria-current={lang.code === locale ? "true" : undefined}
+            onClick={() => setIsRegionOpen(false)}
+          >
+            <span>{lang.label}</span>
+            {lang.code === locale ? <Check size={16} aria-hidden="true" /> : null}
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
 
   return (
     <div>
-      <nav className={`ga-nav${solidNav ? " is-solid" : ""}${isNavHidden && !isMenuOpen && !isRegionOpen ? " is-hidden" : ""}`} role="navigation" aria-label="Main navigation">
+      <nav className={`ga-nav is-solid${isScrolled ? " is-scrolled" : ""}${isNavHidden && !isMenuOpen && !isRegionOpen ? " is-hidden" : ""}`} role="navigation" aria-label={t("mainAria")}>
         <div className="ga-nav-in">
-          <Link href="/" className="ga-logo" aria-label="EasyGoSpa - Home Massage Service">
-            <img src={solidNav ? "/global/lotus-olive.png" : "/global/lotus-white.png"} alt="" />
+          <Link href="/" className="ga-logo" aria-label={t("homeAria")}>
+            <img src="/global/lotus-olive.png" alt="" />
             EasyGoSpa
           </Link>
           <div className="ga-nav-links" role="menubar">
             {currentNavItems.map((item) => (
-              <Link key={item.name} href={item.url} role="menuitem" aria-current={pathname === item.url ? "page" : undefined}>
-                {item.name}
+              <Link key={item.key} href={item.url} role="menuitem" aria-current={pathname === item.url ? "page" : undefined}>
+                {t(item.key)}
               </Link>
             ))}
           </div>
           <div className="ga-nav-right">
-            {SHOW_REGION_MENU ? (
-            <div className={`ga-region${isRegionOpen ? " is-open" : ""}`}>
-              <button type="button" className="ga-region-btn" aria-expanded={isRegionOpen} onClick={() => setIsRegionOpen((open) => !open)}>
-                <span className="ga-region-long">Philippines · English</span>
-                <span className="ga-region-short">PH · EN</span>
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              </button>
-              <div className="ga-region-panel">
-                {REGIONS.map((region) => (
-                  <div key={region.name} className={`ga-region-row${region.live ? " is-on" : ""}`}>
-                    <span>{region.name}</span>
-                    <span>{region.live ? "Now serving" : "Coming soon"}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            ) : (
-              <span className="ga-region-static">
-                <span className="ga-region-long">Philippines · English</span>
-                <span className="ga-region-short">PH · EN</span>
-              </span>
-            )}
-            <button type="button" className="ga-orders" onClick={() => window.dispatchEvent(new CustomEvent("open-my-orders"))} aria-label="Open my orders">
-              My orders
+            {languageMenu}
+            <button type="button" className="ga-orders" onClick={() => window.dispatchEvent(new CustomEvent("open-my-orders"))} aria-label={t("openOrders")}>
+              {t("myOrders")}
             </button>
-            <button type="button" className="ga-btn" onClick={() => window.dispatchEvent(new CustomEvent("open-booking-modal"))} aria-label="Open booking appointment modal">
-              Book Now
+            <button type="button" className="ga-btn" onClick={() => window.dispatchEvent(new CustomEvent("open-booking-modal"))} aria-label={t("openBooking")}>
+              {t("bookNow")}
             </button>
-            <button type="button" className="ga-burger" onClick={() => setIsMenuOpen((open) => !open)} aria-expanded={isMenuOpen} aria-controls="mobile-menu" aria-label={isMenuOpen ? "Close menu" : "Open menu"}>
+            <button type="button" className="ga-burger" onClick={() => setIsMenuOpen((open) => !open)} aria-expanded={isMenuOpen} aria-controls="mobile-menu" aria-label={isMenuOpen ? t("closeMenu") : t("openMenu")}>
               {isMenuOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
             </button>
           </div>
@@ -168,17 +183,17 @@ export default function Navbar() {
       </nav>
 
       {isMenuOpen && (
-        <div id="mobile-menu" className="ga-sheet" role="dialog" aria-modal="true" aria-label="Mobile navigation menu">
+        <div id="mobile-menu" className="ga-sheet" role="dialog" aria-modal="true" aria-label={t("mobileAria")}>
           {currentNavItems.map((item) => (
-            <Link key={item.name} href={item.url} onClick={() => setIsMenuOpen(false)} aria-current={pathname === item.url ? "page" : undefined}>
-              {item.name}
+            <Link key={item.key} href={item.url} onClick={() => setIsMenuOpen(false)} aria-current={pathname === item.url ? "page" : undefined}>
+              {t(item.key)}
             </Link>
           ))}
-          <button type="button" onClick={() => { setIsMenuOpen(false); window.dispatchEvent(new CustomEvent("open-my-orders")); }} aria-label="Open my orders">
-            My orders
+          <button type="button" onClick={() => { setIsMenuOpen(false); window.dispatchEvent(new CustomEvent("open-my-orders")); }} aria-label={t("openOrders")}>
+            {t("myOrders")}
           </button>
-          <button type="button" className="ga-btn" onClick={() => { setIsMenuOpen(false); window.dispatchEvent(new CustomEvent("open-booking-modal")); }} aria-label="Open booking appointment modal">
-            Book Appointment
+          <button type="button" className="ga-btn" onClick={() => { setIsMenuOpen(false); window.dispatchEvent(new CustomEvent("open-booking-modal")); }} aria-label={t("openBooking")}>
+            {t("bookAppointment")}
           </button>
         </div>
       )}

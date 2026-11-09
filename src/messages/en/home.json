@@ -1,0 +1,87 @@
+{
+  "hero": {
+    "title": "24/7 Home Massage in Metro Manila",
+    "lead": "Professional massage at your home, condo or hotel. Licensed, uniformed and ID-verified therapists come to you.",
+    "prices": "See Prices",
+    "note": "From {price} · No tips · Pay cash on arrival",
+    "imageAlt": "A smiling therapist in the EasyGoSpa uniform arriving at a condo door with towels and the EasyGoSpa bag"
+  },
+  "highlights": {
+    "available": "Available 24/7",
+    "verified": "Licensed and ID-verified",
+    "coverage": "Across Metro Manila",
+    "cash": "Pay cash on arrival"
+  },
+  "menu": {
+    "title": "Treatments and prices",
+    "lead": "Every treatment and price, listed. Choose your therapist when you book.",
+    "all": "See all prices"
+  },
+  "steps": {
+    "title": "How it works",
+    "one": {
+      "title": "Choose your therapist",
+      "note": "See each profile when you book.",
+      "alt": "A therapist in uniform opening a door and smiling"
+    },
+    "two": {
+      "title": "Choose your time",
+      "note": "Now, or book for later.",
+      "alt": "Metro Manila at sunset from a high window"
+    },
+    "three": {
+      "title": "Pay cash on arrival",
+      "note": "No deposit, nothing to pay upfront.",
+      "alt": "A therapist walking in through a condo door at night, carrying folded towels"
+    }
+  },
+  "places": {
+    "title": "Your room becomes the spa.",
+    "lead": "Your therapist comes to you. You stay where you are.",
+    "home": "Home",
+    "homeAlt": "A therapist stepping into a living room with a view of the city",
+    "condo": "Condo",
+    "condoAlt": "A therapist walking in through a condo door, carrying folded towels and the EasyGoSpa bag",
+    "hotel": "Hotel",
+    "hotelAlt": "The EasyGoSpa bag on a hotel bed, the city through the window"
+  },
+  "trust": {
+    "title": "Professional massage only.",
+    "lead": "Licensed, uniformed, ID-verified therapists.",
+    "imageAlt": "A therapist in the EasyGoSpa uniform holding up her ID card",
+    "licensed": {
+      "title": "Licensed",
+      "note": "Trained, licensed massage therapists."
+    },
+    "uniformed": {
+      "title": "Uniformed",
+      "note": "Always in the EasyGoSpa uniform."
+    },
+    "verified": {
+      "title": "ID-verified",
+      "note": "Every therapist’s ID is checked."
+    },
+    "door": {
+      "title": "At your door",
+      "note": "Home, condo or hotel, any hour."
+    }
+  },
+  "price": {
+    "title": "A price is a price.",
+    "cash": "Cash",
+    "cashLabel": "Pay on Arrival",
+    "tipsLabel": "Tips Expected",
+    "allDay": "24/7",
+    "allDayLabel": "Available",
+    "note": "Pay cash when your therapist arrives."
+  },
+  "areas": {
+    "title": "A calmer hour, across the city.",
+    "lead": "We come to you in these areas of Metro Manila.",
+    "link": "See service coverage"
+  },
+  "closing": {
+    "title": "Let the city wait.",
+    "lead": "See profiles and prices before you book. Available around the clock."
+  }
+}
