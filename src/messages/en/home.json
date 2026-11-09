@@ -3,49 +3,53 @@
     "title": "24/7 Home Massage in Metro Manila",
     "lead": "Professional massage at your home, condo or hotel. Licensed, uniformed and ID-verified therapists come to you.",
     "prices": "See Prices",
-    "note": "From {price} · No tips · Pay cash on arrival",
-    "imageAlt": "A smiling therapist in the EasyGoSpa uniform in a living room, with the city lit up at night behind her"
+    "imageAlt": "A therapist in the EasyGoSpa uniform guiding a client through a Thai stretch on a floor mat in a bright condo"
   },
-  "highlights": {
-    "available": "Available 24/7",
-    "verified": "Licensed and ID-verified",
-    "coverage": "Across Metro Manila",
-    "cash": "Pay cash on arrival"
+  "stats": {
+    "from": "From {price}",
+    "fromNote": "60-minute massage",
+    "cash": "Pay cash",
+    "cashNote": "when your therapist arrives",
+    "tips": "No tips",
+    "tipsNote": "tipping is never expected",
+    "open": "Open 24/7",
+    "openNote": "book now or for later"
   },
   "menu": {
     "title": "Treatments and prices",
     "lead": "Every treatment and price, listed. Choose your therapist when you book.",
     "all": "See all prices"
   },
-  "steps": {
-    "title": "How it works",
-    "one": {
-      "title": "Choose your therapist",
-      "note": "See each profile when you book."
-    },
-    "two": {
-      "title": "Choose your time",
-      "note": "Now, or book for later."
-    },
-    "three": {
-      "title": "Pay cash on arrival",
-      "note": "No deposit, nothing to pay upfront."
-    }
+  "needs": {
+    "relax": "Relax",
+    "muscles": "Tight muscles",
+    "stretch": "Stretch, no oil",
+    "pressure": "Firm pressure, no oil",
+    "warmth": "Warm stones",
+    "calm": "Calm the mind"
   },
-  "places": {
+  "band": {
     "title": "Your room becomes the spa.",
     "lead": "Your therapist comes to you. You stay where you are.",
+    "alt": "A bright condo living room with floor-to-ceiling windows over Metro Manila",
+    "link": "See service coverage"
+  },
+  "places": {
+    "title": "Home, condo or hotel.",
+    "lead": "We come to you anywhere in our service areas, day or night.",
     "home": "Home",
     "homeAlt": "A smiling therapist arriving at a bright living room with towels and the EasyGoSpa bag",
+    "homeNote": "On your own sofa, after a long week.",
     "condo": "Condo",
-    "condoAlt": "A therapist walking in through a condo door, carrying folded towels and the EasyGoSpa bag",
+    "condoAlt": "A therapist in the EasyGoSpa uniform guiding a client through a Thai stretch on a floor mat, the city outside the condo window",
+    "condoNote": "No traffic, no parking, no waiting room.",
     "hotel": "Hotel",
-    "hotelAlt": "The EasyGoSpa bag on a hotel bed, the city through the window"
+    "hotelAlt": "The EasyGoSpa bag on a hotel bed, the city through the window",
+    "hotelNote": "Between meetings, or before the flight."
   },
   "trust": {
     "title": "Professional massage only.",
     "lead": "Licensed, uniformed, ID-verified therapists.",
-    "imageAlt": "A therapist in the EasyGoSpa uniform holding up her ID card",
     "licensed": {
       "title": "Licensed",
       "note": "Trained, licensed massage therapists."
@@ -63,19 +67,20 @@
       "note": "Home, condo or hotel, any hour."
     }
   },
-  "price": {
-    "title": "A price is a price.",
-    "cash": "Cash",
-    "cashLabel": "Pay on Arrival",
-    "tipsLabel": "Tips Expected",
-    "allDay": "24/7",
-    "allDayLabel": "Available",
-    "note": "Pay cash when your therapist arrives."
-  },
-  "areas": {
-    "title": "A calmer hour, across the city.",
-    "lead": "We come to you in these areas of Metro Manila.",
-    "link": "See service coverage"
+  "steps": {
+    "title": "How it works",
+    "one": {
+      "title": "Choose your therapist",
+      "note": "See each profile when you book."
+    },
+    "two": {
+      "title": "Choose your time",
+      "note": "Now, or book for later."
+    },
+    "three": {
+      "title": "Pay cash on arrival",
+      "note": "No deposit, nothing to pay upfront."
+    }
   },
   "closing": {
     "title": "Let the city wait.",

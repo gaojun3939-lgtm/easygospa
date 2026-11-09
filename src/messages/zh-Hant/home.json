@@ -3,49 +3,53 @@
     "title": "Metro Manila 24/7 到府按摩",
     "lead": "專業按摩，直接到您的住家、公寓或飯店。持有證照、身穿制服、實名認證的技師親自到府服務。",
     "prices": "查看價格",
-    "note": "{price} 起 · 免小費 · 到場付現",
-    "imageAlt": "身穿 EasyGoSpa 制服的技師在客廳裡微笑，身後是城市夜景"
+    "imageAlt": "身穿 EasyGoSpa 制服的技師在明亮的公寓裡，於地墊上為客人做泰式伸展"
   },
-  "highlights": {
-    "available": "24/7 全天候服務",
-    "verified": "持有證照、實名認證",
-    "coverage": "服務遍及 Metro Manila",
-    "cash": "到場付現"
+  "stats": {
+    "from": "{price} 起",
+    "fromNote": "60 分鐘按摩",
+    "cash": "現金付款",
+    "cashNote": "技師到場後再付",
+    "tips": "免小費",
+    "tipsNote": "不需另給小費",
+    "open": "24/7 營業",
+    "openNote": "現在就來，或約個時間"
   },
   "menu": {
     "title": "服務項目與價格",
     "lead": "所有項目與價格一目了然。預約時即可挑選技師。",
     "all": "查看全部價格"
   },
-  "steps": {
-    "title": "預約流程",
-    "one": {
-      "title": "挑選技師",
-      "note": "預約時可查看每位技師的資料。"
-    },
-    "two": {
-      "title": "選擇時間",
-      "note": "現在就來，或預約稍後的時段。"
-    },
-    "three": {
-      "title": "到場付現",
-      "note": "免訂金，無需預付任何費用。"
-    }
+  "needs": {
+    "relax": "放鬆",
+    "muscles": "肌肉緊繃",
+    "stretch": "伸展，不用油",
+    "pressure": "深層按壓，不用油",
+    "warmth": "溫熱石療",
+    "calm": "舒緩身心"
   },
-  "places": {
+  "band": {
     "title": "讓您的房間化身 SPA。",
     "lead": "技師到府服務，您哪裡都不用去。",
+    "alt": "明亮的公寓客廳，落地窗外是 Metro Manila",
+    "link": "查看服務範圍"
+  },
+  "places": {
+    "title": "住家、公寓或飯店。",
+    "lead": "服務範圍內，白天晚上都能到府。",
     "home": "住家",
     "homeAlt": "技師帶著毛巾和 EasyGoSpa 包，微笑著走進明亮的客廳",
+    "homeNote": "忙了一週，就在自家沙發上放鬆。",
     "condo": "公寓",
-    "condoAlt": "技師捧著摺好的毛巾、提著 EasyGoSpa 提袋，走進公寓大門",
+    "condoAlt": "公寓落地窗前，身穿 EasyGoSpa 制服的技師在地墊上為客人做泰式伸展",
+    "condoNote": "不塞車、不找車位、不用排隊。",
     "hotel": "飯店",
-    "hotelAlt": "飯店床上的 EasyGoSpa 提袋，窗外是城市景色"
+    "hotelAlt": "飯店床上的 EasyGoSpa 提袋，窗外是城市景色",
+    "hotelNote": "會議空檔，或搭機之前。"
   },
   "trust": {
     "title": "只提供正規專業按摩。",
     "lead": "持有證照、身穿制服、實名認證的技師。",
-    "imageAlt": "身穿 EasyGoSpa 制服的技師舉起她的證件",
     "licensed": {
       "title": "持有證照",
       "note": "受過專業訓練、持有證照的按摩技師。"
@@ -63,19 +67,20 @@
       "note": "住家、公寓或飯店，任何時段都能服務。"
     }
   },
-  "price": {
-    "title": "標價就是實價。",
-    "cash": "現金",
-    "cashLabel": "到場付現",
-    "tipsLabel": "小費",
-    "allDay": "24/7",
-    "allDayLabel": "全天候服務",
-    "note": "技師到場後再以現金付款。"
-  },
-  "areas": {
-    "title": "城市各處，都能享受靜好的一小時。",
-    "lead": "我們在 Metro Manila 的以下地區提供到府服務。",
-    "link": "查看服務範圍"
+  "steps": {
+    "title": "預約流程",
+    "one": {
+      "title": "挑選技師",
+      "note": "預約時可查看每位技師的資料。"
+    },
+    "two": {
+      "title": "選擇時間",
+      "note": "現在就來，或預約稍後的時段。"
+    },
+    "three": {
+      "title": "到場付現",
+      "note": "免訂金，無需預付任何費用。"
+    }
   },
   "closing": {
     "title": "讓城市等一等。",

@@ -11,8 +11,13 @@ const PHOTOS = [
   [/aroma/i, 'aroma', '/global/photos/oils.webp'],
   [/shiatsu/i, 'shiatsu', '/global/photos/shoulders.webp'],
   [/swedish/i, 'swedish', '/global/photos/swedish.webp'],
-  [/thai/i, 'thai', '/global/photos/thai.webp'],
+  [/thai/i, 'thai', '/global/photos/thai-seated.webp'],
 ]
+// 首页按「身体需要什么」分页签（老板认可的 .ph 首页同一个思路）。后台新加的项目没有对应，就直接用项目名当页签
+export const NEED_ORDER = ['relax', 'muscles', 'stretch', 'pressure', 'warmth', 'calm']
+const NEEDS = [[/swedish/i, 'relax'], [/deep/i, 'muscles'], [/thai/i, 'stretch'], [/shiatsu/i, 'pressure'], [/stone/i, 'warmth'], [/aroma/i, 'calm']]
+export const needOf = (name) => NEEDS.find(([match]) => match.test(String(name || '')))?.[1] || ''
+
 export function photoFor(name) {
   const hit = PHOTOS.find(([match]) => match.test(String(name || '')))
   return hit ? { key: hit[1], src: hit[2] } : { key: 'other', src: '/global/photos/towels.webp' }
