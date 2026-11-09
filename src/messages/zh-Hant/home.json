@@ -3,7 +3,7 @@
     "title": "Metro Manila 24/7 到府按摩",
     "lead": "專業按摩，直接到您的住家、公寓或飯店。持有證照、身穿制服、實名認證的技師親自到府服務。",
     "prices": "查看價格",
-    "imageAlt": "身穿 EasyGoSpa 制服的技師在明亮的公寓裡，於地墊上為客人做泰式伸展"
+    "imageAlt": "夜裡，身穿 EasyGoSpa 制服的技師帶著毛巾和 EasyGoSpa 提袋，微笑著走進公寓"
   },
   "stats": {
     "from": "{price} 起",
@@ -31,20 +31,20 @@
   "band": {
     "title": "讓您的房間化身 SPA。",
     "lead": "技師到府服務，您哪裡都不用去。",
-    "alt": "明亮的公寓客廳，落地窗外是 Metro Manila",
+    "alt": "按摩結束後，客人穿著浴袍在沙發上喝茶，技師在一旁收拾提袋，窗外是城市",
     "link": "查看服務範圍"
   },
   "places": {
     "title": "住家、公寓或飯店。",
     "lead": "服務範圍內，白天晚上都能到府。",
     "home": "住家",
-    "homeAlt": "技師帶著毛巾和 EasyGoSpa 包，微笑著走進明亮的客廳",
+    "homeAlt": "客人打開家門，迎接帶著毛巾和 EasyGoSpa 提袋、面帶微笑的技師",
     "homeNote": "忙了一週，就在自家沙發上放鬆。",
     "condo": "公寓",
-    "condoAlt": "公寓落地窗前，身穿 EasyGoSpa 制服的技師在地墊上為客人做泰式伸展",
+    "condoAlt": "BGC 高樓層公寓裡，技師在沙發邊為客人按摩雙腳",
     "condoNote": "不塞車、不找車位、不用排隊。",
     "hotel": "飯店",
-    "hotelAlt": "飯店床上的 EasyGoSpa 提袋，窗外是城市景色",
+    "hotelAlt": "夜裡，技師為躺在飯店床上的客人整理毛巾",
     "hotelNote": "會議空檔，或搭機之前。"
   },
   "trust": {

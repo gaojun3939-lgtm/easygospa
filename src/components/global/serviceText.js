@@ -4,14 +4,14 @@
 export const peso = (value) => `₱${Number(value).toLocaleString('en-US')}`
 export const niceName = (name) => String(name || '').replace(/\(/, ' (').replace(/\s+/g, ' ').trim()
 
-// 每个项目配一张图（公司现有素材）。后台新加的项目先用毛巾那张，不会空着
+// 每个项目配一张图（2026-11-10 老板「现在这些图太像 AI」后让 Codex 按真实摄影重拍：客人自己的床、沙发、地垫，没有按摩床）。后台新加的项目先用精油那张，不会空着
 const PHOTOS = [
-  [/deep/i, 'deep', '/global/photos/deep.webp'],
-  [/stone/i, 'stone', '/global/photos/stones-back.webp'],
-  [/aroma/i, 'aroma', '/global/photos/oils.webp'],
-  [/shiatsu/i, 'shiatsu', '/global/photos/shoulders.webp'],
-  [/swedish/i, 'swedish', '/global/photos/swedish.webp'],
-  [/thai/i, 'thai', '/global/photos/thai-seated.webp'],
+  [/deep/i, 'deep', '/global/photos/svc-deep.webp'],
+  [/stone/i, 'stone', '/global/photos/svc-stone.webp'],
+  [/aroma/i, 'aroma', '/global/photos/svc-aroma.webp'],
+  [/shiatsu/i, 'shiatsu', '/global/photos/svc-shiatsu.webp'],
+  [/swedish/i, 'swedish', '/global/photos/svc-swedish.webp'],
+  [/thai/i, 'thai', '/global/photos/svc-thai.webp'],
 ]
 // 首页按「身体需要什么」分页签（老板认可的 .ph 首页同一个思路）。后台新加的项目没有对应，就直接用项目名当页签
 export const NEED_ORDER = ['relax', 'muscles', 'stretch', 'pressure', 'warmth', 'calm']
@@ -20,7 +20,7 @@ export const needOf = (name) => NEEDS.find(([match]) => match.test(String(name |
 
 export function photoFor(name) {
   const hit = PHOTOS.find(([match]) => match.test(String(name || '')))
-  return hit ? { key: hit[1], src: hit[2] } : { key: 'other', src: '/global/photos/towels.webp' }
+  return hit ? { key: hit[1], src: hit[2] } : { key: 'other', src: '/global/photos/svc-aroma.webp' }
 }
 
 // tn = serviceNames，ti = serviceInfo，tAlt = services.photoAlt（都是 next-intl 的取字函数）

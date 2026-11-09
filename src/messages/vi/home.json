@@ -3,7 +3,7 @@
     "title": "Massage tại nhà 24/7 ở Metro Manila",
     "lead": "Massage chuyên nghiệp ngay tại nhà riêng, căn hộ hoặc khách sạn của bạn. Kỹ thuật viên có chứng chỉ, mặc đồng phục và đã xác minh danh tính sẽ đến tận nơi.",
     "prices": "Bảng giá",
-    "imageAlt": "Kỹ thuật viên mặc đồng phục EasyGoSpa giúp khách giãn cơ kiểu Thái trên tấm nệm sàn trong căn hộ sáng sủa"
+    "imageAlt": "Buổi tối, kỹ thuật viên mặc đồng phục EasyGoSpa mỉm cười bước vào căn hộ, mang theo khăn và túi EasyGoSpa"
   },
   "stats": {
     "from": "Từ {price}",
@@ -31,20 +31,20 @@
   "band": {
     "title": "Căn phòng của bạn thành spa.",
     "lead": "Kỹ thuật viên đến với bạn. Bạn cứ ở yên tại chỗ.",
-    "alt": "Phòng khách căn hộ sáng sủa với cửa kính lớn nhìn ra Metro Manila",
+    "alt": "Sau buổi massage, khách mặc áo choàng thưởng trà trên sofa trong khi kỹ thuật viên thu dọn túi, bên ngoài là thành phố",
     "link": "Xem khu vực phục vụ"
   },
   "places": {
     "title": "Nhà riêng, căn hộ hay khách sạn.",
     "lead": "Chúng tôi đến tận nơi trong khu vực phục vụ, cả ngày lẫn đêm.",
     "home": "Nhà riêng",
-    "homeAlt": "Kỹ thuật viên mỉm cười bước vào phòng khách sáng sủa, mang theo khăn và túi EasyGoSpa",
+    "homeAlt": "Khách mở cửa đón kỹ thuật viên tươi cười mang theo khăn và túi EasyGoSpa",
     "homeNote": "Sau một tuần dài, ngay trên sofa nhà bạn.",
     "condo": "Căn hộ",
-    "condoAlt": "Kỹ thuật viên mặc đồng phục EasyGoSpa giúp khách giãn cơ kiểu Thái trên tấm nệm sàn, bên ngoài cửa sổ căn hộ là thành phố",
+    "condoAlt": "Kỹ thuật viên massage chân cho khách trên sofa trong căn hộ tầng cao ở BGC",
     "condoNote": "Không kẹt xe, không tìm chỗ đậu, không phải chờ.",
     "hotel": "Khách sạn",
-    "hotelAlt": "Túi EasyGoSpa trên giường khách sạn, thành phố hiện qua khung cửa sổ",
+    "hotelAlt": "Buổi tối, kỹ thuật viên chuẩn bị khăn cho khách đang nằm nghỉ trên giường khách sạn",
     "hotelNote": "Giữa các cuộc họp, hoặc trước chuyến bay."
   },
   "trust": {

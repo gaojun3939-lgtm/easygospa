@@ -3,7 +3,7 @@
     "title": "24/7 Home Massage in Metro Manila",
     "lead": "Professional massage at your home, condo or hotel. Licensed, uniformed and ID-verified therapists come to you.",
     "prices": "See Prices",
-    "imageAlt": "A therapist in the EasyGoSpa uniform guiding a client through a Thai stretch on a floor mat in a bright condo"
+    "imageAlt": "A smiling therapist in the EasyGoSpa uniform walking into a condo at night with towels and the EasyGoSpa bag"
   },
   "stats": {
     "from": "From {price}",
@@ -31,20 +31,20 @@
   "band": {
     "title": "Your room becomes the spa.",
     "lead": "Your therapist comes to you. You stay where you are.",
-    "alt": "A bright condo living room with floor-to-ceiling windows over Metro Manila",
+    "alt": "A client in a robe enjoying tea on her sofa after a massage while the therapist packs her bag, the city outside",
     "link": "See service coverage"
   },
   "places": {
     "title": "Home, condo or hotel.",
     "lead": "We come to you anywhere in our service areas, day or night.",
     "home": "Home",
-    "homeAlt": "A smiling therapist arriving at a bright living room with towels and the EasyGoSpa bag",
+    "homeAlt": "A client opening her front door to a smiling therapist carrying towels and the EasyGoSpa bag",
     "homeNote": "On your own sofa, after a long week.",
     "condo": "Condo",
-    "condoAlt": "A therapist in the EasyGoSpa uniform guiding a client through a Thai stretch on a floor mat, the city outside the condo window",
+    "condoAlt": "A therapist massaging a client’s feet on the sofa of a high-floor condo in BGC",
     "condoNote": "No traffic, no parking, no waiting room.",
     "hotel": "Hotel",
-    "hotelAlt": "The EasyGoSpa bag on a hotel bed, the city through the window",
+    "hotelAlt": "A therapist preparing towels for a client resting on her hotel bed at night",
     "hotelNote": "Between meetings, or before the flight."
   },
   "trust": {

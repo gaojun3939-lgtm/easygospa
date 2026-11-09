@@ -1,13 +1,14 @@
 import { getTranslations } from 'next-intl/server'
 import { BadgeCheck, DoorOpen, IdCard, Shirt } from 'lucide-react'
 import { Link } from '@/i18n/navigation'
+import HeroVideo from './HeroVideo'
 import ServiceNeeds from './ServiceNeeds'
 import { NEED_ORDER, peso } from './serviceText'
 import { nums } from './nums'
 
 // 首页（2026-11-10 老板「图片不好看 设计也差点意思」）：照老板认可的 easygospa.ph 首页的路子——
 // 整屏明亮大图配标题、一条四格亮点、按「身体需要什么」看项目和价格、整屏窗景大图、家/公寓/酒店三张图、资质、三步、夜景收尾。
-// 图全是公司现有的高清原图（不用视频截图），没有按摩床。主色橄榄绿不换。
+// 顶上是视频；下面的图 2026-11-10 让 Codex 按真实摄影重拍（老板「现在这些图太像 AI」），没有按摩床。主色橄榄绿不换。
 const AREAS = ['Makati', 'BGC', 'Taguig', 'Pasay', 'Manila', 'Quezon City', 'Pasig', 'Mandaluyong']
 
 function lowestPrice(services) {
@@ -25,7 +26,7 @@ export default async function SiteHome({ locale, services = [] }) {
   return (
     <div className="ga ga-home">
       <section className="ga-hero">
-        <img className="ga-hero-img" src="/global/photos/hero-thai.webp" alt={t('hero.imageAlt')} fetchPriority="high" />
+        <HeroVideo label={t('hero.imageAlt')} />
         <div className="ga-wrap ga-hero-in">
           <div className="ga-hero-text">
             <p className="ga-eyebrow">{c('tagline')}</p>
@@ -33,14 +34,14 @@ export default async function SiteHome({ locale, services = [] }) {
             <p className="ga-lead">{t('hero.lead')}</p>
             <div className="ga-hero-actions">
               <button type="button" className="ga-btn ga-btn-big" data-open-booking="1">{c('bookNow')}</button>
-              <Link className="ga-btn ga-btn-big ga-btn-line" href="/pricing">{t('hero.prices')}</Link>
+              <Link className="ga-btn ga-btn-big ga-btn-line ga-btn-on-dark" href="/pricing">{t('hero.prices')}</Link>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="ga-wrap">
-        <ul className="ga-stats">
+      <section className="ga-stats-band">
+        <ul className="ga-stats ga-wrap">
           {from ? <li><b>{nums(t('stats.from', { price: peso(from) }))}</b><span>{t('stats.fromNote')}</span></li> : null}
           <li><b>{nums(t('stats.cash'))}</b><span>{t('stats.cashNote')}</span></li>
           <li><b>{nums(t('stats.tips'))}</b><span>{t('stats.tipsNote')}</span></li>
@@ -62,7 +63,7 @@ export default async function SiteHome({ locale, services = [] }) {
       </section>
 
       <section className="ga-band">
-        <img src="/global/photos/window-day.webp" alt={t('band.alt')} loading="lazy" />
+        <img src="/global/photos/band-living.webp" alt={t('band.alt')} loading="lazy" />
         <div className="ga-wrap ga-band-text">
           <h2>{t('band.title')}</h2>
           <p className="ga-lead">{t('band.lead')}</p>
@@ -85,9 +86,9 @@ export default async function SiteHome({ locale, services = [] }) {
           </div>
           <ul className="ga-places">
             {[
-              ['home', '/global/photos/home-day.webp', '72% 50%'],
-              ['condo', '/global/photos/thai-mat.webp', '60% 50%'],
-              ['hotel', '/global/photos/hotel.webp', '50% 60%'],
+              ['home', '/global/photos/place-home.webp', '50% 40%'],
+              ['condo', '/global/photos/place-condo.webp', '50% 50%'],
+              ['hotel', '/global/photos/place-hotel.webp', '50% 55%'],
             ].map(([key, src, position]) => (
               <li key={key}>
                 <figure><img src={src} alt={t(`places.${key}Alt`)} loading="lazy" style={{ objectPosition: position }} /></figure>
@@ -132,7 +133,7 @@ export default async function SiteHome({ locale, services = [] }) {
       </section>
 
       <section className="ga-closing">
-        <img src="/global/photos/condo-night.webp" alt="" loading="lazy" />
+        <img src="/global/photos/closing-corridor.webp" alt="" loading="lazy" />
         <div className="ga-wrap ga-closing-text">
           <h2>{t('closing.title')}</h2>
           <p>{t('closing.lead')}</p>
