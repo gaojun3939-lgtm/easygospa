@@ -162,7 +162,7 @@ export default function ContactPage() {
               <button type="button" onClick={() => handleSocialClick('facebook')} aria-label={t("follow.facebook")}><Facebook size={22} /></button>
             </div>
           </section>
-          <figure className="ga-side-pic"><img src="/global/photos/greet.jpg" alt={t("photoAlt")} loading="lazy" style={{ objectPosition: '50% 22%' }} /></figure>
+          <figure className="ga-side-pic"><img src="/global/photos/therapist-portrait.webp" alt={t("photoAlt")} loading="lazy" style={{ objectPosition: '72% 35%' }} /></figure>
         </div>
 
         <div className="ga-form">

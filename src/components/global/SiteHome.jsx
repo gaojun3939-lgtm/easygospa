@@ -1,5 +1,5 @@
 import { getTranslations } from 'next-intl/server'
-import { Banknote, BadgeCheck, Clock, DoorOpen, IdCard, MapPin, Shirt, ShieldCheck } from 'lucide-react'
+import { Banknote, BadgeCheck, CalendarClock, Clock, DoorOpen, IdCard, MapPin, Shirt, ShieldCheck, UserRoundCheck } from 'lucide-react'
 import { Link } from '@/i18n/navigation'
 import ServiceCards from './ServiceCards'
 import { peso } from './serviceText'
@@ -34,7 +34,7 @@ export default async function SiteHome({ locale, services = [] }) {
             {from ? <p className="ga-hero-note">{t('hero.note', { price: peso(from) })}</p> : null}
           </div>
           <figure className="ga-hero-pic">
-            <img src="/global/photos/arrival.webp" alt={t('hero.imageAlt')} fetchPriority="high" />
+            <img src="/global/photos/therapist-portrait.webp" alt={t('hero.imageAlt')} fetchPriority="high" style={{ objectPosition: '72% 35%' }} />
           </figure>
         </div>
       </section>
@@ -65,13 +65,14 @@ export default async function SiteHome({ locale, services = [] }) {
         <div className="ga-wrap">
           <div className="ga-sec-head"><div><h2>{t('steps.title')}</h2></div></div>
           <ol className="ga-steps">
+            {/* 2026-11-09 老板「视频做的截图很丑」：三步不配图，图标加文字 */}
             {[
-              ['one', '/global/photos/greet.jpg', '50% 22%'],
-              ['two', '/global/photos/sunset.webp', '50% 50%'],
-              ['three', '/global/photos/night.jpg', '50% 32%'],
-            ].map(([key, src, position]) => (
+              ['one', UserRoundCheck],
+              ['two', CalendarClock],
+              ['three', Banknote],
+            ].map(([key, Icon]) => (
               <li key={key}>
-                <figure><img src={src} alt={t(`steps.${key}.alt`)} loading="lazy" style={{ objectPosition: position }} /></figure>
+                <Icon size={30} aria-hidden="true" />
                 <h3>{t(`steps.${key}.title`)}</h3>
                 <p>{t(`steps.${key}.note`)}</p>
               </li>
@@ -90,8 +91,8 @@ export default async function SiteHome({ locale, services = [] }) {
           </div>
           <ul className="ga-places">
             {[
-              ['home', '/global/photos/living.jpg', '50% 40%'],
-              ['condo', '/global/photos/lobby.jpg', '50% 30%'],
+              ['home', '/global/photos/home-day.webp', '74% 50%'],
+              ['condo', '/global/photos/condo-night.webp', '74% 50%'],
               ['hotel', '/global/photos/hotel.webp', '50% 50%'],
             ].map(([key, src, position]) => (
               <li key={key}>
@@ -141,7 +142,7 @@ export default async function SiteHome({ locale, services = [] }) {
             <ul className="ga-chips">{AREAS.map((area) => <li key={area}>{area}</li>)}</ul>
             <Link className="ga-more" href="/coverage">{t('areas.link')} →</Link>
           </div>
-          <figure><img src="/global/photos/city-wide.jpg" alt="" loading="lazy" /></figure>
+          <figure><img src="/global/photos/city-window.webp" alt="" loading="lazy" /></figure>
         </div>
       </section>
 

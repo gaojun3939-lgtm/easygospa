@@ -20,7 +20,7 @@ export default async function CoveragePage({ params }) {
       <PageHead title={t('title')}>{t('lead')}</PageHead>
       <section className="ga-wrap ga-page-sec">
         <ul className="ga-coverage">{AREAS.map((area) => <li key={area}>{area}</li>)}</ul>
-        <figure className="ga-coverage-pic"><img src="/global/photos/city-wide.jpg" alt={t('photoAlt')} loading="lazy" /></figure>
+        <figure className="ga-coverage-pic"><img src="/global/photos/city-window.webp" alt={t('photoAlt')} loading="lazy" /></figure>
       </section>
     </div>
   );

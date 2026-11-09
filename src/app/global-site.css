@@ -77,10 +77,10 @@
 .ga-card-gap { flex: 1; }
 
 .ga-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2vw, 28px); counter-reset: step; }
-.ga-steps li { counter-increment: step; }
-.ga-steps figure { aspect-ratio: 4 / 3; border-radius: var(--ga-radius); overflow: hidden; background: var(--ga-tint); }
-.ga-steps h3 { margin-top: 20px; }
-.ga-steps h3::before { content: counter(step); display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; margin-right: 12px; border-radius: 50%; background: var(--ga-olive); color: #fff; font: 500 14px/1 var(--ga-sans); vertical-align: 3px; }
+.ga-steps li { position: relative; padding: 30px 28px 30px; border: 1px solid var(--ga-line); border-radius: var(--ga-radius); background: var(--ga-ivory); counter-increment: step; }
+.ga-steps li::before { content: counter(step); position: absolute; top: 24px; right: 26px; color: var(--ga-line); font: 400 44px/1 var(--ga-serif); }
+.ga-steps svg { color: var(--ga-olive); }
+.ga-steps h3 { margin-top: 18px; }
 .ga-steps p { margin: 8px 0 0; color: var(--ga-soft); }
 
 .ga-places { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2vw, 28px); }
@@ -154,7 +154,7 @@
   .ga-highlights li:nth-child(3) { border-left: 0; }
   .ga-highlights li:nth-child(n+3) { border-top: 1px solid var(--ga-line); }
   .ga-cards, .ga-steps { grid-template-columns: 1fr; }
-  .ga-card figure, .ga-steps figure { aspect-ratio: 16 / 10; }
+  .ga-card figure { aspect-ratio: 16 / 10; }
   .ga-places { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
   .ga-places figcaption { left: 8px; bottom: 8px; padding: 6px 12px; font-size: 13px; }
   .ga-trust-pic { aspect-ratio: 4 / 3; }

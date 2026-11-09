@@ -4,7 +4,7 @@
     "lead": "Professional massage at your home, condo or hotel. Licensed, uniformed and ID-verified therapists come to you.",
     "prices": "See Prices",
     "note": "From {price} · No tips · Pay cash on arrival",
-    "imageAlt": "A smiling therapist in the EasyGoSpa uniform arriving at a condo door with towels and the EasyGoSpa bag"
+    "imageAlt": "A smiling therapist in the EasyGoSpa uniform in a living room, with the city lit up at night behind her"
   },
   "highlights": {
     "available": "Available 24/7",
@@ -21,25 +21,22 @@
     "title": "How it works",
     "one": {
       "title": "Choose your therapist",
-      "note": "See each profile when you book.",
-      "alt": "A therapist in uniform opening a door and smiling"
+      "note": "See each profile when you book."
     },
     "two": {
       "title": "Choose your time",
-      "note": "Now, or book for later.",
-      "alt": "Metro Manila at sunset from a high window"
+      "note": "Now, or book for later."
     },
     "three": {
       "title": "Pay cash on arrival",
-      "note": "No deposit, nothing to pay upfront.",
-      "alt": "A therapist walking in through a condo door at night, carrying folded towels"
+      "note": "No deposit, nothing to pay upfront."
     }
   },
   "places": {
     "title": "Your room becomes the spa.",
     "lead": "Your therapist comes to you. You stay where you are.",
     "home": "Home",
-    "homeAlt": "A therapist stepping into a living room with a view of the city",
+    "homeAlt": "A smiling therapist arriving at a bright living room with towels and the EasyGoSpa bag",
     "condo": "Condo",
     "condoAlt": "A therapist walking in through a condo door, carrying folded towels and the EasyGoSpa bag",
     "hotel": "Hotel",

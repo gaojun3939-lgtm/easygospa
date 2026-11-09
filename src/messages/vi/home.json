@@ -4,7 +4,7 @@
     "lead": "Massage chuyên nghiệp ngay tại nhà riêng, căn hộ hoặc khách sạn của bạn. Kỹ thuật viên có chứng chỉ, mặc đồng phục và đã xác minh danh tính sẽ đến tận nơi.",
     "prices": "Bảng giá",
     "note": "Từ {price} · Không cần tiền tip · Tiền mặt khi đến nơi",
-    "imageAlt": "Kỹ thuật viên mặc đồng phục EasyGoSpa mỉm cười đến cửa căn hộ, mang theo khăn và túi EasyGoSpa"
+    "imageAlt": "Kỹ thuật viên mặc đồng phục EasyGoSpa mỉm cười trong phòng khách, phía sau là thành phố về đêm"
   },
   "highlights": {
     "available": "Phục vụ 24/7",
@@ -21,25 +21,22 @@
     "title": "Quy trình đặt lịch",
     "one": {
       "title": "Chọn kỹ thuật viên",
-      "note": "Xem hồ sơ từng người khi đặt lịch.",
-      "alt": "Kỹ thuật viên mặc đồng phục mở cửa và mỉm cười"
+      "note": "Xem hồ sơ từng người khi đặt lịch."
     },
     "two": {
       "title": "Chọn thời gian",
-      "note": "Đến ngay, hoặc hẹn giờ sau.",
-      "alt": "Metro Manila lúc hoàng hôn nhìn từ ô cửa sổ trên cao"
+      "note": "Đến ngay, hoặc hẹn giờ sau."
     },
     "three": {
       "title": "Trả tiền mặt khi đến nơi",
-      "note": "Không đặt cọc, không trả trước.",
-      "alt": "Kỹ thuật viên bước vào cửa căn hộ về đêm, tay ôm khăn gấp gọn"
+      "note": "Không đặt cọc, không trả trước."
     }
   },
   "places": {
     "title": "Căn phòng của bạn thành spa.",
     "lead": "Kỹ thuật viên đến với bạn. Bạn cứ ở yên tại chỗ.",
     "home": "Nhà riêng",
-    "homeAlt": "Kỹ thuật viên bước vào phòng khách có tầm nhìn ra thành phố",
+    "homeAlt": "Kỹ thuật viên mỉm cười bước vào phòng khách sáng sủa, mang theo khăn và túi EasyGoSpa",
     "condo": "Căn hộ",
     "condoAlt": "Kỹ thuật viên bước vào qua cửa căn hộ, mang theo khăn gấp gọn và túi EasyGoSpa",
     "hotel": "Khách sạn",
