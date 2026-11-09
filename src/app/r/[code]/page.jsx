@@ -17,9 +17,10 @@ const DESCRIPTION = "Book a licensed massage therapist to your home or hotel in 
 
 const parseCode = (raw) => (/^[A-Za-z0-9]{3,16}$/.test(String(raw || "")) ? String(raw).toUpperCase() : "");
 
-// 苹果 2026-11-10 已过审上架（老板：「苹果过审了，把连接换成真实的」）：直接当已上架，用商店给的正式网址。
-// 原来查 iTunes 接口，刚过审那几天接口还返回「查不到」，按钮会一直写「即将上架」，所以不查了。只上菲律宾，网址用 /ph/。
-const APP_STORE_URL = `https://apps.apple.com/ph/app/easygospa-home-massage/id${IOS_APP_ID}`;
+// 苹果 2026-11-10 已过审上架（老板：「苹果过审了，把连接换成真实的」）：直接当已上架。
+// 原来查 iTunes 接口，刚过审那几天接口还返回「查不到」，按钮会一直写「即将上架」，所以不查了。
+// 同日上架国家放开到 147 国（不含欧盟、中国大陆），网址用不带国家的通用版，苹果按客人所在地打开对应商店页。
+const APP_STORE_URL = `https://apps.apple.com/app/id${IOS_APP_ID}`;
 const isOnAppStore = async () => true;
 
 // 查 Google Play 上架没有：只有 200 才算上架，只存结果，缓存 1 小时；查询出错当没上架，下一次再查
