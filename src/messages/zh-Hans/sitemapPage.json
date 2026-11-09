@@ -28,6 +28,18 @@
     "privacy": {
       "name": "隐私政策",
       "description": "我们如何处理您的个人信息"
+    },
+    "gallery": {
+      "name": "图集",
+      "description": "上门按摩服务场景一览"
+    },
+    "team": {
+      "name": "我们的技师",
+      "description": "技师的培训与实名认证"
+    },
+    "coverage": {
+      "name": "服务范围",
+      "description": "我们在 Metro Manila 的服务区域"
     }
   },
   "treatmentNotes": {

@@ -25,10 +25,10 @@
     "instagram": "Follow us on Instagram",
     "facebook": "Follow us on Facebook"
   },
-  "photoAlt": "A client opening her front door to a smiling therapist carrying towels and the EasyGoSpa bag",
   "sent": {
-    "title": "Thank You!",
-    "text": "Your message has been sent successfully. We’ll get back to you within 2 hours."
+    "title": "Almost Done",
+    "text": "WhatsApp has opened with your message. Tap send in WhatsApp and we’ll reply there.",
+    "again": "Write another message"
   },
   "form": {
     "title": "Send Us a Message",
@@ -43,8 +43,8 @@
     "consultation": "Consultation",
     "message": "Message *",
     "messagePlaceholder": "Tell us your preferred service, location, date, and time.",
-    "sending": "Sending...",
-    "send": "Send Message"
+    "send": "Send Message",
+    "viaWhatsapp": "Your message opens in WhatsApp, ready to send to EasyGoSpa."
   },
   "errors": {
     "firstName": "First name is required",

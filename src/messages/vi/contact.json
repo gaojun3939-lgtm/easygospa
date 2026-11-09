@@ -25,10 +25,10 @@
     "instagram": "Theo dõi chúng tôi trên Instagram",
     "facebook": "Theo dõi chúng tôi trên Facebook"
   },
-  "photoAlt": "Khách mở cửa đón kỹ thuật viên tươi cười mang theo khăn và túi EasyGoSpa",
   "sent": {
-    "title": "Cảm ơn bạn!",
-    "text": "Tin nhắn của bạn đã được gửi thành công. Chúng tôi sẽ phản hồi trong vòng 2 giờ."
+    "title": "Sắp xong rồi",
+    "text": "WhatsApp đã mở cùng tin nhắn của bạn. Hãy nhấn gửi trong WhatsApp, chúng tôi sẽ trả lời bạn tại đó.",
+    "again": "Viết tin nhắn khác"
   },
   "form": {
     "title": "Gửi tin nhắn cho chúng tôi",
@@ -43,8 +43,8 @@
     "consultation": "Tư vấn",
     "message": "Tin nhắn *",
     "messagePlaceholder": "Cho chúng tôi biết dịch vụ, địa điểm, ngày và giờ bạn mong muốn.",
-    "sending": "Đang gửi...",
-    "send": "Gửi tin nhắn"
+    "send": "Gửi tin nhắn",
+    "viaWhatsapp": "Tin nhắn của bạn sẽ mở trong WhatsApp, sẵn sàng để gửi cho EasyGoSpa."
   },
   "errors": {
     "firstName": "Vui lòng nhập tên",

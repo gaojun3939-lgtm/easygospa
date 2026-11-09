@@ -4,7 +4,7 @@
 export const peso = (value) => `₱${Number(value).toLocaleString('en-US')}`
 export const niceName = (name) => String(name || '').replace(/\(/, ' (').replace(/\s+/g, ' ').trim()
 
-// 每个项目配一张图（2026-11-10 老板「现在这些图太像 AI」后让 Codex 按真实摄影重拍：客人自己的床、沙发、地垫，没有按摩床）。后台新加的项目先用精油那张，不会空着
+// 每个项目配一张图（Codex 按真实摄影拍的：客人自己的床、沙发、地垫，没有按摩床）。后台新加的项目先用精油那张，不会空着
 const PHOTOS = [
   [/deep/i, 'deep', '/global/photos/svc-deep.webp'],
   [/stone/i, 'stone', '/global/photos/svc-stone.webp'],
@@ -13,7 +13,7 @@ const PHOTOS = [
   [/swedish/i, 'swedish', '/global/photos/svc-swedish.webp'],
   [/thai/i, 'thai', '/global/photos/svc-thai.webp'],
 ]
-// 首页按「身体需要什么」分页签（老板认可的 .ph 首页同一个思路）。后台新加的项目没有对应，就直接用项目名当页签
+// 「身体需要什么」：首页横排卡片和服务页的分类按钮都按这个。后台新加的项目对不上就只出现在「全部」里
 export const NEED_ORDER = ['relax', 'muscles', 'stretch', 'pressure', 'warmth', 'calm']
 const NEEDS = [[/swedish/i, 'relax'], [/deep/i, 'muscles'], [/thai/i, 'stretch'], [/shiatsu/i, 'pressure'], [/stone/i, 'warmth'], [/aroma/i, 'calm']]
 export const needOf = (name) => NEEDS.find(([match]) => match.test(String(name || '')))?.[1] || ''
@@ -27,11 +27,17 @@ export function photoFor(name) {
 export function serviceView(service, { tn, ti, tAlt }) {
   const raw = String(service?.name || '')
   const photo = photoFor(raw)
+  const options = service?.durationOptions || []
+  const prices = options.map((o) => Number(o.price)).filter((p) => Number.isFinite(p) && p > 0)
+  const minutes = options.map((o) => Number(o.durationMinutes)).filter((m) => Number.isFinite(m) && m > 0)
   return {
     name: tn.has(raw) ? tn(raw) : niceName(raw),
     description: ti.has(raw) ? ti(raw) : service?.description || '',
     photo: { src: photo.src, alt: tAlt(photo.key) },
-    options: service?.durationOptions || [],
+    options,
+    fromPrice: prices.length ? Math.min(...prices) : null,
+    minMinutes: minutes.length ? Math.min(...minutes) : null,
+    maxMinutes: minutes.length ? Math.max(...minutes) : null,
   }
 }
 

@@ -4,5 +4,6 @@
   "minutes": "{count} min",
   "fromPrice": "From {price}",
   "tagline": "Premium Home Massage",
-  "loading": "Preparing your luxury experience..."
+  "loading": "Preparing your luxury experience...",
+  "minutesRange": "{min}–{max} min"
 }

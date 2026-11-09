@@ -1,5 +1,5 @@
 {
-  "about": "Massage tại nhà cao cấp. EasyGoSpa cung cấp dịch vụ massage tại nhà chuyên nghiệp khắp Metro Manila. Đặt lịch massage thư giãn tại khách sạn, căn hộ, nhà riêng hoặc văn phòng với đội ngũ kỹ thuật viên được đào tạo và đáng tin cậy.",
+  "about": "EasyGoSpa cung cấp dịch vụ massage tại nhà chuyên nghiệp khắp Metro Manila. Đặt lịch massage thư giãn tại khách sạn, căn hộ, nhà riêng hoặc văn phòng với đội ngũ kỹ thuật viên được đào tạo và đáng tin cậy.",
   "popularTreatments": "Liệu trình được yêu thích",
   "homeHotel": "Massage tại nhà & khách sạn",
   "contactTitle": "Liên hệ EasyGoSpa",
@@ -10,8 +10,6 @@
   "phone": "Điện thoại: {phone}",
   "whatsapp": "WhatsApp: {phone}",
   "email": "Email: {email}",
-  "offersTitle": "Ưu đãi đặc biệt",
-  "offersText": "Theo dõi chúng tôi trên Facebook để cập nhật khuyến mãi, giảm giá và tin tức về dịch vụ massage tại nhà.",
   "followFacebook": "Theo dõi chúng tôi trên Facebook",
   "rights": "© 2026 {company}. Bảo lưu mọi quyền.",
   "secReg": "Số đăng ký SEC: {number}",
@@ -20,5 +18,9 @@
   "privacy": "Chính sách quyền riêng tư",
   "terms": "Điều khoản dịch vụ",
   "refund": "Chính sách hoàn tiền",
-  "getApp": "Tải ứng dụng"
+  "getApp": "Tải ứng dụng",
+  "tagline": "Massage tại nhà cao cấp",
+  "appText": "Đặt lịch, xem khi nào kỹ thuật viên đến và nhắn tin cho họ ngay trên ứng dụng EasyGoSpa.",
+  "updates": "Theo dõi chúng tôi trên Facebook để cập nhật tin tức và thông tin dịch vụ.",
+  "sitemap": "Sơ đồ trang web"
 }

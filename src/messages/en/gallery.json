@@ -1,0 +1,31 @@
+{
+  "metaTitle": "Gallery",
+  "metaDescription": "See how an EasyGo Spa home massage looks — at home, in a condo or in your hotel room across Metro Manila.",
+  "pill": "Gallery",
+  "title": "Home Massage, Wherever You Are",
+  "lead": "A look at how a session comes to you — at home, in a condo or in your hotel room.",
+  "categories": {
+    "home": "Home",
+    "condo": "Condo",
+    "hotel": "Hotel",
+    "treatment": "Treatment"
+  },
+  "items": {
+    "door": { "title": "At Your Door", "alt": "A client opening her front door to a smiling therapist carrying towels and the EasyGoSpa bag" },
+    "feet": { "title": "Foot Massage on the Sofa", "alt": "A therapist massaging a client’s feet on the sofa of a high-floor condo in BGC" },
+    "towels": { "title": "Ready in Your Hotel Room", "alt": "A therapist preparing towels for a client resting on her hotel bed at night" },
+    "stretch": { "title": "Thai Stretch on a Floor Mat", "alt": "A therapist guiding a clothed client’s leg into a stretch on a floor mat at home" },
+    "tea": { "title": "Tea After the Massage", "alt": "A client in a robe enjoying tea on her sofa after a massage while the therapist packs her bag, the city outside" },
+    "stones": { "title": "Warm Stones", "alt": "A therapist placing warm stones on a client’s back as she rests on her own bed" },
+    "hallway": { "title": "On the Way to You", "alt": "A therapist in the EasyGoSpa uniform walking down a condo hallway at night with towels and the EasyGoSpa bag" },
+    "shiatsu": { "title": "Shiatsu, No Oil", "alt": "A therapist pressing a seated client’s shoulders in his condo living room, no oil" },
+    "oil": { "title": "Aromatherapy Oils", "alt": "A therapist warming essential oil between her hands beside a client resting under a towel" }
+  },
+  "close": "Close",
+  "prev": "Previous photo",
+  "next": "Next photo",
+  "count": "{n} of {total}",
+  "ctaTitle": "Ready for Your Massage?",
+  "ctaText": "Book now and your therapist comes to your home, condo or hotel. Pay in cash when they arrive.",
+  "ctaButton": "Book Now"
+}

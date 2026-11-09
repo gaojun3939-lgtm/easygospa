@@ -1,5 +1,10 @@
 {
   "title": "Service Coverage",
   "lead": "EasyGo Spa currently serves the following areas:",
-  "photoAlt": "A client in a robe enjoying tea on her sofa after a massage while the therapist packs her bag, the city outside"
+  "photoAlt": "A client in a robe enjoying tea on her sofa after a massage while the therapist packs her bag, the city outside",
+  "pill": "Service Area",
+  "note": "We come to homes, condos and hotels in these areas, day or night. Enter your address when you book to check availability.",
+  "ctaTitle": "Book a Massage in Metro Manila",
+  "ctaText": "Choose your treatment and therapist, and pay in cash when they arrive.",
+  "ctaButton": "Book Now"
 }

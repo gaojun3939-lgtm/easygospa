@@ -4,5 +4,6 @@
   "minutes": "{count}分",
   "fromPrice": "{price}〜",
   "tagline": "プレミアム訪問マッサージ",
-  "loading": "上質なひとときをご用意しています…"
+  "loading": "上質なひとときをご用意しています…",
+  "minutesRange": "{min}〜{max}分"
 }

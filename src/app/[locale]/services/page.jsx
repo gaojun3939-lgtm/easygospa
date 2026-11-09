@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import ServicesPage from '@/components/ServicesPage'
+import PageShell from '@/components/site/PageShell';
 import { loadPublicServiceMenu } from '@/lib/publicServiceMenu.mjs';
 import { alternatesFor } from '@/i18n/routing';
 
@@ -28,9 +29,18 @@ export default async function Services({ params }) {
   const { locale } = await params;
   setRequestLocale(locale);
   const services = await loadPublicServiceMenu();
+  const t = await getTranslations({ locale, namespace: 'services' });
   return (
-    <Suspense fallback={null}>
-      <ServicesPage services={services}/>
-    </Suspense>
+    <PageShell
+      pill={t('eyebrow')}
+      title={t('title')}
+      lead={t('lead')}
+      image="/global/photos/svc-swedish.webp"
+      cta={{ title: t('ctaTitle'), text: t('ctaText'), button: t('ctaButton') }}
+    >
+      <Suspense fallback={null}>
+        <ServicesPage services={services}/>
+      </Suspense>
+    </PageShell>
   )
 }

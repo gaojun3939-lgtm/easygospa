@@ -1,5 +1,5 @@
 {
-  "about": "頂級到府按摩。EasyGoSpa 在 Metro Manila 各地提供專業到府按摩服務。由訓練有素、值得信賴的技師，到您的飯店、公寓、住家或辦公室，為您帶來放鬆的按摩體驗。",
+  "about": "EasyGoSpa 在 Metro Manila 各地提供專業到府按摩服務。由訓練有素、值得信賴的技師，到您的飯店、公寓、住家或辦公室，為您帶來放鬆的按摩體驗。",
   "popularTreatments": "熱門項目",
   "homeHotel": "住家與飯店按摩",
   "contactTitle": "聯絡 EasyGoSpa",
@@ -10,8 +10,6 @@
   "phone": "電話：{phone}",
   "whatsapp": "WhatsApp：{phone}",
   "email": "電子郵件：{email}",
-  "offersTitle": "優惠活動",
-  "offersText": "在 Facebook 追蹤我們，掌握優惠、折扣與到府按摩最新消息。",
   "followFacebook": "在 Facebook 追蹤我們",
   "rights": "© 2026 {company}。版權所有。",
   "secReg": "SEC 登記編號 {number}",
@@ -20,5 +18,9 @@
   "privacy": "隱私權政策",
   "terms": "服務條款",
   "refund": "退款政策",
-  "getApp": "下載 App"
+  "getApp": "下載 App",
+  "tagline": "頂級到府按摩",
+  "appText": "在 EasyGoSpa App 預約、查看技師多久到，還能傳訊息給技師。",
+  "updates": "在 Facebook 追蹤我們，掌握最新消息與服務動態。",
+  "sitemap": "網站地圖"
 }

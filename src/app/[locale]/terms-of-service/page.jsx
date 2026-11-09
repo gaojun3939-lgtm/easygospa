@@ -25,9 +25,14 @@ export default async function TermsOfServicePage({ params }) {
   const b = (chunks) => <strong>{chunks}</strong>;
 
   return (
-    <main className="ga-legal">
-      <div className="max-w-3xl mx-auto px-6">
-        <h1 className="ga-legal-title">{t("title")}</h1>
+    // 2026-11-10 换成建站模版 serinity 的内页样子：顶上深色条垫菜单，正文放一张白卡片
+    <main className="pt-32 pb-24 bg-gradient-to-b from-[#F8F2EC] to-white min-h-screen relative">
+      <span data-nav-over-dark hidden />
+      <div style={{ backgroundImage: "url(/global/photos/band-living.webp)" }} className="w-full h-80 bg-center bg-cover -mt-[280px] mb-10" aria-hidden="true">
+        <div className="w-full h-full bg-black/70" />
+      </div>
+      <div className="max-w-4xl mx-auto px-4 md:px-6"><div className="bg-white rounded-3xl shadow-lg px-6 py-10 md:p-14">
+        <h1 className="font-serif text-[clamp(2rem,4.5vw,3.25rem)] text-[#0F0F0F] leading-tight">{t("title")}</h1>
         <p className="mt-2 text-sm text-gray-500">{t("lastUpdated", { date: t("updatedDate") })}</p>
         {locale !== "en" ? <p className="mt-1 text-xs text-gray-500">{t("languageNotice")}</p> : null}
 
@@ -100,7 +105,7 @@ export default async function TermsOfServicePage({ params }) {
           {/* 2026-10-26 老板定:所有条款结尾加「解释权归公司」,写法跟 App 服务条款一致 */}
           <p className="pt-4 border-t border-gray-200 text-gray-600">{t("finalInterpretation", { company: COMPANY })}</p>
         </div>
-      </div>
+      </div></div>
     </main>
   );
 }
@@ -108,7 +113,7 @@ export default async function TermsOfServicePage({ params }) {
 function Section({ id, title, children }) {
   return (
     <section id={id} className="scroll-mt-28">
-      <h2 className="ga-legal-h2">{title}</h2>
+      <h2 className="font-serif text-2xl text-[#0F0F0F] mb-1">{title}</h2>
       {children}
     </section>
   );

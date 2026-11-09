@@ -28,6 +28,18 @@
     "privacy": {
       "name": "プライバシーポリシー",
       "description": "個人情報の取り扱いについて"
+    },
+    "gallery": {
+      "name": "ギャラリー",
+      "description": "訪問マッサージの様子"
+    },
+    "team": {
+      "name": "セラピスト紹介",
+      "description": "セラピストのトレーニングと本人確認について"
+    },
+    "coverage": {
+      "name": "対応エリア",
+      "description": "Metro Manilaの対応エリア"
     }
   },
   "treatmentNotes": {

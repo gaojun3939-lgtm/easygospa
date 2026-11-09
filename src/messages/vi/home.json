@@ -1,94 +1,143 @@
 {
   "hero": {
-    "title": "Massage tại nhà 24/7 ở Metro Manila",
-    "lead": "Massage chuyên nghiệp ngay tại nhà riêng, căn hộ hoặc khách sạn của bạn. Kỹ thuật viên có chứng chỉ, mặc đồng phục và đã xác minh danh tính sẽ đến tận nơi.",
-    "prices": "Bảng giá",
-    "imageAlt": "Buổi tối, kỹ thuật viên mặc đồng phục EasyGoSpa mỉm cười bước vào căn hộ, mang theo khăn và túi EasyGoSpa"
-  },
-  "stats": {
-    "from": "Từ {price}",
-    "fromNote": "Massage 60 phút",
-    "cash": "Trả tiền mặt",
-    "cashNote": "khi kỹ thuật viên đến nơi",
-    "tips": "Không cần tip",
-    "tipsNote": "không bao giờ phải trả tiền tip",
-    "open": "Mở cửa 24/7",
-    "openNote": "đặt ngay hoặc hẹn giờ"
-  },
-  "menu": {
-    "title": "Liệu trình và bảng giá",
-    "lead": "Mọi liệu trình và mức giá đều được niêm yết rõ ràng. Bạn chọn kỹ thuật viên khi đặt lịch.",
-    "all": "Xem toàn bộ bảng giá"
-  },
-  "needs": {
-    "relax": "Thư giãn",
-    "muscles": "Cơ căng cứng",
-    "stretch": "Kéo giãn, không dầu",
-    "pressure": "Ấn mạnh, không dầu",
-    "warmth": "Đá nóng",
-    "calm": "Tĩnh tâm"
-  },
-  "band": {
-    "title": "Căn phòng của bạn thành spa.",
-    "lead": "Kỹ thuật viên đến với bạn. Bạn cứ ở yên tại chỗ.",
-    "alt": "Sau buổi massage, khách mặc áo choàng thưởng trà trên sofa trong khi kỹ thuật viên thu dọn túi, bên ngoài là thành phố",
-    "link": "Xem khu vực phục vụ"
-  },
-  "places": {
-    "title": "Nhà riêng, căn hộ hay khách sạn.",
-    "lead": "Chúng tôi đến tận nơi trong khu vực phục vụ, cả ngày lẫn đêm.",
-    "home": "Nhà riêng",
-    "homeAlt": "Khách mở cửa đón kỹ thuật viên tươi cười mang theo khăn và túi EasyGoSpa",
-    "homeNote": "Sau một tuần dài, ngay trên sofa nhà bạn.",
-    "condo": "Căn hộ",
-    "condoAlt": "Kỹ thuật viên massage chân cho khách trên sofa trong căn hộ tầng cao ở BGC",
-    "condoNote": "Không kẹt xe, không tìm chỗ đậu, không phải chờ.",
-    "hotel": "Khách sạn",
-    "hotelAlt": "Buổi tối, kỹ thuật viên chuẩn bị khăn cho khách đang nằm nghỉ trên giường khách sạn",
-    "hotelNote": "Giữa các cuộc họp, hoặc trước chuyến bay."
-  },
-  "trust": {
-    "title": "Chỉ massage chuyên nghiệp.",
-    "lead": "Kỹ thuật viên có chứng chỉ, mặc đồng phục, đã xác minh danh tính.",
-    "licensed": {
-      "title": "Có chứng chỉ",
-      "note": "Kỹ thuật viên massage được đào tạo, có chứng chỉ hành nghề."
+    "s1": {
+      "title": "Massage tại nhà 24/7 ở Metro Manila",
+      "lead": "Massage chuyên nghiệp ngay tại nhà riêng, căn hộ hoặc khách sạn của bạn. Kỹ thuật viên được đào tạo, mặc đồng phục và đã xác minh danh tính sẽ đến tận nơi.",
+      "cta": "Đặt ngay"
     },
-    "uniformed": {
-      "title": "Mặc đồng phục",
-      "note": "Luôn mặc đồng phục EasyGoSpa."
+    "s2": {
+      "title": "Căn phòng của bạn thành spa",
+      "lead": "Kỹ thuật viên đến tận nơi, dù ngày hay đêm. Không kẹt xe, không tìm chỗ đậu, không phải chờ.",
+      "cta": "Xem dịch vụ",
+      "alt": "Buổi tối, kỹ thuật viên mặc đồng phục EasyGoSpa đi dọc hành lang căn hộ, mang theo khăn và túi EasyGoSpa"
+    },
+    "s3": {
+      "title": "Trả tiền mặt khi kỹ thuật viên đến",
+      "lead": "Không phải trả trước, cũng không cần tip. Mọi mức giá đều được niêm yết trước khi bạn đặt lịch.",
+      "cta": "Bảng giá",
+      "alt": "Sau buổi massage, khách mặc áo choàng thưởng trà trên sofa trong khi kỹ thuật viên thu dọn túi, bên ngoài là thành phố"
+    },
+    "trust": {
+      "open": "Mở cửa 24/7",
+      "verified": "Kỹ thuật viên đã xác minh",
+      "area": "Metro Manila"
+    },
+    "app": "Tải ứng dụng",
+    "videoLabel": "Buổi tối, kỹ thuật viên mặc đồng phục EasyGoSpa mỉm cười đến căn hộ, mang theo khăn và túi EasyGoSpa",
+    "slideAria": "Chuyển đến slide {n}"
+  },
+  "seal": {
+    "sub": "Massage tại nhà",
+    "ring": "Massage tại nhà · EasyGo Spa · Massage tại nhà · EasyGo Spa ·"
+  },
+  "why": {
+    "pill": "Massage tại nhà EasyGo Spa",
+    "title1": "Vì sao chọn EasyGo Spa",
+    "title2": "Dịch vụ massage tại nhà",
+    "lead": "Massage chuyên nghiệp mà không cần rời khỏi phòng. Kỹ thuật viên đến tận nhà riêng, căn hộ hoặc khách sạn của bạn, vào bất kỳ giờ nào.",
+    "come": {
+      "title": "Chúng tôi đến tận nơi",
+      "sub": "Nhà riêng · Căn hộ · Khách sạn",
+      "text": "Không kẹt xe, không tìm chỗ đậu, không phải chờ. Bạn cứ ở yên tại chỗ và thư giãn."
     },
     "verified": {
-      "title": "Đã xác minh danh tính",
-      "note": "Giấy tờ tùy thân của mọi kỹ thuật viên đều được kiểm tra."
+      "title": "Kỹ thuật viên đã xác minh",
+      "sub": "Được đào tạo · Đã kiểm tra giấy tờ · Mặc đồng phục",
+      "text": "Giấy tờ tùy thân của mọi kỹ thuật viên đều được kiểm tra trước khi nhận đơn, và họ luôn mặc đồng phục EasyGoSpa khi đến."
     },
-    "door": {
-      "title": "Đến tận cửa",
-      "note": "Nhà riêng, căn hộ hay khách sạn, bất kể giờ nào."
+    "cash": {
+      "title": "Trả tiền khi đến nơi",
+      "sub": "Tiền mặt · Không cần tip",
+      "text": "Không phải trả trước. Bạn trả tiền mặt cho kỹ thuật viên khi họ đến nơi."
+    },
+    "cta": "Đặt lịch massage",
+    "imageAlt": "Khách mở cửa đón kỹ thuật viên tươi cười mang theo khăn và túi EasyGoSpa"
+  },
+  "services": {
+    "pill": "Dịch vụ",
+    "title1": "Dịch vụ massage tại nhà",
+    "title2": "ở Metro Manila",
+    "lead": "Mọi liệu trình và mức giá đều được niêm yết rõ ràng. Bạn chọn kỹ thuật viên khi đặt lịch.",
+    "all": "Xem tất cả dịch vụ"
+  },
+  "stats": {
+    "pill": "Vì sao chọn EasyGo Spa",
+    "title1": "Massage tại nhà cao cấp,",
+    "title2": "đến tận cửa nhà bạn",
+    "lead": "Massage chuyên nghiệp tại khách sạn, căn hộ hoặc nhà riêng của bạn khắp Metro Manila, giá rõ ràng và không phải trả gì cho đến khi kỹ thuật viên đến.",
+    "from": {
+      "label": "Massage 60 phút"
+    },
+    "cash": {
+      "value": "Trả tiền mặt",
+      "label": "khi kỹ thuật viên đến nơi"
+    },
+    "tips": {
+      "value": "Không cần tip",
+      "label": "không bao giờ phải trả tiền tip"
+    },
+    "open": {
+      "value": "Mở cửa 24/7",
+      "label": "đặt ngay hoặc hẹn giờ"
     }
   },
-  "steps": {
-    "title": "Quy trình đặt lịch",
-    "one": {
-      "title": "Chọn kỹ thuật viên",
-      "note": "Xem hồ sơ từng người khi đặt lịch."
-    },
-    "two": {
-      "title": "Chọn thời gian",
-      "note": "Đến ngay, hoặc hẹn giờ sau."
-    },
-    "three": {
-      "title": "Trả tiền mặt khi đến nơi",
-      "note": "Không đặt cọc, không trả trước."
+  "journeys": {
+    "pill": "Tìm liệu trình phù hợp",
+    "title1": "Hôm nay cơ thể bạn",
+    "title2": "cần điều gì?",
+    "lead": "Chọn cảm giác của bạn lúc này, chúng tôi sẽ gợi ý liệu trình phù hợp.",
+    "more": "Xem liệu trình",
+    "hint": "Di chuột để tạm dừng · Vuốt để xem thêm",
+    "items": {
+      "relax": "Những đường vuốt dài, mềm mại cùng dầu massage giúp bạn thư giãn sau một ngày dài.",
+      "muscles": "Ấn chậm và mạnh vào các điểm co cứng, căng mỏi ở lưng, cổ và vai.",
+      "stretch": "Kéo giãn có hỗ trợ và ấn trên thảm sàn, mặc nguyên quần áo, không dùng dầu.",
+      "pressure": "Ấn mạnh bằng ngón tay và lòng bàn tay dọc cơ thể, không dùng dầu.",
+      "warmth": "Đá nóng cùng những đường vuốt êm giúp thả lỏng cơ bắp căng cứng.",
+      "calm": "Những đường vuốt nhẹ nhàng cùng tinh dầu dịu nhẹ giúp tâm trí lắng lại."
     }
   },
-  "closing": {
-    "title": "Để thành phố chờ một chút.",
-    "lead": "Xem hồ sơ và bảng giá trước khi đặt lịch. Phục vụ suốt ngày đêm."
+  "included": {
+    "title1": "Đơn giản, minh bạch",
+    "title2": "Lần nào đặt cũng vậy",
+    "lead": "Mọi mức giá đều được niêm yết trước khi bạn đặt lịch. Bạn trả tiền mặt cho kỹ thuật viên khi họ đến, và không bao giờ phải trả tip.",
+    "items": {
+      "prices": "Giá niêm yết sẵn",
+      "cash": "Tiền mặt khi đến",
+      "tips": "Không cần tip",
+      "verified": "Đã xác minh danh tính",
+      "uniform": "Luôn mặc đồng phục",
+      "open": "Mở cửa 24/7",
+      "places": "Nhà, căn hộ, khách sạn"
+    }
+  },
+  "standard": {
+    "eyebrow": "Massage tại nhà chuyên nghiệp",
+    "title1": "Tiêu chuẩn EasyGo Spa",
+    "title2": "Dịch vụ chuyên nghiệp, đáng tin cậy",
+    "lead": "EasyGo Spa cung cấp dịch vụ massage tại nhà chuyên nghiệp khắp Metro Manila. Kỹ thuật viên đến thẳng khách sạn, căn hộ hoặc nhà riêng của bạn, để bạn thư giãn ngay trong không gian của mình.",
+    "verified": {
+      "title": "Kỹ thuật viên đã xác minh",
+      "text": "Kỹ thuật viên được đào tạo bài bản và tuyển chọn kỹ lưỡng."
+    },
+    "fast": {
+      "title": "Đến nhanh",
+      "text": "Điều phối kỹ thuật viên nhanh chóng khắp Metro Manila."
+    },
+    "private": {
+      "title": "An toàn & riêng tư",
+      "text": "Tận hưởng massage ngay trong phòng khách sạn, căn hộ hoặc nhà riêng của bạn."
+    },
+    "open": {
+      "title": "Đặt lịch 24/7",
+      "text": "Đặt lịch bất cứ lúc nào, dù ngày hay đêm."
+    },
+    "cta": "Đặt lịch massage ngay hôm nay",
+    "altLeft": "Buổi tối, kỹ thuật viên chuẩn bị khăn cho khách đang nằm nghỉ trên giường khách sạn",
+    "altRight": "Kỹ thuật viên massage chân cho khách trên sofa trong căn hộ tầng cao ở BGC"
   },
   "app": {
-    "eyebrow": "Ứng dụng EasyGoSpa",
-    "title": "Đặt lịch trên ứng dụng.",
+    "big": "Tải ứng dụng",
     "lead": "Cùng kỹ thuật viên và mức giá, thêm vài tiện ích giúp massage tại nhà dễ dàng hơn.",
     "points": {
       "pick": "Chọn kỹ thuật viên qua ảnh thật và hồ sơ",
@@ -102,7 +151,39 @@
     "storeNone": "Sắp có trên Google Play và App Store.",
     "scanAndroid": "Quét bằng điện thoại Android để tải ứng dụng",
     "scanIphone": "Quét bằng iPhone để tải ứng dụng",
-    "scanAny": "Quét bằng điện thoại để tải ứng dụng",
-    "phoneAlt": "Ứng dụng EasyGoSpa trên điện thoại"
+    "scanAny": "Quét bằng điện thoại để tải ứng dụng"
+  },
+  "areas": {
+    "title": "Phục vụ Metro Manila, cả ngày lẫn đêm"
+  },
+  "faq": {
+    "title": "Điều bạn nên biết",
+    "prev": "Câu hỏi trước",
+    "next": "Câu hỏi tiếp theo",
+    "pay": {
+      "q": "Tôi thanh toán thế nào?",
+      "a": "Bằng tiền mặt, trả trực tiếp cho kỹ thuật viên khi họ đến. Không trả trước, không cần đặt cọc.",
+      "tag": "Thanh toán"
+    },
+    "tips": {
+      "q": "Tôi có cần tip không?",
+      "a": "Không. Bạn không bao giờ phải tip. Mọi liệu trình và mức giá đều có trên trang bảng giá.",
+      "tag": "Tiền tip"
+    },
+    "where": {
+      "q": "Kỹ thuật viên đến những đâu?",
+      "a": "Đến nhà riêng, căn hộ hoặc phòng khách sạn của bạn trong khu vực phục vụ khắp Metro Manila, cả ngày lẫn đêm.",
+      "tag": "Khu vực phục vụ"
+    },
+    "choose": {
+      "q": "Tôi có được chọn kỹ thuật viên không?",
+      "a": "Có. Khi đặt lịch, bạn xem hồ sơ của từng kỹ thuật viên đang sẵn sàng và chọn người đến.",
+      "tag": "Đặt lịch"
+    },
+    "when": {
+      "q": "Khi nào tôi có thể đặt lịch?",
+      "a": "Bất cứ lúc nào, 24 giờ mỗi ngày. Đặt ngay, hoặc chọn một giờ sau.",
+      "tag": "Giờ phục vụ"
+    }
   }
 }

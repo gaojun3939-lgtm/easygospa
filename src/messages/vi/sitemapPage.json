@@ -28,6 +28,18 @@
     "privacy": {
       "name": "Chính sách quyền riêng tư",
       "description": "Cách chúng tôi xử lý thông tin cá nhân của bạn"
+    },
+    "gallery": {
+      "name": "Thư viện ảnh",
+      "description": "Một buổi massage tại nhà trông như thế nào"
+    },
+    "team": {
+      "name": "Đội ngũ kỹ thuật viên",
+      "description": "Cách kỹ thuật viên được đào tạo và xác minh"
+    },
+    "coverage": {
+      "name": "Khu vực phục vụ",
+      "description": "Các khu vực chúng tôi phục vụ khắp Metro Manila"
     }
   },
   "treatmentNotes": {

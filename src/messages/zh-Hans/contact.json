@@ -25,10 +25,10 @@
     "instagram": "在 Instagram 关注我们",
     "facebook": "在 Facebook 关注我们"
   },
-  "photoAlt": "客人打开家门，迎接带着毛巾和 EasyGoSpa 包、面带微笑的技师",
   "sent": {
-    "title": "感谢您！",
-    "text": "您的留言已成功发送，我们会在 2 小时内回复您。"
+    "title": "还差一步",
+    "text": "WhatsApp 已打开并填好您的留言。请在 WhatsApp 中点击发送，我们会在 WhatsApp 上回复您。",
+    "again": "再写一条留言"
   },
   "form": {
     "title": "给我们留言",
@@ -43,8 +43,8 @@
     "consultation": "咨询",
     "message": "留言内容 *",
     "messagePlaceholder": "请告诉我们您想要的服务、地点、日期和时间。",
-    "sending": "发送中……",
-    "send": "发送留言"
+    "send": "发送留言",
+    "viaWhatsapp": "您的留言会在 WhatsApp 中打开，可直接发送给 EasyGoSpa。"
   },
   "errors": {
     "firstName": "请填写名字",

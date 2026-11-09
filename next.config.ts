@@ -32,9 +32,9 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // 2026-10-26 老板定(重新申请 Xendit 前全站清模板残留):这三页下线,打开直接跳走。
-  // /team、/gallery 是建站模板的假团队 / 假实体店相册;/attribution-check 是内部中文调试页。
-  // 页面代码在 git 历史里(提交 519146c 及以前),要恢复从那里找。
+  // 2026-10-26 老板定(重新申请 Xendit 前全站清模板残留):/team、/gallery(建站模板的假团队 / 假实体店相册)、
+  // /attribution-check(内部中文调试页)下线,打开直接跳走。
+  // 2026-11-10 老板「用模版做骨架、不要删减页面」:/gallery、/team 用我们自己的内容放回来,这两条跳转去掉;调试页照旧跳走。
   async redirects() {
     return [
       // 2026-11-03:不带 www 的地址整站跳 www,只留 /.well-known/ 直接返回(谷歌、苹果校验都不接受跳转)。
@@ -45,8 +45,6 @@ const nextConfig: NextConfig = {
         destination: "https://www.easygospa.com/:path",
         permanent: true,
       },
-      { source: "/team", destination: "/services", permanent: true },
-      { source: "/gallery", destination: "/services", permanent: true },
       { source: "/attribution-check", destination: "/", permanent: true },
       // 2026-11-03 老板「为什么推荐的是 404」:推荐链接不带码时回首页;带码的 /r/<码> 不受影响。
       { source: "/r", destination: "/", permanent: false },

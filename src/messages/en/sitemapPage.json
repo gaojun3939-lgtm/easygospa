@@ -28,6 +28,18 @@
     "privacy": {
       "name": "Privacy Policy",
       "description": "How we handle your personal information"
+    },
+    "gallery": {
+      "name": "Gallery",
+      "description": "How a home massage session looks"
+    },
+    "team": {
+      "name": "Our Therapists",
+      "description": "How our therapists are trained and verified"
+    },
+    "coverage": {
+      "name": "Service Coverage",
+      "description": "Areas we serve across Metro Manila"
     }
   },
   "treatmentNotes": {

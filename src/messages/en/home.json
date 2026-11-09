@@ -1,94 +1,143 @@
 {
   "hero": {
-    "title": "24/7 Home Massage in Metro Manila",
-    "lead": "Professional massage at your home, condo or hotel. Licensed, uniformed and ID-verified therapists come to you.",
-    "prices": "See Prices",
-    "imageAlt": "A smiling therapist in the EasyGoSpa uniform walking into a condo at night with towels and the EasyGoSpa bag"
-  },
-  "stats": {
-    "from": "From {price}",
-    "fromNote": "60-minute massage",
-    "cash": "Pay cash",
-    "cashNote": "when your therapist arrives",
-    "tips": "No tips",
-    "tipsNote": "tipping is never expected",
-    "open": "Open 24/7",
-    "openNote": "book now or for later"
-  },
-  "menu": {
-    "title": "Treatments and prices",
-    "lead": "Every treatment and price, listed. Choose your therapist when you book.",
-    "all": "See all prices"
-  },
-  "needs": {
-    "relax": "Relax",
-    "muscles": "Tight muscles",
-    "stretch": "Stretch, no oil",
-    "pressure": "Firm pressure, no oil",
-    "warmth": "Warm stones",
-    "calm": "Calm the mind"
-  },
-  "band": {
-    "title": "Your room becomes the spa.",
-    "lead": "Your therapist comes to you. You stay where you are.",
-    "alt": "A client in a robe enjoying tea on her sofa after a massage while the therapist packs her bag, the city outside",
-    "link": "See service coverage"
-  },
-  "places": {
-    "title": "Home, condo or hotel.",
-    "lead": "We come to you anywhere in our service areas, day or night.",
-    "home": "Home",
-    "homeAlt": "A client opening her front door to a smiling therapist carrying towels and the EasyGoSpa bag",
-    "homeNote": "On your own sofa, after a long week.",
-    "condo": "Condo",
-    "condoAlt": "A therapist massaging a client’s feet on the sofa of a high-floor condo in BGC",
-    "condoNote": "No traffic, no parking, no waiting room.",
-    "hotel": "Hotel",
-    "hotelAlt": "A therapist preparing towels for a client resting on her hotel bed at night",
-    "hotelNote": "Between meetings, or before the flight."
-  },
-  "trust": {
-    "title": "Professional massage only.",
-    "lead": "Licensed, uniformed, ID-verified therapists.",
-    "licensed": {
-      "title": "Licensed",
-      "note": "Trained, licensed massage therapists."
+    "s1": {
+      "title": "24/7 Home Massage in Metro Manila",
+      "lead": "Professional massage at your home, condo or hotel. Trained, uniformed and ID-verified therapists come to you.",
+      "cta": "Book Now"
     },
-    "uniformed": {
-      "title": "Uniformed",
-      "note": "Always in the EasyGoSpa uniform."
+    "s2": {
+      "title": "Your Room Becomes the Spa",
+      "lead": "Your therapist comes to you, day or night. No traffic, no parking, no waiting room.",
+      "cta": "See Our Services",
+      "alt": "A therapist in the EasyGoSpa uniform walking down a condo hallway at night with towels and the EasyGoSpa bag"
+    },
+    "s3": {
+      "title": "Pay Cash When Your Therapist Arrives",
+      "lead": "Nothing to pay upfront, and tips are never expected. Every price is listed before you book.",
+      "cta": "See Prices",
+      "alt": "A client in a robe enjoying tea on her sofa after a massage while the therapist packs her bag, the city outside"
+    },
+    "trust": {
+      "open": "Open 24/7",
+      "verified": "Verified Therapists",
+      "area": "Metro Manila"
+    },
+    "app": "Get the App",
+    "videoLabel": "A smiling therapist in the EasyGoSpa uniform arriving at a condo at night with towels and the EasyGoSpa bag",
+    "slideAria": "Go to slide {n}"
+  },
+  "seal": {
+    "sub": "Home Massage",
+    "ring": "Home Massage · EasyGo Spa · Home Massage · EasyGo Spa ·"
+  },
+  "why": {
+    "pill": "EasyGo Spa Home Massage",
+    "title1": "Why Choose EasyGo Spa",
+    "title2": "Home Massage Service",
+    "lead": "Professional massage without leaving your room. Your therapist comes to your home, condo or hotel, at any hour.",
+    "come": {
+      "title": "We Come to You",
+      "sub": "Home · Condo · Hotel",
+      "text": "No traffic, no parking, no waiting room. Stay where you are and relax."
     },
     "verified": {
-      "title": "ID-verified",
-      "note": "Every therapist’s ID is checked."
+      "title": "Verified Therapists",
+      "sub": "Trained · ID-checked · Uniformed",
+      "text": "Every therapist’s ID is checked before they take bookings, and they always arrive in the EasyGoSpa uniform."
     },
-    "door": {
-      "title": "At your door",
-      "note": "Home, condo or hotel, any hour."
+    "cash": {
+      "title": "Pay on Arrival",
+      "sub": "Cash · No tips expected",
+      "text": "Nothing to pay upfront. You pay your therapist in cash when they arrive."
+    },
+    "cta": "Book a Massage",
+    "imageAlt": "A client opening her front door to a smiling therapist carrying towels and the EasyGoSpa bag"
+  },
+  "services": {
+    "pill": "Our Services",
+    "title1": "Home Massage Services",
+    "title2": "in Metro Manila",
+    "lead": "Every treatment and price, listed. Choose your therapist when you book.",
+    "all": "Explore All Services"
+  },
+  "stats": {
+    "pill": "Why EasyGo Spa",
+    "title1": "Premium Home Massage,",
+    "title2": "Delivered to Your Door",
+    "lead": "Professional massage at your hotel, condo or home across Metro Manila, with clear prices and nothing to pay until your therapist arrives.",
+    "from": {
+      "label": "60-minute massage"
+    },
+    "cash": {
+      "value": "Pay cash",
+      "label": "when your therapist arrives"
+    },
+    "tips": {
+      "value": "No tips",
+      "label": "tipping is never expected"
+    },
+    "open": {
+      "value": "Open 24/7",
+      "label": "book now or for later"
     }
   },
-  "steps": {
-    "title": "How it works",
-    "one": {
-      "title": "Choose your therapist",
-      "note": "See each profile when you book."
-    },
-    "two": {
-      "title": "Choose your time",
-      "note": "Now, or book for later."
-    },
-    "three": {
-      "title": "Pay cash on arrival",
-      "note": "No deposit, nothing to pay upfront."
+  "journeys": {
+    "pill": "Find Your Massage",
+    "title1": "What Does Your Body",
+    "title2": "Need Today?",
+    "lead": "Choose how you feel, and we’ll show you the treatment for it.",
+    "more": "See the treatment",
+    "hint": "Hover to pause · Swipe to see more",
+    "items": {
+      "relax": "Long, flowing strokes with oil to help you unwind after a long day.",
+      "muscles": "Slow, firm pressure on knots and tight spots in your back, neck and shoulders.",
+      "stretch": "Assisted stretches and pressure on a floor mat, fully clothed and without oil.",
+      "pressure": "Firm finger and palm pressure along the body, without oil.",
+      "warmth": "Warm stones and smooth strokes to loosen tight muscles.",
+      "calm": "Gentle strokes with soothing essential oils to quiet the mind."
     }
   },
-  "closing": {
-    "title": "Let the city wait.",
-    "lead": "See profiles and prices before you book. Available around the clock."
+  "included": {
+    "title1": "Simple and Upfront",
+    "title2": "Every Booking, Every Time",
+    "lead": "Every price is listed before you book. You pay your therapist in cash when they arrive, and tips are never expected.",
+    "items": {
+      "prices": "Prices listed upfront",
+      "cash": "Cash on arrival",
+      "tips": "No tips expected",
+      "verified": "ID-verified therapists",
+      "uniform": "Always in uniform",
+      "open": "Open 24/7",
+      "places": "Home, condo or hotel"
+    }
+  },
+  "standard": {
+    "eyebrow": "Professional Home Massage",
+    "title1": "The EasyGo Spa Standard",
+    "title2": "Professional Service You Can Trust",
+    "lead": "EasyGo Spa provides professional home massage across Metro Manila. Our therapists travel directly to your hotel, condo or home, so you can relax in your own space.",
+    "verified": {
+      "title": "Verified Therapists",
+      "text": "Professionally trained and carefully screened therapists."
+    },
+    "fast": {
+      "title": "Fast Arrival",
+      "text": "Quick therapist dispatch across Metro Manila."
+    },
+    "private": {
+      "title": "Safe & Private",
+      "text": "Enjoy your massage in your own hotel room, condo or home."
+    },
+    "open": {
+      "title": "24/7 Booking",
+      "text": "Book your session any time, day or night."
+    },
+    "cta": "Book Your Massage Today",
+    "altLeft": "A therapist preparing towels for a client resting on her hotel bed at night",
+    "altRight": "A therapist massaging a client’s feet on the sofa of a high-floor condo in BGC"
   },
   "app": {
-    "eyebrow": "The EasyGoSpa app",
-    "title": "Book in the app.",
+    "big": "Get the App",
     "lead": "The same therapists and prices, with a few extras that make home massage easier.",
     "points": {
       "pick": "Choose your therapist from real photos and profiles",
@@ -102,7 +151,39 @@
     "storeNone": "Coming soon to Google Play and the App Store.",
     "scanAndroid": "Scan with your Android phone to get the app",
     "scanIphone": "Scan with your iPhone to get the app",
-    "scanAny": "Scan with your phone to get the app",
-    "phoneAlt": "The EasyGoSpa app on a phone"
+    "scanAny": "Scan with your phone to get the app"
+  },
+  "areas": {
+    "title": "Serving Metro Manila, Day and Night"
+  },
+  "faq": {
+    "title": "Good to Know",
+    "prev": "Previous question",
+    "next": "Next question",
+    "pay": {
+      "q": "How do I pay?",
+      "a": "In cash, to your therapist, when they arrive. Nothing is paid upfront and no deposit is needed.",
+      "tag": "Payment"
+    },
+    "tips": {
+      "q": "Do I need to tip?",
+      "a": "No. Tipping is never expected. Every treatment and price is listed on our pricing page.",
+      "tag": "Tips"
+    },
+    "where": {
+      "q": "Where do you come?",
+      "a": "To your home, condo or hotel room in our service areas across Metro Manila, day or night.",
+      "tag": "Service area"
+    },
+    "choose": {
+      "q": "Can I choose my therapist?",
+      "a": "Yes. When you book, you see each available therapist’s profile and choose who comes.",
+      "tag": "Booking"
+    },
+    "when": {
+      "q": "When can I book?",
+      "a": "Any time, 24 hours a day. Book for right now, or choose a time for later.",
+      "tag": "Opening hours"
+    }
   }
 }

@@ -1,5 +1,5 @@
 {
-  "about": "プレミアム訪問マッサージ。EasyGoSpaは、Metro Manila全域でプロの訪問マッサージを提供しています。トレーニングを受けた信頼できるセラピストが、ホテル、マンション、ご自宅、オフィスで、くつろぎのマッサージをお届けします。",
+  "about": "EasyGoSpaは、Metro Manila全域でプロの訪問マッサージを提供しています。トレーニングを受けた信頼できるセラピストが、ホテル、マンション、ご自宅、オフィスで、くつろぎのマッサージをお届けします。",
   "popularTreatments": "人気のメニュー",
   "homeHotel": "ご自宅・ホテルでのマッサージ",
   "contactTitle": "EasyGoSpaへのお問い合わせ",
@@ -10,8 +10,6 @@
   "phone": "電話：{phone}",
   "whatsapp": "WhatsApp：{phone}",
   "email": "メール：{email}",
-  "offersTitle": "キャンペーン情報",
-  "offersText": "キャンペーンや割引、訪問マッサージの最新情報は、Facebookでお知らせしています。",
   "followFacebook": "Facebookをフォロー",
   "rights": "© 2026 {company}. All rights reserved.",
   "secReg": "SEC登録番号：{number}",
@@ -20,5 +18,9 @@
   "privacy": "プライバシーポリシー",
   "terms": "利用規約",
   "refund": "返金ポリシー",
-  "getApp": "アプリをダウンロード"
+  "getApp": "アプリをダウンロード",
+  "tagline": "プレミアム訪問マッサージ",
+  "appText": "EasyGoSpaアプリなら、予約、セラピストの到着予定の確認、メッセージのやり取りができます。",
+  "updates": "最新情報やサービスのお知らせは、Facebookで発信しています。",
+  "sitemap": "サイトマップ"
 }

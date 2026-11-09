@@ -25,10 +25,10 @@
     "instagram": "Instagram에서 팔로우하기",
     "facebook": "Facebook에서 팔로우하기"
   },
-  "photoAlt": "현관문을 열어 주는 고객과 수건, EasyGoSpa 가방을 들고 웃으며 찾아온 테라피스트",
   "sent": {
-    "title": "감사합니다!",
-    "text": "메시지가 전송되었습니다. 2시간 이내에 답변드리겠습니다."
+    "title": "거의 다 됐습니다",
+    "text": "메시지가 입력된 채로 WhatsApp이 열렸습니다. WhatsApp에서 전송을 눌러 주시면 WhatsApp으로 답변드리겠습니다.",
+    "again": "다른 메시지 작성하기"
   },
   "form": {
     "title": "메시지 보내기",
@@ -43,8 +43,8 @@
     "consultation": "상담",
     "message": "메시지 *",
     "messagePlaceholder": "원하시는 서비스, 장소, 날짜, 시간을 알려 주세요.",
-    "sending": "전송 중...",
-    "send": "메시지 보내기"
+    "send": "메시지 보내기",
+    "viaWhatsapp": "메시지는 WhatsApp에서 열리며, 바로 EasyGoSpa로 보낼 수 있습니다."
   },
   "errors": {
     "firstName": "이름을 입력해 주세요",

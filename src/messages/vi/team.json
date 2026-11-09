@@ -1,0 +1,54 @@
+{
+  "metaTitle": "Đội ngũ kỹ thuật viên",
+  "metaDescription": "Mọi kỹ thuật viên của EasyGo Spa đều được đào tạo, đã xác minh danh tính và mặc đồng phục khi đến. Khi đặt lịch, bạn chọn kỹ thuật viên qua hồ sơ thật.",
+  "pill": "Gặp gỡ đội ngũ kỹ thuật viên",
+  "title": "Kỹ thuật viên được đào tạo, đã xác minh, đến tận nơi",
+  "lead": "Mọi kỹ thuật viên của EasyGo Spa đều đạt cùng một tiêu chuẩn trước khi nhận đơn đầu tiên.",
+  "chipsTitle": "Cụ thể:",
+  "cards": {
+    "trained": {
+      "badge": "Được đào tạo",
+      "title": "Đào tạo chuyên nghiệp",
+      "role": "Thành thạo mọi liệu trình mình cung cấp",
+      "text": "Kỹ thuật viên của chúng tôi được đào tạo cho các liệu trình họ cung cấp, từ massage Thụy Điển nhẹ nhàng và tinh dầu đến mô sâu, kéo giãn kiểu Thái và đá nóng.",
+      "alt": "Kỹ thuật viên ấn chậm dọc bả vai khách đang nằm trên giường khách sạn"
+    },
+    "verified": {
+      "badge": "Đã xác minh",
+      "title": "Xác minh danh tính",
+      "role": "Kiểm tra trước đơn đầu tiên",
+      "text": "Chúng tôi kiểm tra giấy tờ tùy thân của mọi kỹ thuật viên trước khi họ được nhận đơn. Khi đặt lịch, bạn thấy ảnh thật và tên thật của họ.",
+      "alt": "Kỹ thuật viên massage dầu nhẹ nhàng cho khách nằm trên giường nhà mình trong căn hộ sáng sủa",
+      "chips": {
+        "id": "Đã kiểm tra giấy tờ",
+        "photo": "Ảnh thật",
+        "name": "Tên thật"
+      }
+    },
+    "uniform": {
+      "badge": "Mặc đồng phục",
+      "title": "Luôn mặc đồng phục",
+      "role": "Dễ nhận ra ngay tại cửa",
+      "text": "Kỹ thuật viên mặc đồng phục EasyGoSpa khi đến, nên bạn biết chính xác ai đang ở trước cửa.",
+      "alt": "Buổi tối, kỹ thuật viên mặc đồng phục EasyGoSpa đi dọc hành lang căn hộ, mang theo khăn và túi EasyGoSpa",
+      "chips": {
+        "uniform": "Đồng phục EasyGoSpa",
+        "door": "Nhà, căn hộ, khách sạn"
+      }
+    },
+    "rated": {
+      "badge": "Khách hàng đánh giá",
+      "title": "Đánh giá sau mỗi lần phục vụ",
+      "role": "Ý kiến của bạn rất quan trọng",
+      "text": "Sau mỗi buổi massage, bạn có thể đánh giá kỹ thuật viên. Điểm đánh giá hiển thị trên hồ sơ, giúp khách sau yên tâm lựa chọn.",
+      "alt": "Buổi tối, kỹ thuật viên chuẩn bị khăn cho khách đang nằm nghỉ trên giường khách sạn",
+      "chips": {
+        "stars": "Chấm điểm sao",
+        "profile": "Hiển thị trên từng hồ sơ"
+      }
+    }
+  },
+  "ctaTitle": "Chọn kỹ thuật viên",
+  "ctaText": "Khi đặt lịch, bạn xem ảnh và hồ sơ của từng kỹ thuật viên đang sẵn sàng và chọn người đến với bạn.",
+  "ctaButton": "Đặt ngay"
+}

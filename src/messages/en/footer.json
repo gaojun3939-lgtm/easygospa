@@ -1,5 +1,5 @@
 {
-  "about": "Premium Home Massage. EasyGoSpa provides professional home massage services across Metro Manila. Book relaxing massage treatments at your hotel, condo, home, or office with trained and trusted therapists.",
+  "about": "EasyGoSpa provides professional home massage services across Metro Manila. Book relaxing massage treatments at your hotel, condo, home, or office with trained and trusted therapists.",
   "popularTreatments": "Popular Treatments",
   "homeHotel": "Home & Hotel Massage",
   "contactTitle": "Contact EasyGoSpa",
@@ -10,8 +10,6 @@
   "phone": "Phone: {phone}",
   "whatsapp": "WhatsApp: {phone}",
   "email": "Email: {email}",
-  "offersTitle": "Special Offers",
-  "offersText": "Follow us on Facebook for promotions, discounts, and home massage service updates.",
   "followFacebook": "Follow us on Facebook",
   "rights": "© 2026 {company}. All rights reserved.",
   "secReg": "SEC Reg. No. {number}",
@@ -20,5 +18,9 @@
   "privacy": "Privacy Policy",
   "terms": "Terms of Service",
   "refund": "Refund Policy",
-  "getApp": "Get the app"
+  "getApp": "Get the app",
+  "tagline": "Premium Home Massage",
+  "appText": "Book, see when your therapist will arrive, and message them in the EasyGoSpa app.",
+  "updates": "Follow us on Facebook for news and service updates.",
+  "sitemap": "Sitemap"
 }

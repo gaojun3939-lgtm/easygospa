@@ -10,11 +10,11 @@ import BookingModal from "@/components/BookingModal";
 import CustomerOrders from "@/components/CustomerOrders";
 import LoadingScreen from "@/components/LoadingScreen";
 import MetaPixel from "@/components/MetaPixel";
-import SiteFooter from "@/components/global/SiteFooter";
+import Footer from "@/components/site/Footer";
 import { routing, languageOf, SITE } from "@/i18n/routing";
 import { CLIENT_NAMESPACES } from "@/i18n/namespaces";
 import "../globals.css";
-import "../global-site.css";
+import "../site.css";
 
 const gaSerif = Playfair_Display({
   variable: "--font-ga-serif",
@@ -125,7 +125,7 @@ export default async function LocaleLayout({
             <Navbar />
           </Suspense>
           {children}
-          <SiteFooter />
+          <Footer />
           {/* ChatBot 暂时下架:LLM 接口未接通,且菜单数据为模板假数据;AI 阶段接真模型后再恢复 */}
           <BookingModal />
           <CustomerOrders />

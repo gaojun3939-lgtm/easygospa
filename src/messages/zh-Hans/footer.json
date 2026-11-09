@@ -1,5 +1,5 @@
 {
-  "about": "高端上门按摩。EasyGoSpa 在 Metro Manila 全区提供专业上门按摩服务。预约训练有素、值得信赖的技师，在酒店、公寓、家中或办公室享受放松按摩。",
+  "about": "EasyGoSpa 在 Metro Manila 全区提供专业上门按摩服务。预约训练有素、值得信赖的技师，在酒店、公寓、家中或办公室享受放松按摩。",
   "popularTreatments": "热门项目",
   "homeHotel": "家中与酒店上门按摩",
   "contactTitle": "联系 EasyGoSpa",
@@ -10,8 +10,6 @@
   "phone": "电话：{phone}",
   "whatsapp": "WhatsApp：{phone}",
   "email": "邮箱：{email}",
-  "offersTitle": "优惠活动",
-  "offersText": "关注我们的 Facebook，获取促销、折扣及上门按摩服务的最新动态。",
   "followFacebook": "在 Facebook 关注我们",
   "rights": "© 2026 {company}。保留所有权利。",
   "secReg": "SEC 注册号：{number}",
@@ -20,5 +18,9 @@
   "privacy": "隐私政策",
   "terms": "服务条款",
   "refund": "退款政策",
-  "getApp": "下载 App"
+  "getApp": "下载 App",
+  "tagline": "高端上门按摩",
+  "appText": "在 EasyGoSpa App 里预约、查看技师多久到，还能给技师发消息。",
+  "updates": "关注我们的 Facebook，获取最新消息和服务动态。",
+  "sitemap": "网站地图"
 }

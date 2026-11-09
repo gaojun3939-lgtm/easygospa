@@ -28,6 +28,18 @@
     "privacy": {
       "name": "개인정보 처리방침",
       "description": "개인정보를 처리하는 방법"
+    },
+    "gallery": {
+      "name": "갤러리",
+      "description": "방문 마사지는 이런 모습입니다"
+    },
+    "team": {
+      "name": "테라피스트 소개",
+      "description": "테라피스트 교육과 본인 인증 방식"
+    },
+    "coverage": {
+      "name": "서비스 지역",
+      "description": "Metro Manila 내 서비스 지역"
     }
   },
   "treatmentNotes": {

@@ -4,5 +4,6 @@
   "minutes": "{count} 分钟",
   "fromPrice": "{price} 起",
   "tagline": "高端上门按摩",
-  "loading": "正在为您准备尊享体验……"
+  "loading": "正在为您准备尊享体验……",
+  "minutesRange": "{min}–{max} 分钟"
 }

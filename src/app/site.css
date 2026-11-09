@@ -1,0 +1,51 @@
+/* 全球站（2026-11-10 老板：用建站模版 serinity 当骨架，模版的每一块、每一页都留着，只换成我们的内容、标志和项目）。
+   版式全写在各组件的 Tailwind 里，跟模版一样；这里只放字体、主题色和几样 Tailwind 写不了的动效。
+   主题色是橄榄绿 #64734F（深一档 #55633F），模版原来的亮绿一律换掉。 */
+
+:root {
+  --eg-olive: #64734f;
+  --eg-olive-deep: #55633f;
+  --ga-serif: var(--font-ga-serif), Georgia, serif;
+  --ga-sans: var(--font-ga-sans), -apple-system, "Helvetica Neue", Arial, sans-serif;
+}
+/* 中日韩泰的字 Playfair 和 Inter 都没有，交给系统字体；标题不压字距 */
+:lang(zh-Hans) { --ga-serif: var(--font-ga-serif), "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", "Noto Sans CJK SC", sans-serif; --ga-sans: var(--font-ga-sans), "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", "Noto Sans CJK SC", sans-serif; }
+:lang(zh-Hant) { --ga-serif: var(--font-ga-serif), "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", "Noto Sans CJK TC", sans-serif; --ga-sans: var(--font-ga-sans), "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", "Noto Sans CJK TC", sans-serif; }
+:lang(ja) { --ga-serif: var(--font-ga-serif), "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", "Noto Sans JP", "Noto Sans CJK JP", sans-serif; --ga-sans: var(--font-ga-sans), "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", "Noto Sans JP", "Noto Sans CJK JP", sans-serif; }
+:lang(ko) { --ga-serif: var(--font-ga-serif), "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", "Noto Sans CJK KR", sans-serif; --ga-sans: var(--font-ga-sans), "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", "Noto Sans CJK KR", sans-serif; }
+:lang(th) { --ga-serif: var(--font-ga-serif), "Thonburi", "Leelawadee UI", "Noto Sans Thai", sans-serif; --ga-sans: var(--font-ga-sans), "Thonburi", "Leelawadee UI", "Noto Sans Thai", sans-serif; }
+:is(:lang(zh-Hans), :lang(zh-Hant), :lang(ja), :lang(ko), :lang(th)) :is(h1, h2, h3, h4, .font-serif) { letter-spacing: 0; }
+
+html { scroll-behavior: smooth; }
+body { overflow-x: clip; }
+
+/* 模版标题是粗体 Playfair；我们只装了 400/500 两档，粗体用 500 */
+.font-serif { font-family: var(--ga-serif); }
+.font-sans { font-family: var(--ga-sans); }
+h1.font-serif, h2.font-serif, h3.font-serif, h4.font-serif, .font-serif.font-bold { font-weight: 500 !important; }
+
+/* Playfair 的数字是老式写法（0 像 o），标题和大字里的数字、₱ 一律包成 .eg-n 用 Inter（nums()） */
+.eg-n { font-family: var(--ga-sans); font-weight: 500; font-style: normal; letter-spacing: -0.02em; }
+
+/* 菜单滑下来以后的毛玻璃底（模版原样） */
+.glass-nav { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); background: rgba(248, 242, 236, 0.95); border-bottom: 1px solid rgba(100, 115, 79, 0.12); }
+.nav-transition { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+.text-shadow-dark { text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5); }
+
+/* 横着自动走的一排（模版「材料」和「品牌」两条） */
+.eg-marquee { display: flex; width: max-content; animation: eg-marquee 60s linear infinite; }
+.eg-marquee-slow { animation-duration: 90s; }
+.eg-marquee-wrap:hover .eg-marquee { animation-play-state: paused; }
+@keyframes eg-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .eg-marquee { animation: none; }
+  html { scroll-behavior: auto; }
+}
+
+/* 小屏按钮不挤（模版原有的处理） */
+@media (max-width: 375px) {
+  .eg-btn-wide { padding-inline: 1.25rem !important; font-size: 0.95rem !important; white-space: normal; }
+}

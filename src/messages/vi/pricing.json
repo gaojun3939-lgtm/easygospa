@@ -1,9 +1,10 @@
 {
   "title": "Bảng giá",
   "lead": "Kỹ thuật viên đến tận nhà riêng, căn hộ hoặc khách sạn của bạn.",
-  "note": "Không cần tiền tip · Trả tiền mặt khi kỹ thuật viên đến",
-  "bandAlt": "Kỹ thuật viên mặc đồng phục EasyGoSpa mỉm cười đến cửa căn hộ",
   "empty": "Đang tải bảng giá. Vui lòng mở trang đặt lịch để xem giá hiện hành.",
   "pick": "Chọn kỹ thuật viên",
-  "foot": "Bạn tự chọn kỹ thuật viên — ảnh thật, hồ sơ thật, xem ngay trên danh sách."
+  "foot": "Bạn tự chọn kỹ thuật viên — ảnh thật, hồ sơ thật, xem ngay trên danh sách.",
+  "pill": "Bảng giá dịch vụ",
+  "cash": "Trả tiền mặt khi kỹ thuật viên đến",
+  "tips": "Không cần tiền tip"
 }

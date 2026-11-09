@@ -28,6 +28,18 @@
     "privacy": {
       "name": "隱私權政策",
       "description": "我們如何處理您的個人資料"
+    },
+    "gallery": {
+      "name": "相簿",
+      "description": "到府按摩服務情境一覽"
+    },
+    "team": {
+      "name": "我們的技師",
+      "description": "技師的訓練與實名認證"
+    },
+    "coverage": {
+      "name": "服務範圍",
+      "description": "我們在 Metro Manila 的服務地區"
     }
   },
   "treatmentNotes": {

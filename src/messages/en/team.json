@@ -1,0 +1,44 @@
+{
+  "metaTitle": "Our Therapists",
+  "metaDescription": "Every EasyGo Spa therapist is trained, ID-verified and arrives in uniform. Choose your therapist from real profiles when you book.",
+  "pill": "Meet Our Therapists",
+  "title": "Trained, Verified Therapists Who Come to You",
+  "lead": "Every EasyGo Spa therapist meets the same standard before they take a single booking.",
+  "chipsTitle": "What this means:",
+  "cards": {
+    "trained": {
+      "badge": "Trained",
+      "title": "Professionally Trained",
+      "role": "Skilled in every treatment they offer",
+      "text": "Our therapists are trained in the treatments they offer, from gentle Swedish and aromatherapy to deep tissue, Thai stretching and hot stone.",
+      "alt": "A therapist working slowly along a client’s shoulder blade as he rests on his hotel bed"
+    },
+    "verified": {
+      "badge": "ID-verified",
+      "title": "Identity Verified",
+      "role": "Checked before their first booking",
+      "text": "We check every therapist’s ID before they can take bookings. When you book, you see their real photo and name.",
+      "alt": "A therapist giving a gentle oil massage to a client lying on her own bed in a bright condo",
+      "chips": { "id": "ID checked", "photo": "Real photo", "name": "Real name" }
+    },
+    "uniform": {
+      "badge": "In uniform",
+      "title": "Always in Uniform",
+      "role": "Easy to recognize at your door",
+      "text": "Your therapist arrives in the EasyGoSpa uniform, so you know exactly who is at your door.",
+      "alt": "A therapist in the EasyGoSpa uniform walking down a condo hallway at night with towels and the EasyGoSpa bag",
+      "chips": { "uniform": "EasyGoSpa uniform", "door": "Home, condo or hotel" }
+    },
+    "rated": {
+      "badge": "Rated by clients",
+      "title": "Rated After Every Visit",
+      "role": "Your feedback counts",
+      "text": "After each massage you can rate your therapist. Ratings show on their profile, so the next client can choose with confidence.",
+      "alt": "A therapist preparing towels for a client resting on her hotel bed at night",
+      "chips": { "stars": "Star ratings", "profile": "Shown on each profile" }
+    }
+  },
+  "ctaTitle": "Choose Your Therapist",
+  "ctaText": "When you book, you see each available therapist’s photo and profile and choose who comes to you.",
+  "ctaButton": "Book Now"
+}

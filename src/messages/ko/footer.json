@@ -1,5 +1,5 @@
 {
-  "about": "프리미엄 방문 마사지. EasyGoSpa는 Metro Manila 전역에서 전문 방문 마사지 서비스를 제공합니다. 숙련되고 믿을 수 있는 테라피스트와 함께 호텔, 아파트, 집, 사무실에서 편안한 마사지를 예약하세요.",
+  "about": "EasyGoSpa는 Metro Manila 전역에서 전문 방문 마사지 서비스를 제공합니다. 숙련되고 믿을 수 있는 테라피스트와 함께 호텔, 아파트, 집, 사무실에서 편안한 마사지를 예약하세요.",
   "popularTreatments": "인기 서비스",
   "homeHotel": "집·호텔 방문 마사지",
   "contactTitle": "EasyGoSpa 문의",
@@ -10,8 +10,6 @@
   "phone": "전화: {phone}",
   "whatsapp": "WhatsApp: {phone}",
   "email": "이메일: {email}",
-  "offersTitle": "특별 혜택",
-  "offersText": "프로모션, 할인, 방문 마사지 서비스 소식은 Facebook에서 확인하세요.",
   "followFacebook": "Facebook에서 팔로우하기",
   "rights": "© 2026 {company}. 모든 권리 보유.",
   "secReg": "SEC 등록번호 {number}",
@@ -20,5 +18,9 @@
   "privacy": "개인정보 처리방침",
   "terms": "이용약관",
   "refund": "환불 정책",
-  "getApp": "앱 받기"
+  "getApp": "앱 받기",
+  "tagline": "프리미엄 방문 마사지",
+  "appText": "EasyGoSpa 앱에서 예약하고, 테라피스트 도착 시간을 확인하고, 메시지도 보내세요.",
+  "updates": "새 소식과 서비스 안내는 Facebook에서 확인하세요.",
+  "sitemap": "사이트맵"
 }

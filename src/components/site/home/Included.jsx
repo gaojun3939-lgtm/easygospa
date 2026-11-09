@@ -1,0 +1,47 @@
+'use client'
+
+import { motion } from 'framer-motion'
+import { Banknote, BadgeCheck, Clock, HandCoins, Home, ReceiptText, Shirt } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { nums } from '../nums'
+
+// 模版「Purely Potent, Naturally」：标题 + 一段话 + 一排图标自己往左走。
+// 模版写的是有机产品（无硫酸盐、无酒精……），我们没有这套说法，换成每一单都一样的几条实话。
+const ITEMS = [
+  { key: 'prices', icon: ReceiptText },
+  { key: 'cash', icon: Banknote },
+  { key: 'tips', icon: HandCoins },
+  { key: 'verified', icon: BadgeCheck },
+  { key: 'uniform', icon: Shirt },
+  { key: 'open', icon: Clock },
+  { key: 'places', icon: Home },
+]
+
+export default function Included() {
+  const t = useTranslations('home.included')
+  const row = [...ITEMS, ...ITEMS, ...ITEMS, ...ITEMS]
+  return (
+    <motion.section initial={{ opacity: 0, y: 80 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: 'easeOut' }} viewport={{ once: true }} className="py-16 md:py-20 overflow-hidden relative bg-white">
+      <div className="text-center mb-14 relative px-6">
+        <h2 className="font-serif text-4xl md:text-5xl leading-tight">
+          <span className="text-[#0F0F0F]">{nums(t('title1'))}</span>
+          <br />
+          <span className="text-[#64734F]">{nums(t('title2'))}</span>
+        </h2>
+        <p className="font-sans text-lg text-gray-600 mt-6 max-w-3xl mx-auto leading-relaxed">{t('lead')}</p>
+      </div>
+      <div className="relative eg-marquee-wrap overflow-hidden">
+        <div className="eg-marquee">
+          {row.map((item, i) => (
+            <div key={i} className="flex flex-col items-center justify-center mx-6 sm:mx-8 text-center w-32" aria-hidden={i >= ITEMS.length ? 'true' : undefined}>
+              <div className="w-24 h-24 rounded-full flex items-center justify-center mb-4 border-2 border-transparent hover:border-[#64734F]/30 transition-all duration-300">
+                <item.icon className="w-8 h-8 text-gray-500 hover:text-[#64734F] transition-colors duration-300" strokeWidth={1.6} aria-hidden="true" />
+              </div>
+              <p className="font-sans text-sm text-gray-700 font-medium">{t(`items.${item.key}`)}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </motion.section>
+  )
+}

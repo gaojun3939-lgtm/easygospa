@@ -1,0 +1,58 @@
+{
+  "metaTitle": "Thư viện ảnh",
+  "metaDescription": "Xem một buổi massage tại nhà của EasyGo Spa diễn ra thế nào — tại nhà riêng, căn hộ hay phòng khách sạn của bạn khắp Metro Manila.",
+  "pill": "Thư viện ảnh",
+  "title": "Massage tại nhà, dù bạn ở đâu",
+  "lead": "Cùng xem buổi massage đến với bạn như thế nào — tại nhà riêng, căn hộ hay phòng khách sạn.",
+  "categories": {
+    "home": "Nhà riêng",
+    "condo": "Căn hộ",
+    "hotel": "Khách sạn",
+    "treatment": "Liệu trình"
+  },
+  "items": {
+    "door": {
+      "title": "Đến tận cửa",
+      "alt": "Khách mở cửa đón kỹ thuật viên tươi cười mang theo khăn và túi EasyGoSpa"
+    },
+    "feet": {
+      "title": "Massage chân trên sofa",
+      "alt": "Kỹ thuật viên massage chân cho khách trên sofa trong căn hộ tầng cao ở BGC"
+    },
+    "towels": {
+      "title": "Sẵn sàng trong phòng khách sạn",
+      "alt": "Buổi tối, kỹ thuật viên chuẩn bị khăn cho khách đang nằm nghỉ trên giường khách sạn"
+    },
+    "stretch": {
+      "title": "Kéo giãn kiểu Thái trên nệm sàn",
+      "alt": "Kỹ thuật viên giúp khách mặc quần áo kéo giãn chân trên tấm nệm sàn tại nhà"
+    },
+    "tea": {
+      "title": "Thưởng trà sau massage",
+      "alt": "Sau buổi massage, khách mặc áo choàng thưởng trà trên sofa trong khi kỹ thuật viên thu dọn túi, bên ngoài là thành phố"
+    },
+    "stones": {
+      "title": "Đá nóng",
+      "alt": "Kỹ thuật viên đặt đá ấm lên lưng khách đang nằm nghỉ trên giường nhà mình"
+    },
+    "hallway": {
+      "title": "Trên đường đến với bạn",
+      "alt": "Buổi tối, kỹ thuật viên mặc đồng phục EasyGoSpa đi dọc hành lang căn hộ, mang theo khăn và túi EasyGoSpa"
+    },
+    "shiatsu": {
+      "title": "Shiatsu, không dầu",
+      "alt": "Kỹ thuật viên ấn vai cho khách ngồi trong phòng khách căn hộ, không dùng dầu"
+    },
+    "oil": {
+      "title": "Tinh dầu thơm",
+      "alt": "Kỹ thuật viên xoa ấm tinh dầu trong lòng bàn tay bên cạnh khách đang nằm nghỉ dưới khăn"
+    }
+  },
+  "close": "Đóng",
+  "prev": "Ảnh trước",
+  "next": "Ảnh tiếp theo",
+  "count": "{n} / {total}",
+  "ctaTitle": "Sẵn sàng cho buổi massage?",
+  "ctaText": "Đặt lịch ngay, kỹ thuật viên sẽ đến nhà riêng, căn hộ hoặc khách sạn của bạn. Trả tiền mặt khi kỹ thuật viên đến.",
+  "ctaButton": "Đặt ngay"
+}

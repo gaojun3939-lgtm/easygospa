@@ -25,10 +25,10 @@
     "instagram": "Instagramをフォロー",
     "facebook": "Facebookをフォロー"
   },
-  "photoAlt": "玄関のドアを開けるお客様と、タオルとEasyGoSpaのバッグを持って笑顔で訪れたセラピスト",
   "sent": {
-    "title": "ありがとうございます",
-    "text": "メッセージを送信しました。2時間以内にご返信いたします。"
+    "title": "あと少しで完了です",
+    "text": "メッセージを入力した状態でWhatsAppが開きました。WhatsAppで送信をタップしてください。返信はWhatsAppでお送りします。",
+    "again": "別のメッセージを書く"
   },
   "form": {
     "title": "メッセージを送る",
@@ -43,8 +43,8 @@
     "consultation": "ご相談",
     "message": "メッセージ *",
     "messagePlaceholder": "ご希望のメニュー、場所、日時をお知らせください。",
-    "sending": "送信中…",
-    "send": "送信する"
+    "send": "送信する",
+    "viaWhatsapp": "メッセージはWhatsAppで開き、そのままEasyGoSpaへ送信できます。"
   },
   "errors": {
     "firstName": "名を入力してください",

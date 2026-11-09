@@ -6,7 +6,7 @@
 // Open EasyGoSpa 只在 App Store 上架后的 iPhone 上显示，不自动跳：没装 App 时 Safari 会报错。
 // 2026-11-09 多语言：文字在 src/messages/<语言>/referral.json；Google Play、App Store 是商店名字，不翻译
 import { useEffect, useState } from "react";
-import { AppleLogo, PlayLogo } from "@/components/global/StoreLogos";
+import { AppleLogo, PlayLogo } from "@/components/site/StoreLogos";
 import { useTranslations } from "next-intl";
 import { Check } from "lucide-react";
 import { Link } from "@/i18n/navigation";

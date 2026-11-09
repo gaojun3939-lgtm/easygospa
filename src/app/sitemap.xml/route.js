@@ -4,7 +4,7 @@ import { LANGUAGES, SITE, localePath } from '@/i18n/routing'
 // 不收录的页面（/track、/r、/welcome）不放。
 // 不能用 Next 自带的 app/sitemap.js：跟给人看的目录页 /sitemap 冲突，打包会失败，所以单独写这个文件
 // 2026-11-09 起七种语言：每一页每种语言一条，并且互相标明「这是同一页的另一种语言」
-const PAGES = ['/', '/services', '/pricing', '/coverage', '/contact', '/sitemap', '/terms-of-service', '/privacy-policy']
+const PAGES = ['/', '/services', '/pricing', '/gallery', '/team', '/coverage', '/contact', '/sitemap', '/terms-of-service', '/privacy-policy']
 
 export const dynamic = 'force-static'
 
