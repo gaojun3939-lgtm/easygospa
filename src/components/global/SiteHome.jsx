@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server'
 import { BadgeCheck, DoorOpen, IdCard, Shirt } from 'lucide-react'
 import { Link } from '@/i18n/navigation'
+import GetApp from './GetApp'
 import HeroVideo from './HeroVideo'
 import ServiceNeeds from './ServiceNeeds'
 import { NEED_ORDER, peso } from './serviceText'
@@ -61,6 +62,8 @@ export default async function SiteHome({ locale, services = [] }) {
           <p className="ga-center"><Link className="ga-more" href="/pricing">{t('menu.all')} →</Link></p>
         </div>
       </section>
+
+      <GetApp locale={locale} />
 
       <section className="ga-band">
         <img src="/global/photos/band-living.webp" alt={t('band.alt')} loading="lazy" />

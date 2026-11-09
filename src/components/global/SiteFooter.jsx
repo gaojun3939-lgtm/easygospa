@@ -2,6 +2,7 @@ import { getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import { CONTACT_EMAIL, COMPANY_PHONE, FACEBOOK_URL, INSTAGRAM_URL, whatsappLink } from '@/lib/contactConfig'
 import { niceName } from './serviceText'
+import { APP_STORE_URL, isOnAppStore, isOnGooglePlay, playStoreUrl } from '@/lib/appStores.mjs'
 
 // 全球站页脚：旧页脚每一样都在，只换样子。公司全名、注册号、地址、退款入口是收款审核要看的，不能少。
 // 公司名、注册号、地址、电话、邮箱不翻译；给公司 WhatsApp 的预填话保持英文（客服看英文）。
@@ -16,6 +17,8 @@ export default async function SiteFooter() {
   const t = await getTranslations('footer')
   const tn = await getTranslations('serviceNames')
   const waText = WHATSAPP_TEXT
+  const tb = await getTranslations('referral.badges')
+  const [onPlay, onApple] = await Promise.all([isOnGooglePlay(), isOnAppStore()])
   return (
     <footer className="ga-footer" role="contentinfo">
       <div className="ga-wrap">
@@ -28,6 +31,11 @@ export default async function SiteFooter() {
               <a href={FACEBOOK_URL} target="_blank" rel="noreferrer">Facebook</a>
               <a href={whatsappLink(waText)} target="_blank" rel="noreferrer">WhatsApp</a>
             </div>
+            <p className="ga-foot-app">
+              <b>{t('getApp')}</b>
+              {onPlay ? <a href={playStoreUrl('utm_source=website&utm_medium=footer')} target="_blank" rel="noopener">Google Play</a> : <span>Google Play · {tb('comingSoon')}</span>}
+              {onApple ? <a href={APP_STORE_URL} target="_blank" rel="noopener">App Store</a> : <span>App Store · {tb('comingSoon')}</span>}
+            </p>
           </div>
           <div>
             <h2>{t('popularTreatments')}</h2>

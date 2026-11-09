@@ -6,6 +6,7 @@
 // Open EasyGoSpa 只在 App Store 上架后的 iPhone 上显示，不自动跳：没装 App 时 Safari 会报错。
 // 2026-11-09 多语言：文字在 src/messages/<语言>/referral.json；Google Play、App Store 是商店名字，不翻译
 import { useEffect, useState } from "react";
+import { AppleLogo, PlayLogo } from "@/components/global/StoreLogos";
 import { useTranslations } from "next-intl";
 import { Check } from "lucide-react";
 import { Link } from "@/i18n/navigation";
@@ -29,27 +30,7 @@ const copyByCommand = (text) => {
   } catch {}
 };
 
-function PlayLogo() {
-  return (
-    <svg width="24" height="26" viewBox="0 0 24 26" aria-hidden="true">
-      <path fill="#2196f3" d="M1.2.6 13.3 12.8 1.2 25c-.4-.3-.6-.8-.6-1.4V1.9c0-.6.2-1 .6-1.3Z" />
-      <path fill="#00c853" d="M1.2.6c.4-.3 1-.3 1.7.1l14.3 8.2-3.9 3.9Z" />
-      <path fill="#ffc107" d="m17.2 8.9 4.4 2.5c1.3.7 1.3 2 0 2.8l-4.4 2.5-3.9-3.9Z" />
-      <path fill="#f44336" d="M17.2 16.7 2.9 24.9c-.7.4-1.3.4-1.7.1l12.1-12.2Z" />
-    </svg>
-  );
-}
 
-function AppleLogo() {
-  return (
-    <svg width="21" height="26" viewBox="0 0 384 512" aria-hidden="true">
-      <path
-        fill="currentColor"
-        d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"
-      />
-    </svg>
-  );
-}
 
 function StoreBadge({ live, href, onClick, logo, small, smallSoon, big }) {
   const t = useTranslations("referral");

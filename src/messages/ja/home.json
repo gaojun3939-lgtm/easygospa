@@ -85,5 +85,24 @@
   "closing": {
     "title": "街の喧騒は、しばし忘れて。",
     "lead": "ご予約前に、プロフィールと料金をご確認いただけます。24時間いつでも対応しています。"
+  },
+  "app": {
+    "eyebrow": "EasyGoSpaアプリ",
+    "title": "アプリで予約。",
+    "lead": "セラピストも料金も同じ。訪問マッサージがもっと便利になる機能も。",
+    "points": {
+      "pick": "写真とプロフィールを見てセラピストを選べる",
+      "later": "今すぐ、または日時を指定して予約",
+      "eta": "セラピストの到着予定がわかる",
+      "chat": "予約が確定したらセラピストにメッセージ"
+    },
+    "storeBoth": "Google PlayとApp Storeで無料。",
+    "storePlay": "Google Playで無料。App Storeは近日公開。",
+    "storeApple": "App Storeで無料。Google Playは近日公開。",
+    "storeNone": "Google PlayとApp Storeで近日公開。",
+    "scanAndroid": "Androidスマートフォンでスキャンしてアプリを入手",
+    "scanIphone": "iPhoneでスキャンしてアプリを入手",
+    "scanAny": "スマートフォンでスキャンしてアプリを入手",
+    "phoneAlt": "スマートフォンに表示されたEasyGoSpaアプリ"
   }
 }

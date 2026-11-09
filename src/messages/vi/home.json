@@ -85,5 +85,24 @@
   "closing": {
     "title": "Để thành phố chờ một chút.",
     "lead": "Xem hồ sơ và bảng giá trước khi đặt lịch. Phục vụ suốt ngày đêm."
+  },
+  "app": {
+    "eyebrow": "Ứng dụng EasyGoSpa",
+    "title": "Đặt lịch trên ứng dụng.",
+    "lead": "Cùng kỹ thuật viên và mức giá, thêm vài tiện ích giúp massage tại nhà dễ dàng hơn.",
+    "points": {
+      "pick": "Chọn kỹ thuật viên qua ảnh thật và hồ sơ",
+      "later": "Đặt ngay hoặc hẹn giờ",
+      "eta": "Biết khi nào kỹ thuật viên sẽ đến",
+      "chat": "Nhắn tin cho kỹ thuật viên khi đơn được nhận"
+    },
+    "storeBoth": "Miễn phí trên Google Play và App Store.",
+    "storePlay": "Miễn phí trên Google Play. Sắp có trên App Store.",
+    "storeApple": "Miễn phí trên App Store. Sắp có trên Google Play.",
+    "storeNone": "Sắp có trên Google Play và App Store.",
+    "scanAndroid": "Quét bằng điện thoại Android để tải ứng dụng",
+    "scanIphone": "Quét bằng iPhone để tải ứng dụng",
+    "scanAny": "Quét bằng điện thoại để tải ứng dụng",
+    "phoneAlt": "Ứng dụng EasyGoSpa trên điện thoại"
   }
 }

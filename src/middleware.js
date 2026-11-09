@@ -5,6 +5,6 @@ import { routing } from './i18n/routing';
 export default createMiddleware(routing);
 
 export const config = {
-  // 接口、静态文件、两个验证文件（/.well-known）不经过这里
-  matcher: ['/((?!api|_next|_vercel|\\.well-known|.*\\..*).*)'],
+  // 接口、静态文件、两个验证文件（/.well-known）、/app（二维码跳商店）不经过这里
+  matcher: ['/((?!api|app$|app/|_next|_vercel|\\.well-known|.*\\..*).*)'],
 };

@@ -85,5 +85,24 @@
   "closing": {
     "title": "Let the city wait.",
     "lead": "See profiles and prices before you book. Available around the clock."
+  },
+  "app": {
+    "eyebrow": "The EasyGoSpa app",
+    "title": "Book in the app.",
+    "lead": "The same therapists and prices, with a few extras that make home massage easier.",
+    "points": {
+      "pick": "Choose your therapist from real photos and profiles",
+      "later": "Book for right now, or for later",
+      "eta": "See when your therapist will arrive",
+      "chat": "Message your therapist once your booking is accepted"
+    },
+    "storeBoth": "Free on Google Play and the App Store.",
+    "storePlay": "Free on Google Play. Coming soon to the App Store.",
+    "storeApple": "Free on the App Store. Coming soon to Google Play.",
+    "storeNone": "Coming soon to Google Play and the App Store.",
+    "scanAndroid": "Scan with your Android phone to get the app",
+    "scanIphone": "Scan with your iPhone to get the app",
+    "scanAny": "Scan with your phone to get the app",
+    "phoneAlt": "The EasyGoSpa app on a phone"
   }
 }

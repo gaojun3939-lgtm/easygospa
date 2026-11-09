@@ -105,6 +105,8 @@ export default function Navbar() {
       // 2026-10-26 老板定:价目表页挂进菜单,Xendit 审核员和客人一进站就找得到价格
       { key: "pricing", url: "/pricing" },
       { key: "contact", url: "/contact" },
+      // 2026-11-10 老板「为什么官网没有 app 下载的介绍」：指到首页下载区
+      { key: "getApp", url: "/#app" },
     ],
     []
   );

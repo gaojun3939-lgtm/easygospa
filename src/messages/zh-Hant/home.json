@@ -85,5 +85,24 @@
   "closing": {
     "title": "讓城市等一等。",
     "lead": "預約前即可查看技師資料與價格。全天候隨時為您服務。"
+  },
+  "app": {
+    "eyebrow": "EasyGoSpa App",
+    "title": "用 App 預約。",
+    "lead": "同樣的技師和價格，還多了幾樣讓到府按摩更省心的功能。",
+    "points": {
+      "pick": "看真實照片和資料，自選技師",
+      "later": "現在就來，或約個時間",
+      "eta": "隨時看到技師多久到",
+      "chat": "接單後可直接傳訊息給技師"
+    },
+    "storeBoth": "Google Play 和 App Store 免費下載。",
+    "storePlay": "Google Play 免費下載，App Store 即將上架。",
+    "storeApple": "App Store 免費下載，Google Play 即將上架。",
+    "storeNone": "即將登上 Google Play 和 App Store。",
+    "scanAndroid": "用 Android 手機掃碼下載 App",
+    "scanIphone": "用 iPhone 掃碼下載 App",
+    "scanAny": "用手機掃碼下載 App",
+    "phoneAlt": "手機上的 EasyGoSpa App"
   }
 }
