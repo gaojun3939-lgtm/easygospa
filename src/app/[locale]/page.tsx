@@ -17,7 +17,8 @@ import Areas from "@/components/site/home/Areas";
 import GoodToKnow from "@/components/site/home/GoodToKnow";
 
 // 首页（2026-11-10 老板：用建站模版 serinity 当骨架，模版首页每一块都留着，按原顺序，只换成我们的内容）。
-// 模版顺序：首屏轮播+圆章 → 为什么选我们 → 项目 → 大图数字 → 横走卡片 → 横走图标 → 标准 → 横幅 → 品牌条 → 评价。
+// 模版顺序：首屏+圆章 → 为什么选我们 → 项目 → 大图数字 → 横走卡片 → 横走图标 → 标准 → 横幅 → 品牌条 → 评价。
+// 首屏 2026-11-11 换成整屏开场片 + 下载 App（老板「官网顶部显示的就说 app」），模版的三张轮播去掉。
 // 项目卡显示后台真价（Xendit 审核要一眼看到价格）；每 60 秒最多重算一次，读不到后台时继续给上一次的页面（lib/publicServiceMenu.mjs）。
 export const revalidate = 60;
 
@@ -46,7 +47,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
     <ClientText namespaces={["home"]}>
       <div>
         <div className="relative">
-          <Hero />
+          <Hero onPlay={onPlay} onApple={onApple} playHref={playStoreUrl("utm_source=website&utm_medium=hero")} appleHref={APP_STORE_URL} qrSvg={qrSvg} />
           <Seal />
         </div>
         <div className="bg-[#FDFCF9] relative">

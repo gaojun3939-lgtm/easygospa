@@ -1,30 +1,10 @@
 {
   "hero": {
-    "s1": {
-      "title": "Massage tại nhà 24/7 ở Metro Manila",
-      "lead": "Massage chuyên nghiệp ngay tại nhà riêng, căn hộ hoặc khách sạn của bạn. Kỹ thuật viên được đào tạo, mặc đồng phục và đã xác minh danh tính sẽ đến tận nơi.",
-      "cta": "Đặt ngay"
-    },
-    "s2": {
-      "title": "Căn phòng của bạn thành spa",
-      "lead": "Kỹ thuật viên đến tận nơi, dù ngày hay đêm. Không kẹt xe, không tìm chỗ đậu, không phải chờ.",
-      "cta": "Xem dịch vụ",
-      "alt": "Buổi tối, kỹ thuật viên mặc đồng phục EasyGoSpa đi dọc hành lang căn hộ, mang theo khăn và túi EasyGoSpa"
-    },
-    "s3": {
-      "title": "Trả tiền mặt khi kỹ thuật viên đến",
-      "lead": "Không phải trả trước, cũng không cần tip. Mọi mức giá đều được niêm yết trước khi bạn đặt lịch.",
-      "cta": "Bảng giá",
-      "alt": "Sau buổi massage, khách mặc áo choàng thưởng trà trên sofa trong khi kỹ thuật viên thu dọn túi, bên ngoài là thành phố"
-    },
-    "trust": {
-      "open": "Mở cửa 24/7",
-      "verified": "Kỹ thuật viên đã xác minh",
-      "area": "Metro Manila"
-    },
-    "app": "Tải ứng dụng",
-    "videoLabel": "Buổi tối, kỹ thuật viên mặc đồng phục EasyGoSpa mỉm cười đến căn hộ, mang theo khăn và túi EasyGoSpa",
-    "slideAria": "Chuyển đến slide {n}"
+    "title1": "Không cần ra ngoài,",
+    "title2": "vẫn tận hưởng massage",
+    "available": "Hiện có tại Metro Manila",
+    "scan": "Quét bằng điện thoại để tải ứng dụng",
+    "videoLabel": "Phim mở đầu: xác nhận đặt lịch trong ứng dụng, máy quay lao vào ghim bản đồ, kéo ra thấy Trái Đất rồi bay xuống Manila; kỹ thuật viên Mia đi qua sảnh khách sạn, đến cửa phòng, xoa ấm dầu trong tay và mỉm cười"
   },
   "seal": {
     "sub": "Massage tại nhà",

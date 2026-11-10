@@ -1,152 +1,97 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowRight, Clock, MapPin, ShieldCheck, Smartphone } from 'lucide-react'
+import { useEffect, useRef } from 'react'
+import { motion } from 'framer-motion'
+import { MapPin } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { Link } from '@/i18n/navigation'
-import { openBooking } from '../motion'
-import { nums } from '../nums'
+import { AppleLogo, PlayLogo } from '../StoreLogos'
 
-// 模版首屏：整屏大图轮播 + 大标题 + 三个小标 + 两个按钮 + 下面的小圆点。
-// 第一张换成我们的视频（老板 11-10「顶部放视频」），播完自己换下一张；后两张是 Codex 照片，各停 6 秒。
-const SLIDES = [
-  { key: 's1', video: true },
-  { key: 's2', image: '/global/photos/closing-corridor.webp' },
-  { key: 's3', image: '/global/photos/band-living.webp' },
-]
-const PHOTO_MS = 6000
-// 视频没能播（省流量模式、被拦）时最多停这么久
-const VIDEO_FALLBACK_MS = 12000
+// 首屏（2026-11-11 老板定）：整屏开场片「点一下，她就到」+ 一句大标题 + 两个商店按钮 + 一行「现已开通 · 马尼拉」。
+// 首屏只讲 App（老板 11-11「官网顶部显示的就说 app」），不放网页预约。
+// 电脑版：字在左边，片子里的人和手机都在右边；手机版：字压在下半截。
+// 片子按屏幕宽窄只下一份（电脑约 4MB、手机约 2MB）；系统开了「减少动态效果」就只显示封面（结尾 Mia 微笑那帧）。
 
-function HeroVideo({ label, onEnded }) {
+function HeroVideo({ label }) {
   const ref = useRef(null)
   useEffect(() => {
     const video = ref.current
-    if (!video || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (!video) return
     const phone = window.matchMedia('(max-width: 768px)').matches
     video.poster = phone ? '/global/video/hero-m.webp' : '/global/video/hero-d.webp'
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     video.src = phone ? '/global/video/hero-m.mp4' : '/global/video/hero-d.mp4'
     video.play().catch(() => {})
   }, [])
   return (
     <video
       ref={ref}
-      className="w-full h-full object-cover"
+      className="absolute inset-0 w-full h-full object-cover"
       poster="/global/video/hero-d.webp"
       muted
+      loop
       playsInline
       preload="none"
       aria-label={label}
-      onEnded={onEnded}
     />
   )
 }
 
-export default function Hero() {
-  const t = useTranslations('home.hero')
-  const [index, setIndex] = useState(0)
-  const slide = SLIDES[index]
-  const next = useCallback(() => setIndex((i) => (i + 1) % SLIDES.length), [])
-
-  useEffect(() => {
-    const timer = setTimeout(next, slide.video ? VIDEO_FALLBACK_MS : PHOTO_MS)
-    return () => clearTimeout(timer)
-  }, [index, slide.video, next])
-
-  const trust = [
-    { icon: Clock, text: t('trust.open'), color: 'text-white' },
-    { icon: ShieldCheck, text: t('trust.verified'), color: 'text-[#C9D4B4]' },
-    { icon: MapPin, text: t('trust.area'), color: 'text-white' },
-  ]
-  const Title = slide.key === 's1' ? 'h1' : 'h2'
-  const cta = {
-    s1: { label: t('s1.cta'), onClick: openBooking },
-    s2: { label: t('s2.cta'), href: '/services' },
-    s3: { label: t('s3.cta'), href: '/pricing' },
-  }[slide.key]
-  const ctaClass = 'eg-btn-wide group bg-gradient-to-r from-[#55633F] to-[#64734F] text-white px-6 sm:px-8 lg:px-10 py-4 sm:py-5 rounded-full font-sans font-semibold text-sm sm:text-base lg:text-lg hover:from-[#64734F] hover:to-[#55633F] transition-all duration-500 hover:scale-105 shadow-2xl flex items-center justify-center gap-2 sm:gap-3 min-h-[48px] sm:min-h-[56px] lg:min-h-[60px] w-full sm:w-auto'
-
+// 商店按钮：手机上点了直接去商店；电脑上鼠标移上去在按钮上方弹出二维码（电脑装不了手机 App）
+function Store({ kind, live, href, qrSvg, top, scan }) {
+  const apple = kind === 'apple'
+  const Logo = apple ? AppleLogo : PlayLogo
+  const base = 'inline-flex items-center gap-3 rounded-2xl pl-4 pr-6 h-[60px] transition-all duration-300'
+  const look = apple
+    ? 'bg-white text-[#0F0F0F] hover:bg-[#F3F0EA]'
+    : 'bg-white/10 text-white border border-white/45 backdrop-blur-sm hover:bg-white/20'
+  const inner = (
+    <>
+      <Logo />
+      <span className="flex flex-col leading-tight text-left">
+        <small className="text-[11px] opacity-75 whitespace-nowrap">{top}</small>
+        <b className="text-lg font-semibold whitespace-nowrap">{apple ? 'App Store' : 'Google Play'}</b>
+      </span>
+    </>
+  )
+  if (!live) return <span aria-disabled="true" className={`${base} ${look} opacity-60 cursor-default`}>{inner}</span>
   return (
-    <section className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-[#14120d]">
+    <span className="relative group">
+      <a href={href} target="_blank" rel="noopener" className={`${base} ${look}`}>{inner}</a>
+      {qrSvg ? (
+        <span className="hidden md:flex pointer-events-none absolute left-0 bottom-full mb-3 items-center gap-3 rounded-2xl bg-white p-3 pr-4 shadow-2xl opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 group-focus-within:opacity-100 group-focus-within:translate-y-0 transition-all duration-200">
+          <span className="block w-24 h-24" aria-hidden="true" dangerouslySetInnerHTML={{ __html: qrSvg }} />
+          <span className="text-sm text-[#0F0F0F] max-w-[11em] leading-snug">{scan}</span>
+        </span>
+      ) : null}
+    </span>
+  )
+}
+
+export default function Hero({ onPlay, onApple, playHref, appleHref, qrSvg }) {
+  const t = useTranslations('home.hero')
+  const tb = useTranslations('referral.badges')
+  return (
+    <section className="relative min-h-[100svh] w-full overflow-hidden bg-[#0E100B]">
       <span data-nav-over-dark hidden />
-      <AnimatePresence initial={false}>
-        <motion.div
-          key={slide.key}
-          className="absolute inset-0 w-full h-full"
-          initial={{ opacity: 0, scale: 1.1 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 1.5, ease: 'easeInOut' }}
-        >
-          {slide.video ? (
-            <HeroVideo label={t('videoLabel')} onEnded={next} />
-          ) : (
-            <img src={slide.image} alt={t(`${slide.key}.alt`)} className="w-full h-full object-cover object-center" />
-          )}
+      <HeroVideo label={t('videoLabel')} />
+      {/* 衬字的暗色：电脑从左往右淡，手机从下往上淡 */}
+      <div className="absolute inset-0 hidden md:block bg-gradient-to-r from-black/75 via-black/40 via-45% to-transparent to-65%" aria-hidden="true" />
+      <div className="absolute inset-0 md:hidden bg-gradient-to-t from-black/90 via-black/55 via-40% to-transparent to-65%" aria-hidden="true" />
+
+      <div className="relative z-10 min-h-[100svh] max-w-7xl mx-auto px-5 sm:px-8 flex items-end md:items-center pb-12 md:pb-0">
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: 'easeOut' }} className="w-full md:max-w-[52%]">
+          <h1 className="text-white font-semibold leading-[1.08] tracking-[0.02em] text-[clamp(2.5rem,5.6vw,5.5rem)] drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]">
+            {t('title1')}<br />{t('title2')}
+          </h1>
+          <div className="flex flex-wrap gap-3 mt-8 md:mt-11">
+            <Store kind="apple" live={onApple} href={appleHref} qrSvg={qrSvg} top={onApple ? tb('appStore.get') : tb('appStore.soon')} scan={t('scan')} />
+            <Store kind="play" live={onPlay} href={playHref} qrSvg={qrSvg} top={onPlay ? tb('googlePlay.get') : tb('googlePlay.soon')} scan={t('scan')} />
+          </div>
+          <p className="mt-6 flex items-center gap-2 text-sm text-[#DDE6CC]">
+            <MapPin className="w-4 h-4 text-[#C9D4B4]" aria-hidden="true" />
+            {t('available')}
+          </p>
         </motion.div>
-      </AnimatePresence>
-
-      <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/45 to-transparent z-10" />
-
-      <div className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 sm:pt-36 md:pt-40 pb-16 sm:pb-20">
-        <div className="w-full max-w-4xl">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={slide.key}
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -30 }}
-              transition={{ duration: 0.8, ease: 'easeOut' }}
-              className="text-white space-y-6 sm:space-y-8"
-            >
-              <Title className="font-serif leading-[1.1] text-white text-[clamp(2rem,5vw,3.5rem)]">{nums(t(`${slide.key}.title`))}</Title>
-              <p className="text-gray-100 text-[clamp(1.05rem,2.4vw,1.4rem)] font-light leading-relaxed max-w-3xl">{t(`${slide.key}.lead`)}</p>
-
-              <div className="flex flex-wrap gap-4 sm:gap-6 pt-2 sm:pt-4">
-                {trust.map((item, i) => (
-                  <motion.div key={item.text} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, delay: i * 0.2 }} className="flex items-center gap-2">
-                    <item.icon className={`w-4 h-4 sm:w-5 sm:h-5 ${item.color}`} aria-hidden="true" />
-                    <span className="text-xs sm:text-sm font-medium text-white/90">{item.text}</span>
-                  </motion.div>
-                ))}
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 pt-4 sm:pt-6">
-                {cta.href ? (
-                  <Link href={cta.href} className={ctaClass}>
-                    <span className="text-center leading-tight uppercase tracking-wide">{cta.label}</span>
-                    <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-2 transition-transform duration-300 flex-shrink-0" />
-                  </Link>
-                ) : (
-                  <button type="button" onClick={cta.onClick} className={ctaClass}>
-                    <span className="text-center leading-tight uppercase tracking-wide">{cta.label}</span>
-                    <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-2 transition-transform duration-300 flex-shrink-0" />
-                  </button>
-                )}
-                <a
-                  href="#app"
-                  className="eg-btn-wide group bg-white/10 backdrop-blur-sm text-white border-2 border-white/30 px-6 sm:px-8 py-4 sm:py-5 rounded-full font-sans font-semibold text-sm sm:text-base lg:text-lg hover:bg-white hover:text-[#0F0F0F] transition-all duration-500 flex items-center justify-center gap-2 sm:gap-3 min-h-[48px] sm:min-h-[56px] lg:min-h-[60px] w-full sm:w-auto"
-                >
-                  <Smartphone className="w-5 h-5" aria-hidden="true" />
-                  <span className="whitespace-nowrap">{t('app')}</span>
-                </a>
-              </div>
-            </motion.div>
-          </AnimatePresence>
-        </div>
-      </div>
-
-      <div className="absolute bottom-24 sm:bottom-28 left-1/2 -translate-x-1/2 z-30 flex gap-2 sm:gap-3">
-        {SLIDES.map((item, i) => (
-          <button
-            key={item.key}
-            type="button"
-            onClick={() => setIndex(i)}
-            className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all duration-300 ${index === i ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white'}`}
-            aria-label={t('slideAria', { n: i + 1 })}
-          />
-        ))}
       </div>
     </section>
   )

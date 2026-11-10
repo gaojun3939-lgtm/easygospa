@@ -1,30 +1,10 @@
 {
   "hero": {
-    "s1": {
-      "title": "24/7 Home Massage in Metro Manila",
-      "lead": "Professional massage at your home, condo or hotel. Trained, uniformed and ID-verified therapists come to you.",
-      "cta": "Book Now"
-    },
-    "s2": {
-      "title": "Your Room Becomes the Spa",
-      "lead": "Your therapist comes to you, day or night. No traffic, no parking, no waiting room.",
-      "cta": "See Our Services",
-      "alt": "A therapist in the EasyGoSpa uniform walking down a condo hallway at night with towels and the EasyGoSpa bag"
-    },
-    "s3": {
-      "title": "Pay Cash When Your Therapist Arrives",
-      "lead": "Nothing to pay upfront, and tips are never expected. Every price is listed before you book.",
-      "cta": "See Prices",
-      "alt": "A client in a robe enjoying tea on her sofa after a massage while the therapist packs her bag, the city outside"
-    },
-    "trust": {
-      "open": "Open 24/7",
-      "verified": "Verified Therapists",
-      "area": "Metro Manila"
-    },
-    "app": "Get the App",
-    "videoLabel": "A smiling therapist in the EasyGoSpa uniform arriving at a condo at night with towels and the EasyGoSpa bag",
-    "slideAria": "Go to slide {n}"
+    "title1": "Stay in.",
+    "title2": "Enjoy a massage.",
+    "available": "Now in Metro Manila",
+    "scan": "Scan with your phone to get the app",
+    "videoLabel": "Opening film: a booking is confirmed in the app, the camera dives into the map pin, pulls out to the Earth and flies down into Manila; therapist Mia walks through a hotel lobby, arrives at the room door, warms the oil in her hands and smiles at the camera"
   },
   "seal": {
     "sub": "Home Massage",

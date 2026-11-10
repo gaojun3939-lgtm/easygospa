@@ -30,9 +30,10 @@ const NAV_ITEMS = [
   { key: "gallery", url: "/gallery" },
   { key: "team", url: "/team" },
   { key: "contact", url: "/contact" },
-  // 2026-11-10 老板「为什么官网没有 app 下载的介绍」：指到首页下载横幅
-  { key: "getApp", url: "/#app" },
 ];
+// 2026-11-10 老板「为什么官网没有 app 下载的介绍」→ 11-11 老板「官网顶部显示的就说 app」：
+// 右上角的主按钮从「预约」换成「下载 App」，指到首页下载横幅；菜单里原来那个「下载 App」就不重复放了。
+const APP_URL = "/#app";
 
 const openBooking = () => window.dispatchEvent(new CustomEvent("open-booking-modal"));
 const openOrders = () => window.dispatchEvent(new CustomEvent("open-my-orders"));
@@ -165,15 +166,12 @@ export default function Navbar() {
               <button type="button" onClick={openOrders} aria-label={t("openOrders")} className={`hidden md:block rounded-full px-3 py-2 text-sm font-medium transition-colors duration-300 whitespace-nowrap ${solid ? "text-[#0F0F0F] hover:bg-[#64734F]/10" : "text-white text-shadow-dark hover:bg-white/10"}`}>
                 {t("myOrders")}
               </button>
-              <button
-                type="button"
-                onClick={openBooking}
-                aria-label={t("openBooking")}
+              <Link
+                href={APP_URL}
                 className="bg-[#64734F] text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-full text-sm font-medium hover:bg-[#0F0F0F] transition-all duration-300 hover:scale-105 shadow-lg whitespace-nowrap"
               >
-                <span className="sm:hidden">{t("bookNow")}</span>
-                <span className="hidden sm:inline">{t("bookAppointment")}</span>
-              </button>
+                {t("getApp")}
+              </Link>
               <button
                 type="button"
                 className={`xl:hidden p-2 rounded ${solid ? "text-[#0F0F0F]" : "text-white text-shadow-dark"}`}
@@ -207,14 +205,13 @@ export default function Navbar() {
               {t("myOrders")}
             </button>
             <div className="pt-2">{languageMenu(true)}</div>
-            <button
-              type="button"
-              onClick={() => { setIsMenuOpen(false); openBooking(); }}
-              aria-label={t("openBooking")}
+            <Link
+              href={APP_URL}
+              onClick={() => setIsMenuOpen(false)}
               className="mt-4 bg-[#64734F] text-white px-8 py-4 rounded-full text-lg font-medium hover:bg-[#0F0F0F] transition-all duration-300 hover:scale-105 shadow-lg"
             >
-              {t("bookAppointment")}
-            </button>
+              {t("getApp")}
+            </Link>
           </div>
         </div>
       )}
