@@ -22,7 +22,7 @@ export async function generateMetadata({ params }) {
   const url = code ? `${SITE}/r/${code}` : SITE;
   const onAppStore = await isOnAppStore();
   const t = await getTranslations({ locale, namespace: "referral" });
-  const title = t("title", { brand: BRAND });
+  const title = t("shareTitle", { brand: BRAND });
   const description = t("description");
   return {
     title: { absolute: title },
@@ -59,10 +59,28 @@ export default async function ReferralLandingPage({ params }) {
   const userAgent = (await headers()).get("user-agent") || "";
   const [onAppStore, onGooglePlay] = await Promise.all([isOnAppStore(), isOnGooglePlay()]);
 
+  // 2026-11-12 老板「这个太丑了吧」→ 照效果图重做：深色底，跟新分享图同一个画面。
+  // 电脑：整幅 Mia（11 号，首屏片子封面那帧）铺满、左边压暗放字，中间一部 App 手机（宽屏才放，窄了会挡字）；
+  // 手机：上面 Mia 照片，下面字和按钮。照片和手机截图都是装饰，读屏跳过。
   return (
-    <main className="pt-28 pb-24 bg-gradient-to-b from-[#F8F2EC] to-white min-h-screen">
-      {onGooglePlay ? <OpenApp intentUrl={intentUrl} /> : null}
-      <ReferralContent
+    <main className="relative min-h-[100svh] overflow-hidden bg-[#0E0E0C] text-white">
+      <span data-nav-over-dark hidden />
+      {onGooglePlay ? <OpenApp intentUrl={intentUrl} code={code} /> : null}
+      <div className="relative h-[60svh] md:hidden" aria-hidden="true">
+        <img src="/global/photos/team-rated.webp" alt="" className="h-full w-full object-cover object-[100%_0%]" />
+        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#0E0E0C] to-transparent" />
+      </div>
+      <div className="absolute inset-0 hidden md:block" aria-hidden="true">
+        <img src="/global/photos/team-rated.webp" alt="" className="h-full w-full object-cover object-[100%_0%]" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(14,14,12,.95)_0%,rgba(14,14,12,.88)_36%,rgba(14,14,12,.45)_56%,rgba(14,14,12,0)_70%)]" />
+        <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#0E0E0C]/70 to-transparent" />
+      </div>
+      <div className="absolute left-[48%] top-[190px] hidden w-[290px] rounded-[44px] bg-[#111] p-[11px] shadow-[0_30px_70px_rgba(0,0,0,.55),inset_0_0_0_2px_#333] xl:block" aria-hidden="true">
+        <img src="/global/photos/app-welcome.webp" alt="" className="block w-full rounded-[34px]" />
+      </div>
+      <div className="relative z-10 mx-auto max-w-7xl px-6 pb-20 -mt-24 md:mt-0 md:pt-40 lg:px-8 xl:pt-44">
+        <ReferralContent
+        code={code}
         iosFromServer={/iPhone|iPad|iPod/i.test(userAgent)}
         androidFromServer={/Android/i.test(userAgent)}
         onAppStore={onAppStore}
@@ -71,7 +89,8 @@ export default async function ReferralLandingPage({ params }) {
         appStoreUrl={APP_STORE_URL}
         link={code ? `${SITE}/r/${code}` : ""}
         openAppUrl={code ? `easygospa://r/${code}` : ""}
-      />
+        />
+      </div>
     </main>
   );
 }

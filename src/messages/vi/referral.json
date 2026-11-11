@@ -1,7 +1,12 @@
 {
-  "title": "Bạn được mời tham gia {brand}",
-  "description": "Đặt kỹ thuật viên massage có chứng chỉ đến nhà riêng hoặc khách sạn của bạn ở Metro Manila.",
-  "descriptionGetApp": "Đặt kỹ thuật viên massage có chứng chỉ đến nhà riêng hoặc khách sạn của bạn ở Metro Manila. Tải ứng dụng để đặt lịch — lời mời của bạn được lưu tự động.",
+  "pill": "Lời mời",
+  "friend": "Một người bạn mời bạn",
+  "title": "trải nghiệm {brand}",
+  "shareTitle": "Một người bạn mời bạn trải nghiệm {brand}",
+  "description": "Đặt kỹ thuật viên đã xác minh danh tính đến massage tại nhà riêng, căn hộ hoặc khách sạn của bạn.",
+  "descriptionGetApp": "Tải ứng dụng và đặt kỹ thuật viên đến nhà riêng, căn hộ hoặc khách sạn của bạn. Lời mời của bạn được lưu tự động.",
+  "code": "Mã mời",
+  "codeNote": "tự động áp dụng sau khi tải, không cần nhập",
   "badges": {
     "comingSoon": "Sắp ra mắt",
     "googlePlay": {
@@ -15,9 +20,9 @@
   },
   "points": {
     "verified": "Kỹ thuật viên đã xác minh",
-    "coverage": "Phục vụ tại nhà riêng, căn hộ và khách sạn khắp Metro Manila",
-    "allDay": "Phục vụ 24/7"
+    "home": "Đến nhà riêng, căn hộ, khách sạn",
+    "eta": "Biết khi nào kỹ thuật viên đến",
+    "allDay": "Đặt lịch 24/7"
   },
-  "openApp": "Mở {brand}",
-  "bookOnWebsite": "Đặt lịch trên trang web"
+  "openApp": "Mở {brand}"
 }

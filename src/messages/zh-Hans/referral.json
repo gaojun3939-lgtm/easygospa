@@ -1,7 +1,12 @@
 {
-  "title": "邀请您加入 {brand}",
-  "description": "在 Metro Manila 预约持证按摩技师，上门到您的家中或酒店。",
-  "descriptionGetApp": "在 Metro Manila 预约持证按摩技师，上门到您的家中或酒店。下载 App 即可预约，您的邀请会自动保存。",
+  "pill": "好友邀请",
+  "friend": "您的朋友邀请您",
+  "title": "来体验 {brand}",
+  "shareTitle": "您的朋友邀请您来体验 {brand}",
+  "description": "预约实名认证的技师上门按摩：家中、公寓或酒店都可以。",
+  "descriptionGetApp": "下载 App，预约技师上门按摩：家中、公寓或酒店都可以。您的邀请会自动保存。",
+  "code": "邀请码",
+  "codeNote": "下载后自动带上，不用手填",
   "badges": {
     "comingSoon": "即将上线",
     "googlePlay": {
@@ -14,10 +19,10 @@
     }
   },
   "points": {
-    "verified": "认证技师",
-    "coverage": "Metro Manila 全区家中、公寓及酒店上门服务",
-    "allDay": "24/7 全天候服务"
+    "verified": "实名认证技师",
+    "home": "上门到家中、公寓、酒店",
+    "eta": "随时知道技师多久到",
+    "allDay": "24 小时都能约"
   },
-  "openApp": "打开 {brand}",
-  "bookOnWebsite": "在官网预约"
+  "openApp": "打开 {brand}"
 }

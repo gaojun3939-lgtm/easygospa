@@ -1,7 +1,12 @@
 {
-  "title": "{brand}へのご招待",
-  "description": "Metro Manilaのご自宅やホテルへ、有資格のマッサージセラピストを予約できます。",
-  "descriptionGetApp": "Metro Manilaのご自宅やホテルへ、有資格のマッサージセラピストを予約できます。アプリをダウンロードしてご予約ください。招待は自動で保存されます。",
+  "pill": "ご招待",
+  "friend": "お友だちからのご招待",
+  "title": "{brand}をお試しください",
+  "shareTitle": "お友だちから{brand}へのご招待が届きました",
+  "description": "本人確認済みのセラピストを、ご自宅・マンション・ホテルに呼べます。",
+  "descriptionGetApp": "アプリをダウンロードして、ご自宅・マンション・ホテルへの出張マッサージを予約。招待は自動で保存されます。",
+  "code": "招待コード",
+  "codeNote": "ダウンロード後に自動で適用、入力不要",
   "badges": {
     "comingSoon": "近日公開",
     "googlePlay": {
@@ -15,9 +20,9 @@
   },
   "points": {
     "verified": "本人確認済みのセラピスト",
-    "coverage": "Metro Manila全域で、ご自宅・マンション・ホテルに対応",
-    "allDay": "24/7対応"
+    "home": "ご自宅・マンション・ホテルへ出張",
+    "eta": "到着時間がいつでもわかる",
+    "allDay": "24時間いつでも予約"
   },
-  "openApp": "{brand}を開く",
-  "bookOnWebsite": "ウェブサイトで予約"
+  "openApp": "{brand}を開く"
 }

@@ -1,7 +1,12 @@
 {
-  "title": "{brand}에 초대되었습니다",
-  "description": "Metro Manila에서 자격을 갖춘 마사지 테라피스트를 집이나 호텔로 예약하세요.",
-  "descriptionGetApp": "Metro Manila에서 자격을 갖춘 마사지 테라피스트를 집이나 호텔로 예약하세요. 앱을 받아 예약하세요 — 초대 정보는 자동으로 저장됩니다.",
+  "pill": "친구 초대",
+  "friend": "친구가 초대했어요",
+  "title": "{brand}를 경험해 보세요",
+  "shareTitle": "친구가 {brand} 체험에 초대했어요",
+  "description": "본인 인증을 마친 테라피스트를 집, 아파트, 호텔로 예약하세요.",
+  "descriptionGetApp": "앱을 다운로드하고 집, 아파트, 호텔로 방문 마사지를 예약하세요. 초대 정보는 자동으로 저장됩니다.",
+  "code": "초대 코드",
+  "codeNote": "다운로드 후 자동 적용, 입력할 필요 없음",
   "badges": {
     "comingSoon": "출시 예정",
     "googlePlay": {
@@ -14,10 +19,10 @@
     }
   },
   "points": {
-    "verified": "인증된 테라피스트",
-    "coverage": "Metro Manila 전역 집·아파트·호텔 방문 서비스",
-    "allDay": "24/7 이용 가능"
+    "verified": "본인 인증 테라피스트",
+    "home": "집, 아파트, 호텔로 방문",
+    "eta": "도착 시간을 언제든 확인",
+    "allDay": "24시간 언제든 예약"
   },
-  "openApp": "{brand} 열기",
-  "bookOnWebsite": "웹사이트에서 예약하기"
+  "openApp": "{brand} 열기"
 }

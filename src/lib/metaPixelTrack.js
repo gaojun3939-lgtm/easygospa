@@ -26,6 +26,11 @@ function funnelSessionId() {
   } catch { return ''; }
 }
 
+// 只记我们自己的账、不发 Meta（推荐页的点开 / 点下载用，2026-11-12）
+export function logOwnEvent(eventName, params) {
+  logToOurBooks(eventName, params);
+}
+
 function logToOurBooks(eventName, params) {
   try {
     if (typeof window === 'undefined') return;

@@ -13,7 +13,10 @@ export const FUNNEL_EVENT_NAMES = [
   'AddToCart',         // 选好项目按预订
   'Lead',              // 填完手机号
   'InitiateCheckout',  // 到最后确认页
-  'Schedule'           // 按下提交
+  'Schedule',          // 按下提交
+  // 2026-11-12 老板「记下有多少人点开、有多少人点了下载」：推荐链接落地页 /r/<码>
+  'ReferralView',      // 点开推荐链接（content_ids = [推荐码]）
+  'ReferralDownload'   // 在推荐页点了下载 / 打开 App（content_name = google_play / app_store / open_app / android_auto）
 ];
 
 // 这张表就认这几个键,别的一概不存

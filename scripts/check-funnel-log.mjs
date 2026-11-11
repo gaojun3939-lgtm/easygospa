@@ -20,7 +20,7 @@ const strip = s => s.replace(/\/\*[\s\S]*?\*\//g, '').split('\n').map(l => (/^\s
 
 // ============ ① 白名单 ============
 console.log('=== 🔴 只收认识的事件 ===');
-ok(FUNNEL_EVENT_NAMES.length === 6, `白名单是6枪:${FUNNEL_EVENT_NAMES.join('/')}`);
+ok(FUNNEL_EVENT_NAMES.length === 8, `白名单是6枪 + 推荐页2枪:${FUNNEL_EVENT_NAMES.join('/')}`);
 for (const n of ['PageView', 'ViewContent', 'AddToCart', 'Lead', 'InitiateCheckout', 'Schedule']) {
   ok(Boolean(normalizeFunnelEvent({ event_name: n })), `  收 ${n}`);
 }

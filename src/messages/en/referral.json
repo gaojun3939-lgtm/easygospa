@@ -1,7 +1,12 @@
 {
-  "title": "You're invited to {brand}",
-  "description": "Book a licensed massage therapist to your home or hotel in Metro Manila.",
-  "descriptionGetApp": "Book a licensed massage therapist to your home or hotel in Metro Manila. Get the app to book — your invite is saved automatically.",
+  "pill": "Invitation",
+  "friend": "A friend invited you",
+  "title": "to try {brand}",
+  "shareTitle": "A friend invited you to try {brand}",
+  "description": "Book an ID-verified therapist for a massage at your home, condo or hotel.",
+  "descriptionGetApp": "Get the app and book a therapist to your home, condo or hotel. Your invite is saved automatically.",
+  "code": "Invite code",
+  "codeNote": "applied automatically after you download",
   "badges": {
     "comingSoon": "Coming soon",
     "googlePlay": {
@@ -14,10 +19,10 @@
     }
   },
   "points": {
-    "verified": "Verified therapists",
-    "coverage": "Home, condo and hotel service across Metro Manila",
-    "allDay": "Available 24/7"
+    "verified": "ID-verified therapists",
+    "home": "At your home, condo or hotel",
+    "eta": "See when your therapist will arrive",
+    "allDay": "Book any time, 24/7"
   },
-  "openApp": "Open {brand}",
-  "bookOnWebsite": "Book on the website"
+  "openApp": "Open {brand}"
 }
