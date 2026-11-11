@@ -17,8 +17,8 @@ const icon = (size) => sharp(source).resize(size, size, { kernel: 'lanczos3' }).
 await icon(512).toFile(path.join(appDirectory, 'icon.png'));
 await icon(180).toFile(path.join(appDirectory, 'apple-icon.png'));
 
-// favicon.ico：一个 32×32 的 PNG 包在 ico 文件头里
-const faviconPng = await icon(32).toBuffer();
+// favicon.ico：一个 32×32 的 PNG 包在 ico 文件头里。⚠ ico 里的 PNG 必须是全彩带透明度（RGBA），不能用 256 色，不然 Next 打包报「The PNG is not in RGBA format」
+const faviconPng = await sharp(source).resize(32, 32, { kernel: 'lanczos3' }).ensureAlpha().png({ compressionLevel: 9 }).toBuffer();
 const icoHeader = Buffer.alloc(22);
 icoHeader.writeUInt16LE(0, 0);
 icoHeader.writeUInt16LE(1, 2);
