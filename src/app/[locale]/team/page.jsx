@@ -10,14 +10,16 @@ import { alternatesFor } from '@/i18n/routing';
 // 「身份已核验」用 App 里技师上传证件那一页的真截图（老板「在app 技师上传id的那个 界面啊」）；
 // 「始终身穿制服」那张撤掉（老板「不一定穿制服 你最好换个说法」），换成 App 真有的「随时知道技师多久到」（实时距离、接单后直接发消息）。
 // 11-11 晚老板「随时知道多久到 不也是app里面现成的么？评分的这个笑容不甜美…认证这个有人脸识别的，为什么黑屏了？」→
-// 实名卡换成「选证件 + 自拍人脸比对」两页（拍证件那页模拟器没摄像头是黑的，不用）；进度卡换成 App 订单进度页真截图；评分卡换成 Mia 脸部特写定稿照（笑得最甜那张）。
+// 实名卡换成「选证件 + 自拍人脸比对」两页（拍证件那页模拟器没摄像头是黑的，不用）；进度卡换成 App 订单进度页真截图。
+// 评分卡：老板从 Mia 全部照片里挑了 11 号「这个多好啊」= 首屏片子封面（结尾那段第 2.5 秒，傍晚客厅里笑）。
+// Mia 站在画面右边：手机上卡片窄，图片往右对齐（pos），保证人在里面；电脑上整张都看得到。
 // App 截图只有中文和英文两种：中文页用中文图，其他语言用英文图
 const appShot = (name) => (locale) => `/global/photos/${name}-${locale.startsWith('zh') ? 'zh' : 'en'}.webp`;
 const CARDS = [
   { key: 'trained', src: '/global/photos/team-trained.webp', chips: ['Swedish Massage', 'Deep tissue', 'Thai Body Massage', 'Hot Stone Massage'] },
   { key: 'verified', src: appShot('team-verified'), chips: ['id', 'face', 'photo'] },
   { key: 'arrival', src: appShot('team-arrival'), chips: ['eta', 'chat'] },
-  { key: 'rated', src: '/global/photos/team-rated.webp', chips: ['stars', 'profile'] },
+  { key: 'rated', src: '/global/photos/team-rated.webp', pos: 'object-[88%_30%]', chips: ['stars', 'profile'] },
 ];
 
 export async function generateMetadata({ params }) {
@@ -45,7 +47,7 @@ export default async function TeamPage({ params }) {
           <div key={card.key} className="group animate-fadeInUp">
             <div className="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 group-hover:-translate-y-2 h-full">
               <div className="relative h-80 overflow-hidden">
-                <img src={typeof card.src === 'function' ? card.src(locale) : card.src} alt={t(`cards.${card.key}.alt`)} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" />
+                <img src={typeof card.src === 'function' ? card.src(locale) : card.src} alt={t(`cards.${card.key}.alt`)} className={`w-full h-full object-cover ${card.pos ?? ''} group-hover:scale-110 transition-transform duration-700`} loading="lazy" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                 <div className="absolute top-4 right-4 bg-[#64734F] text-white rounded-full px-3 py-1 flex items-center gap-1">
                   <BrandMark size={22} tone="light" />
