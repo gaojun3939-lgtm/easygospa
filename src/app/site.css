@@ -49,3 +49,17 @@ h1.font-serif, h2.font-serif, h3.font-serif, h4.font-serif, .font-serif.font-bol
 @media (max-width: 375px) {
   .eg-btn-wide { padding-inline: 1.25rem !important; font-size: 0.95rem !important; white-space: normal; }
 }
+
+/* 首屏标题和上面那行小字（11-11 照 easygospa.ph 的做法：细衬线常规体、两行贴近；小字全大写、字距拉开）
+   字体在 components/site/home/heroFonts.js：英文越南文 Newsreader，中日韩泰配思源宋体系列（Noto Serif），本机有宋体 / 明朝的退回本机的 */
+.eg-hero-eyebrow { font-family: var(--ga-sans); font-size: 12px; line-height: 16px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 500; }
+.eg-hero-title { font-family: var(--font-hero-latin), Georgia, serif; font-weight: 400; font-size: 44px; line-height: 1.04; letter-spacing: -0.02em; text-shadow: 0 2px 24px rgba(0, 0, 0, 0.35); text-wrap: balance; }
+@media (min-width: 1024px) { .eg-hero-title { font-size: 72px; } }
+:lang(zh-Hans) .eg-hero-title { font-family: var(--font-hero-latin), var(--font-hero-sc), "Songti SC", "STSong", serif; }
+:lang(zh-Hant) .eg-hero-title { font-family: var(--font-hero-latin), var(--font-hero-tc), "Songti TC", serif; }
+:lang(ja) .eg-hero-title { font-family: var(--font-hero-latin), var(--font-hero-jp), "Hiragino Mincho ProN", "Yu Mincho", serif; }
+:lang(ko) .eg-hero-title { font-family: var(--font-hero-latin), var(--font-hero-kr), "AppleMyungjo", serif; }
+:lang(th) .eg-hero-title { font-family: var(--font-hero-latin), var(--font-hero-th), serif; }
+/* 中日韩泰：字距归零，行距放一点（方块字两行贴太紧会挤） */
+:is(:lang(zh-Hans), :lang(zh-Hant), :lang(ja), :lang(ko), :lang(th)) .eg-hero-title { letter-spacing: 0; line-height: 1.16; }
+:is(:lang(zh-Hans), :lang(zh-Hant), :lang(ja), :lang(ko), :lang(th)) .eg-hero-eyebrow { letter-spacing: 0.08em; }

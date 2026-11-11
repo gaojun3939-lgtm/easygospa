@@ -4,7 +4,17 @@
     "title2": "Enjoy a massage.",
     "available": "Now in Metro Manila",
     "scan": "Scan with your phone to get the app",
-    "videoLabel": "Opening film: a booking is confirmed in the app, the camera dives into the map pin, pulls out to the Earth and flies down into Manila; therapist Mia walks through a hotel lobby, arrives at the room door, warms the oil in her hands and smiles at the camera"
+    "videoLabel": "Opening film: a booking is confirmed in the app, the camera dives into the map pin, pulls out to the Earth and flies down into Manila; therapist Mia walks through a hotel lobby, arrives at the room door, warms the oil in her hands and smiles at the camera",
+    "badgePlay": "GET IT ON",
+    "badgeApple": "Download on the",
+    "ch1": "Book",
+    "ch2": "Manila",
+    "ch3": "Arrive",
+    "ch4": "Relax",
+    "chaptersAria": "Film chapters",
+    "play": "Play",
+    "pause": "Pause",
+    "replay": "Replay"
   },
   "seal": {
     "sub": "Home Massage",
