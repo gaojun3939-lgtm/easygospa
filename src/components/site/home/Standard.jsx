@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 import { Clock, Lock, ShieldCheck, Zap } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { openBooking } from '../motion'
+import { useGoApp } from '../AppButton'
 import { nums } from '../nums'
 
 // 模版「The NUNYUI Standard」：小字眉题、两行大字、一段话；左右两张圆图，中间四条
@@ -31,6 +31,7 @@ function Leaves() {
 
 export default function Standard() {
   const t = useTranslations('home.standard')
+  const goApp = useGoApp('standard')
   const round = 'w-48 h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 rounded-full overflow-hidden shadow-lg'
   return (
     <section className="py-16 md:py-20 lg:py-24 bg-white relative overflow-hidden">
@@ -72,7 +73,7 @@ export default function Standard() {
         </div>
 
         <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.3 }} viewport={{ once: true }} className="text-center mt-16">
-          <motion.button type="button" whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.96 }} onClick={openBooking} className="eg-btn-wide bg-gradient-to-r from-[#55633F] to-[#64734F] text-white px-8 py-4 rounded-full font-sans font-semibold hover:from-[#64734F] hover:to-[#55633F] transition-all duration-300 shadow-lg text-lg">
+          <motion.button type="button" whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.96 }} onClick={goApp} className="eg-btn-wide bg-gradient-to-r from-[#55633F] to-[#64734F] text-white px-8 py-4 rounded-full font-sans font-semibold hover:from-[#64734F] hover:to-[#55633F] transition-all duration-300 shadow-lg text-lg">
             {t('cta')}
           </motion.button>
         </motion.div>

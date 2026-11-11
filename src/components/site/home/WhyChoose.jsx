@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { Home, Navigation, ShieldCheck, Wallet } from 'lucide-react'
 import BrandMark from '@/components/BrandMark'
 import { useTranslations } from 'next-intl'
-import { openBooking } from '../motion'
+import { useGoApp } from '../AppButton'
 import { nums } from '../nums'
 
 // 模版「Why Choose」：左边一张竖图，右边小胶囊、两行大字、一段话、带图标的理由、一个按钮
@@ -19,6 +19,7 @@ const FEATURES = [
 
 export default function WhyChoose() {
   const t = useTranslations('home.why')
+  const goApp = useGoApp('why')
   return (
     <section id="why-us" className="pt-28 md:pt-32 lg:pt-36 pb-16 md:pb-20 lg:pb-24 bg-gradient-to-b from-[#F8F2EC] to-white relative overflow-hidden">
       <motion.div initial={{ opacity: 0, scale: 0.3 }} whileInView={{ opacity: 0.12, scale: 1 }} transition={{ duration: 2.5, ease: 'easeOut', delay: 0.3 }} viewport={{ once: true }} className="absolute bottom-10 left-10" aria-hidden="true">
@@ -67,7 +68,7 @@ export default function WhyChoose() {
           </div>
 
           <div className="pt-4">
-            <motion.button type="button" whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.96 }} onClick={openBooking} className="bg-[#64734F] text-white px-8 py-4 rounded-full font-sans font-medium hover:bg-[#55633F] transition-colors duration-300 shadow-lg">
+            <motion.button type="button" whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.96 }} onClick={goApp} className="bg-[#64734F] text-white px-8 py-4 rounded-full font-sans font-medium hover:bg-[#55633F] transition-colors duration-300 shadow-lg">
               {t('cta')}
             </motion.button>
           </div>

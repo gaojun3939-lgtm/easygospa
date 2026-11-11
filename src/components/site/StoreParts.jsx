@@ -1,12 +1,15 @@
-import { Clock, MapPin, MessageCircle, Phone, Store } from 'lucide-react'
+import { Clock, ExternalLink, MapPin, MessageCircle, Phone, Store } from 'lucide-react'
 import { Link } from '@/i18n/navigation'
 import BrandMark from '@/components/BrandMark'
+import AppButton from './AppButton'
 import { COMPANY_PHONE, whatsappLink } from '@/lib/contactConfig'
 import { intlLocale } from '@/i18n/routing'
 import { storePath } from './stores'
 
 // 门店页用的零件：门店卡、营业状态小标签、预约按钮、「首家门店即将开业」。门店资料在 stores.js。
-// 预约到店：App 能约到店之前先走公司 WhatsApp（预填哪家店，客服看英文所以预填英文）；App 做好后 booking 改成 'app' 就跳 App 下载。
+// 门店预约（11-12 老板「我们就直接在弄个网站 给门店，官网点了门店，跳转过去，那里全部都是小程序」）：
+// 这家店填了 bookingUrl（门店网站上这家店的预约页）就「去门店预约」跳过去；门店网站还没好时先走公司 WhatsApp（预填哪家店，客服看英文所以预填英文）。
+// 官网别的「预约」都去 App（AppButton.jsx），门店预约是唯一不去 App 的。
 
 export function openingText(store, locale) {
   if (!store.opening) return ''
@@ -30,8 +33,13 @@ export function BookButton({ store, t, wide = false }) {
   if (store.status !== 'open' || store.booking === 'none') {
     return <span className={`${base} bg-gray-100 text-gray-500 cursor-default`}>{t('bookSoon')}</span>
   }
-  if (store.booking === 'app') {
-    return <Link href="/#app" className={`${base} bg-[#64734F] text-white hover:bg-[#55633F] shadow-lg`}>{t('bookInApp')}</Link>
+  if (store.bookingUrl) {
+    return (
+      <a href={store.bookingUrl} target="_blank" rel="noreferrer" className={`${base} bg-[#64734F] text-white hover:bg-[#55633F] shadow-lg`}>
+        {t('book')}
+        <ExternalLink className="w-4 h-4" aria-hidden="true" />
+      </a>
+    )
   }
   return (
     <a href={whatsappLink(t('waText', { store: store.name }))} target="_blank" rel="noreferrer" className={`${base} bg-[#64734F] text-white hover:bg-[#55633F] shadow-lg`}>
@@ -77,14 +85,14 @@ export function StoreCard({ store, t, locale }) {
   )
 }
 
-// 还没有门店：独立的空状态（不是空框），告诉客人首家店在筹备、现在可以先约上门
+// 还没有门店：独立的空状态（不是空框），告诉客人首家店在筹备、现在可以先下载 App 约上门
 export function NoStoresYet({ t }) {
   return (
     <div className="max-w-3xl mx-auto bg-white rounded-3xl shadow-lg p-8 md:p-12 text-center animate-fadeInUp">
       <span className="inline-flex w-16 h-16 rounded-2xl bg-[#64734F]/10 items-center justify-center mb-6"><Store className="w-8 h-8 text-[#64734F]" aria-hidden="true" /></span>
       <h2 className="font-serif text-[clamp(1.7rem,3.2vw,2.4rem)] text-[#0F0F0F] mb-4">{t('empty.title')}</h2>
       <p className="text-gray-600 leading-[1.618] max-w-xl mx-auto mb-8">{t('empty.text')}</p>
-      <button type="button" data-open-booking="1" className="bg-[#64734F] text-white px-8 py-4 rounded-full font-medium hover:bg-[#55633F] transition-all duration-300 hover:scale-105 shadow-lg">{t('empty.button')}</button>
+      <AppButton from="stores" className="bg-[#64734F] text-white px-8 py-4 rounded-full font-medium hover:bg-[#55633F] transition-all duration-300 hover:scale-105 shadow-lg">{t('empty.button')}</AppButton>
     </div>
   )
 }

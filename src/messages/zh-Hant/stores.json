@@ -3,7 +3,7 @@
   "metaDescription": "EasyGoSpa 實體門市：地址、營業時間與預約方式。",
   "pill": "門市",
   "title": "到店享受按摩",
-  "lead": "想換個環境放鬆，也可以來我們的門市。每家店的地址、營業時間和預約方式都在這裡。",
+  "lead": "附近有我們的門市，就在網頁上直接預約：到店按，或請門市技師到府，不用下載 App。",
   "status": {
     "open": "營業中",
     "soon": "即將開幕"
@@ -12,12 +12,11 @@
   "openingNote": "預計 {month} 開幕，開幕後可在這裡預約。",
   "empty": {
     "title": "首家門市即將開幕",
-    "text": "開幕後，地址、營業時間和預約方式會在這裡公布。現在可以先預約到府按摩，技師到您的住家、公寓或飯店。",
-    "button": "預約到府按摩"
+    "text": "開幕後，在網頁上就能預約門市：到店按，或請門市技師到府，不用下載 App。現在想約到府按摩，請下載 App，找您身邊的技師。",
+    "button": "下載 App 約到府"
   },
   "view": "查看門市",
-  "book": "預約到店",
-  "bookInApp": "在 App 裡預約",
+  "book": "前往門市預約",
   "bookSoon": "開幕後可預約",
   "waText": "Hi EasyGoSpa, I'd like to book a massage at {store}.",
   "photoAlt": "{store} 門市",
@@ -33,7 +32,7 @@
   },
   "back": "全部門市",
   "storeMeta": "{store}（{area}）的地址、營業時間與預約方式。",
-  "ctaTitle": "不方便出門？",
-  "ctaText": "技師到府服務，到您的住家、公寓或飯店，毛巾精油都會帶來。",
-  "ctaButton": "預約到府按摩"
+  "ctaTitle": "想要更多技師、更多區域？",
+  "ctaText": "下載 App，找您身邊的技師到府服務。",
+  "ctaButton": "下載 App 約到府"
 }

@@ -45,7 +45,7 @@
       "sub": "Tiền mặt · Trực tuyến · Không cần tip",
       "text": "Trả tiền mặt khi kỹ thuật viên đến, hoặc thanh toán trực tuyến trong ứng dụng bằng GCash, Maya và nhiều cách khác. Không cần đặt cọc, không cần tip."
     },
-    "cta": "Đặt lịch massage",
+    "cta": "Tải ứng dụng để đặt lịch",
     "imageAlt": "Túi xanh EasyGoSpa, khăn gấp gọn và bát gốm trên băng ghế cuối giường trong phòng ngủ tại nhà"
   },
   "ways": {
@@ -53,15 +53,15 @@
     "title1": "Tại nhà hoặc tại cửa hàng",
     "title2": "Tùy bạn chọn",
     "home": {
-      "title": "Massage tại nhà",
-      "text": "Kỹ thuật viên đến nhà riêng, căn hộ hoặc khách sạn của bạn, mang theo khăn và tinh dầu.",
-      "button": "Đặt massage tại nhà",
+      "title": "Tại nhà: đặt trong ứng dụng",
+      "text": "Tải ứng dụng để tìm kỹ thuật viên gần bạn — nhiều kỹ thuật viên hơn, nhiều khu vực hơn.",
+      "button": "Tải ứng dụng",
       "alt": "Kỹ thuật viên Mia đứng trước cửa phòng khách sạn, mang khăn và túi xanh"
     },
     "store": {
-      "title": "Massage tại cửa hàng",
-      "textSoon": "Cửa hàng đầu tiên sắp khai trương. Địa chỉ và giờ mở cửa sẽ được đăng trên trang cửa hàng.",
-      "textOpen": "Hiện có {count} cửa hàng đang mở cửa. Địa chỉ, giờ mở cửa và cách đặt lịch có trên trang cửa hàng.",
+      "title": "Tại cửa hàng: đặt trực tuyến",
+      "textSoon": "Cửa hàng đầu tiên sắp khai trương. Khi khai trương, bạn đặt lịch trực tuyến — đến cửa hàng hoặc mời kỹ thuật viên của cửa hàng đến tận nơi, không cần tải ứng dụng.",
+      "textOpen": "Có {count} cửa hàng gần bạn — đặt lịch trực tuyến: đến cửa hàng hoặc mời kỹ thuật viên của cửa hàng đến tận nơi, không cần tải ứng dụng.",
       "button": "Xem cửa hàng",
       "soon": "Sắp khai trương",
       "alt": "Cửa hàng {store}"
@@ -147,7 +147,7 @@
       "title": "Đặt lịch 24/7",
       "text": "Đặt lịch bất cứ lúc nào, dù ngày hay đêm."
     },
-    "cta": "Đặt lịch massage ngay hôm nay",
+    "cta": "Tải ứng dụng, đặt lịch hôm nay",
     "altLeft": "Phòng khách sạn lúc chạng vạng, túi xanh EasyGoSpa và khăn gấp gọn ở cuối giường, ngoài cửa sổ là ánh đèn thành phố",
     "altRight": "Túi xanh EasyGoSpa trên sofa phòng khách căn hộ, trên bàn cạnh là khăn gấp gọn, chai dầu và cành ô liu"
   },

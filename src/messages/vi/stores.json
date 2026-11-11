@@ -3,7 +3,7 @@
   "metaDescription": "Cửa hàng EasyGoSpa: địa chỉ, giờ mở cửa và cách đặt lịch.",
   "pill": "Cửa hàng",
   "title": "Massage tại cửa hàng",
-  "lead": "Muốn đổi không gian thư giãn? Bạn cũng có thể đến cửa hàng của chúng tôi. Địa chỉ, giờ mở cửa và cách đặt lịch của từng cửa hàng đều ở đây.",
+  "lead": "Có cửa hàng gần bạn? Đặt lịch trực tuyến ngay — đến cửa hàng hoặc mời kỹ thuật viên của cửa hàng đến tận nơi, không cần tải ứng dụng.",
   "status": {
     "open": "Đang mở cửa",
     "soon": "Sắp khai trương"
@@ -12,12 +12,11 @@
   "openingNote": "Dự kiến khai trương vào {month}. Sau khi khai trương, bạn có thể đặt lịch tại đây.",
   "empty": {
     "title": "Cửa hàng đầu tiên sắp khai trương",
-    "text": "Sau khi khai trương, địa chỉ, giờ mở cửa và cách đặt lịch sẽ được đăng tại đây. Trong lúc chờ, bạn có thể đặt massage tại nhà, kỹ thuật viên sẽ đến nhà riêng, căn hộ hoặc khách sạn của bạn.",
-    "button": "Đặt massage tại nhà"
+    "text": "Khi khai trương, bạn có thể đặt lịch trực tuyến — đến cửa hàng hoặc mời kỹ thuật viên của cửa hàng đến tận nơi, không cần tải ứng dụng. Muốn massage tại nhà ngay bây giờ, hãy tải ứng dụng và tìm kỹ thuật viên gần bạn.",
+    "button": "Tải ứng dụng để đặt massage tại nhà"
   },
   "view": "Xem cửa hàng",
-  "book": "Đặt lịch tại cửa hàng",
-  "bookInApp": "Đặt lịch trong ứng dụng",
+  "book": "Đặt lịch cửa hàng này",
   "bookSoon": "Đặt lịch sau khi khai trương",
   "waText": "Hi EasyGoSpa, I'd like to book a massage at {store}.",
   "photoAlt": "Cửa hàng {store}",
@@ -33,7 +32,7 @@
   },
   "back": "Tất cả cửa hàng",
   "storeMeta": "Địa chỉ, giờ mở cửa và cách đặt lịch của {store} ({area}).",
-  "ctaTitle": "Ngại ra ngoài?",
-  "ctaText": "Kỹ thuật viên mang khăn và tinh dầu đến tận nhà riêng, căn hộ hoặc khách sạn của bạn.",
-  "ctaButton": "Đặt massage tại nhà"
+  "ctaTitle": "Muốn nhiều kỹ thuật viên và khu vực hơn?",
+  "ctaText": "Tải ứng dụng để tìm kỹ thuật viên gần bạn đến tận nhà.",
+  "ctaButton": "Tải ứng dụng để đặt massage tại nhà"
 }

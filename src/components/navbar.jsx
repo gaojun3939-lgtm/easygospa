@@ -38,7 +38,7 @@ const NAV_ITEMS = [
 const APP_URL = "/#app";
 
 const openBooking = () => window.dispatchEvent(new CustomEvent("open-booking-modal"));
-const openOrders = () => window.dispatchEvent(new CustomEvent("open-my-orders"));
+// 11-12 老板「下单链接啥的全部到app」→ 右上角和手机菜单里的「我的订单」去掉（订单在 App 里看）
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = React.useState(false);
@@ -165,9 +165,6 @@ export default function Navbar() {
 
             <div className="flex items-center gap-1 sm:gap-2">
               <div className="hidden sm:block">{languageMenu()}</div>
-              <button type="button" onClick={openOrders} aria-label={t("openOrders")} className={`hidden md:block rounded-full px-3 py-2 text-sm font-medium transition-colors duration-300 whitespace-nowrap ${solid ? "text-[#0F0F0F] hover:bg-[#64734F]/10" : "text-white text-shadow-dark hover:bg-white/10"}`}>
-                {t("myOrders")}
-              </button>
               <Link
                 href={APP_URL}
                 className="bg-[#64734F] text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-full text-sm font-medium hover:bg-[#0F0F0F] transition-all duration-300 hover:scale-105 shadow-lg whitespace-nowrap"
@@ -203,9 +200,6 @@ export default function Navbar() {
                 {t(item.key)}
               </Link>
             ))}
-            <button type="button" onClick={() => { setIsMenuOpen(false); openOrders(); }} className="text-2xl font-medium text-[#0F0F0F] hover:text-[#64734F] px-2 py-1">
-              {t("myOrders")}
-            </button>
             <div className="pt-2">{languageMenu(true)}</div>
             <Link
               href={APP_URL}

@@ -46,4 +46,3 @@ export function serviceView(service, { tn, ti, tAlt }) {
   }
 }
 
-export const bookService = (service) => window.dispatchEvent(new CustomEvent('open-booking-modal-with-service', { detail: { service } }))

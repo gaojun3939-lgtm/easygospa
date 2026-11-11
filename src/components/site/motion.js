@@ -6,4 +6,4 @@ export const rise = (delay = 0, y = 40) => ({
   viewport: { once: true, margin: '0px 0px -60px 0px' },
 })
 
-export const openBooking = () => window.dispatchEvent(new CustomEvent('open-booking-modal'))
+// 11-12 起官网的预约都去 App（components/site/AppButton.jsx），原来打开网页下单窗口的 openBooking 删了

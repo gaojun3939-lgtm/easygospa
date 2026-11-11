@@ -45,7 +45,7 @@
       "sub": "Cash · Online · No tips expected",
       "text": "Pay your therapist in cash when they arrive, or pay online in the app with GCash, Maya and more. No deposit, and no tips expected."
     },
-    "cta": "Book a Massage",
+    "cta": "Get the App to Book",
     "imageAlt": "The EasyGoSpa green bag, folded towels and a stoneware bowl on a bench at the foot of a bed at home"
   },
   "ways": {
@@ -53,15 +53,15 @@
     "title1": "At Home or In Store",
     "title2": "Whatever Suits You",
     "home": {
-      "title": "Home Massage",
-      "text": "Your therapist comes to your home, condo or hotel, bringing the towels and oils.",
-      "button": "Book a home visit",
+      "title": "Home Visits: Book in the App",
+      "text": "Get the app to find therapists near you — more therapists, more areas.",
+      "button": "Get the App",
       "alt": "Therapist Mia at a hotel room door with towels and the green bag"
     },
     "store": {
-      "title": "In-Store Massage",
-      "textSoon": "Our first store is opening soon. Its address and hours will be posted on the stores page.",
-      "textOpen": "{count, plural, one {# store is} other {# stores are}} now open — addresses, hours and booking are on the stores page.",
+      "title": "In Store: Book Online",
+      "textSoon": "Our first store is opening soon. Once it opens, book it online — visit the store or have its therapist come to you, no app needed.",
+      "textOpen": "{count, plural, one {# store is} other {# stores are}} near you — book online: visit the store or have its therapist come to you, no app needed.",
       "button": "View stores",
       "soon": "Opening soon",
       "alt": "{store} store"
@@ -147,7 +147,7 @@
       "title": "24/7 Booking",
       "text": "Book your session any time, day or night."
     },
-    "cta": "Book Your Massage Today",
+    "cta": "Get the App and Book Today",
     "altLeft": "The EasyGoSpa green bag and folded towels at the foot of a hotel bed at dusk, city lights outside the window",
     "altRight": "The EasyGoSpa green bag on a condo sofa, with folded towels, an oil bottle and olive branches on the side table"
   },

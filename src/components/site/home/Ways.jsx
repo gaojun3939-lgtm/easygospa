@@ -5,7 +5,7 @@ import { ArrowRight, Home, Store } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
 import SectionHead from '../SectionHead'
-import { openBooking } from '../motion'
+import { useGoApp } from '../AppButton'
 import { STORES } from '../stores'
 import { StorePhoto } from '../StoreParts'
 
@@ -14,6 +14,7 @@ import { StorePhoto } from '../StoreParts'
 // 左边上门（Mia 到门口的真照片 + 预约上门）；右边到店：有门店就放第一家店的真照片和家数，一家都没有就写「首家门店即将开业」（不放示意图）。
 export default function Ways() {
   const t = useTranslations('home.ways')
+  const goApp = useGoApp('ways')
   const open = STORES.filter((store) => store.status === 'open')
   const first = STORES[0]
   const storeText = open.length ? t('store.textOpen', { count: open.length }) : t('store.textSoon')
@@ -32,7 +33,7 @@ export default function Ways() {
                 <h3 className="font-serif text-2xl text-[#0F0F0F]">{t('home.title')}</h3>
               </div>
               <p className="text-gray-600 leading-relaxed mb-6">{t('home.text')}</p>
-              <button type="button" onClick={openBooking} className="mt-auto self-start inline-flex items-center gap-2 bg-[#64734F] text-white px-6 py-3 rounded-full font-medium hover:bg-[#55633F] transition-colors shadow-lg">
+              <button type="button" onClick={goApp} className="mt-auto self-start inline-flex items-center gap-2 bg-[#64734F] text-white px-6 py-3 rounded-full font-medium hover:bg-[#55633F] transition-colors shadow-lg">
                 {t('home.button')}
                 <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </button>

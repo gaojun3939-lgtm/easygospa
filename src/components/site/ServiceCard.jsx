@@ -3,13 +3,15 @@
 import { motion } from 'framer-motion'
 import { ArrowRight, Clock } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { bookService, NEED_ICONS, peso, serviceView } from './serviceText'
+import { NEED_ICONS, peso, serviceView } from './serviceText'
+import { useGoApp } from './AppButton'
 
 // 模版的项目卡：上面一张图（右上价格、左下时长），下面名字、介绍、按钮。
 // 模版在按钮上面放了五颗星和 (4.9)——我们没有这个数，换成三档真价格（读后台）。
 // 服务页传 need：名字上面带「身体需要什么」小标签（图标跟首页那排卡片同一套）；anchor 给首页点进来滚到这张用；highlight = 首页点的就是这张，加一圈绿边。
 export default function ServiceCard({ service, index = 0, fullText = false, need = '', anchor, highlight = false }) {
   const t = useTranslations('common')
+  const goApp = useGoApp('service')
   const tNeed = useTranslations('services.needs')
   const NeedIcon = need ? NEED_ICONS[need] : null
   const tn = useTranslations('serviceNames')
@@ -64,7 +66,7 @@ export default function ServiceCard({ service, index = 0, fullText = false, need
           ) : null}
           <button
             type="button"
-            onClick={() => bookService(service)}
+            onClick={goApp}
             className="w-full bg-[#64734F]/10 text-[#55633F] py-3 rounded-full font-medium hover:bg-[#64734F] hover:text-white transition-all duration-300 group-hover:shadow-lg flex items-center justify-center gap-2"
           >
             {t('bookNow')}

@@ -17,7 +17,8 @@
 //   hours: '10:00–02:00',              // 营业时间
 //   phone: '+63 …',                    // 门店电话（不填就用公司电话）
 //   photos: ['/global/stores/makati-1.webp'], // 门店真实照片（门头、房间），放在 public/global/stores/
-//   booking: 'whatsapp',               // 预约方式：'whatsapp'（App 能约到店之前先用）/ 'app'（App 做好后）/ 'none'（先不开放）
+//   bookingUrl: 'https://…/makati',    // 门店网站上这家店的预约页（门店网站另外做，老板 11-12「官网点了门店，跳转过去，那里全部都是小程序」）；没填就先走公司 WhatsApp
+//   booking: 'none',                   // 填 'none' = 先不开放预约（按钮显示「开业后可预约」）
 //   samePrice: true,                   // 到店价格跟上门一样（不同就写 false，门店页会写「到店价格见店内价目」）
 // }
 export const STORES = []

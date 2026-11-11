@@ -3,7 +3,7 @@
   "metaDescription": "EasyGoSpa 线下门店：地址、营业时间和预约方式。",
   "pill": "门店",
   "title": "到店享受按摩",
-  "lead": "想换个环境放松，也可以来我们的门店。每家店的地址、营业时间和预约方式都在这里。",
+  "lead": "附近有我们的门店，就在网页上直接预约：到店按，或请门店技师上门，不用下载 App。",
   "status": {
     "open": "营业中",
     "soon": "即将开业"
@@ -12,12 +12,11 @@
   "openingNote": "预计 {month} 开业，开业后可以在这里预约。",
   "empty": {
     "title": "首家门店即将开业",
-    "text": "开业后，地址、营业时间和预约方式会在这里公布。现在可以先预约上门按摩，技师到您的家中、公寓或酒店。",
-    "button": "预约上门按摩"
+    "text": "开业后，在网页上就能预约门店：到店按，或请门店技师上门，不用下载 App。现在想约上门，请下载 App，找您身边的技师。",
+    "button": "下载 App 约上门"
   },
   "view": "查看门店",
-  "book": "预约到店",
-  "bookInApp": "在 App 里预约",
+  "book": "去门店预约",
   "bookSoon": "开业后可预约",
   "waText": "Hi EasyGoSpa, I'd like to book a massage at {store}.",
   "photoAlt": "{store} 门店",
@@ -33,7 +32,7 @@
   },
   "back": "全部门店",
   "storeMeta": "{store}（{area}）的地址、营业时间和预约方式。",
-  "ctaTitle": "不方便出门？",
-  "ctaText": "技师上门到您的家中、公寓或酒店，毛巾精油都带来。",
-  "ctaButton": "预约上门按摩"
+  "ctaTitle": "想要更多技师、更多区域？",
+  "ctaText": "下载 App，找您身边的技师上门。",
+  "ctaButton": "下载 App 约上门"
 }
