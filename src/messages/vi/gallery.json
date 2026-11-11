@@ -11,41 +11,41 @@
     "treatment": "Liệu trình"
   },
   "items": {
-    "door": {
-      "title": "Đến tận cửa",
-      "alt": "Khách mở cửa đón kỹ thuật viên tươi cười mang theo khăn và túi EasyGoSpa"
+    "home": {
+      "title": "Tại nhà bạn",
+      "alt": "Túi xanh EasyGoSpa, khăn gấp gọn và bát gốm trên băng ghế cuối giường trong phòng ngủ tại nhà"
     },
-    "feet": {
-      "title": "Massage chân trên sofa",
-      "alt": "Kỹ thuật viên massage chân cho khách trên sofa trong căn hộ tầng cao ở BGC"
+    "condo": {
+      "title": "Tại căn hộ của bạn",
+      "alt": "Túi xanh EasyGoSpa trên sofa phòng khách căn hộ, trên bàn cạnh là khăn gấp gọn, chai dầu và cành ô liu"
     },
-    "towels": {
-      "title": "Sẵn sàng trong phòng khách sạn",
-      "alt": "Buổi tối, kỹ thuật viên chuẩn bị khăn cho khách đang nằm nghỉ trên giường khách sạn"
+    "hotel": {
+      "title": "Tại phòng khách sạn",
+      "alt": "Phòng khách sạn lúc chạng vạng, túi xanh EasyGoSpa và khăn gấp gọn ở cuối giường, ngoài cửa sổ là ánh đèn thành phố"
     },
-    "stretch": {
-      "title": "Kéo giãn kiểu Thái trên nệm sàn",
-      "alt": "Kỹ thuật viên giúp khách mặc quần áo kéo giãn chân trên tấm nệm sàn tại nhà"
+    "thai": {
+      "title": "Massage Thái",
+      "alt": "Túi chườm thảo dược bọc vải cotton đặt trên khăn gấp gọn, bên cạnh là sả và cành ô liu"
     },
-    "tea": {
-      "title": "Thưởng trà sau massage",
-      "alt": "Sau buổi massage, khách mặc áo choàng thưởng trà trên sofa trong khi kỹ thuật viên thu dọn túi, bên ngoài là thành phố"
+    "kit": {
+      "title": "Mọi thứ trong một chiếc túi",
+      "alt": "Túi xanh EasyGoSpa, khăn gấp gọn, chai dầu và cành ô liu trên tủ gỗ dưới nắng chiều"
     },
     "stones": {
       "title": "Đá nóng",
-      "alt": "Kỹ thuật viên đặt đá ấm lên lưng khách đang nằm nghỉ trên giường nhà mình"
+      "alt": "Ba viên đá massage đen ấm đặt trên khăn gấp gọn, một viên nằm trong đĩa đồng"
     },
-    "hallway": {
-      "title": "Trên đường đến với bạn",
-      "alt": "Buổi tối, kỹ thuật viên mặc đồng phục EasyGoSpa đi dọc hành lang căn hộ, mang theo khăn và túi EasyGoSpa"
+    "ready": {
+      "title": "Sẵn sàng đến với bạn",
+      "alt": "Đồng phục EasyGoSpa gấp gọn đặt trên túi xanh cạnh cửa, sẵn sàng lên đường"
     },
     "shiatsu": {
       "title": "Shiatsu, không dầu",
-      "alt": "Kỹ thuật viên ấn vai cho khách ngồi trong phòng khách căn hộ, không dùng dầu"
+      "alt": "Ba chiếc khăn gấp gọn buộc bằng dây vải màu ô liu, không dùng dầu"
     },
     "oil": {
       "title": "Tinh dầu thơm",
-      "alt": "Kỹ thuật viên xoa ấm tinh dầu trong lòng bàn tay bên cạnh khách đang nằm nghỉ dưới khăn"
+      "alt": "Hai chai tinh dầu và một bát dầu thả lá ô liu, bên cạnh là cành ô liu"
     }
   },
   "close": "Đóng",

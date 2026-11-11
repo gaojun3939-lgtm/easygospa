@@ -7,13 +7,13 @@
   "ctaText": "Book your appointment today — choose your therapist and pay in cash when they arrive.",
   "ctaButton": "Book Your Experience",
   "photoAlt": {
-    "swedish": "A therapist giving a gentle oil massage to a client lying on her own bed in a bright condo",
-    "deep": "A therapist working slowly along a client’s shoulder blade as he rests on his hotel bed",
-    "thai": "A therapist guiding a clothed client’s leg into a stretch on a floor mat at home",
-    "shiatsu": "A therapist pressing a seated client’s shoulders in his condo living room, no oil",
-    "stone": "A therapist placing warm stones on a client’s back as she rests on her own bed",
-    "aroma": "A therapist warming essential oil between her hands beside a client resting under a towel",
-    "other": "A therapist warming essential oil between her hands beside a client resting under a towel"
+    "swedish": "Massage oil pouring from an amber bottle into a brass dish, with a folded towel and an olive sprig",
+    "deep": "A therapist’s hands resting flat on a folded towel, olive piping on the uniform cuffs",
+    "thai": "A cotton-wrapped herbal compress on a folded towel, with lemongrass and an olive sprig",
+    "shiatsu": "Three folded towels tied with an olive cotton tape, no oil needed",
+    "stone": "Three warm dark massage stones on a folded towel, one resting in a brass dish",
+    "aroma": "Two essential-oil bottles and a bowl of oil with floating olive leaves, beside an olive branch",
+    "other": "Two essential-oil bottles and a bowl of oil with floating olive leaves, beside an olive branch"
   },
   "needs": {
     "relax": "Relax",

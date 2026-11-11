@@ -4,7 +4,7 @@
 export const peso = (value) => `₱${Number(value).toLocaleString('en-US')}`
 export const niceName = (name) => String(name || '').replace(/\(/, ' (').replace(/\s+/g, ' ').trim()
 
-// 每个项目配一张图（Codex 按真实摄影拍的：客人自己的床、沙发、地垫，没有按摩床）。后台新加的项目先用精油那张，不会空着
+// 每个项目配一张图（2026-11-11 第二套自家静物图：同一张台面、傍晚窗光、橄榄绿条纹毛巾，没有人脸、没有按摩床）。后台新加的项目先用精油那张，不会空着
 const PHOTOS = [
   [/deep/i, 'deep', '/global/photos/svc-deep.webp'],
   [/stone/i, 'stone', '/global/photos/svc-stone.webp'],

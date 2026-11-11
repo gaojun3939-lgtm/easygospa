@@ -7,13 +7,13 @@
   "ctaText": "Đặt lịch ngay hôm nay — chọn kỹ thuật viên và trả tiền mặt khi kỹ thuật viên đến.",
   "ctaButton": "Đặt lịch trải nghiệm",
   "photoAlt": {
-    "swedish": "Kỹ thuật viên massage dầu nhẹ nhàng cho khách nằm trên giường nhà mình trong căn hộ sáng sủa",
-    "deep": "Kỹ thuật viên ấn chậm dọc bả vai khách đang nằm trên giường khách sạn",
-    "thai": "Kỹ thuật viên giúp khách mặc quần áo kéo giãn chân trên tấm nệm sàn tại nhà",
-    "shiatsu": "Kỹ thuật viên ấn vai cho khách ngồi trong phòng khách căn hộ, không dùng dầu",
-    "stone": "Kỹ thuật viên đặt đá ấm lên lưng khách đang nằm nghỉ trên giường nhà mình",
-    "aroma": "Kỹ thuật viên xoa ấm tinh dầu trong lòng bàn tay bên cạnh khách đang nằm nghỉ dưới khăn",
-    "other": "Kỹ thuật viên xoa ấm tinh dầu trong lòng bàn tay bên cạnh khách đang nằm nghỉ dưới khăn"
+    "swedish": "Dầu massage rót từ chai thủy tinh màu hổ phách vào đĩa đồng, bên cạnh là khăn gấp gọn và cành ô liu",
+    "deep": "Đôi tay kỹ thuật viên đặt phẳng trên khăn gấp gọn, cổ tay áo đồng phục viền màu ô liu",
+    "thai": "Túi chườm thảo dược bọc vải cotton đặt trên khăn gấp gọn, bên cạnh là sả và cành ô liu",
+    "shiatsu": "Ba chiếc khăn gấp gọn buộc bằng dây vải màu ô liu, không dùng dầu",
+    "stone": "Ba viên đá massage đen ấm đặt trên khăn gấp gọn, một viên nằm trong đĩa đồng",
+    "aroma": "Hai chai tinh dầu và một bát dầu thả lá ô liu, bên cạnh là cành ô liu",
+    "other": "Hai chai tinh dầu và một bát dầu thả lá ô liu, bên cạnh là cành ô liu"
   },
   "needs": {
     "relax": "Thư giãn",

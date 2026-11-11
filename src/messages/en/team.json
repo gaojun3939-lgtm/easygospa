@@ -11,14 +11,14 @@
       "title": "Professionally Trained",
       "role": "Skilled in every treatment they offer",
       "text": "Our therapists are trained in the treatments they offer, from gentle Swedish and aromatherapy to deep tissue, Thai stretching and hot stone.",
-      "alt": "A therapist working slowly along a client’s shoulder blade as he rests on his hotel bed"
+      "alt": "A therapist’s hands resting flat on a folded towel, olive piping on the uniform cuffs"
     },
     "verified": {
       "badge": "ID-verified",
       "title": "Identity Verified",
       "role": "Checked before their first booking",
       "text": "We check every therapist’s ID before they can take bookings. When you book, you see their real photo and name.",
-      "alt": "A therapist giving a gentle oil massage to a client lying on her own bed in a bright condo",
+      "alt": "Massage oil pouring from an amber bottle into a brass dish, with a folded towel and an olive sprig",
       "chips": { "id": "ID checked", "photo": "Real photo", "name": "Real name" }
     },
     "uniform": {
@@ -26,7 +26,7 @@
       "title": "Always in Uniform",
       "role": "Easy to recognize at your door",
       "text": "Your therapist arrives in the EasyGoSpa uniform, so you know exactly who is at your door.",
-      "alt": "A therapist in the EasyGoSpa uniform walking down a condo hallway at night with towels and the EasyGoSpa bag",
+      "alt": "A folded EasyGoSpa uniform on top of the green bag by the door, ready to go",
       "chips": { "uniform": "EasyGoSpa uniform", "door": "Home, condo or hotel" }
     },
     "rated": {
@@ -34,7 +34,7 @@
       "title": "Rated After Every Visit",
       "role": "Your feedback counts",
       "text": "After each massage you can rate your therapist. Ratings show on their profile, so the next client can choose with confidence.",
-      "alt": "A therapist preparing towels for a client resting on her hotel bed at night",
+      "alt": "The EasyGoSpa green bag and folded towels at the foot of a hotel bed at dusk, city lights outside the window",
       "chips": { "stars": "Star ratings", "profile": "Shown on each profile" }
     }
   },

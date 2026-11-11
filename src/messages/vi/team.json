@@ -11,14 +11,14 @@
       "title": "Đào tạo chuyên nghiệp",
       "role": "Thành thạo mọi liệu trình mình cung cấp",
       "text": "Kỹ thuật viên của chúng tôi được đào tạo cho các liệu trình họ cung cấp, từ massage Thụy Điển nhẹ nhàng và tinh dầu đến mô sâu, kéo giãn kiểu Thái và đá nóng.",
-      "alt": "Kỹ thuật viên ấn chậm dọc bả vai khách đang nằm trên giường khách sạn"
+      "alt": "Đôi tay kỹ thuật viên đặt phẳng trên khăn gấp gọn, cổ tay áo đồng phục viền màu ô liu"
     },
     "verified": {
       "badge": "Đã xác minh",
       "title": "Xác minh danh tính",
       "role": "Kiểm tra trước đơn đầu tiên",
       "text": "Chúng tôi kiểm tra giấy tờ tùy thân của mọi kỹ thuật viên trước khi họ được nhận đơn. Khi đặt lịch, bạn thấy ảnh thật và tên thật của họ.",
-      "alt": "Kỹ thuật viên massage dầu nhẹ nhàng cho khách nằm trên giường nhà mình trong căn hộ sáng sủa",
+      "alt": "Dầu massage rót từ chai thủy tinh màu hổ phách vào đĩa đồng, bên cạnh là khăn gấp gọn và cành ô liu",
       "chips": {
         "id": "Đã kiểm tra giấy tờ",
         "photo": "Ảnh thật",
@@ -30,7 +30,7 @@
       "title": "Luôn mặc đồng phục",
       "role": "Dễ nhận ra ngay tại cửa",
       "text": "Kỹ thuật viên mặc đồng phục EasyGoSpa khi đến, nên bạn biết chính xác ai đang ở trước cửa.",
-      "alt": "Buổi tối, kỹ thuật viên mặc đồng phục EasyGoSpa đi dọc hành lang căn hộ, mang theo khăn và túi EasyGoSpa",
+      "alt": "Đồng phục EasyGoSpa gấp gọn đặt trên túi xanh cạnh cửa, sẵn sàng lên đường",
       "chips": {
         "uniform": "Đồng phục EasyGoSpa",
         "door": "Nhà, căn hộ, khách sạn"
@@ -41,7 +41,7 @@
       "title": "Đánh giá sau mỗi lần phục vụ",
       "role": "Ý kiến của bạn rất quan trọng",
       "text": "Sau mỗi buổi massage, bạn có thể đánh giá kỹ thuật viên. Điểm đánh giá hiển thị trên hồ sơ, giúp khách sau yên tâm lựa chọn.",
-      "alt": "Buổi tối, kỹ thuật viên chuẩn bị khăn cho khách đang nằm nghỉ trên giường khách sạn",
+      "alt": "Phòng khách sạn lúc chạng vạng, túi xanh EasyGoSpa và khăn gấp gọn ở cuối giường, ngoài cửa sổ là ánh đèn thành phố",
       "chips": {
         "stars": "Chấm điểm sao",
         "profile": "Hiển thị trên từng hồ sơ"

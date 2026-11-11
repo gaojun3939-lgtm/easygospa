@@ -4,15 +4,15 @@ import GalleryGrid from '@/components/site/GalleryGrid';
 import { alternatesFor } from '@/i18n/routing';
 
 // 相册页（建站模版 serinity 有这一页；2026-11-10 老板「不要删减页面」，用我们自己的图放回来）。
-// 九张都是 Codex 按真实摄影拍的上门场景（客人自己的家、公寓、酒店，没有按摩床），跟首页同一批图。
+// 九张是 2026-11-11 老板挑定的第二套自家静物图（同一张台面、同一种傍晚窗光、深绿莲花包、橄榄绿条纹毛巾，没有人脸、没有按摩床），跟首页同一批图。
 const IMAGES = [
-  { src: '/global/photos/place-home.webp', key: 'door', category: 'home' },
-  { src: '/global/photos/place-condo.webp', key: 'feet', category: 'condo' },
-  { src: '/global/photos/place-hotel.webp', key: 'towels', category: 'hotel' },
-  { src: '/global/photos/svc-thai.webp', key: 'stretch', category: 'treatment' },
-  { src: '/global/photos/band-living.webp', key: 'tea', category: 'home' },
+  { src: '/global/photos/place-home.webp', key: 'home', category: 'home' },
+  { src: '/global/photos/place-condo.webp', key: 'condo', category: 'condo' },
+  { src: '/global/photos/place-hotel.webp', key: 'hotel', category: 'hotel' },
+  { src: '/global/photos/svc-thai.webp', key: 'thai', category: 'treatment' },
+  { src: '/global/photos/band-living.webp', key: 'kit', category: 'home' },
   { src: '/global/photos/svc-stone.webp', key: 'stones', category: 'treatment' },
-  { src: '/global/photos/closing-corridor.webp', key: 'hallway', category: 'condo' },
+  { src: '/global/photos/closing-corridor.webp', key: 'ready', category: 'hotel' },
   { src: '/global/photos/svc-shiatsu.webp', key: 'shiatsu', category: 'treatment' },
   { src: '/global/photos/svc-aroma.webp', key: 'oil', category: 'treatment' },
 ];

@@ -11,15 +11,15 @@
     "treatment": "Treatment"
   },
   "items": {
-    "door": { "title": "At Your Door", "alt": "A client opening her front door to a smiling therapist carrying towels and the EasyGoSpa bag" },
-    "feet": { "title": "Foot Massage on the Sofa", "alt": "A therapist massaging a client’s feet on the sofa of a high-floor condo in BGC" },
-    "towels": { "title": "Ready in Your Hotel Room", "alt": "A therapist preparing towels for a client resting on her hotel bed at night" },
-    "stretch": { "title": "Thai Stretch on a Floor Mat", "alt": "A therapist guiding a clothed client’s leg into a stretch on a floor mat at home" },
-    "tea": { "title": "Tea After the Massage", "alt": "A client in a robe enjoying tea on her sofa after a massage while the therapist packs her bag, the city outside" },
-    "stones": { "title": "Warm Stones", "alt": "A therapist placing warm stones on a client’s back as she rests on her own bed" },
-    "hallway": { "title": "On the Way to You", "alt": "A therapist in the EasyGoSpa uniform walking down a condo hallway at night with towels and the EasyGoSpa bag" },
-    "shiatsu": { "title": "Shiatsu, No Oil", "alt": "A therapist pressing a seated client’s shoulders in his condo living room, no oil" },
-    "oil": { "title": "Aromatherapy Oils", "alt": "A therapist warming essential oil between her hands beside a client resting under a towel" }
+    "home": { "title": "At Your Home", "alt": "The EasyGoSpa green bag, folded towels and a stoneware bowl on a bench at the foot of a bed at home" },
+    "condo": { "title": "At Your Condo", "alt": "The EasyGoSpa green bag on a condo sofa, with folded towels, an oil bottle and olive branches on the side table" },
+    "hotel": { "title": "In Your Hotel Room", "alt": "The EasyGoSpa green bag and folded towels at the foot of a hotel bed at dusk, city lights outside the window" },
+    "thai": { "title": "Thai Massage", "alt": "A cotton-wrapped herbal compress on a folded towel, with lemongrass and an olive sprig" },
+    "kit": { "title": "Everything in One Bag", "alt": "The EasyGoSpa green bag, folded towels, an oil bottle and an olive sprig on a wooden sideboard in late-afternoon light" },
+    "stones": { "title": "Warm Stones", "alt": "Three warm dark massage stones on a folded towel, one resting in a brass dish" },
+    "ready": { "title": "Ready to Come to You", "alt": "A folded EasyGoSpa uniform on top of the green bag by the door, ready to go" },
+    "shiatsu": { "title": "Shiatsu, No Oil", "alt": "Three folded towels tied with an olive cotton tape, no oil needed" },
+    "oil": { "title": "Aromatherapy Oils", "alt": "Two essential-oil bottles and a bowl of oil with floating olive leaves, beside an olive branch" }
   },
   "close": "Close",
   "prev": "Previous photo",
