@@ -4,22 +4,53 @@
   "pill": "Gallery",
   "title": "Home Massage, Wherever You Are",
   "lead": "A look at how a session comes to you — at home, in a condo or in your hotel room.",
-  "categories": {
-    "home": "Home",
-    "condo": "Condo",
-    "hotel": "Hotel",
-    "treatment": "Treatment"
+  "groups": {
+    "visit": "What a Home Visit Looks Like",
+    "treatments": "Our Massages"
   },
   "items": {
-    "home": { "title": "At Your Home", "alt": "The EasyGoSpa green bag, folded towels and a stoneware bowl on a bench at the foot of a bed at home" },
-    "condo": { "title": "At Your Condo", "alt": "The EasyGoSpa green bag on a condo sofa, with folded towels, an oil bottle and olive branches on the side table" },
-    "hotel": { "title": "In Your Hotel Room", "alt": "The EasyGoSpa green bag and folded towels at the foot of a hotel bed at dusk, city lights outside the window" },
-    "thai": { "title": "Thai Massage", "alt": "A cotton-wrapped herbal compress on a folded towel, with lemongrass and an olive sprig" },
-    "kit": { "title": "Everything in One Bag", "alt": "The EasyGoSpa green bag, folded towels, an oil bottle and an olive sprig on a wooden sideboard in late-afternoon light" },
-    "stones": { "title": "Warm Stones", "alt": "Three warm dark massage stones on a folded towel, one resting in a brass dish" },
-    "ready": { "title": "Ready to Come to You", "alt": "A folded EasyGoSpa uniform on top of the green bag by the door, ready to go" },
-    "shiatsu": { "title": "Shiatsu, No Oil", "alt": "Three folded towels tied with an olive cotton tape, no oil needed" },
-    "oil": { "title": "Aromatherapy Oils", "alt": "Two essential-oil bottles and a bowl of oil with floating olive leaves, beside an olive branch" }
+    "home": {
+      "title": "At Your Home",
+      "alt": "Therapist Mia smiling at a client’s front door, carrying the green EasyGoSpa bag and towels"
+    },
+    "condo": {
+      "title": "At Your Condo",
+      "alt": "Therapist Mia smiling in a condo living room, the city at dusk outside the window"
+    },
+    "hotel": {
+      "title": "In Your Hotel Room",
+      "alt": "Therapist Mia at a hotel room door with the green EasyGoSpa bag and towels"
+    },
+    "oil": {
+      "title": "Warming the Oil First",
+      "alt": "A therapist warming massage oil between her palms, folded towels and an oil bottle beside her"
+    },
+    "kit": {
+      "title": "Everything in One Bag",
+      "alt": "The EasyGoSpa green bag, folded towels, an oil bottle and an olive sprig on a wooden sideboard in late-afternoon light"
+    },
+    "night": {
+      "title": "Late at Night Too",
+      "alt": "The EasyGoSpa green bag and folded towels at the foot of a hotel bed at dusk, city lights outside the window"
+    },
+    "swedish": {
+      "alt": "Massage oil pouring from an amber bottle into a brass dish, with a folded towel and an olive sprig"
+    },
+    "deep": {
+      "alt": "A therapist’s hands resting flat on a folded towel, olive piping on the uniform cuffs"
+    },
+    "stone": {
+      "alt": "Three warm dark massage stones on a folded towel, one resting in a brass dish"
+    },
+    "aroma": {
+      "alt": "Two essential-oil bottles and a bowl of oil with floating olive leaves, beside an olive branch"
+    },
+    "thai": {
+      "alt": "An ivory cotton floor mat on a wooden floor with a round bolster, a folded towel and an olive sprig — no oil"
+    },
+    "shiatsu": {
+      "alt": "A therapist pressing her thumb into a folded towel, fingers relaxed — no oil"
+    }
   },
   "close": "Close",
   "prev": "Previous photo",

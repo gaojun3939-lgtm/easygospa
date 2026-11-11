@@ -1,20 +1,30 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import PageShell from '@/components/site/PageShell';
 import GalleryGrid from '@/components/site/GalleryGrid';
+import { niceName } from '@/components/site/serviceText';
 import { alternatesFor } from '@/i18n/routing';
 
 // 相册页（建站模版 serinity 有这一页；2026-11-10 老板「不要删减页面」，用我们自己的图放回来）。
-// 九张是 2026-11-11 老板挑定的第二套自家静物图（同一张台面、同一种傍晚窗光、深绿莲花包、橄榄绿条纹毛巾，没有人脸、没有按摩床），跟首页同一批图。
-const IMAGES = [
-  { src: '/global/photos/place-home.webp', key: 'home', category: 'home' },
-  { src: '/global/photos/place-condo.webp', key: 'condo', category: 'condo' },
-  { src: '/global/photos/place-hotel.webp', key: 'hotel', category: 'hotel' },
-  { src: '/global/photos/svc-thai.webp', key: 'thai', category: 'treatment' },
-  { src: '/global/photos/band-living.webp', key: 'kit', category: 'home' },
-  { src: '/global/photos/svc-stone.webp', key: 'stones', category: 'treatment' },
-  { src: '/global/photos/closing-corridor.webp', key: 'ready', category: 'hotel' },
-  { src: '/global/photos/svc-shiatsu.webp', key: 'shiatsu', category: 'treatment' },
-  { src: '/global/photos/svc-aroma.webp', key: 'oil', category: 'treatment' },
+// 11-11 老板「图集里面的内容有点 不对吧」→「执行」：以前九张里五张都是深绿包加毛巾、一个人都没有、泰式配了草药球、少了瑞典和深层、标题手机上看不到。现在分两组：
+// 一、上门是什么样子：技师 Mia 到家门口 / 在公寓 / 到酒店房门口（Mia 定稿照和开场片原片截帧，房间看得出来），搓热精油，加两张静物（用品一包带齐、夜里的酒店）。
+// 二、按摩项目：后台六个项目各一张，名字跟服务项目页同一份翻译（serviceNames）；泰式干推是地垫不用油，指压是大拇指按、不用油。
+// pos：图片在 4:3 框里往哪边对齐，保证人和东西不被裁掉。
+const VISIT = [
+  { key: 'home', src: '/global/photos/gal-home.webp', pos: 'object-[75%_50%]' },
+  { key: 'condo', src: '/global/photos/team-rated.webp', pos: 'object-[95%_30%]' },
+  { key: 'hotel', src: '/global/photos/gal-hotel.webp', pos: 'object-[40%_30%]' },
+  { key: 'oil', src: '/global/photos/gal-oil.webp', pos: 'object-[75%_50%]' },
+  { key: 'kit', src: '/global/photos/band-living.webp', pos: 'object-[80%_50%]' },
+  { key: 'night', src: '/global/photos/place-hotel.webp', pos: 'object-[50%_30%]' },
+];
+// name = 后台项目的英文原名（serviceNames 里按它翻译）
+const TREATMENTS = [
+  { key: 'swedish', name: 'Swedish Massage', src: '/global/photos/svc-swedish.webp' },
+  { key: 'deep', name: 'Deep tissue', src: '/global/photos/svc-deep.webp' },
+  { key: 'thai', name: 'Thai Body Massage', src: '/global/photos/svc-thai.webp' },
+  { key: 'shiatsu', name: 'Shiatsu Massage(without Oil)', src: '/global/photos/need-pressure.webp', pos: 'object-[50%_25%]' },
+  { key: 'stone', name: 'Hot Stone Massage', src: '/global/photos/svc-stone.webp' },
+  { key: 'aroma', name: 'Relaxing Premium Aromatherapy Body Massage', src: '/global/photos/svc-aroma.webp' },
 ];
 
 export async function generateMetadata({ params }) {
@@ -27,21 +37,26 @@ export default async function GalleryPage({ params }) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: 'gallery' });
-  const images = IMAGES.map((image) => ({
-    src: image.src,
-    title: t(`items.${image.key}.title`),
-    alt: t(`items.${image.key}.alt`),
-    category: t(`categories.${image.category}`),
-  }));
+  const tn = await getTranslations({ locale, namespace: 'serviceNames' });
+  const groups = [
+    {
+      title: t('groups.visit'),
+      images: VISIT.map((image) => ({ src: image.src, pos: image.pos, title: t(`items.${image.key}.title`), alt: t(`items.${image.key}.alt`) })),
+    },
+    {
+      title: t('groups.treatments'),
+      images: TREATMENTS.map((image) => ({ src: image.src, pos: image.pos, title: tn.has(image.name) ? tn(image.name) : niceName(image.name), alt: t(`items.${image.key}.alt`) })),
+    },
+  ];
   return (
     <PageShell
       pill={t('pill')}
       title={t('title')}
       lead={t('lead')}
-      image="/global/photos/closing-corridor.webp"
+      image="/global/photos/band-living.webp"
       cta={{ title: t('ctaTitle'), text: t('ctaText'), button: t('ctaButton') }}
     >
-      <GalleryGrid images={images} labels={{ close: t('close'), prev: t('prev'), next: t('next'), count: t.raw('count') }} />
+      <GalleryGrid groups={groups} labels={{ close: t('close'), prev: t('prev'), next: t('next'), count: t.raw('count') }} />
     </PageShell>
   );
 }
