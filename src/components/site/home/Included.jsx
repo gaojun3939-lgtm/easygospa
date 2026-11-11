@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Banknote, BadgeCheck, Clock, HandCoins, Home, ReceiptText, Shirt } from 'lucide-react'
+import { Banknote, BadgeCheck, Clock, HandCoins, Home, Navigation, ReceiptText } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { nums } from '../nums'
 
@@ -12,7 +12,7 @@ const ITEMS = [
   { key: 'cash', icon: Banknote },
   { key: 'tips', icon: HandCoins },
   { key: 'verified', icon: BadgeCheck },
-  { key: 'uniform', icon: Shirt },
+  { key: 'eta', icon: Navigation }, // 11-11 原来是「统一着装」，老板说技师不一定穿制服 → 换成 App 真有的「随时看到技师多久到」
   { key: 'open', icon: Clock },
   { key: 'places', icon: Home },
 ]

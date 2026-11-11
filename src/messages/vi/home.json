@@ -32,8 +32,8 @@
     },
     "verified": {
       "title": "Kỹ thuật viên đã xác minh",
-      "sub": "Được đào tạo · Đã kiểm tra giấy tờ · Mặc đồng phục",
-      "text": "Giấy tờ tùy thân của mọi kỹ thuật viên đều được kiểm tra trước khi nhận đơn, và họ luôn mặc đồng phục EasyGoSpa khi đến."
+      "sub": "Được đào tạo · Đã xác minh giấy tờ · Ảnh thật",
+      "text": "Mọi kỹ thuật viên đều được xác minh giấy tờ trước khi nhận đơn. Khi đặt lịch, bạn thấy ảnh thật và tên thật của họ."
     },
     "cash": {
       "title": "Trả tiền khi đến nơi",
@@ -96,7 +96,7 @@
       "cash": "Tiền mặt khi đến",
       "tips": "Không cần tip",
       "verified": "Đã xác minh danh tính",
-      "uniform": "Luôn mặc đồng phục",
+      "eta": "Biết khi nào kỹ thuật viên đến",
       "open": "Mở cửa 24/7",
       "places": "Nhà, căn hộ, khách sạn"
     }

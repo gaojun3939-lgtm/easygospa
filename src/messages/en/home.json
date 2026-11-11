@@ -32,8 +32,8 @@
     },
     "verified": {
       "title": "Verified Therapists",
-      "sub": "Trained · ID-checked · Uniformed",
-      "text": "Every therapist’s ID is checked before they take bookings, and they always arrive in the EasyGoSpa uniform."
+      "sub": "Trained · ID-checked · Real photos",
+      "text": "Every therapist’s ID is checked before they take bookings. When you book, you see their real photo and name."
     },
     "cash": {
       "title": "Pay on Arrival",
@@ -96,7 +96,7 @@
       "cash": "Cash on arrival",
       "tips": "No tips expected",
       "verified": "ID-verified therapists",
-      "uniform": "Always in uniform",
+      "eta": "See when your therapist arrives",
       "open": "Open 24/7",
       "places": "Home, condo or hotel"
     }
