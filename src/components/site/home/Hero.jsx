@@ -6,9 +6,9 @@ import { MapPin } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { AppleLogo, PlayLogo } from '../StoreLogos'
 
-// 首屏（2026-11-11 老板定）：整屏开场片「点一下，她就到」+ 一句大标题 + 两个商店按钮 + 一行「现已开通 · 马尼拉」。
+// 首屏（2026-11-11 老板定）：开场片「点一下，她就到」+ 一句大标题 + 两个商店按钮 + 一行「现已开通 · 马尼拉」。
 // 首屏只讲 App（老板 11-11「官网顶部显示的就说 app」），不放网页预约。
-// 电脑版：字在左边，片子里的人和手机都在右边；手机版：字压在下半截。
+// 电脑版：字在左下，片子里的人和手机都在右边；手机版：字压在下半截。
 // 片子按屏幕宽窄只下一份（电脑约 4MB、手机约 2MB）；系统开了「减少动态效果」就只显示封面（结尾 Mia 微笑那帧）。
 
 function HeroVideo({ label }) {
@@ -37,20 +37,18 @@ function HeroVideo({ label }) {
 }
 
 // 商店按钮：手机上点了直接去商店；电脑上鼠标移上去在按钮上方弹出二维码（电脑装不了手机 App）
-function Store({ kind, live, href, qrSvg, top, scan }) {
+// 11-11 老板嫌首屏「太大」：按钮按商店官方徽章的大小做（48 高），只留标志和名字
+function Store({ kind, live, href, qrSvg, scan }) {
   const apple = kind === 'apple'
   const Logo = apple ? AppleLogo : PlayLogo
-  const base = 'inline-flex items-center gap-3 rounded-2xl pl-4 pr-6 h-[60px] transition-all duration-300'
+  const base = 'inline-flex items-center gap-2.5 rounded-xl pl-3.5 pr-5 h-12 transition-all duration-300 [&_svg]:h-5 [&_svg]:w-auto'
   const look = apple
     ? 'bg-white text-[#0F0F0F] hover:bg-[#F3F0EA]'
-    : 'bg-white/10 text-white border border-white/45 backdrop-blur-sm hover:bg-white/20'
+    : 'bg-white/10 text-white border border-white/40 backdrop-blur-sm hover:bg-white/20'
   const inner = (
     <>
       <Logo />
-      <span className="flex flex-col leading-tight text-left">
-        <small className="text-[11px] opacity-75 whitespace-nowrap">{top}</small>
-        <b className="text-lg font-semibold whitespace-nowrap">{apple ? 'App Store' : 'Google Play'}</b>
-      </span>
+      <b className="text-[15px] font-semibold whitespace-nowrap">{apple ? 'App Store' : 'Google Play'}</b>
     </>
   )
   if (!live) return <span aria-disabled="true" className={`${base} ${look} opacity-60 cursor-default`}>{inner}</span>
@@ -67,28 +65,31 @@ function Store({ kind, live, href, qrSvg, top, scan }) {
   )
 }
 
+// 11-11 老板嫌「太大」→ 照六善、我们 .ph 站的做法：视频照样铺满，但只占九成屏高（露出下一块的开头）；
+// 标题 56 像素细一档的衬线字（中日韩泰自动换成系统字），标题、按钮、一行小字挨着排在左下角，不压画面中间。
 export default function Hero({ onPlay, onApple, playHref, appleHref, qrSvg }) {
   const t = useTranslations('home.hero')
-  const tb = useTranslations('referral.badges')
   return (
-    <section className="relative min-h-[100svh] w-full overflow-hidden bg-[#0E100B]">
+    <section className="relative h-[88svh] min-h-[520px] w-full overflow-hidden bg-[#0E100B]">
       <span data-nav-over-dark hidden />
       <HeroVideo label={t('videoLabel')} />
-      {/* 衬字的暗色：电脑从左往右淡，手机从下往上淡 */}
-      <div className="absolute inset-0 hidden md:block bg-gradient-to-r from-black/75 via-black/40 via-45% to-transparent to-65%" aria-hidden="true" />
-      <div className="absolute inset-0 md:hidden bg-gradient-to-t from-black/90 via-black/55 via-40% to-transparent to-65%" aria-hidden="true" />
+      {/* 衬字的暗色：只在左下角那一片压暗 */}
+      <div className="absolute inset-0 hidden md:block bg-gradient-to-r from-black/60 via-black/20 via-40% to-transparent to-60%" aria-hidden="true" />
+      <div className="absolute inset-0 hidden md:block bg-gradient-to-t from-black/70 via-black/25 via-30% to-transparent to-55%" aria-hidden="true" />
+      {/* 手机上字压在 Mia 的米白制服上，要压得更暗才看得清 */}
+      <div className="absolute inset-0 md:hidden bg-gradient-to-t from-black/90 via-black/65 via-35% to-transparent to-62%" aria-hidden="true" />
 
-      <div className="relative z-10 min-h-[100svh] max-w-7xl mx-auto px-5 sm:px-8 flex items-end md:items-center pb-12 md:pb-0">
-        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: 'easeOut' }} className="w-full md:max-w-[52%]">
-          <h1 className="text-white font-semibold leading-[1.08] tracking-[0.02em] text-[clamp(2.5rem,5.6vw,5.5rem)] drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]">
+      <div className="relative z-10 h-full max-w-7xl mx-auto px-5 sm:px-8 flex items-end pb-28 md:pb-[10svh]">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: 'easeOut' }} className="w-full md:max-w-[46%]">
+          <h1 className="font-serif text-white leading-[1.12] text-[clamp(2.1rem,3.65vw,3.5rem)] drop-shadow-[0_2px_10px_rgba(0,0,0,0.3)]">
             {t('title1')}<br />{t('title2')}
           </h1>
-          <div className="flex flex-wrap gap-3 mt-8 md:mt-11">
-            <Store kind="apple" live={onApple} href={appleHref} qrSvg={qrSvg} top={onApple ? tb('appStore.get') : tb('appStore.soon')} scan={t('scan')} />
-            <Store kind="play" live={onPlay} href={playHref} qrSvg={qrSvg} top={onPlay ? tb('googlePlay.get') : tb('googlePlay.soon')} scan={t('scan')} />
+          <div className="flex flex-wrap gap-3 mt-6">
+            <Store kind="apple" live={onApple} href={appleHref} qrSvg={qrSvg} scan={t('scan')} />
+            <Store kind="play" live={onPlay} href={playHref} qrSvg={qrSvg} scan={t('scan')} />
           </div>
-          <p className="mt-6 flex items-center gap-2 text-sm text-[#DDE6CC]">
-            <MapPin className="w-4 h-4 text-[#C9D4B4]" aria-hidden="true" />
+          <p className="mt-4 flex items-center gap-1.5 text-[13px] text-[#DDE6CC]">
+            <MapPin className="w-3.5 h-3.5 text-[#C9D4B4]" aria-hidden="true" />
             {t('available')}
           </p>
         </motion.div>
