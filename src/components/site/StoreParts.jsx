@@ -22,11 +22,11 @@ export function StatusChip({ store, t, locale, onDark = false }) {
   const cls = onDark
     ? 'bg-white/90 text-[#55633F]'
     : open ? 'bg-[#64734F] text-white' : 'bg-[#64734F]/10 text-[#55633F]'
-  return <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium ${cls}`}>{open ? <span className="w-1.5 h-1.5 rounded-full bg-current" aria-hidden="true" /> : null}{label}</span>
+  return <span className={`self-start w-fit inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium ${cls}`}>{open ? <span className="w-1.5 h-1.5 rounded-full bg-current" aria-hidden="true" /> : null}{label}</span>
 }
 
 export function BookButton({ store, t, wide = false }) {
-  const base = `inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 font-medium transition-all duration-300 ${wide ? 'w-full' : ''}`
+  const base = `inline-flex items-center justify-center gap-2 rounded-full py-3 font-medium whitespace-nowrap transition-all duration-300 ${wide ? 'w-full px-4' : 'px-6'}`
   if (store.status !== 'open' || store.booking === 'none') {
     return <span className={`${base} bg-gray-100 text-gray-500 cursor-default`}>{t('bookSoon')}</span>
   }
@@ -69,7 +69,7 @@ export function StoreCard({ store, t, locale }) {
           {store.hours ? <li className="flex items-start gap-2"><Clock className="w-4 h-4 mt-0.5 flex-none text-[#64734F]" aria-hidden="true" />{store.hours}</li> : null}
         </ul>
         <div className="mt-auto pt-2 grid grid-cols-2 gap-3">
-          <Link href={storePath(store)} className="inline-flex items-center justify-center rounded-full px-4 py-3 font-medium bg-[#64734F]/10 text-[#55633F] hover:bg-[#64734F]/20 transition-colors">{t('view')}</Link>
+          <Link href={storePath(store)} className="inline-flex items-center justify-center rounded-full px-4 py-3 font-medium whitespace-nowrap bg-[#64734F]/10 text-[#55633F] hover:bg-[#64734F]/20 transition-colors">{t('view')}</Link>
           <BookButton store={store} t={t} wide />
         </div>
       </div>
