@@ -7,15 +7,17 @@ import { Link } from '@/i18n/navigation'
 import SectionHead from '../SectionHead'
 import { NEED_ORDER } from '../serviceText'
 
-// 模版「Curated Wellness Journeys」：一排彩色卡片自己慢慢往左走，鼠标放上去停。
+// 模版「Curated Wellness Journeys」：一排卡片自己慢慢往左走，鼠标放上去停。
 // 模版写的是会员卡项目（美甲、修眉、做头发……），我们换成「身体需要什么」六种，点进服务页对应那一类。
+// 11-11 老板「这几个为什么不增加背景图片？」：模版的浅蓝、粉色色块换成同一套自家静物照（跟项目卡的图不重复），
+// 字改白色放在下面、压一层深色渐变；图标放进半透明小圆底。
 const STYLE = {
-  relax: { icon: Leaf, bg: 'bg-[#F5E6D8]' },
-  muscles: { icon: HeartPulse, bg: 'bg-[#E8F4F8]' },
-  stretch: { icon: Footprints, bg: 'bg-white border border-[#64734F]/20' },
-  pressure: { icon: Hand, bg: 'bg-[#EEF2E6]' },
-  warmth: { icon: Flame, bg: 'bg-[#F8E8F0]' },
-  calm: { icon: Moon, bg: 'bg-[#F3F0E8]' },
+  relax: { icon: Leaf, photo: '/global/photos/need-relax.webp' },
+  muscles: { icon: HeartPulse, photo: '/global/photos/need-muscles.webp' },
+  stretch: { icon: Footprints, photo: '/global/photos/need-stretch.webp' },
+  pressure: { icon: Hand, photo: '/global/photos/need-pressure.webp' },
+  warmth: { icon: Flame, photo: '/global/photos/need-warmth.webp' },
+  calm: { icon: Moon, photo: '/global/photos/need-calm.webp' },
 }
 
 export default function Journeys() {
@@ -59,15 +61,19 @@ export default function Journeys() {
               const style = STYLE[need]
               return (
                 <Link key={`${need}-${i}`} href={`/services?need=${need}`} className="flex-shrink-0 w-72 sm:w-80 group" aria-hidden={i >= NEED_ORDER.length ? 'true' : undefined} tabIndex={i >= NEED_ORDER.length ? -1 : undefined}>
-                  <div className={`${style.bg} rounded-3xl p-6 h-full flex flex-col hover:shadow-xl transition-all duration-500 group-hover:-translate-y-2 min-h-[280px]`}>
-                    <div className="mb-6 text-[#8B6F3F] group-hover:text-[#64734F] transition-colors duration-300">
-                      <style.icon className="w-9 h-9 md:w-10 md:h-10" strokeWidth={1.5} aria-hidden="true" />
+                  <div className="relative overflow-hidden bg-[#171A17] rounded-3xl p-6 h-full flex flex-col hover:shadow-xl transition-all duration-500 group-hover:-translate-y-2 min-h-[340px]">
+                    <img src={style.photo} alt="" aria-hidden="true" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/5" aria-hidden="true" />
+                    <div className="relative w-12 h-12 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center text-white">
+                      <style.icon className="w-6 h-6" strokeWidth={1.5} aria-hidden="true" />
                     </div>
-                    <h3 className="font-serif text-2xl text-[#0F0F0F] mb-4 group-hover:text-[#55633F] transition-colors duration-300 leading-tight">{tn(need)}</h3>
-                    <p className="font-sans text-gray-500 leading-relaxed mb-6 flex-grow">{t(`items.${need}`)}</p>
-                    <div className="flex items-center gap-2 font-sans text-sm font-medium text-gray-500 group-hover:text-[#55633F] transition-colors duration-300 mt-auto uppercase tracking-wide">
-                      {t('more')}
-                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" aria-hidden="true" />
+                    <div className="relative mt-auto pt-10">
+                      <h3 className="font-serif text-2xl text-white mb-3 leading-tight">{tn(need)}</h3>
+                      <p className="font-sans text-white/80 leading-relaxed mb-5">{t(`items.${need}`)}</p>
+                      <div className="flex items-center gap-2 font-sans text-sm font-medium text-white/80 group-hover:text-white transition-colors duration-300 uppercase tracking-wide">
+                        {t('more')}
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" aria-hidden="true" />
+                      </div>
                     </div>
                   </div>
                 </Link>

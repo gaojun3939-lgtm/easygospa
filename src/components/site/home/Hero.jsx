@@ -9,7 +9,8 @@ import { AppleLogo, PlayLogo } from '../StoreLogos'
 // 首屏（2026-11-11 老板定）：开场片「点一下，她就到」+ 一句大标题 + 两个商店按钮 + 一行「现已开通 · 马尼拉」。
 // 首屏只讲 App（老板 11-11「官网顶部显示的就说 app」），不放网页预约。
 // 电脑版：字在左下，片子里的人和手机都在右边；手机版：字压在下半截。
-// 片子按屏幕宽窄只下一份（电脑约 4MB、手机约 2MB）；系统开了「减少动态效果」就只显示封面（结尾 Mia 微笑那帧）。
+// 片子按屏幕宽窄只下一份（11-11 老板嫌糊后提清楚：电脑 1920×1080 约 11MB、手机 1080×1920 约 6MB）；系统开了「减少动态效果」就只显示封面（结尾 Mia 微笑那帧）。
+// 宽屏上片子要铺满宽度，上下会被裁；裁切偏下（object-position 中间 25%），人头和手机顶部不被切，裁掉的是下面放字的地方。
 
 function HeroVideo({ label }) {
   const ref = useRef(null)
@@ -25,7 +26,7 @@ function HeroVideo({ label }) {
   return (
     <video
       ref={ref}
-      className="absolute inset-0 w-full h-full object-cover"
+      className="absolute inset-0 w-full h-full object-cover object-[50%_25%]"
       poster="/global/video/hero-d.webp"
       muted
       loop
