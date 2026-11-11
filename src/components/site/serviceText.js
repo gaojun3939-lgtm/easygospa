@@ -1,6 +1,8 @@
 // 项目的名字、介绍、配图、价格写法（首页、服务页、价目页共用）。
 // 名字和介绍读后台（英文）；别的语言在 serviceNames / serviceInfo 两份文字里按后台原名对上，对不上就显示英文原文。
 // 后台改了英文介绍，别的语言要跟着改 src/messages/<语言>/serviceInfo.json。
+import { Flame, Footprints, Hand, HeartPulse, Leaf, Moon } from 'lucide-react'
+
 export const peso = (value) => `₱${Number(value).toLocaleString('en-US')}`
 export const niceName = (name) => String(name || '').replace(/\(/, ' (').replace(/\s+/g, ' ').trim()
 
@@ -13,8 +15,11 @@ const PHOTOS = [
   [/swedish/i, 'swedish', '/global/photos/svc-swedish.webp'],
   [/thai/i, 'thai', '/global/photos/svc-thai.webp'],
 ]
-// 「身体需要什么」：首页横排卡片和服务页的分类按钮都按这个。后台新加的项目对不上就只出现在「全部」里
+// 「身体需要什么」：首页横排卡片、服务页每张项目卡上的小标签都按这个（图标两边同一套）。
+// 11-12 老板「你这个里面放这个 合适不合适？」→ 服务页那排筛选按钮去掉（六个按钮对六个项目，点哪个都只剩一张）；首页卡片点进来带 ?need=，服务页滚到那一张、加绿边。
+// 后台新加的项目对不上就不带小标签
 export const NEED_ORDER = ['relax', 'muscles', 'stretch', 'pressure', 'warmth', 'calm']
+export const NEED_ICONS = { relax: Leaf, muscles: HeartPulse, stretch: Footprints, pressure: Hand, warmth: Flame, calm: Moon }
 const NEEDS = [[/swedish/i, 'relax'], [/deep/i, 'muscles'], [/thai/i, 'stretch'], [/shiatsu/i, 'pressure'], [/stone/i, 'warmth'], [/aroma/i, 'calm']]
 export const needOf = (name) => NEEDS.find(([match]) => match.test(String(name || '')))?.[1] || ''
 

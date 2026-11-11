@@ -1,24 +1,17 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { ArrowRight, Flame, Footprints, Hand, HeartPulse, Leaf, Moon } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
 import SectionHead from '../SectionHead'
-import { NEED_ORDER } from '../serviceText'
+import { NEED_ICONS, NEED_ORDER } from '../serviceText'
 
 // 模版「Curated Wellness Journeys」：一排卡片自己慢慢往左走，鼠标放上去停。
-// 模版写的是会员卡项目（美甲、修眉、做头发……），我们换成「身体需要什么」六种，点进服务页对应那一类。
+// 模版写的是会员卡项目（美甲、修眉、做头发……），我们换成「身体需要什么」六种，点进服务页滚到对应那个项目（11-12 起服务页不再筛选）。
 // 11-11 老板「这几个为什么不增加背景图片？」：模版的浅蓝、粉色色块换成同一套自家静物照（跟项目卡的图不重复），
-// 字改白色放在下面、压一层深色渐变；图标放进半透明小圆底。
-const STYLE = {
-  relax: { icon: Leaf, photo: '/global/photos/need-relax.webp' },
-  muscles: { icon: HeartPulse, photo: '/global/photos/need-muscles.webp' },
-  stretch: { icon: Footprints, photo: '/global/photos/need-stretch.webp' },
-  pressure: { icon: Hand, photo: '/global/photos/need-pressure.webp' },
-  warmth: { icon: Flame, photo: '/global/photos/need-warmth.webp' },
-  calm: { icon: Moon, photo: '/global/photos/need-calm.webp' },
-}
+// 字改白色放在下面、压一层深色渐变；图标放进半透明小圆底。图标跟服务页项目卡上的小标签同一套（NEED_ICONS）。
+const STYLE = Object.fromEntries(NEED_ORDER.map((need) => [need, { icon: NEED_ICONS[need], photo: `/global/photos/need-${need}.webp` }]))
 
 export default function Journeys() {
   const t = useTranslations('home.journeys')

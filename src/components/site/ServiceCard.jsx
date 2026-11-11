@@ -3,12 +3,15 @@
 import { motion } from 'framer-motion'
 import { ArrowRight, Clock } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { bookService, peso, serviceView } from './serviceText'
+import { bookService, NEED_ICONS, peso, serviceView } from './serviceText'
 
 // 模版的项目卡：上面一张图（右上价格、左下时长），下面名字、介绍、按钮。
 // 模版在按钮上面放了五颗星和 (4.9)——我们没有这个数，换成三档真价格（读后台）。
-export default function ServiceCard({ service, index = 0, fullText = false }) {
+// 服务页传 need：名字上面带「身体需要什么」小标签（图标跟首页那排卡片同一套）；anchor 给首页点进来滚到这张用；highlight = 首页点的就是这张，加一圈绿边。
+export default function ServiceCard({ service, index = 0, fullText = false, need = '', anchor, highlight = false }) {
   const t = useTranslations('common')
+  const tNeed = useTranslations('services.needs')
+  const NeedIcon = need ? NEED_ICONS[need] : null
   const tn = useTranslations('serviceNames')
   const ti = useTranslations('serviceInfo')
   const tAlt = useTranslations('services.photoAlt')
@@ -23,7 +26,8 @@ export default function ServiceCard({ service, index = 0, fullText = false }) {
       transition={{ duration: 0.8, delay: (index % 3) * 0.1, ease: 'easeOut' }}
       viewport={{ once: true }}
       whileHover={{ y: -8 }}
-      className="group bg-white rounded-3xl overflow-hidden shadow-lg flex flex-col"
+      id={anchor}
+      className={`group bg-white rounded-3xl overflow-hidden shadow-lg flex flex-col scroll-mt-28 ${highlight ? 'ring-[3px] ring-[#64734F] ring-offset-4 ring-offset-[#FAF7F2] shadow-2xl' : ''}`}
     >
       <div className="relative h-64 overflow-hidden">
         <img src={view.photo.src} alt={view.photo.alt} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" decoding="async" />
@@ -39,6 +43,12 @@ export default function ServiceCard({ service, index = 0, fullText = false }) {
         ) : null}
       </div>
       <div className="p-6 flex flex-col flex-1">
+        {NeedIcon ? (
+          <span className="self-start inline-flex items-center gap-1.5 bg-[#64734F]/10 text-[#55633F] px-3 py-1 rounded-full text-xs font-medium mb-3">
+            <NeedIcon className="w-3.5 h-3.5" aria-hidden="true" />
+            {tNeed(need)}
+          </span>
+        ) : null}
         <h3 className="font-serif text-xl text-[#0F0F0F] mb-3 group-hover:text-[#55633F] transition-colors duration-300">{view.name}</h3>
         {view.description ? <p className={`text-gray-600 text-sm leading-relaxed mb-4 ${fullText ? '' : 'line-clamp-3'}`}>{view.description}</p> : null}
         <div className="mt-auto">
