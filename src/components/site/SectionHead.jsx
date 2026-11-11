@@ -12,7 +12,7 @@ export default function SectionHead({ pill, title1, title2, lead, dark = false, 
     <motion.div {...rise()} className={`text-center ${className}`}>
       {pill ? (
         <div className={`inline-flex items-center gap-2 rounded-full px-4 py-2 mb-6 ${dark ? 'bg-[#64734F]/85' : 'bg-[#64734F]/10'}`}>
-          <BrandMark size={22} tone={dark ? 'light' : 'brand'} />
+          <BrandMark size={28} tone={dark ? 'light' : 'brand'} />
           <span className={`font-sans text-sm font-medium uppercase tracking-wider ${dark ? 'text-white' : 'text-[#55633F]'}`}>{pill}</span>
         </div>
       ) : null}

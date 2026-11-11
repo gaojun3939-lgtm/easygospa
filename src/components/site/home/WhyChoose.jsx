@@ -30,7 +30,7 @@ export default function WhyChoose() {
         <motion.div initial={{ opacity: 0, y: 80 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: 'easeOut' }} viewport={{ once: true }} className="space-y-8 text-center">
           <div>
             <div className="inline-flex items-center gap-2 bg-[#64734F]/10 rounded-full px-4 py-2 mb-6">
-              <BrandMark size={22} />
+              <BrandMark size={28} />
               <span className="font-sans text-sm text-[#55633F] font-medium uppercase tracking-wider">{t('pill')}</span>
             </div>
             <h2 className="font-serif text-4xl md:text-[2.6rem] lg:text-5xl mb-6 leading-tight">

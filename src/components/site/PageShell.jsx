@@ -28,7 +28,7 @@ export default function PageShell({ pill, title, lead, image = '/global/photos/b
         <header className="text-center mb-14 animate-fadeInUp">
           {pill ? (
             <div className="inline-flex items-center gap-2 bg-[#64734F]/10 rounded-full px-4 py-2 mb-6">
-              <BrandMark size={22} />
+              <BrandMark size={28} />
               <span className="text-base font-medium text-[#55633F]">{pill}</span>
             </div>
           ) : null}
