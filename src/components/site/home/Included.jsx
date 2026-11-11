@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Banknote, BadgeCheck, Clock, HandCoins, Home, Navigation, ReceiptText } from 'lucide-react'
+import { BadgeCheck, Clock, HandCoins, Home, Navigation, ReceiptText, Wallet } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { nums } from '../nums'
 
@@ -9,7 +9,7 @@ import { nums } from '../nums'
 // 模版写的是有机产品（无硫酸盐、无酒精……），我们没有这套说法，换成每一单都一样的几条实话。
 const ITEMS = [
   { key: 'prices', icon: ReceiptText },
-  { key: 'cash', icon: Banknote },
+  { key: 'cash', icon: Wallet }, // 11-12 起写「现金或线上付款」
   { key: 'tips', icon: HandCoins },
   { key: 'verified', icon: BadgeCheck },
   { key: 'eta', icon: Navigation }, // 11-11 原来是「统一着装」，老板说技师不一定穿制服 → 换成 App 真有的「随时看到技师多久到」

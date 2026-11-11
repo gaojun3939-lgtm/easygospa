@@ -2,13 +2,13 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Banknote, ChevronLeft, ChevronRight, Clock, HandCoins, MapPin, Quote, UserRound } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Clock, HandCoins, MapPin, Quote, UserRound, Wallet } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
 // 模版这里是客人评价轮播（头像、一段话、五颗星、名字）。我们现在没有能公开的真评价，不编；
 // 同样的轮播先放客人最常问的五个问题，有了真评价再换回来。
 const ITEMS = [
-  { key: 'pay', icon: Banknote },
+  { key: 'pay', icon: Wallet }, // 11-12 起付款写「现金或 App 里线上付款」
   { key: 'tips', icon: HandCoins },
   { key: 'where', icon: MapPin },
   { key: 'choose', icon: UserRound },

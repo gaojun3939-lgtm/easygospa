@@ -31,14 +31,19 @@
       "text": "Không kẹt xe, không tìm chỗ đậu, không phải chờ. Bạn cứ ở yên tại chỗ và thư giãn."
     },
     "verified": {
-      "title": "Kỹ thuật viên đã xác minh",
-      "sub": "Được đào tạo · Đã xác minh giấy tờ · Ảnh thật",
-      "text": "Mọi kỹ thuật viên đều được xác minh giấy tờ trước khi nhận đơn. Khi đặt lịch, bạn thấy ảnh thật và tên thật của họ."
+      "title": "Kỹ thuật viên đã xác minh, bạn tự chọn",
+      "sub": "Đã xác minh giấy tờ · Ảnh thật · Đánh giá",
+      "text": "Mọi kỹ thuật viên đều được kiểm tra giấy tờ và ảnh selfie trước khi nhận đơn. Bạn xem ảnh thật, tên và điểm đánh giá, chọn ai thì người đó đến."
     },
-    "cash": {
-      "title": "Trả tiền khi đến nơi",
-      "sub": "Tiền mặt · Không cần tip",
-      "text": "Không phải trả trước. Bạn trả tiền mặt cho kỹ thuật viên khi họ đến nơi."
+    "eta": {
+      "title": "Biết khi nào kỹ thuật viên đến",
+      "sub": "Khoảng cách trực tiếp · Giờ đến · Nhắn tin trực tiếp",
+      "text": "Khi kỹ thuật viên xuất phát, ứng dụng cho bạn thấy họ còn cách bao xa và khoảng mấy giờ sẽ đến. Sau khi nhận đơn, bạn có thể nhắn tin trực tiếp cho họ."
+    },
+    "pay": {
+      "title": "Thanh toán dễ dàng",
+      "sub": "Tiền mặt · Trực tuyến · Không cần tip",
+      "text": "Trả tiền mặt khi kỹ thuật viên đến, hoặc thanh toán trực tuyến trong ứng dụng bằng GCash, Maya và nhiều cách khác. Không cần đặt cọc, không cần tip."
     },
     "cta": "Đặt lịch massage",
     "imageAlt": "Túi xanh EasyGoSpa, khăn gấp gọn và bát gốm trên băng ghế cuối giường trong phòng ngủ tại nhà"
@@ -54,13 +59,13 @@
     "pill": "Vì sao chọn EasyGoSpa",
     "title1": "Massage tại nhà cao cấp,",
     "title2": "đến tận cửa nhà bạn",
-    "lead": "Massage chuyên nghiệp tại khách sạn, căn hộ hoặc nhà riêng của bạn khắp Metro Manila, giá rõ ràng và không phải trả gì cho đến khi kỹ thuật viên đến.",
+    "lead": "Massage chuyên nghiệp tại khách sạn, căn hộ hoặc nhà riêng của bạn khắp Metro Manila, giá rõ ràng. Trả tiền mặt khi kỹ thuật viên đến, hoặc thanh toán trực tuyến trong ứng dụng.",
     "from": {
       "label": "Massage 60 phút"
     },
     "cash": {
-      "value": "Trả tiền mặt",
-      "label": "khi kỹ thuật viên đến nơi"
+      "value": "Tiền mặt hoặc trực tuyến",
+      "label": "khi đến nơi hoặc trong ứng dụng"
     },
     "tips": {
       "value": "Không cần tip",
@@ -90,10 +95,10 @@
   "included": {
     "title1": "Đơn giản, minh bạch",
     "title2": "Lần nào đặt cũng vậy",
-    "lead": "Mọi mức giá đều được niêm yết trước khi bạn đặt lịch. Bạn trả tiền mặt cho kỹ thuật viên khi họ đến, và không bao giờ phải trả tip.",
+    "lead": "Mọi mức giá đều được niêm yết trước khi bạn đặt lịch. Trả tiền mặt khi kỹ thuật viên đến hoặc thanh toán trực tuyến trong ứng dụng, và không bao giờ phải trả tip.",
     "items": {
       "prices": "Giá niêm yết sẵn",
-      "cash": "Tiền mặt khi đến",
+      "cash": "Tiền mặt hoặc trực tuyến",
       "tips": "Không cần tip",
       "verified": "Đã xác minh danh tính",
       "eta": "Biết khi nào kỹ thuật viên đến",
@@ -152,7 +157,7 @@
     "next": "Câu hỏi tiếp theo",
     "pay": {
       "q": "Tôi thanh toán thế nào?",
-      "a": "Bằng tiền mặt, trả trực tiếp cho kỹ thuật viên khi họ đến. Không trả trước, không cần đặt cọc.",
+      "a": "Cả hai đều được: trả tiền mặt cho kỹ thuật viên khi họ đến, hoặc thanh toán trực tuyến trong ứng dụng bằng GCash, Maya và nhiều cách khác. Không cần đặt cọc.",
       "tag": "Thanh toán"
     },
     "tips": {

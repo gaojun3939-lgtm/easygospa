@@ -1,5 +1,5 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { Banknote, HandCoins } from 'lucide-react';
+import { HandCoins, Wallet } from 'lucide-react';
 import PageShell from '@/components/site/PageShell';
 import PriceList from '@/components/site/PriceList';
 import { loadPublicServiceMenu } from '@/lib/publicServiceMenu.mjs';
@@ -37,7 +37,7 @@ export default async function PricingPage({ params }) {
       cta={{ title: t('pick'), text: t('foot'), button: tc('bookNow') }}
     >
       <div className="flex flex-wrap justify-center gap-3 mb-10">
-        <span className="inline-flex items-center gap-2 rounded-full bg-white border border-[#64734F]/20 px-4 py-2 text-sm text-[#55633F]"><Banknote className="w-4 h-4" aria-hidden="true" />{t('cash')}</span>
+        <span className="inline-flex items-center gap-2 rounded-full bg-white border border-[#64734F]/20 px-4 py-2 text-sm text-[#55633F]"><Wallet className="w-4 h-4" aria-hidden="true" />{t('cash')}</span>
         <span className="inline-flex items-center gap-2 rounded-full bg-white border border-[#64734F]/20 px-4 py-2 text-sm text-[#55633F]"><HandCoins className="w-4 h-4" aria-hidden="true" />{t('tips')}</span>
       </div>
       {services.length ? <PriceList services={services} /> : <p className="text-center text-gray-600">{t('empty')}</p>}

@@ -31,14 +31,19 @@
       "text": "No traffic, no parking, no waiting room. Stay where you are and relax."
     },
     "verified": {
-      "title": "Verified Therapists",
-      "sub": "Trained · ID-checked · Real photos",
-      "text": "Every therapist’s ID is checked before they take bookings. When you book, you see their real photo and name."
+      "title": "Verified Therapists You Choose",
+      "sub": "ID-checked · Real photos · Ratings",
+      "text": "Every therapist’s ID and selfie are checked before they take bookings. You see their real photo, name and rating, and the therapist you pick is the one who comes."
     },
-    "cash": {
-      "title": "Pay on Arrival",
-      "sub": "Cash · No tips expected",
-      "text": "Nothing to pay upfront. You pay your therapist in cash when they arrive."
+    "eta": {
+      "title": "Know When They’ll Arrive",
+      "sub": "Live distance · Arrival time · Direct messages",
+      "text": "Once your therapist sets off, the app shows how far away they are and roughly when they’ll arrive. After they accept, you can message them directly."
+    },
+    "pay": {
+      "title": "Easy Payment",
+      "sub": "Cash · Online · No tips expected",
+      "text": "Pay your therapist in cash when they arrive, or pay online in the app with GCash, Maya and more. No deposit, and no tips expected."
     },
     "cta": "Book a Massage",
     "imageAlt": "The EasyGoSpa green bag, folded towels and a stoneware bowl on a bench at the foot of a bed at home"
@@ -54,13 +59,13 @@
     "pill": "Why EasyGoSpa",
     "title1": "Premium Home Massage,",
     "title2": "Delivered to Your Door",
-    "lead": "Professional massage at your hotel, condo or home across Metro Manila, with clear prices and nothing to pay until your therapist arrives.",
+    "lead": "Professional massage at your hotel, condo or home across Metro Manila, with clear prices. Pay in cash when your therapist arrives, or online in the app.",
     "from": {
       "label": "60-minute massage"
     },
     "cash": {
-      "value": "Pay cash",
-      "label": "when your therapist arrives"
+      "value": "Cash or online",
+      "label": "on arrival, or in the app"
     },
     "tips": {
       "value": "No tips",
@@ -90,10 +95,10 @@
   "included": {
     "title1": "Simple and Upfront",
     "title2": "Every Booking, Every Time",
-    "lead": "Every price is listed before you book. You pay your therapist in cash when they arrive, and tips are never expected.",
+    "lead": "Every price is listed before you book. Pay in cash when your therapist arrives or online in the app, and tips are never expected.",
     "items": {
       "prices": "Prices listed upfront",
-      "cash": "Cash on arrival",
+      "cash": "Cash or online payment",
       "tips": "No tips expected",
       "verified": "ID-verified therapists",
       "eta": "See when your therapist arrives",
@@ -152,7 +157,7 @@
     "next": "Next question",
     "pay": {
       "q": "How do I pay?",
-      "a": "In cash, to your therapist, when they arrive. Nothing is paid upfront and no deposit is needed.",
+      "a": "Either way: in cash to your therapist when they arrive, or online in the app with GCash, Maya and more. No deposit is needed.",
       "tag": "Payment"
     },
     "tips": {

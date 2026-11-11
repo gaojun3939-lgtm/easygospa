@@ -1,17 +1,20 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Banknote, Home, ShieldCheck } from 'lucide-react'
+import { Home, Navigation, ShieldCheck, Wallet } from 'lucide-react'
 import BrandMark from '@/components/BrandMark'
 import { useTranslations } from 'next-intl'
 import { openBooking } from '../motion'
 import { nums } from '../nums'
 
-// 模版「Why Choose」：左边一张竖图，右边小胶囊、两行大字、一段话、三条带图标的理由、一个按钮
+// 模版「Why Choose」：左边一张竖图，右边小胶囊、两行大字、一段话、带图标的理由、一个按钮
+// 11-12 老板「付款 可以多种选择啊，我们要接三方支付的嘛，还有能看到多久过来」「线上开通了 因为我们马上接了」→ 三条改四条：
+// 上门服务 / 实名认证·自己挑技师 / 随时知道多久到（App 进度页现成的）/ 付款方便（到场付现金或 App 里线上付款）
 const FEATURES = [
   { key: 'come', icon: Home },
   { key: 'verified', icon: ShieldCheck },
-  { key: 'cash', icon: Banknote },
+  { key: 'eta', icon: Navigation },
+  { key: 'pay', icon: Wallet },
 ]
 
 export default function WhyChoose() {
