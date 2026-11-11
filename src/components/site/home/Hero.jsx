@@ -149,8 +149,8 @@ export default function Hero({ onPlay, onApple, playHref, appleHref, qrSvg }) {
       <div className="absolute inset-0 hidden md:block bg-gradient-to-t from-black/75 via-black/25 via-30% to-transparent to-55%" aria-hidden="true" />
       {/* 顶上一条压暗：开场片推镜头最后一秒手机顶到菜单下面，白屏衬白字看不清（大厂视频首屏都有这一条） */}
       <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/55 to-transparent" aria-hidden="true" />
-      {/* 手机上字压在 Mia 的米白制服上，要压得更暗才看得清 */}
-      <div className="absolute inset-0 md:hidden bg-gradient-to-t from-black/90 via-black/65 via-35% to-transparent to-62%" aria-hidden="true" />
+      {/* 手机上字压在 Mia 的米白制服上，要压得更暗才看得清（11-11 加了小字和进度条，字块变高，压暗往上延到 78%） */}
+      <div className="absolute inset-0 md:hidden bg-gradient-to-t from-black/90 via-black/65 via-45% to-transparent to-78%" aria-hidden="true" />
 
       {/* 底下留出圆章的位置：圆章压在首屏下沿正中，往上露出 70 / 80 / 90 像素（手机 / 平板 / 电脑），进度条和暂停键不能被它盖住 */}
       <div className="relative z-10 h-full max-w-7xl mx-auto px-5 sm:px-8 flex items-end pb-24 md:pb-[100px] lg:pb-[108px]">
