@@ -7,17 +7,17 @@ import { alternatesFor } from '@/i18n/routing';
 // 相册页（建站模版 serinity 有这一页；2026-11-10 老板「不要删减页面」，用我们自己的图放回来）。
 // 11-11 老板「图集里面的内容有点 不对吧」→「执行」：以前九张里五张都是深绿包加毛巾、一个人都没有、泰式配了草药球、少了瑞典和深层、标题手机上看不到。现在分两组：
 // 一、从下单到按完：老板「这上面 应该是一套 下单的程序 对吧？」→ 按客人用 App 的先后顺序排 1–6 步：
-//    挑技师、下单、技师出发（App 真截图，主窗口用调试包演示单截的，技师换成 Mia）→ 到您门口（Mia 定稿全身照）→ 开始按摩（开场片搓精油）→ 按完评分。
+//    挑技师、下单、技师出发（App 真截图，主窗口用调试包演示单截的，技师换成 Mia）→ 到您门口（开场片竖拍的酒店门口）→ 开始按摩（开场片搓精油，两手合在一起那一帧）→ 按完评分。
+//    11-12 老板「你这个 app 显示的都没完全显示出来 这不扯淡么」→ 这一组格子改成竖的 9:16，App 截图用整屏（不裁），整部手机从顶上时间到底下按钮全露出来。
 //    App 截图只有中文和英文两种：中文页用中文图，其他语言用英文图。
 // 二、按摩项目：后台六个项目各一张，图和名字都跟服务项目页同一份（svc-*、serviceNames）；泰式干推是地垫不用油，指压是一只手大拇指按毛巾、不用油（老板「指压那张也换了」）。
-// pos：图片在 4:3 框里往哪边对齐，保证人和东西不被裁掉。
 const appShot = (name) => (locale) => `/global/photos/${name}-${locale.startsWith('zh') ? 'zh' : 'en'}.webp`;
 const STEPS = [
   { key: 'pick', src: appShot('gal-step-pick') },
   { key: 'book', src: appShot('gal-step-book') },
   { key: 'depart', src: appShot('gal-step-depart') },
-  { key: 'arrive', src: '/global/photos/gal-home.webp', pos: 'object-[75%_50%]' },
-  { key: 'massage', src: '/global/photos/gal-oil.webp', pos: 'object-[75%_50%]' },
+  { key: 'arrive', src: '/global/photos/gal-step-arrive.webp' },
+  { key: 'massage', src: '/global/photos/gal-step-massage.webp' },
   { key: 'rate', src: appShot('gal-step-rate') },
 ];
 // name = 后台项目的英文原名（serviceNames 里按它翻译）
@@ -44,6 +44,7 @@ export default async function GalleryPage({ params }) {
   const groups = [
     {
       title: t('groups.steps'),
+      aspect: 'aspect-[9/16]',
       images: STEPS.map((image, i) => ({
         src: typeof image.src === 'function' ? image.src(locale) : image.src,
         pos: image.pos,

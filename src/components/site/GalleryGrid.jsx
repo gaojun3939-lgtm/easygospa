@@ -7,6 +7,7 @@ import { ArrowRight, X } from 'lucide-react'
 // 相册（建站模版 serinity 的相册页）：分组、三列图，点开大图，左右键翻、Esc 关。
 // 11-11 老板「图集里面的内容有点 不对吧」→ 标题直接写在每张图下面（以前鼠标放上去才出来，手机上看不到）；大图里左右翻跨组连着翻。
 // 有 step 的图（「从下单到按完」那组）标题前面带步骤号 1–6（老板「这上面 应该是一套 下单的程序」）。
+// group.aspect：这一组格子的比例。「从下单到按完」是竖的 9:16，整部手机从顶上时间到底下按钮全露出来（老板「app 显示的都没完全显示出来」）；别的组默认 4:3。
 export default function GalleryGrid({ groups, labels }) {
   const images = groups.flatMap((group) => group.images)
   const [open, setOpen] = useState(null)
@@ -50,7 +51,7 @@ export default function GalleryGrid({ groups, labels }) {
                   aria-label={image.title}
                 >
                   <div className="relative overflow-hidden rounded-3xl bg-white shadow-lg hover:shadow-2xl transition-all duration-500 group-hover:-translate-y-2">
-                    <div className="relative aspect-[4/3] overflow-hidden">
+                    <div className={`relative ${group.aspect || 'aspect-[4/3]'} overflow-hidden`}>
                       <img src={image.src} alt={image.alt} className={`w-full h-full object-cover ${image.pos || ''} group-hover:scale-110 transition-transform duration-700`} loading="lazy" />
                       <div className="absolute top-4 right-4 w-11 h-11 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
                         <ArrowRight className="w-5 h-5 text-[#64734F]" aria-hidden="true" />
