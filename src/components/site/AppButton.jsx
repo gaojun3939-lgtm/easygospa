@@ -1,5 +1,6 @@
 'use client'
 
+import { useLocale } from 'next-intl'
 import { useRouter } from '@/i18n/navigation'
 
 // 官网所有「预约」都去 App（2026-11-12 老板「官网 就不弄那么复杂了，下单链接啥的全部到app」）：
@@ -7,10 +8,11 @@ import { useRouter } from '@/i18n/navigation'
 // 门店预约不走这里：官网门店页「去门店预约」跳门店网站（另外做）。
 export function useGoApp(from = 'book') {
   const router = useRouter()
+  const locale = useLocale()
   return () => {
     const ua = typeof navigator === 'undefined' ? '' : navigator.userAgent || ''
     if (/android|iphone|ipad|ipod/i.test(ua)) {
-      window.location.href = `/app?from=${encodeURIComponent(from)}`
+      window.location.href = `/app?from=${encodeURIComponent(from)}&lang=${encodeURIComponent(locale)}`
       return
     }
     router.push('/#app')
