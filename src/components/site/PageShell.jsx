@@ -1,4 +1,4 @@
-import { Sparkles } from 'lucide-react'
+import BrandMark from '@/components/BrandMark'
 import { nums } from './nums'
 
 // 内页外框（建站模版 serinity 的内页样子）：顶上一条压暗的大图垫在菜单下面，下面小胶囊 + 大标题 + 一段说明，
@@ -28,7 +28,7 @@ export default function PageShell({ pill, title, lead, image = '/global/photos/b
         <header className="text-center mb-14 animate-fadeInUp">
           {pill ? (
             <div className="inline-flex items-center gap-2 bg-[#64734F]/10 rounded-full px-4 py-2 mb-6">
-              <Sparkles className="w-4 h-4 text-[#64734F]" aria-hidden="true" />
+              <BrandMark size={22} />
               <span className="text-base font-medium text-[#55633F]">{pill}</span>
             </div>
           ) : null}

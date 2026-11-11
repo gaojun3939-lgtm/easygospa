@@ -1,5 +1,5 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { Award } from 'lucide-react';
+import BrandMark from '@/components/BrandMark';
 import PageShell from '@/components/site/PageShell';
 import { niceName } from '@/components/site/serviceText';
 import { alternatesFor } from '@/i18n/routing';
@@ -42,7 +42,7 @@ export default async function TeamPage({ params }) {
                 <img src={card.src} alt={t(`cards.${card.key}.alt`)} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                 <div className="absolute top-4 right-4 bg-[#64734F] text-white rounded-full px-3 py-1 flex items-center gap-1">
-                  <Award className="w-3 h-3" aria-hidden="true" />
+                  <BrandMark size={18} tone="light" />
                   <span className="text-xs font-medium">{t(`cards.${card.key}.badge`)}</span>
                 </div>
               </div>

@@ -1,7 +1,8 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Check, Sparkles } from 'lucide-react'
+import { Check } from 'lucide-react'
+import BrandMark from '@/components/BrandMark'
 import { useTranslations } from 'next-intl'
 import { AppleLogo, PlayLogo } from '../StoreLogos'
 import { nums } from '../nums'
@@ -43,7 +44,8 @@ export default function AppBanner({ onPlay, onApple, playHref, appleHref, qrSvg 
             transition={{ duration: 6, repeat: Infinity, delay: i * 0.8, ease: 'easeInOut' }}
             style={{ left: `${10 + i * 11}%`, top: `${20 + (i % 3) * 25}%` }}
           >
-            <Sparkles className="w-6 h-6 text-white/50" />
+            {/* 飘着的小莲花（模版原来是星星，11-11 换成我们的标） */}
+            <BrandMark size={30} tone="light" className="opacity-50" />
           </motion.div>
         ))}
       </div>
@@ -79,7 +81,7 @@ export default function AppBanner({ onPlay, onApple, playHref, appleHref, qrSvg 
 
           <div className="flex justify-center items-center gap-4 pt-4" aria-hidden="true">
             <div className="w-16 h-0.5 bg-white/30" />
-            <Sparkles className="w-6 h-6 text-white/60" />
+            <BrandMark size={34} tone="light" className="opacity-60" />
             <div className="w-16 h-0.5 bg-white/30" />
           </div>
         </motion.div>
