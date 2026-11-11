@@ -36,13 +36,13 @@ export async function generateMetadata({ params }) {
       url,
       title,
       description,
-      images: [{ url: `${SITE}/opengraph-image.png`, width: 1200, height: 630, alt: "EasyGoSpa" }],
+      images: [{ url: `${SITE}/opengraph-image.jpg`, width: 1200, height: 630, alt: "EasyGoSpa" }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [`${SITE}/twitter-image.png`],
+      images: [`${SITE}/twitter-image.jpg`],
     },
     ...(onAppStore ? { itunes: { appId: IOS_APP_ID, appArgument: url } } : {}),
   };
