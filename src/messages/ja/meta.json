@@ -1,20 +1,20 @@
 {
   "site": {
-    "title": "EasyGo Spa | Manilaのプレミアム訪問マッサージ",
-    "description": "EasyGo Spaは、Metro Manila全域でプロの訪問マッサージを提供しています。信頼できるセラピストが、ホテル、マンション、ご自宅へ伺います。",
-    "keywords": "マニラ 出張マッサージ, マニラ 訪問マッサージ, マニラ ホテル マッサージ, マカティ マッサージ, BGC マッサージ, フィリピン マッサージ 日本語, スウェーデン式マッサージ, ディープティシューマッサージ, タイ古式マッサージ, 指圧, EasyGo Spa",
-    "ogTitle": "EasyGo Spa | Manilaのプロの訪問マッサージ",
+    "title": "EasyGoSpa | Manilaのプレミアム訪問マッサージ",
+    "description": "EasyGoSpaは、Metro Manila全域でプロの訪問マッサージを提供しています。信頼できるセラピストが、ホテル、マンション、ご自宅へ伺います。",
+    "keywords": "マニラ 出張マッサージ, マニラ 訪問マッサージ, マニラ ホテル マッサージ, マカティ マッサージ, BGC マッサージ, フィリピン マッサージ 日本語, スウェーデン式マッサージ, ディープティシューマッサージ, タイ古式マッサージ, 指圧, EasyGoSpa",
+    "ogTitle": "EasyGoSpa | Manilaのプロの訪問マッサージ",
     "ogDescription": "Metro Manila全域でプロの訪問マッサージ。信頼できるセラピストが、ホテル、マンション、ご自宅へ伺います。",
-    "twitterTitle": "EasyGo Spa | Manilaの訪問マッサージ",
+    "twitterTitle": "EasyGoSpa | Manilaの訪問マッサージ",
     "twitterDescription": "Metro Manilaで、プロの訪問マッサージをご予約いただけます。"
   },
   "services": {
-    "title": "プレミアムメニュー | EasyGo Spa プレミアム訪問マッサージ",
+    "title": "プレミアムメニュー | EasyGoSpa プレミアム訪問マッサージ",
     "description": "Metro Manilaの訪問マッサージ。スウェーデン式、ディープティシュー、指圧、タイ古式、ホットストーン、アロマセラピーの全メニューの料金を掲載。本人確認済みのセラピストが24/7、ホテル、マンション、ご自宅へ伺います。",
     "ogDescription": "Metro Manilaのプロの訪問マッサージ。すべてのメニューと料金をご覧いただけます。"
   },
   "pricing": {
-    "title": "料金 | EasyGo Spa Manilaの訪問マッサージ",
+    "title": "料金 | EasyGoSpa Manilaの訪問マッサージ",
     "description": "Metro Manilaの訪問マッサージの実際の料金です。チップ不要。セラピストの到着時に現金でお支払いください。"
   },
   "contact": {

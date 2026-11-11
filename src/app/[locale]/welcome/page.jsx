@@ -16,7 +16,7 @@ export async function generateMetadata({ params }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'welcome' });
   return {
-    title: { absolute: t('meta.title', { amount: '₱150', site: 'EasyGo Spa' }) },
+    title: { absolute: t('meta.title', { amount: '₱150', site: 'EasyGoSpa' }) },
     description: t('meta.description', { amount: '₱150' }),
     alternates: alternatesFor(locale, '/welcome'),
     // 这是广告落地页,不给搜索引擎收录(免得优惠被当成常态价挂在搜索结果里)

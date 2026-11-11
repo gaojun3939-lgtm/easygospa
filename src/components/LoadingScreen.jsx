@@ -51,7 +51,7 @@ function LoadingOverlay() {
               animate={{ scale: [1, 1.04, 1] }}
               transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
             >
-              <BrandMark size={92} />
+              <BrandMark size={120} />
             </motion.div>
 
             <motion.div
@@ -61,7 +61,7 @@ function LoadingOverlay() {
               className="text-center mt-6"
             >
               <p className="font-serif text-4xl font-bold text-[#64734F] mb-2">
-                EasyGo Spa
+                EasyGoSpa
               </p>
               <p className="text-sm text-gray-600 tracking-widest uppercase">
                 {t("tagline")}

@@ -18,14 +18,14 @@ export function ServiceCardImage({ service }) {
   if (!src) {
     return (
       <div className="w-full h-full flex items-center justify-center bg-[#F7F4EE]">
-        <BrandMark size={120} tone="brand" />
+        <BrandMark size={140} tone="brand" />
       </div>
     );
   }
   return (
     <img
       src={src}
-      alt={`${service.name} - home massage in Metro Manila by EasyGo Spa`}
+      alt={`${service.name} - home massage in Metro Manila by EasyGoSpa`}
       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
       loading="lazy"
       decoding="async"

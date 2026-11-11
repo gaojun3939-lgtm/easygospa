@@ -1,6 +1,6 @@
 {
   "eyebrow": "网站导航",
-  "title": "EasyGo Spa 网站地图",
+  "title": "EasyGoSpa 网站地图",
   "lead": "EasyGoSpa 网站所有页面，一页尽览。",
   "main": "主要页面",
   "treatments": "按摩项目",
@@ -62,7 +62,7 @@
   "office": "注册办公地址",
   "homeOnly": "仅提供上门服务，技师上门为您服务。",
   "phone": "电话：{phone}",
-  "ctaTitle": "准备好体验 EasyGo Spa 了吗？",
+  "ctaTitle": "准备好体验 EasyGoSpa 了吗？",
   "ctaText": "立即预约：自选技师，技师到达后付现金。",
   "ctaButton": "立即预约体验"
 }

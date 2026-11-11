@@ -13,14 +13,14 @@ export async function generateMetadata({ params }) {
   const t = await getTranslations({ locale, namespace: 'meta.services' });
   // 2026-10-26:原来写着 Thai dry / foot massage(我们没有)、分享卡写 salon、配图文件不存在;改成真项目,配图用全站默认那张
   return {
-    // 标题里已经带品牌名，不再让外框在后面多加一个「| EasyGo Spa」
+    // 标题里已经带品牌名，不再让外框在后面多加一个「| EasyGoSpa」
     title: { absolute: t('title') },
     description: t('description'),
     alternates: alternatesFor(locale, '/services'),
     openGraph: {
       title: t('title'),
       description: t('ogDescription'),
-      images: [{ url: "/opengraph-image.png", width: 1200, height: 630, alt: "EasyGo Spa" }],
+      images: [{ url: "/opengraph-image.png", width: 1200, height: 630, alt: "EasyGoSpa" }],
     },
   };
 }

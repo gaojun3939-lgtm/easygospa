@@ -139,9 +139,9 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-5 lg:px-8">
           <div className="flex items-center justify-between gap-4">
             <Link href="/" className="flex items-center gap-3 group transition-transform hover:scale-105 flex-shrink-0" aria-label={t("homeAria")}>
-              <BrandMark size={36} tone={solid ? "brand" : "light"} />
+              <BrandMark size={42} tone={solid ? "brand" : "light"} />
               <div className="leading-tight">
-                <p className={`font-serif text-lg ${solid ? "text-[#0F0F0F]" : "text-white text-shadow-dark"}`}>EasyGo Spa</p>
+                <p className={`font-serif text-lg ${solid ? "text-[#0F0F0F]" : "text-white text-shadow-dark"}`}>EasyGoSpa</p>
                 <p className={`text-[11px] tracking-widest uppercase ${solid ? "text-[#64734F]" : "text-[#DDE6CC] text-shadow-dark"}`}>{t("tagline")}</p>
               </div>
             </Link>

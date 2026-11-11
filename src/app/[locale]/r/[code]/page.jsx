@@ -31,12 +31,12 @@ export async function generateMetadata({ params }) {
     robots: { index: false, follow: false },
     openGraph: {
       type: "website",
-      siteName: "EasyGo Spa",
+      siteName: "EasyGoSpa",
       locale: languageOf(locale).og,
       url,
       title,
       description,
-      images: [{ url: `${SITE}/opengraph-image.png`, width: 1200, height: 630, alt: "EasyGo Spa" }],
+      images: [{ url: `${SITE}/opengraph-image.png`, width: 1200, height: 630, alt: "EasyGoSpa" }],
     },
     twitter: {
       card: "summary_large_image",

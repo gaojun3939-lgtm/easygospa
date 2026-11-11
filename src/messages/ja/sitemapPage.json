@@ -1,6 +1,6 @@
 {
   "eyebrow": "サイトナビゲーション",
-  "title": "EasyGo Spa サイトマップ",
+  "title": "EasyGoSpa サイトマップ",
   "lead": "EasyGoSpaウェブサイトのすべてのページを、ここにまとめています。",
   "main": "メインページ",
   "treatments": "マッサージメニュー",
@@ -62,7 +62,7 @@
   "office": "登記上の所在地",
   "homeOnly": "訪問サービスのみ。セラピストがお客様のもとへ伺います。",
   "phone": "電話：{phone}",
-  "ctaTitle": "EasyGo Spaを体験してみませんか？",
+  "ctaTitle": "EasyGoSpaを体験してみませんか？",
   "ctaText": "今すぐご予約ください。セラピストを選んで、到着時に現金でお支払いいただけます。",
   "ctaButton": "予約する"
 }

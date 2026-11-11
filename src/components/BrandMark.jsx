@@ -1,23 +1,16 @@
-// EasyGo Spa brand mark: a three-petal lotus over a gold bowl.
-// Single source of truth for the logo — navbar, loading screen and the
-// favicon (src/app/icon.svg) all use this same geometry.
+// EasyGoSpa 的标：老板 2026-09-11 定稿的五瓣线描莲花（「这个是我们的 logo，以后全部用这个」）。
+// 跟 App（src/assets/brand/lotus-mark.png）、easygospa.ph（public/images/lotus-mark.png）用的是同一个文件：public/brand/lotus-mark.png。
+// 图是透明底黑色，这里当遮罩用，颜色随 tone 换（brand = 橄榄绿，light = 白）。size 是宽，高按原图 512×242 算。
+// 浏览器标签小图标（src/app/icon.png、apple-icon.png、favicon.ico）也是这朵莲花：米白底墨色，跟 App 图标一样。
+// 11-11 前这里是一个三瓣实心莲花加托盘的旧标（定稿前就有的），老板「我们不是有我们的专用图表 你还记得么」→ 全部换成定稿的。
 export default function BrandMark({ size = 32, tone = 'brand', className = '' }) {
-  const petal = tone === 'light' ? '#ffffff' : '#64734F';
-  const bowl = tone === 'light' ? 'rgba(255,255,255,0.82)' : '#64734F';
+  const color = tone === 'light' ? '#ffffff' : '#64734F';
+  const mask = 'url(/brand/lotus-mark.png) center / contain no-repeat';
   return (
-    <svg
+    <span
       aria-hidden="true"
-      className={className}
-      fill="none"
-      height={size}
-      viewBox="0 0 48 48"
-      width={size}
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path d="M24 6.5 C28.6 13 28.6 20.8 24 27.5 C19.4 20.8 19.4 13 24 6.5 Z" fill={petal} />
-      <path d="M11 14.5 C17.8 15.8 22.1 20.9 23.1 28.3 C15.9 27.9 11.2 22.4 11 14.5 Z" fill={petal} opacity="0.72" />
-      <path d="M37 14.5 C30.2 15.8 25.9 20.9 24.9 28.3 C32.1 27.9 36.8 22.4 37 14.5 Z" fill={petal} opacity="0.72" />
-      <path d="M11.5 32.5 C16.5 37.2 31.5 37.2 36.5 32.5 C34.6 39.6 13.4 39.6 11.5 32.5 Z" fill={bowl} />
-    </svg>
+      className={`inline-block flex-none ${className}`}
+      style={{ width: size, height: Math.round((size * 242) / 512), backgroundColor: color, WebkitMask: mask, mask }}
+    />
   );
 }
