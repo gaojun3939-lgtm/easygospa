@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { BadgeCheck, Clock, HandCoins, Home, Navigation, ReceiptText, Wallet } from 'lucide-react'
+import { BadgeCheck, Car, Clock, HandCoins, Home, Navigation, ReceiptText, Wallet } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { nums } from '../nums'
 
@@ -29,6 +29,11 @@ export default function Included() {
           <span className="text-[#64734F]">{nums(t('title2'))}</span>
         </h2>
         <p className="font-sans text-lg text-gray-600 mt-6 max-w-3xl mx-auto leading-relaxed">{t('lead')}</p>
+        {/* 11-12 老板「免小费，这个 夜班费跟车费 算是么？」→ 车费、夜间费写明（都全归技师、下单前合计里有），「透明」才说得过去 */}
+        <p className="font-sans text-sm text-gray-500 mt-3 max-w-2xl mx-auto leading-relaxed flex items-start justify-center gap-1.5">
+          <Car className="w-4 h-4 mt-0.5 flex-none text-[#64734F]" aria-hidden="true" />
+          <span>{t('fees')}</span>
+        </p>
       </div>
       <div className="relative eg-marquee-wrap overflow-hidden">
         <div className="eg-marquee">

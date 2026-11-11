@@ -28,7 +28,7 @@
     "come": {
       "title": "Chúng tôi đến tận nơi",
       "sub": "Nhà riêng · Căn hộ · Khách sạn",
-      "text": "Không kẹt xe, không tìm chỗ đậu, không phải chờ. Bạn cứ ở yên tại chỗ và thư giãn."
+      "text": "Không cần ra ngoài. Kỹ thuật viên mang theo khăn và tinh dầu đến tận nơi; massage xong bạn nghỉ ngơi luôn, không phải đi đường về nhà."
     },
     "verified": {
       "title": "Kỹ thuật viên đã xác minh, bạn tự chọn",
@@ -96,6 +96,7 @@
     "title1": "Đơn giản, minh bạch",
     "title2": "Lần nào đặt cũng vậy",
     "lead": "Mọi mức giá đều được niêm yết trước khi bạn đặt lịch. Trả tiền mặt khi kỹ thuật viên đến hoặc thanh toán trực tuyến trong ứng dụng, và không bao giờ phải trả tip.",
+    "fees": "Phí di chuyển ₱50–150 theo khoảng cách, cộng phụ phí ban đêm nếu bắt đầu từ nửa đêm đến 6 giờ sáng — đều trả cho kỹ thuật viên và hiển thị trong tổng tiền trước khi đặt.",
     "items": {
       "prices": "Giá niêm yết sẵn",
       "cash": "Tiền mặt hoặc trực tuyến",
@@ -110,7 +111,7 @@
     "eyebrow": "Massage tại nhà chuyên nghiệp",
     "title1": "Tiêu chuẩn EasyGoSpa",
     "title2": "Dịch vụ chuyên nghiệp, đáng tin cậy",
-    "lead": "EasyGoSpa cung cấp dịch vụ massage tại nhà chuyên nghiệp khắp Metro Manila. Kỹ thuật viên đến thẳng khách sạn, căn hộ hoặc nhà riêng của bạn, để bạn thư giãn ngay trong không gian của mình.",
+    "lead": "EasyGoSpa mang dịch vụ massage chuyên nghiệp đến tận nhà riêng, căn hộ hoặc khách sạn của bạn. Hiện đã có tại Manila, sắp mở rộng thêm nhiều thành phố.",
     "verified": {
       "title": "Kỹ thuật viên đã xác minh",
       "text": "Kỹ thuật viên được đào tạo bài bản và tuyển chọn kỹ lưỡng."

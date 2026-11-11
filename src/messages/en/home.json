@@ -28,7 +28,7 @@
     "come": {
       "title": "We Come to You",
       "sub": "Home · Condo · Hotel",
-      "text": "No traffic, no parking, no waiting room. Stay where you are and relax."
+      "text": "No need to go out. Your therapist brings the towels and oils, and when the massage ends you simply rest — no trip home."
     },
     "verified": {
       "title": "Verified Therapists You Choose",
@@ -96,6 +96,7 @@
     "title1": "Simple and Upfront",
     "title2": "Every Booking, Every Time",
     "lead": "Every price is listed before you book. Pay in cash when your therapist arrives or online in the app, and tips are never expected.",
+    "fees": "A travel fee of ₱50–150 by distance, plus a night fee for sessions starting midnight–6 am — both go to your therapist and are shown in the total before you book.",
     "items": {
       "prices": "Prices listed upfront",
       "cash": "Cash or online payment",
@@ -110,7 +111,7 @@
     "eyebrow": "Professional Home Massage",
     "title1": "The EasyGoSpa Standard",
     "title2": "Professional Service You Can Trust",
-    "lead": "EasyGoSpa provides professional home massage across Metro Manila. Our therapists travel directly to your hotel, condo or home, so you can relax in your own space.",
+    "lead": "EasyGoSpa brings professional massage to your home, condo or hotel. Now available in Manila, with more cities on the way.",
     "verified": {
       "title": "Verified Therapists",
       "text": "Professionally trained and carefully screened therapists."

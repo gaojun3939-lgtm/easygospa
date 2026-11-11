@@ -1,5 +1,5 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { HandCoins, Wallet } from 'lucide-react';
+import { Car, HandCoins, Wallet } from 'lucide-react';
 import PageShell from '@/components/site/PageShell';
 import PriceList from '@/components/site/PriceList';
 import { loadPublicServiceMenu } from '@/lib/publicServiceMenu.mjs';
@@ -41,6 +41,11 @@ export default async function PricingPage({ params }) {
         <span className="inline-flex items-center gap-2 rounded-full bg-white border border-[#64734F]/20 px-4 py-2 text-sm text-[#55633F]"><HandCoins className="w-4 h-4" aria-hidden="true" />{t('tips')}</span>
       </div>
       {services.length ? <PriceList services={services} /> : <p className="text-center text-gray-600">{t('empty')}</p>}
+      {/* 11-12 老板「免小费，这个 夜班费跟车费 算是么？全球站这么写合适么？」→ 价目下面写明马尼拉的车费、夜间费（规矩照服务条款第 3 条和 App 确认页） */}
+      <p className="mt-8 max-w-3xl mx-auto text-center text-sm text-gray-500 leading-relaxed flex items-start justify-center gap-1.5">
+        <Car className="w-4 h-4 mt-0.5 flex-none text-[#64734F]" aria-hidden="true" />
+        <span>{t('fees')}</span>
+      </p>
     </PageShell>
   );
 }
