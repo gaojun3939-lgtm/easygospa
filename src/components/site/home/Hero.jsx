@@ -175,7 +175,8 @@ export default function Hero({ onPlay, onApple, playHref, appleHref, qrSvg }) {
                   className={`flex flex-col items-stretch gap-2 pt-2.5 pb-1.5 text-left text-[12px] md:text-[13px] font-medium tracking-[0.02em] cursor-pointer transition-colors duration-300 ${shown === i ? 'text-white' : 'text-white/60 hover:text-white/85'}`}
                 >
                   <span className="relative h-[3px] rounded-[3px] bg-white/30 overflow-hidden">
-                    <span ref={(el) => { fillRefs.current[i] = el }} className="absolute inset-0 bg-white origin-left scale-x-0" />
+                    {/* 起始宽度写在 style 里（Tailwind 的 scale-x-0 用的是另一个属性，会把后面的进度盖成 0） */}
+                    <span ref={(el) => { fillRefs.current[i] = el }} className="absolute inset-0 bg-white origin-left" style={{ transform: 'scaleX(0)' }} />
                   </span>
                   <span className="truncate">{label}</span>
                 </button>

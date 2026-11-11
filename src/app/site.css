@@ -63,3 +63,6 @@ h1.font-serif, h2.font-serif, h3.font-serif, h4.font-serif, .font-serif.font-bol
 /* 中日韩泰：字距归零，行距放一点（方块字两行贴太紧会挤） */
 :is(:lang(zh-Hans), :lang(zh-Hant), :lang(ja), :lang(ko), :lang(th)) .eg-hero-title { letter-spacing: 0; line-height: 1.16; }
 :is(:lang(zh-Hans), :lang(zh-Hant), :lang(ja), :lang(ko), :lang(th)) .eg-hero-eyebrow { letter-spacing: 0.08em; }
+/* 泰文上下都有声调符号，行距要比中日韩再松一些，不然顶到上面那行小字 */
+:lang(th) .eg-hero-title { line-height: 1.32; }
+:lang(th) .eg-hero-eyebrow { margin-bottom: 20px; }
