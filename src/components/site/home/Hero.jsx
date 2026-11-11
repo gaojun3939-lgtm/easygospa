@@ -77,6 +77,8 @@ export default function Hero({ onPlay, onApple, playHref, appleHref, qrSvg }) {
       {/* 衬字的暗色：只在左下角那一片压暗 */}
       <div className="absolute inset-0 hidden md:block bg-gradient-to-r from-black/60 via-black/20 via-40% to-transparent to-60%" aria-hidden="true" />
       <div className="absolute inset-0 hidden md:block bg-gradient-to-t from-black/70 via-black/25 via-30% to-transparent to-55%" aria-hidden="true" />
+      {/* 顶上一条压暗：开场片推镜头最后一秒手机顶到菜单下面，白屏衬白字看不清（大厂视频首屏都有这一条） */}
+      <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/55 to-transparent" aria-hidden="true" />
       {/* 手机上字压在 Mia 的米白制服上，要压得更暗才看得清 */}
       <div className="absolute inset-0 md:hidden bg-gradient-to-t from-black/90 via-black/65 via-35% to-transparent to-62%" aria-hidden="true" />
 
