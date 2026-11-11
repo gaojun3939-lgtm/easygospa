@@ -15,6 +15,7 @@ import Standard from "@/components/site/home/Standard";
 import AppBanner from "@/components/site/home/AppBanner";
 import Areas from "@/components/site/home/Areas";
 import GoodToKnow from "@/components/site/home/GoodToKnow";
+import Ways from "@/components/site/home/Ways";
 
 // 首页（2026-11-10 老板：用建站模版 serinity 当骨架，模版首页每一块都留着，按原顺序，只换成我们的内容）。
 // 模版顺序：首屏+圆章 → 为什么选我们 → 项目 → 大图数字 → 横走卡片 → 横走图标 → 标准 → 横幅 → 品牌条 → 评价。
@@ -52,6 +53,8 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         </div>
         <div className="bg-[#FDFCF9] relative">
           <WhyChoose />
+          {/* 11-12 老板「官网里面 没有看到 门店下单啊？」→ 上门 / 到店两种方式，到店进门店页 */}
+          <Ways />
           <Services services={services} />
           <Stats fromPrice={fromPrice} />
         </div>

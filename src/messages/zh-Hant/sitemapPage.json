@@ -17,6 +17,10 @@
       "name": "價格",
       "description": "各項目、各時長的價格"
     },
+    "stores": {
+      "name": "門市",
+      "description": "實體門市的地址、營業時間與預約方式"
+    },
     "contact": {
       "name": "聯絡我們",
       "description": "電話、WhatsApp、電子郵件與服務範圍"

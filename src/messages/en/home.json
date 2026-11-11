@@ -48,6 +48,25 @@
     "cta": "Book a Massage",
     "imageAlt": "The EasyGoSpa green bag, folded towels and a stoneware bowl on a bench at the foot of a bed at home"
   },
+  "ways": {
+    "pill": "Two ways",
+    "title1": "At Home or In Store",
+    "title2": "Whatever Suits You",
+    "home": {
+      "title": "Home Massage",
+      "text": "Your therapist comes to your home, condo or hotel, bringing the towels and oils.",
+      "button": "Book a home visit",
+      "alt": "Therapist Mia at a hotel room door with towels and the green bag"
+    },
+    "store": {
+      "title": "In-Store Massage",
+      "textSoon": "Our first store is opening soon. Its address and hours will be posted on the stores page.",
+      "textOpen": "{count, plural, one {# store is} other {# stores are}} now open — addresses, hours and booking are on the stores page.",
+      "button": "View stores",
+      "soon": "Opening soon",
+      "alt": "{store} store"
+    }
+  },
   "services": {
     "pill": "Our Services",
     "title1": "Home Massage Services",

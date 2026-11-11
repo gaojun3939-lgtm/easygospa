@@ -17,6 +17,10 @@
       "name": "料金",
       "description": "各メニュー・各コース時間の料金"
     },
+    "stores": {
+      "name": "店舗",
+      "description": "店舗の住所、営業時間、予約方法"
+    },
     "contact": {
       "name": "お問い合わせ",
       "description": "電話、WhatsApp、メール、対応エリア"

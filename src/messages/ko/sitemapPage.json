@@ -17,6 +17,10 @@
       "name": "가격",
       "description": "서비스별, 시간별 가격"
     },
+    "stores": {
+      "name": "매장",
+      "description": "매장 주소, 영업시간, 예약 방법"
+    },
     "contact": {
       "name": "문의",
       "description": "전화, WhatsApp, 이메일, 서비스 지역"

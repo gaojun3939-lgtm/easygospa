@@ -17,6 +17,10 @@
       "name": "Pricing",
       "description": "Prices for every treatment and duration"
     },
+    "stores": {
+      "name": "Stores",
+      "description": "Addresses, opening hours and booking for our stores"
+    },
     "contact": {
       "name": "Contact",
       "description": "Phone, WhatsApp, email and service area"

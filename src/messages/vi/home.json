@@ -48,6 +48,25 @@
     "cta": "Đặt lịch massage",
     "imageAlt": "Túi xanh EasyGoSpa, khăn gấp gọn và bát gốm trên băng ghế cuối giường trong phòng ngủ tại nhà"
   },
+  "ways": {
+    "pill": "Hai cách",
+    "title1": "Tại nhà hoặc tại cửa hàng",
+    "title2": "Tùy bạn chọn",
+    "home": {
+      "title": "Massage tại nhà",
+      "text": "Kỹ thuật viên đến nhà riêng, căn hộ hoặc khách sạn của bạn, mang theo khăn và tinh dầu.",
+      "button": "Đặt massage tại nhà",
+      "alt": "Kỹ thuật viên Mia đứng trước cửa phòng khách sạn, mang khăn và túi xanh"
+    },
+    "store": {
+      "title": "Massage tại cửa hàng",
+      "textSoon": "Cửa hàng đầu tiên sắp khai trương. Địa chỉ và giờ mở cửa sẽ được đăng trên trang cửa hàng.",
+      "textOpen": "Hiện có {count} cửa hàng đang mở cửa. Địa chỉ, giờ mở cửa và cách đặt lịch có trên trang cửa hàng.",
+      "button": "Xem cửa hàng",
+      "soon": "Sắp khai trương",
+      "alt": "Cửa hàng {store}"
+    }
+  },
   "services": {
     "pill": "Dịch vụ",
     "title1": "Dịch vụ massage tại nhà",

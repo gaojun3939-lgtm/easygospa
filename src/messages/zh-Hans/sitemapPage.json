@@ -17,6 +17,10 @@
       "name": "价格",
       "description": "各项目、各时长的价格"
     },
+    "stores": {
+      "name": "门店",
+      "description": "线下门店的地址、营业时间和预约方式"
+    },
     "contact": {
       "name": "联系我们",
       "description": "电话、WhatsApp、邮箱及服务区域"

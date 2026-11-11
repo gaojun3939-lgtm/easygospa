@@ -1,0 +1,39 @@
+{
+  "metaTitle": "門市",
+  "metaDescription": "EasyGoSpa 實體門市：地址、營業時間與預約方式。",
+  "pill": "門市",
+  "title": "到店享受按摩",
+  "lead": "想換個環境放鬆，也可以來我們的門市。每家店的地址、營業時間和預約方式都在這裡。",
+  "status": {
+    "open": "營業中",
+    "soon": "即將開幕"
+  },
+  "openingOn": "{month}開幕",
+  "openingNote": "預計 {month} 開幕，開幕後可在這裡預約。",
+  "empty": {
+    "title": "首家門市即將開幕",
+    "text": "開幕後，地址、營業時間和預約方式會在這裡公布。現在可以先預約到府按摩，技師到您的住家、公寓或飯店。",
+    "button": "預約到府按摩"
+  },
+  "view": "查看門市",
+  "book": "預約到店",
+  "bookInApp": "在 App 裡預約",
+  "bookSoon": "開幕後可預約",
+  "waText": "Hi EasyGoSpa, I'd like to book a massage at {store}.",
+  "photoAlt": "{store} 門市",
+  "fields": {
+    "address": "地址",
+    "map": "在 Google 地圖上查看",
+    "hours": "營業時間",
+    "price": "價格",
+    "samePrice": "到店價格與到府相同。",
+    "seePrices": "查看價目表",
+    "ownPrice": "到店價格以店內價目為準。",
+    "callStore": "致電門市 {phone}"
+  },
+  "back": "全部門市",
+  "storeMeta": "{store}（{area}）的地址、營業時間與預約方式。",
+  "ctaTitle": "不方便出門？",
+  "ctaText": "技師到府服務，到您的住家、公寓或飯店，毛巾精油都會帶來。",
+  "ctaButton": "預約到府按摩"
+}

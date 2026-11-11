@@ -27,6 +27,8 @@ const NAV_ITEMS = [
   { key: "services", url: "/services" },
   // 2026-10-26 老板定:价目表页挂进菜单,Xendit 审核员和客人一进站就找得到价格
   { key: "pricing", url: "/pricing" },
+  // 2026-11-12 老板「官网里面 没有看到 门店下单啊？」「我们以后肯定不止一家店」→ 加「门店」
+  { key: "stores", url: "/stores" },
   { key: "gallery", url: "/gallery" },
   { key: "team", url: "/team" },
   { key: "contact", url: "/contact" },

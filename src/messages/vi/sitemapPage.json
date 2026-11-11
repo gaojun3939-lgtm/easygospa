@@ -17,6 +17,10 @@
       "name": "Bảng giá",
       "description": "Giá cho từng liệu trình và thời lượng"
     },
+    "stores": {
+      "name": "Cửa hàng",
+      "description": "Địa chỉ, giờ mở cửa và cách đặt lịch của các cửa hàng"
+    },
     "contact": {
       "name": "Liên hệ",
       "description": "Điện thoại, WhatsApp, email và khu vực phục vụ"

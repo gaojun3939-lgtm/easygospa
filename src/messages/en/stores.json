@@ -1,0 +1,39 @@
+{
+  "metaTitle": "Stores",
+  "metaDescription": "EasyGoSpa stores: addresses, opening hours and how to book.",
+  "pill": "Stores",
+  "title": "Visit an EasyGoSpa Store",
+  "lead": "Prefer a change of scene? You can also come to one of our stores. Every store’s address, hours and booking details are here.",
+  "status": {
+    "open": "Open now",
+    "soon": "Opening soon"
+  },
+  "openingOn": "Opening {month}",
+  "openingNote": "Expected to open in {month}. You can book here once it opens.",
+  "empty": {
+    "title": "Our First Store Is Coming Soon",
+    "text": "Once it opens, its address, hours and booking details will be posted here. In the meantime, book a home massage and your therapist comes to your home, condo or hotel.",
+    "button": "Book a Home Massage"
+  },
+  "view": "View store",
+  "book": "Book a visit",
+  "bookInApp": "Book in the app",
+  "bookSoon": "Booking opens soon",
+  "waText": "Hi EasyGoSpa, I'd like to book a massage at {store}.",
+  "photoAlt": "{store} store",
+  "fields": {
+    "address": "Address",
+    "map": "View on Google Maps",
+    "hours": "Opening hours",
+    "price": "Prices",
+    "samePrice": "Same prices as home visits.",
+    "seePrices": "See the price list",
+    "ownPrice": "In-store prices are listed at the store.",
+    "callStore": "Call the store: {phone}"
+  },
+  "back": "All stores",
+  "storeMeta": "Address, opening hours and booking for {store} ({area}).",
+  "ctaTitle": "Rather Stay In?",
+  "ctaText": "Your therapist comes to your home, condo or hotel, with towels and oils.",
+  "ctaButton": "Book a Home Massage"
+}

@@ -12,6 +12,7 @@ const MAIN_PAGES = [
   { key: "home", url: "/" },
   { key: "services", url: "/services" },
   { key: "pricing", url: "/pricing" },
+  { key: "stores", url: "/stores" },
   { key: "gallery", url: "/gallery" },
   { key: "team", url: "/team" },
   { key: "coverage", url: "/coverage" },

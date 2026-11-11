@@ -1,0 +1,39 @@
+{
+  "metaTitle": "매장",
+  "metaDescription": "EasyGoSpa 매장: 주소, 영업시간, 예약 방법.",
+  "pill": "매장",
+  "title": "매장에서 받는 마사지",
+  "lead": "분위기를 바꿔 쉬고 싶다면 매장으로 오셔도 됩니다. 매장별 주소, 영업시간, 예약 방법을 여기서 확인하세요.",
+  "status": {
+    "open": "영업 중",
+    "soon": "오픈 예정"
+  },
+  "openingOn": "{month} 오픈",
+  "openingNote": "{month} 오픈 예정입니다. 오픈 후 여기서 예약할 수 있습니다.",
+  "empty": {
+    "title": "첫 매장 오픈 예정",
+    "text": "오픈하면 주소, 영업시간, 예약 방법을 여기에 안내해 드립니다. 그동안은 방문 마사지를 예약하세요. 테라피스트가 집, 아파트, 호텔로 찾아갑니다.",
+    "button": "방문 마사지 예약"
+  },
+  "view": "매장 보기",
+  "book": "매장 예약",
+  "bookInApp": "앱에서 예약",
+  "bookSoon": "오픈 후 예약 가능",
+  "waText": "Hi EasyGoSpa, I'd like to book a massage at {store}.",
+  "photoAlt": "{store} 매장",
+  "fields": {
+    "address": "주소",
+    "map": "Google 지도에서 보기",
+    "hours": "영업시간",
+    "price": "가격",
+    "samePrice": "매장 가격은 방문 마사지와 같습니다.",
+    "seePrices": "가격표 보기",
+    "ownPrice": "매장 가격은 매장 내 가격표를 확인하세요.",
+    "callStore": "매장 전화: {phone}"
+  },
+  "back": "전체 매장",
+  "storeMeta": "{store}({area})의 주소, 영업시간, 예약 방법.",
+  "ctaTitle": "외출이 번거로우신가요?",
+  "ctaText": "테라피스트가 수건과 오일을 챙겨 집, 아파트, 호텔로 찾아갑니다.",
+  "ctaButton": "방문 마사지 예약"
+}

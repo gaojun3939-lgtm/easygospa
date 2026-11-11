@@ -1,0 +1,39 @@
+{
+  "metaTitle": "店舗",
+  "metaDescription": "EasyGoSpaの店舗：住所、営業時間、予約方法。",
+  "pill": "店舗",
+  "title": "店舗でマッサージ",
+  "lead": "気分を変えてくつろぎたいときは、店舗にもお越しいただけます。各店舗の住所、営業時間、予約方法はこちら。",
+  "status": {
+    "open": "営業中",
+    "soon": "近日オープン"
+  },
+  "openingOn": "{month}オープン",
+  "openingNote": "{month}オープン予定です。オープン後はこちらから予約できます。",
+  "empty": {
+    "title": "1号店、近日オープン",
+    "text": "オープン後、住所・営業時間・予約方法をこちらでお知らせします。それまでは出張マッサージをご予約ください。セラピストがご自宅、マンション、ホテルへ伺います。",
+    "button": "出張マッサージを予約"
+  },
+  "view": "店舗を見る",
+  "book": "来店予約",
+  "bookInApp": "アプリで予約",
+  "bookSoon": "オープン後に予約可",
+  "waText": "Hi EasyGoSpa, I'd like to book a massage at {store}.",
+  "photoAlt": "{store}の店舗",
+  "fields": {
+    "address": "住所",
+    "map": "Googleマップで見る",
+    "hours": "営業時間",
+    "price": "料金",
+    "samePrice": "店舗の料金は出張と同じです。",
+    "seePrices": "料金表を見る",
+    "ownPrice": "店舗の料金は店内の料金表をご確認ください。",
+    "callStore": "店舗に電話：{phone}"
+  },
+  "back": "すべての店舗",
+  "storeMeta": "{store}（{area}）の住所、営業時間、予約方法。",
+  "ctaTitle": "外出したくないときは",
+  "ctaText": "セラピストがタオルとオイルを持って、ご自宅、マンション、ホテルへ伺います。",
+  "ctaButton": "出張マッサージを予約"
+}
