@@ -17,12 +17,12 @@
       "badge": "Đã xác minh",
       "title": "Xác minh danh tính",
       "role": "Kiểm tra trước đơn đầu tiên",
-      "text": "Chúng tôi kiểm tra giấy tờ tùy thân của mọi kỹ thuật viên trước khi họ được nhận đơn. Khi đặt lịch, bạn thấy ảnh thật và tên thật của họ.",
-      "alt": "Màn hình ứng dụng EasyGoSpa nơi kỹ thuật viên tải giấy tờ lên để xác minh",
+      "text": "Trước khi nhận đơn đầu tiên, mỗi kỹ thuật viên đều tải giấy tờ tùy thân lên và chụp ảnh selfie để chúng tôi đối chiếu khuôn mặt. Khi đặt lịch, bạn thấy ảnh thật và tên thật của họ.",
+      "alt": "Hai bước xác minh danh tính trong ứng dụng EasyGoSpa: chọn giấy tờ, rồi chụp selfie để đối chiếu khuôn mặt",
       "chips": {
         "id": "Đã kiểm tra giấy tờ",
-        "photo": "Ảnh thật",
-        "name": "Tên thật"
+        "face": "Đối chiếu khuôn mặt",
+        "photo": "Ảnh thật"
       }
     },
     "arrival": {
@@ -30,7 +30,7 @@
       "title": "Biết khi nào kỹ thuật viên đến",
       "role": "Theo dõi từ lúc xuất phát",
       "text": "Khi kỹ thuật viên xuất phát, ứng dụng cho bạn thấy họ còn cách bao xa và khoảng bao lâu nữa sẽ đến. Sau khi nhận đơn, bạn có thể nhắn tin trực tiếp cho họ.",
-      "alt": "Kỹ thuật viên Mia mỉm cười trước cửa phòng khách sạn, cầm khăn và túi xanh EasyGoSpa",
+      "alt": "Màn hình tiến trình đặt lịch trong ứng dụng EasyGoSpa: kỹ thuật viên Mia đã xuất phát, hiển thị giờ đến dự kiến, khoảng cách và nút nhắn tin cho cô ấy",
       "chips": {
         "eta": "Khoảng cách trực tiếp",
         "chat": "Nhắn tin trực tiếp"
@@ -41,7 +41,7 @@
       "title": "Đánh giá sau mỗi lần phục vụ",
       "role": "Ý kiến của bạn rất quan trọng",
       "text": "Sau mỗi buổi massage, bạn có thể đánh giá kỹ thuật viên. Điểm đánh giá hiển thị trên hồ sơ, giúp khách sau yên tâm lựa chọn.",
-      "alt": "Kỹ thuật viên Mia mỉm cười trong phòng, ngoài cửa sổ là thành phố lúc chạng vạng",
+      "alt": "Kỹ thuật viên Mia mỉm cười rạng rỡ trước cửa",
       "chips": {
         "stars": "Chấm điểm sao",
         "profile": "Hiển thị trên từng hồ sơ"

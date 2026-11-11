@@ -17,12 +17,12 @@
       "badge": "ID-verified",
       "title": "Identity Verified",
       "role": "Checked before their first booking",
-      "text": "We check every therapist’s ID before they can take bookings. When you book, you see their real photo and name.",
-      "alt": "The EasyGoSpa app screen where therapists upload their ID for verification",
+      "text": "Before their first booking, every therapist uploads an ID and takes a selfie that we match against it. When you book, you see their real photo and name.",
+      "alt": "Two steps of ID verification in the EasyGoSpa app: choosing the ID, then a selfie for the face match",
       "chips": {
         "id": "ID checked",
-        "photo": "Real photo",
-        "name": "Real name"
+        "face": "Face match",
+        "photo": "Real photo"
       }
     },
     "arrival": {
@@ -30,7 +30,7 @@
       "title": "Know When Your Therapist Arrives",
       "role": "Follow them from the moment they set off",
       "text": "Once your therapist sets off, the app shows how far away they are and roughly when they’ll arrive. After they accept, you can message them directly.",
-      "alt": "Therapist Mia smiling at a hotel room door with towels and the green EasyGoSpa bag",
+      "alt": "The EasyGoSpa app booking progress screen: therapist Mia is on the way, with her arrival time, distance and a button to message her",
       "chips": {
         "eta": "Live distance",
         "chat": "Direct messages"
@@ -41,7 +41,7 @@
       "title": "Rated After Every Visit",
       "role": "Your feedback counts",
       "text": "After each massage you can rate your therapist. Ratings show on their profile, so the next client can choose with confidence.",
-      "alt": "Therapist Mia smiling in a condo living room, the city at dusk outside the window",
+      "alt": "Therapist Mia smiling warmly at the door",
       "chips": {
         "stars": "Star ratings",
         "profile": "Shown on each profile"
