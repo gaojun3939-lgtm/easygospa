@@ -5,33 +5,33 @@
   "title": "Home Massage, Wherever You Are",
   "lead": "A look at how a session comes to you — at home, in a condo or in your hotel room.",
   "groups": {
-    "visit": "What a Home Visit Looks Like",
+    "steps": "From Booking to Your Massage",
     "treatments": "Our Massages"
   },
   "items": {
-    "home": {
-      "title": "At Your Home",
+    "pick": {
+      "title": "Choose Your Therapist",
+      "alt": "The EasyGoSpa app therapist page: Mia is available now and ID-verified; Swedish Massage, 90 minutes, ₱1,200 selected"
+    },
+    "book": {
+      "title": "Book",
+      "alt": "The EasyGoSpa app booking review: therapist Mia, 1.7 km away, Swedish Massage for 90 minutes and the visit address"
+    },
+    "depart": {
+      "title": "Your Therapist Sets Off",
+      "alt": "The EasyGoSpa app booking progress screen: Mia is on the way, with her arrival time and distance"
+    },
+    "arrive": {
+      "title": "At Your Door",
       "alt": "Therapist Mia smiling at a client’s front door, carrying the green EasyGoSpa bag and towels"
     },
-    "condo": {
-      "title": "At Your Condo",
-      "alt": "Therapist Mia smiling in a condo living room, the city at dusk outside the window"
-    },
-    "hotel": {
-      "title": "In Your Hotel Room",
-      "alt": "Therapist Mia at a hotel room door with the green EasyGoSpa bag and towels"
-    },
-    "oil": {
-      "title": "Warming the Oil First",
+    "massage": {
+      "title": "The Massage Begins",
       "alt": "A therapist warming massage oil between her palms, folded towels and an oil bottle beside her"
     },
-    "kit": {
-      "title": "Everything in One Bag",
-      "alt": "The EasyGoSpa green bag, folded towels, an oil bottle and an olive sprig on a wooden sideboard in late-afternoon light"
-    },
-    "night": {
-      "title": "Late at Night Too",
-      "alt": "The EasyGoSpa green bag and folded towels at the foot of a hotel bed at dusk, city lights outside the window"
+    "rate": {
+      "title": "Rate Your Therapist",
+      "alt": "The EasyGoSpa app rating screen: five stars for Mia"
     },
     "swedish": {
       "alt": "Massage oil pouring from an amber bottle into a brass dish, with a folded towel and an olive sprig"
@@ -39,17 +39,17 @@
     "deep": {
       "alt": "A therapist’s hands resting flat on a folded towel, olive piping on the uniform cuffs"
     },
-    "stone": {
-      "alt": "Three warm dark massage stones on a folded towel, one resting in a brass dish"
-    },
-    "aroma": {
-      "alt": "Two essential-oil bottles and a bowl of oil with floating olive leaves, beside an olive branch"
-    },
     "thai": {
       "alt": "An ivory cotton floor mat on a wooden floor with a round bolster, a folded towel and an olive sprig — no oil"
     },
     "shiatsu": {
       "alt": "A therapist pressing her thumb into a folded towel, fingers relaxed — no oil"
+    },
+    "stone": {
+      "alt": "Three warm dark massage stones on a folded towel, one resting in a brass dish"
+    },
+    "aroma": {
+      "alt": "Two essential-oil bottles and a bowl of oil with floating olive leaves, beside an olive branch"
     }
   },
   "close": "Close",

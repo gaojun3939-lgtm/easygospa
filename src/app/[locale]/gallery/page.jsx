@@ -6,16 +6,19 @@ import { alternatesFor } from '@/i18n/routing';
 
 // 相册页（建站模版 serinity 有这一页；2026-11-10 老板「不要删减页面」，用我们自己的图放回来）。
 // 11-11 老板「图集里面的内容有点 不对吧」→「执行」：以前九张里五张都是深绿包加毛巾、一个人都没有、泰式配了草药球、少了瑞典和深层、标题手机上看不到。现在分两组：
-// 一、上门是什么样子：技师 Mia 到家门口 / 在公寓 / 到酒店房门口（Mia 定稿照和开场片原片截帧，房间看得出来），搓热精油，加两张静物（用品一包带齐、夜里的酒店）。
+// 一、从下单到按完：老板「这上面 应该是一套 下单的程序 对吧？」→ 按客人用 App 的先后顺序排 1–6 步：
+//    挑技师、下单、技师出发（App 真截图，主窗口用调试包演示单截的，技师换成 Mia）→ 到您门口（Mia 定稿全身照）→ 开始按摩（开场片搓精油）→ 按完评分。
+//    App 截图只有中文和英文两种：中文页用中文图，其他语言用英文图。
 // 二、按摩项目：后台六个项目各一张，图和名字都跟服务项目页同一份（svc-*、serviceNames）；泰式干推是地垫不用油，指压是一只手大拇指按毛巾、不用油（老板「指压那张也换了」）。
 // pos：图片在 4:3 框里往哪边对齐，保证人和东西不被裁掉。
-const VISIT = [
-  { key: 'home', src: '/global/photos/gal-home.webp', pos: 'object-[75%_50%]' },
-  { key: 'condo', src: '/global/photos/team-rated.webp', pos: 'object-[95%_30%]' },
-  { key: 'hotel', src: '/global/photos/gal-hotel.webp', pos: 'object-[40%_30%]' },
-  { key: 'oil', src: '/global/photos/gal-oil.webp', pos: 'object-[75%_50%]' },
-  { key: 'kit', src: '/global/photos/band-living.webp', pos: 'object-[80%_50%]' },
-  { key: 'night', src: '/global/photos/place-hotel.webp', pos: 'object-[50%_0%]' }, // 竖图，往上对齐，窗外夜里的城市灯光才露得出来
+const appShot = (name) => (locale) => `/global/photos/${name}-${locale.startsWith('zh') ? 'zh' : 'en'}.webp`;
+const STEPS = [
+  { key: 'pick', src: appShot('gal-step-pick') },
+  { key: 'book', src: appShot('gal-step-book') },
+  { key: 'depart', src: appShot('gal-step-depart') },
+  { key: 'arrive', src: '/global/photos/gal-home.webp', pos: 'object-[75%_50%]' },
+  { key: 'massage', src: '/global/photos/gal-oil.webp', pos: 'object-[75%_50%]' },
+  { key: 'rate', src: appShot('gal-step-rate') },
 ];
 // name = 后台项目的英文原名（serviceNames 里按它翻译）
 const TREATMENTS = [
@@ -40,8 +43,14 @@ export default async function GalleryPage({ params }) {
   const tn = await getTranslations({ locale, namespace: 'serviceNames' });
   const groups = [
     {
-      title: t('groups.visit'),
-      images: VISIT.map((image) => ({ src: image.src, pos: image.pos, title: t(`items.${image.key}.title`), alt: t(`items.${image.key}.alt`) })),
+      title: t('groups.steps'),
+      images: STEPS.map((image, i) => ({
+        src: typeof image.src === 'function' ? image.src(locale) : image.src,
+        pos: image.pos,
+        step: i + 1,
+        title: t(`items.${image.key}.title`),
+        alt: t(`items.${image.key}.alt`),
+      })),
     },
     {
       title: t('groups.treatments'),

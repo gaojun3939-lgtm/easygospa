@@ -6,6 +6,7 @@ import { ArrowRight, X } from 'lucide-react'
 
 // 相册（建站模版 serinity 的相册页）：分组、三列图，点开大图，左右键翻、Esc 关。
 // 11-11 老板「图集里面的内容有点 不对吧」→ 标题直接写在每张图下面（以前鼠标放上去才出来，手机上看不到）；大图里左右翻跨组连着翻。
+// 有 step 的图（「从下单到按完」那组）标题前面带步骤号 1–6（老板「这上面 应该是一套 下单的程序」）。
 export default function GalleryGrid({ groups, labels }) {
   const images = groups.flatMap((group) => group.images)
   const [open, setOpen] = useState(null)
@@ -55,7 +56,10 @@ export default function GalleryGrid({ groups, labels }) {
                         <ArrowRight className="w-5 h-5 text-[#64734F]" aria-hidden="true" />
                       </div>
                     </div>
-                    <h3 className="font-serif text-[#0F0F0F] text-xl px-6 py-5">{image.title}</h3>
+                    <h3 className="font-serif text-[#0F0F0F] text-xl px-6 py-5 flex items-center gap-3">
+                      {image.step ? <span className="flex-none w-8 h-8 rounded-full bg-[#64734F] text-white font-sans text-sm font-medium flex items-center justify-center">{image.step}</span> : null}
+                      <span>{image.title}</span>
+                    </h3>
                   </div>
                 </motion.button>
               )
@@ -72,7 +76,7 @@ export default function GalleryGrid({ groups, labels }) {
           <div className="relative max-w-5xl max-h-[90vh] mx-4" onClick={(e) => e.stopPropagation()}>
             <img src={current.src} alt={current.alt} className="w-full h-full max-h-[90vh] object-contain rounded-lg" />
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 rounded-b-lg text-white">
-              <h3 className="font-serif text-2xl mb-1">{current.title}</h3>
+              <h3 className="font-serif text-2xl mb-1">{current.step ? `${current.step} · ` : ''}{current.title}</h3>
               <p className="text-sm text-gray-300">{labels.count.replace('{n}', String(open + 1)).replace('{total}', String(images.length))}</p>
             </div>
           </div>

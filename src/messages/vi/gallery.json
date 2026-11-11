@@ -5,33 +5,33 @@
   "title": "Massage tại nhà, dù bạn ở đâu",
   "lead": "Cùng xem buổi massage đến với bạn như thế nào — tại nhà riêng, căn hộ hay phòng khách sạn.",
   "groups": {
-    "visit": "Một buổi massage tại nhà",
+    "steps": "Từ đặt lịch đến buổi massage",
     "treatments": "Các dịch vụ massage"
   },
   "items": {
-    "home": {
-      "title": "Tại nhà bạn",
+    "pick": {
+      "title": "Chọn kỹ thuật viên",
+      "alt": "Màn hình kỹ thuật viên trong ứng dụng EasyGoSpa: Mia sẵn sàng ngay, đã xác minh danh tính; đã chọn massage Thụy Điển 90 phút ₱1,200"
+    },
+    "book": {
+      "title": "Đặt lịch",
+      "alt": "Màn hình xác nhận đặt lịch trong ứng dụng EasyGoSpa: kỹ thuật viên Mia, cách 1,7 km, massage Thụy Điển 90 phút và địa chỉ"
+    },
+    "depart": {
+      "title": "Kỹ thuật viên xuất phát",
+      "alt": "Màn hình tiến trình đặt lịch trong ứng dụng EasyGoSpa: Mia đã xuất phát, hiển thị giờ đến dự kiến và khoảng cách"
+    },
+    "arrive": {
+      "title": "Đến tận cửa",
       "alt": "Kỹ thuật viên Mia mỉm cười trước cửa nhà khách, mang túi xanh EasyGoSpa và khăn"
     },
-    "condo": {
-      "title": "Tại căn hộ của bạn",
-      "alt": "Kỹ thuật viên Mia mỉm cười trong phòng khách căn hộ, ngoài cửa sổ là thành phố lúc chạng vạng"
-    },
-    "hotel": {
-      "title": "Tại phòng khách sạn",
-      "alt": "Kỹ thuật viên Mia đứng trước cửa phòng khách sạn, mang túi xanh và khăn"
-    },
-    "oil": {
-      "title": "Làm ấm tinh dầu trước",
+    "massage": {
+      "title": "Bắt đầu massage",
       "alt": "Kỹ thuật viên làm ấm tinh dầu trong lòng bàn tay, bên cạnh là khăn gấp và chai tinh dầu"
     },
-    "kit": {
-      "title": "Mang theo đủ dụng cụ",
-      "alt": "Túi xanh EasyGoSpa, khăn gấp gọn, chai dầu và cành ô liu trên tủ gỗ dưới nắng chiều"
-    },
-    "night": {
-      "title": "Đêm khuya vẫn đến",
-      "alt": "Phòng khách sạn lúc chạng vạng, túi xanh EasyGoSpa và khăn gấp gọn ở cuối giường, ngoài cửa sổ là ánh đèn thành phố"
+    "rate": {
+      "title": "Đánh giá sau buổi massage",
+      "alt": "Màn hình đánh giá trong ứng dụng EasyGoSpa: năm sao cho Mia"
     },
     "swedish": {
       "alt": "Dầu massage rót từ chai thủy tinh màu hổ phách vào đĩa đồng, bên cạnh là khăn gấp gọn và cành ô liu"
@@ -39,17 +39,17 @@
     "deep": {
       "alt": "Đôi tay kỹ thuật viên đặt phẳng trên khăn gấp gọn, cổ tay áo đồng phục viền màu ô liu"
     },
-    "stone": {
-      "alt": "Ba viên đá massage đen ấm đặt trên khăn gấp gọn, một viên nằm trong đĩa đồng"
-    },
-    "aroma": {
-      "alt": "Hai chai tinh dầu và một bát dầu thả lá ô liu, bên cạnh là cành ô liu"
-    },
     "thai": {
       "alt": "Tấm nệm cotton màu ngà trải trên sàn gỗ, có gối tròn, khăn gấp và cành ô liu — không dùng dầu"
     },
     "shiatsu": {
       "alt": "Bàn tay kỹ thuật viên ấn ngón cái lên khăn gấp — không dùng dầu"
+    },
+    "stone": {
+      "alt": "Ba viên đá massage đen ấm đặt trên khăn gấp gọn, một viên nằm trong đĩa đồng"
+    },
+    "aroma": {
+      "alt": "Hai chai tinh dầu và một bát dầu thả lá ô liu, bên cạnh là cành ô liu"
     }
   },
   "close": "Đóng",
