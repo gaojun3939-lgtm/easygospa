@@ -8,11 +8,11 @@
   },
   "seal": {
     "sub": "上门按摩",
-    "ring": "上门按摩 · EasyGo Spa · 上门按摩 · EasyGo Spa ·"
+    "ring": "上门按摩 · EasyGoSpa · 上门按摩 · EasyGoSpa ·"
   },
   "why": {
-    "pill": "EasyGo Spa 上门按摩",
-    "title1": "为什么选择 EasyGo Spa",
+    "pill": "EasyGoSpa 上门按摩",
+    "title1": "为什么选择 EasyGoSpa",
     "title2": "上门按摩服务",
     "lead": "足不出户，享受专业按摩。无论何时，技师都会上门到您的家中、公寓或酒店。",
     "come": {
@@ -41,7 +41,7 @@
     "all": "查看全部服务"
   },
   "stats": {
-    "pill": "为什么选择 EasyGo Spa",
+    "pill": "为什么选择 EasyGoSpa",
     "title1": "高端上门按摩，",
     "title2": "直达您的门前",
     "lead": "在 Metro Manila，技师上门到您的酒店、公寓或家中提供专业按摩。价格清楚透明，技师到场前无需支付任何费用。",
@@ -93,9 +93,9 @@
   },
   "standard": {
     "eyebrow": "专业上门按摩",
-    "title1": "EasyGo Spa 的标准",
+    "title1": "EasyGoSpa 的标准",
     "title2": "值得信赖的专业服务",
-    "lead": "EasyGo Spa 在 Metro Manila 提供专业上门按摩。技师直接前往您的酒店、公寓或家中，让您在自己的空间里安心放松。",
+    "lead": "EasyGoSpa 在 Metro Manila 提供专业上门按摩。技师直接前往您的酒店、公寓或家中，让您在自己的空间里安心放松。",
     "verified": {
       "title": "实名认证技师",
       "text": "技师均受过专业培训，并经过仔细筛选。"

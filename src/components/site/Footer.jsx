@@ -39,9 +39,9 @@ export default async function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 text-center md:text-left">
           <div className="flex flex-col items-center md:items-start">
             <div className="flex items-center gap-3 mb-6">
-              <BrandMark size={40} tone="light" />
+              <BrandMark size={48} tone="light" />
               <div>
-                <p className="font-serif text-2xl">EasyGo Spa</p>
+                <p className="font-serif text-2xl">EasyGoSpa</p>
                 <p className="text-xs text-[#9DAE82] tracking-widest uppercase">{t('tagline')}</p>
               </div>
             </div>

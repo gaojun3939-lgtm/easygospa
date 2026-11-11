@@ -18,8 +18,8 @@ export default function Seal() {
       >
         <div className="absolute inset-0 bg-[#F5E6D8] rounded-full shadow-xl p-3 md:p-4 lg:p-5">
           <div className="w-full h-full rounded-full flex flex-col items-center justify-center bg-white text-center px-2">
-            <BrandMark size={30} />
-            <p className="font-serif text-[#333333] leading-tight mt-1" style={{ fontSize: 'clamp(15px, 3.4vw, 18px)', letterSpacing: '0.5px' }}>EasyGo Spa</p>
+            <BrandMark size={44} />
+            <p className="font-serif text-[#333333] leading-tight mt-1" style={{ fontSize: 'clamp(15px, 3.4vw, 18px)', letterSpacing: '0.5px' }}>EasyGoSpa</p>
             <p className="font-sans text-[#55633F] tracking-wider" style={{ fontSize: 'clamp(10px, 2.3vw, 12px)' }}>{t('sub')}</p>
           </div>
         </div>

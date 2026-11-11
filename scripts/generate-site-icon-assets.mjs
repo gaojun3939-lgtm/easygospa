@@ -1,16 +1,24 @@
+// 浏览器标签小图标（icon.png 512、apple-icon.png 180、favicon.ico 32）。
+// 2026-11-12 老板定「方块图标」统一：App 桌面图标、脸书头像、官网小图标都用 App 图标原图（深绿底金莲花，09-11 定稿的五瓣莲花）。
+// 原图 scripts/assets/app-icon.png = App 仓库 assets/icon-a.png 原样拷贝（App 换图标时这里跟着换）；只缩小、不裁、不改色，
+// 跟 easygospa.ph 的小图标同一个来源。取代 11-11 的米白底墨色莲花，更早的黑金 / 紫金莲花早已作废。
+// 分享图（opengraph-image.jpg / twitter-image.jpg）这个脚本不碰。
+// 用法：node scripts/generate-site-icon-assets.mjs
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import sharp from 'sharp';
 
 const appDirectory = path.join(process.cwd(), 'src', 'app');
-const iconPath = path.join(appDirectory, 'icon.svg');
-const iconSvg = await fs.readFile(iconPath);
+const source = path.join(process.cwd(), 'scripts', 'assets', 'app-icon.png');
 
-const faviconPng = await sharp(iconSvg)
-  .resize(32, 32)
-  .png({ compressionLevel: 9 })
-  .toBuffer();
+// 压成 256 色的 PNG：深绿底金线条，放大对比看不出差别，文件小很多
+const icon = (size) => sharp(source).resize(size, size, { kernel: 'lanczos3' }).png({ palette: true, colors: 256, compressionLevel: 9 });
 
+await icon(512).toFile(path.join(appDirectory, 'icon.png'));
+await icon(180).toFile(path.join(appDirectory, 'apple-icon.png'));
+
+// favicon.ico：一个 32×32 的 PNG 包在 ico 文件头里。⚠ ico 里的 PNG 必须是全彩带透明度（RGBA），不能用 256 色，不然 Next 打包报「The PNG is not in RGBA format」
+const faviconPng = await sharp(source).resize(32, 32, { kernel: 'lanczos3' }).ensureAlpha().png({ compressionLevel: 9 }).toBuffer();
 const icoHeader = Buffer.alloc(22);
 icoHeader.writeUInt16LE(0, 0);
 icoHeader.writeUInt16LE(1, 2);
@@ -24,58 +32,4 @@ icoHeader.writeUInt16LE(32, 12);
 icoHeader.writeUInt32LE(faviconPng.length, 14);
 icoHeader.writeUInt32LE(22, 18);
 await fs.writeFile(path.join(appDirectory, 'favicon.ico'), Buffer.concat([icoHeader, faviconPng]));
-
-await sharp(iconSvg)
-  .resize(180, 180)
-  .png({ compressionLevel: 9 })
-  .toFile(path.join(appDirectory, 'apple-icon.png'));
-
-const shareCardSvg = Buffer.from(`
-  <svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <linearGradient id="cardBackground" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stop-color="#080711"/>
-        <stop offset="0.55" stop-color="#15112c"/>
-        <stop offset="1" stop-color="#211c46"/>
-      </linearGradient>
-      <linearGradient id="cardGold" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0" stop-color="#e0a52b"/>
-        <stop offset="0.5" stop-color="#f6d27a"/>
-        <stop offset="1" stop-color="#e0a52b"/>
-      </linearGradient>
-      <radialGradient id="goldGlow" cx="50%" cy="30%" r="68%">
-        <stop offset="0" stop-color="#f0b429" stop-opacity="0.18"/>
-        <stop offset="0.48" stop-color="#4d3860" stop-opacity="0.10"/>
-        <stop offset="1" stop-color="#080711" stop-opacity="0"/>
-      </radialGradient>
-    </defs>
-    <rect width="1200" height="630" fill="url(#cardBackground)"/>
-    <rect width="1200" height="630" fill="url(#goldGlow)"/>
-    <rect x="36" y="36" width="1128" height="558" rx="34" fill="none" stroke="#e0a52b" stroke-opacity="0.52" stroke-width="2"/>
-    <path d="M80 88 H298 M902 88 H1120" stroke="url(#cardGold)" stroke-opacity="0.55" stroke-width="2"/>
-    <circle cx="314" cy="88" r="4" fill="#f6d27a" fill-opacity="0.75"/>
-    <circle cx="886" cy="88" r="4" fill="#f6d27a" fill-opacity="0.75"/>
-    <text x="600" y="376" text-anchor="middle" fill="url(#cardGold)" font-family="Georgia, 'Times New Roman', serif" font-size="82" font-weight="700" letter-spacing="1">EasyGo Spa</text>
-    <path d="M416 414 H784" stroke="url(#cardGold)" stroke-width="2" stroke-opacity="0.72"/>
-    <text x="600" y="476" text-anchor="middle" fill="#f8f2ec" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="500" letter-spacing="2.2">Premium Home Massage · Manila</text>
-  </svg>
-`);
-
-const lotusTile = await sharp(iconSvg)
-  .resize(184, 184)
-  .png({ compressionLevel: 9 })
-  .toBuffer();
-
-async function renderShareCard(filename) {
-  await sharp(shareCardSvg)
-    .composite([{ input: lotusTile, left: 508, top: 92 }])
-    .png({ compressionLevel: 9 })
-    .toFile(path.join(appDirectory, filename));
-}
-
-await Promise.all([
-  renderShareCard('opengraph-image.png'),
-  renderShareCard('twitter-image.png'),
-]);
-
-console.log('Generated favicon.ico, apple-icon.png, opengraph-image.png, and twitter-image.png');
+console.log('icon.png / apple-icon.png / favicon.ico 已按 App 图标原图生成');

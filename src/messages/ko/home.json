@@ -8,12 +8,12 @@
   },
   "seal": {
     "sub": "방문 마사지",
-    "ring": "방문 마사지 · EasyGo Spa · 방문 마사지 · EasyGo Spa ·"
+    "ring": "방문 마사지 · EasyGoSpa · 방문 마사지 · EasyGoSpa ·"
   },
   "why": {
-    "pill": "EasyGo Spa 방문 마사지",
+    "pill": "EasyGoSpa 방문 마사지",
     "title1": "방문 마사지,",
-    "title2": "왜 EasyGo Spa일까요?",
+    "title2": "왜 EasyGoSpa일까요?",
     "lead": "방에서 나가지 않고 받는 전문 마사지. 테라피스트가 언제든 집, 아파트, 호텔로 찾아갑니다.",
     "come": {
       "title": "직접 찾아갑니다",
@@ -41,7 +41,7 @@
     "all": "전체 서비스 보기"
   },
   "stats": {
-    "pill": "EasyGo Spa를 선택하는 이유",
+    "pill": "EasyGoSpa를 선택하는 이유",
     "title1": "프리미엄 방문 마사지,",
     "title2": "문 앞까지 찾아갑니다",
     "lead": "Metro Manila 곳곳의 호텔, 아파트, 집에서 받는 전문 마사지. 가격은 투명하고, 테라피스트가 도착하기 전까지 결제할 것이 없습니다.",
@@ -93,9 +93,9 @@
   },
   "standard": {
     "eyebrow": "전문 방문 마사지",
-    "title1": "EasyGo Spa의 기준",
+    "title1": "EasyGoSpa의 기준",
     "title2": "믿을 수 있는 전문 서비스",
-    "lead": "EasyGo Spa는 Metro Manila 곳곳에서 전문 방문 마사지를 제공합니다. 테라피스트가 호텔, 아파트, 집으로 직접 찾아가, 익숙한 공간에서 편히 쉬실 수 있습니다.",
+    "lead": "EasyGoSpa는 Metro Manila 곳곳에서 전문 방문 마사지를 제공합니다. 테라피스트가 호텔, 아파트, 집으로 직접 찾아가, 익숙한 공간에서 편히 쉬실 수 있습니다.",
     "verified": {
       "title": "인증된 테라피스트",
       "text": "전문 교육을 받고 꼼꼼한 심사를 거친 테라피스트입니다."

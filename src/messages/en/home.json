@@ -8,11 +8,11 @@
   },
   "seal": {
     "sub": "Home Massage",
-    "ring": "Home Massage · EasyGo Spa · Home Massage · EasyGo Spa ·"
+    "ring": "Home Massage · EasyGoSpa · Home Massage · EasyGoSpa ·"
   },
   "why": {
-    "pill": "EasyGo Spa Home Massage",
-    "title1": "Why Choose EasyGo Spa",
+    "pill": "EasyGoSpa Home Massage",
+    "title1": "Why Choose EasyGoSpa",
     "title2": "Home Massage Service",
     "lead": "Professional massage without leaving your room. Your therapist comes to your home, condo or hotel, at any hour.",
     "come": {
@@ -41,7 +41,7 @@
     "all": "Explore All Services"
   },
   "stats": {
-    "pill": "Why EasyGo Spa",
+    "pill": "Why EasyGoSpa",
     "title1": "Premium Home Massage,",
     "title2": "Delivered to Your Door",
     "lead": "Professional massage at your hotel, condo or home across Metro Manila, with clear prices and nothing to pay until your therapist arrives.",
@@ -93,9 +93,9 @@
   },
   "standard": {
     "eyebrow": "Professional Home Massage",
-    "title1": "The EasyGo Spa Standard",
+    "title1": "The EasyGoSpa Standard",
     "title2": "Professional Service You Can Trust",
-    "lead": "EasyGo Spa provides professional home massage across Metro Manila. Our therapists travel directly to your hotel, condo or home, so you can relax in your own space.",
+    "lead": "EasyGoSpa provides professional home massage across Metro Manila. Our therapists travel directly to your hotel, condo or home, so you can relax in your own space.",
     "verified": {
       "title": "Verified Therapists",
       "text": "Professionally trained and carefully screened therapists."

@@ -1,6 +1,6 @@
 {
   "eyebrow": "網站導覽",
-  "title": "EasyGo Spa 網站地圖",
+  "title": "EasyGoSpa 網站地圖",
   "lead": "在這裡找到 EasyGoSpa 網站的所有頁面。",
   "main": "主要頁面",
   "treatments": "按摩項目",
@@ -62,7 +62,7 @@
   "office": "公司登記地址",
   "homeOnly": "僅提供到府服務——由技師前往您所在的地點。",
   "phone": "電話：{phone}",
-  "ctaTitle": "準備好體驗 EasyGo Spa 了嗎？",
+  "ctaTitle": "準備好體驗 EasyGoSpa 了嗎？",
   "ctaText": "立即預約——挑選您的技師，技師到場後再付現金。",
   "ctaButton": "立即預約體驗"
 }

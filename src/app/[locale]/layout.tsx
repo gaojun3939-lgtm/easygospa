@@ -49,19 +49,19 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return {
     title: {
       default: t("site.title"),
-      template: "%s | EasyGo Spa",
+      template: "%s | EasyGoSpa",
     },
     description: t("site.description"),
     keywords: t("site.keywords"),
-    authors: [{ name: "EasyGo Spa" }],
-    creator: "EasyGo Spa",
-    publisher: "EasyGo Spa",
+    authors: [{ name: "EasyGoSpa" }],
+    creator: "EasyGoSpa",
+    publisher: "EasyGoSpa",
     // 每页自己写正式网址和七种语言的网址（alternatesFor），这里不写，免得没写的页面被当成首页
     openGraph: {
       title: t("site.ogTitle"),
       description: t("site.ogDescription"),
-      siteName: "EasyGo Spa",
-      images: [{ url: "/opengraph-image.png", width: 1200, height: 630, alt: "EasyGo Spa" }],
+      siteName: "EasyGoSpa",
+      images: [{ url: "/opengraph-image.png", width: 1200, height: 630, alt: "EasyGoSpa" }],
       locale: languageOf(locale).og,
       type: "website",
     },

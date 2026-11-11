@@ -1,6 +1,6 @@
 {
   "eyebrow": "사이트 안내",
-  "title": "EasyGo Spa 웹사이트 사이트맵",
+  "title": "EasyGoSpa 웹사이트 사이트맵",
   "lead": "EasyGoSpa 웹사이트의 모든 페이지를 한곳에서 찾아보세요.",
   "main": "주요 페이지",
   "treatments": "마사지 서비스",
@@ -62,7 +62,7 @@
   "office": "등록 사무소",
   "homeOnly": "방문 서비스만 제공합니다 — 테라피스트가 찾아갑니다.",
   "phone": "전화: {phone}",
-  "ctaTitle": "EasyGo Spa를 경험할 준비가 되셨나요?",
+  "ctaTitle": "EasyGoSpa를 경험할 준비가 되셨나요?",
   "ctaText": "지금 예약하세요 — 테라피스트를 직접 선택하고, 도착하면 현금으로 결제하세요.",
   "ctaButton": "지금 예약하기"
 }

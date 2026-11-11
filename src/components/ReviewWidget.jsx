@@ -40,7 +40,7 @@ const reviews = [
     id: 5,
     name: "Akosua R.",
     rating: 5,
-    text: "EasyGo Spa is my go-to place for all beauty needs.",
+    text: "EasyGoSpa is my go-to place for all beauty needs.",
     service: "Full Package",
     avatar: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/7cf2b68ad_image.png?w=400&q=90"
   },
@@ -206,9 +206,9 @@ export default function ReviewWidget() {
             <div className="absolute inset-0 rounded-xl border-2 border-[#2db83d]/30 animate-pulse pointer-events-none" />
           </div>
 
-          {/* EasyGo Spa Badge */}
+          {/* EasyGoSpa Badge */}
           <div className="absolute -top-1 -right-1 bg-[#2db83d] text-white px-2 py-0.5 rounded-full text-xs font-medium shadow-lg">
-            EasyGo Spa
+            EasyGoSpa
           </div>
         </motion.div>
       )}
