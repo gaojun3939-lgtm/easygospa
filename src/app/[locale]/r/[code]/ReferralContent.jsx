@@ -116,7 +116,7 @@ export function ReferralContent({ code, iosFromServer, androidFromServer, onAppS
         <BrandMark size={28} tone="light" />
         {t("pill")}
       </span>
-      <h1 className="font-serif font-normal text-[40px] md:text-[54px] xl:text-[62px] leading-[1.1] mt-5 mb-4">
+      <h1 className="font-serif font-normal text-[34px] sm:text-[40px] md:text-[54px] xl:text-[62px] leading-[1.12] mt-5 mb-4">
         {t("friend")}
         <br />
         {t("title", { brand: BRAND })}
