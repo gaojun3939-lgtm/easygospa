@@ -2,7 +2,7 @@
   "title": "Điều khoản dịch vụ",
   "metaDescription": "Các điều khoản áp dụng khi bạn sử dụng dịch vụ đặt lịch massage tại nhà của {brand} ở Metro Manila.",
   "lastUpdated": "Cập nhật lần cuối: {date}",
-  "updatedDate": "5 tháng 11 năm 2026",
+  "updatedDate": "12 tháng 11 năm 2026",
   "languageNotice": "Trang này là bản dịch. Nếu có khác biệt giữa bản tiếng Anh và bản dịch, bản tiếng Anh được ưu tiên áp dụng.",
   "intro": "Chào mừng bạn đến với {brand}. Khi đặt lịch hoặc sử dụng trang web và dịch vụ của chúng tôi, bạn đồng ý với các Điều khoản dịch vụ này. Vui lòng đọc kỹ. Nếu bạn không đồng ý, vui lòng không sử dụng dịch vụ của chúng tôi.",
   "appliesToApp": "Các Điều khoản này cũng áp dụng cho ứng dụng di động {appName} trên Google Play và App Store.",
@@ -16,7 +16,7 @@
   },
   "pricing": {
     "title": "3. Giá và thanh toán",
-    "body": "Giá dịch vụ được hiển thị trước khi bạn xác nhận đặt lịch. Có thể áp dụng phí di chuyển theo khoảng cách: ₱50 trong phạm vi 5 km, ₱100 trong phạm vi 10 km và ₱150 trong phạm vi 15 km. Trong ứng dụng, phụ phí ban đêm cũng có thể áp dụng cho các buổi dịch vụ bắt đầu từ nửa đêm đến 6:00 sáng. Tổng số tiền hiển thị trước khi bạn xác nhận chính là số tiền bạn phải trả. Không yêu cầu tiền tip. Bạn thanh toán bằng tiền mặt cho kỹ thuật viên khi kỹ thuật viên đến nơi, trước khi bắt đầu dịch vụ."
+    "body": "Giá dịch vụ được hiển thị trước khi bạn xác nhận đặt lịch. Có thể áp dụng phí di chuyển theo khoảng cách: ₱50 trong phạm vi 5 km, ₱100 trong phạm vi 10 km và ₱150 trong phạm vi 15 km. Trong ứng dụng, phụ phí ban đêm cũng có thể áp dụng cho các buổi dịch vụ bắt đầu từ nửa đêm đến 6:00 sáng. Tổng số tiền hiển thị trước khi bạn xác nhận chính là số tiền bạn phải trả. Không yêu cầu tiền tip. Bạn có thể thanh toán bằng tiền mặt cho kỹ thuật viên khi kỹ thuật viên đến nơi, trước khi bắt đầu dịch vụ, hoặc thanh toán trực tuyến trong ứng dụng bằng GCash, Maya hoặc các phương thức khác hiện có."
   },
   "refunds": {
     "title": "4. Hủy và hoàn tiền",
