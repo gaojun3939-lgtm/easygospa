@@ -15,7 +15,7 @@ const VISIT = [
   { key: 'hotel', src: '/global/photos/gal-hotel.webp', pos: 'object-[40%_30%]' },
   { key: 'oil', src: '/global/photos/gal-oil.webp', pos: 'object-[75%_50%]' },
   { key: 'kit', src: '/global/photos/band-living.webp', pos: 'object-[80%_50%]' },
-  { key: 'night', src: '/global/photos/place-hotel.webp', pos: 'object-[50%_30%]' },
+  { key: 'night', src: '/global/photos/place-hotel.webp', pos: 'object-[50%_0%]' }, // 竖图，往上对齐，窗外夜里的城市灯光才露得出来
 ];
 // name = 后台项目的英文原名（serviceNames 里按它翻译）
 const TREATMENTS = [
