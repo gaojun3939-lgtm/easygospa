@@ -152,7 +152,8 @@ export default function Hero({ onPlay, onApple, playHref, appleHref, qrSvg }) {
       {/* 手机上字压在 Mia 的米白制服上，要压得更暗才看得清 */}
       <div className="absolute inset-0 md:hidden bg-gradient-to-t from-black/90 via-black/65 via-35% to-transparent to-62%" aria-hidden="true" />
 
-      <div className="relative z-10 h-full max-w-7xl mx-auto px-5 sm:px-8 flex items-end pb-24 md:pb-8">
+      {/* 底下留出圆章的位置：圆章压在首屏下沿正中，往上露出 70 / 80 / 90 像素（手机 / 平板 / 电脑），进度条和暂停键不能被它盖住 */}
+      <div className="relative z-10 h-full max-w-7xl mx-auto px-5 sm:px-8 flex items-end pb-24 md:pb-[100px] lg:pb-[108px]">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: 'easeOut' }} className="w-full md:max-w-[640px]">
           <p className="eg-hero-eyebrow text-white/80 mb-3.5">{t('available')}</p>
           <h1 className="eg-hero-title text-white">
