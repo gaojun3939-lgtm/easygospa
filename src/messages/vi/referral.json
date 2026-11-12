@@ -3,8 +3,8 @@
   "friend": "Một người bạn mời bạn",
   "title": "trải nghiệm {brand}",
   "shareTitle": "Một người bạn mời bạn trải nghiệm {brand}",
-  "description": "Đặt kỹ thuật viên đã xác minh danh tính đến massage tại nhà riêng, căn hộ hoặc khách sạn của bạn.",
-  "descriptionGetApp": "Tải ứng dụng và đặt kỹ thuật viên đến nhà riêng, căn hộ hoặc khách sạn của bạn. Lời mời của bạn được lưu tự động.",
+  "description": "Đặt kỹ thuật viên có chứng chỉ, đã xác minh danh tính đến massage tại nhà riêng, căn hộ hoặc khách sạn của bạn.",
+  "descriptionGetApp": "Tải ứng dụng và đặt kỹ thuật viên có chứng chỉ, đã xác minh danh tính đến nhà riêng, căn hộ hoặc khách sạn của bạn. Lời mời của bạn được lưu tự động.",
   "code": "Mã mời",
   "codeNote": "tự động áp dụng sau khi tải, không cần nhập",
   "badges": {
@@ -19,7 +19,7 @@
     }
   },
   "points": {
-    "verified": "Kỹ thuật viên đã xác minh",
+    "verified": "Có chứng chỉ, đã xác minh",
     "home": "Đến nhà riêng, căn hộ, khách sạn",
     "eta": "Biết khi nào kỹ thuật viên đến",
     "allDay": "Đặt lịch 24/7"
