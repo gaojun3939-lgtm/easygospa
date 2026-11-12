@@ -4,6 +4,7 @@ import { alternatesFor, languageOf } from "@/i18n/routing";
 import { OpenApp } from "./OpenApp";
 import { ReferralContent } from "./ReferralContent";
 import { APP_STORE_URL, IOS_APP_ID, PACKAGE, isOnAppStore, isOnGooglePlay, playStoreUrl } from "@/lib/appStores.mjs";
+import { OG_IMAGE, TWITTER_IMAGE } from "@/lib/shareImage";
 
 // 推荐链接落地页（2026-10-19，App 简化版大检查 B6）：https://www.easygospa.com/r/<推荐码>
 // 安卓手机：装了 App → 直接打开 App（带着码）；没装 → 跳 Play 商店，商店把码记下（install referrer），
@@ -36,13 +37,13 @@ export async function generateMetadata({ params }) {
       url,
       title,
       description,
-      images: [{ url: `${SITE}/opengraph-image.jpg`, width: 1200, height: 630, alt: "EasyGoSpa" }],
+      images: [OG_IMAGE],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [`${SITE}/twitter-image.jpg`],
+      images: [TWITTER_IMAGE],
     },
     ...(onAppStore ? { itunes: { appId: IOS_APP_ID, appArgument: url } } : {}),
   };

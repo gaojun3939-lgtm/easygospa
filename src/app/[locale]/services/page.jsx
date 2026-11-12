@@ -4,6 +4,7 @@ import ServicesPage from '@/components/ServicesPage'
 import PageShell from '@/components/site/PageShell';
 import { loadPublicServiceMenu } from '@/lib/publicServiceMenu.mjs';
 import { alternatesFor } from '@/i18n/routing';
+import { OG_IMAGE } from '@/lib/shareImage';
 
 // 2026-10-26:服务卡显示后台真价;每 60 秒最多重算一次,读不到后台时继续给上一次的页面(规则见 lib/publicServiceMenu.mjs)
 export const revalidate = 60;
@@ -20,7 +21,7 @@ export async function generateMetadata({ params }) {
     openGraph: {
       title: t('title'),
       description: t('ogDescription'),
-      images: [{ url: "/opengraph-image.jpg", width: 1200, height: 630, alt: "EasyGoSpa" }],
+      images: [OG_IMAGE],
     },
   };
 }

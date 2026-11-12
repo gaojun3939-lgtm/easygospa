@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { OG_IMAGE, TWITTER_IMAGE } from "@/lib/shareImage";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
@@ -61,7 +62,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       title: t("site.ogTitle"),
       description: t("site.ogDescription"),
       siteName: "EasyGoSpa",
-      images: [{ url: "/opengraph-image.jpg", width: 1200, height: 630, alt: "EasyGoSpa" }],
+      images: [OG_IMAGE],
       locale: languageOf(locale).og,
       type: "website",
     },
@@ -69,7 +70,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       card: "summary_large_image",
       title: t("site.twitterTitle"),
       description: t("site.twitterDescription"),
-      images: ["/twitter-image.jpg"],
+      images: [TWITTER_IMAGE],
     },
     robots: {
       index: true,
