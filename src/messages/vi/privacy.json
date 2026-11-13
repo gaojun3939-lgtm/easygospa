@@ -2,7 +2,7 @@
   "title": "Chính sách quyền riêng tư",
   "metaDescription": "Cách {brand} thu thập, sử dụng và bảo vệ thông tin cá nhân của bạn trên trang web và trong ứng dụng {brand}.",
   "lastUpdated": "Cập nhật lần cuối: {date}",
-  "updatedDate": "7 tháng 11 năm 2026",
+  "updatedDate": "13 tháng 11 năm 2026",
   "languageNotice": "Trang này là bản dịch. Nếu có khác biệt giữa bản tiếng Anh và bản dịch, bản tiếng Anh được ưu tiên áp dụng.",
   "intro": "{company} (“{brand}”, “chúng tôi”, “của chúng tôi”) vận hành trang web {brand}, ứng dụng {brand} và dịch vụ massage tại nhà tại Metro Manila, Philippines. Chính sách này giải thích chúng tôi thu thập những thông tin cá nhân nào, vì sao thu thập, ai có thể xem, lưu giữ trong bao lâu và bạn có những quyền gì. Chính sách áp dụng cho cả trang web và ứng dụng. Chúng tôi tuân thủ Đạo luật Quyền riêng tư dữ liệu năm 2012 của Philippines (Đạo luật Cộng hòa số 10173).",
   "collect": {
@@ -68,7 +68,7 @@
     "title": "6. Chúng tôi lưu giữ thông tin trong bao lâu",
     "account": "Chúng tôi lưu giữ thông tin của bạn trong thời gian tài khoản của bạn còn hoạt động hoặc khi chúng tôi cần thông tin đó cho các đơn đặt lịch của bạn. Sau khi bạn xóa tài khoản, chúng tôi sẽ xóa hoặc ẩn danh hóa thông tin cá nhân của bạn, trừ những hồ sơ chúng tôi phải lưu giữ theo quy định pháp luật, vì mục đích thuế hoặc để giải quyết tranh chấp.",
     "chats": "Tin nhắn trong ứng dụng về một đơn được lưu giữ trong 1 năm và ảnh gửi trong tin nhắn được lưu giữ trong 180 ngày; sau thời hạn này, chúng sẽ tự động bị xóa.",
-    "fingerprint": "Để ngăn một người đăng ký lặp đi lặp lại nhằm nhận thưởng giới thiệu, chúng tôi lưu giữ một mã băm một chiều của số điện thoại và email (không thể khôi phục lại thành số điện thoại) cho đến khi mã này không xuất hiện trong 1 năm, hoặc cho đến khi dữ liệu tài khoản của bạn bị xóa sau khi bạn xóa tài khoản, tùy điều kiện nào đến trước."
+    "fingerprint": "Để nhận biết nhiều tài khoản do cùng một người đăng ký (ví dụ: đăng ký lại bằng cùng số điện thoại hoặc email sau khi xóa tài khoản), chúng tôi lưu giữ một mã băm một chiều của số điện thoại và email (không thể khôi phục lại thành số điện thoại) cho đến khi mã này không xuất hiện trong 1 năm, hoặc cho đến khi dữ liệu tài khoản của bạn bị xóa sau khi bạn xóa tài khoản, tùy điều kiện nào đến trước."
   },
   "protect": {
     "title": "7. Cách chúng tôi bảo vệ thông tin",
