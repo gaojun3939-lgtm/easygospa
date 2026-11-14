@@ -6,6 +6,7 @@ import BrandMark from '@/components/BrandMark'
 import { useTranslations } from 'next-intl'
 import { useGoApp } from '../AppButton'
 import { nums } from '../nums'
+import TitleTail from '../TitleTail'
 
 // 模版「Why Choose」：左边一张竖图，右边小胶囊、两行大字、一段话、带图标的理由、一个按钮
 // 11-12 老板「付款 可以多种选择啊，我们要接三方支付的嘛，还有能看到多久过来」「线上开通了 因为我们马上接了」→ 三条改四条：
@@ -39,8 +40,7 @@ export default function WhyChoose() {
             </div>
             <h2 className="eg-title font-serif text-4xl md:text-[2.6rem] lg:text-5xl mb-6 leading-tight">
               <span className="text-[#0F0F0F]">{nums(t('title1'))}</span>
-              <br className="eg-br" />
-              <span className="eg-t2 text-[#64734F]"> {nums(t('title2'))}</span>
+              <TitleTail t1={t('title1')} t2={t('title2')} className="text-[#64734F]" />
             </h2>
             <p className="eg-lead font-sans text-lg text-gray-600 leading-relaxed mb-2 max-w-3xl mx-auto">{t('lead')}</p>
           </div>

@@ -5,6 +5,7 @@ import BrandMark from '@/components/BrandMark'
 import { Link } from '@/i18n/navigation'
 import { rise } from './motion'
 import { nums } from './nums'
+import TitleTail from './TitleTail'
 
 // 模版每一块的标题：小胶囊 + 两行大字（第二行绿色）+ 一段说明
 // 小胶囊前面的图标 11-11 起用我们定稿的莲花（模版原来是星星，老板「这个服务项目的logo也没改成我们的」）
@@ -24,8 +25,7 @@ export default function SectionHead({ pill, title1, title2, lead, dark = false, 
           {nums(title1)}
           {title2 ? (
             <>
-              <br className="eg-br" />
-              <span className={`eg-t2 ${dark ? 'text-[#C9D4B4]' : 'text-[#64734F]'}`}> {nums(title2)}</span>
+              <TitleTail t1={title1} t2={title2} className={dark ? 'text-[#C9D4B4]' : 'text-[#64734F]'} />
             </>
           ) : null}
         </Tag>

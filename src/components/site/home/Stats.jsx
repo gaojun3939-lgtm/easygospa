@@ -6,6 +6,7 @@ import { Clock, HandCoins, Tag, Users, Wallet } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { peso } from '../serviceText'
 import { nums } from '../nums'
+import TitleTail from '../TitleTail'
 
 // 模版「Our Impact」：整幅照片压暗，标题 + 一段话 + 四个大字。
 // 模版的四个数（2000+ 客人、4.9 分、15 个奖、5 年）我们拿不出来，换成四样真的：起步价、到场付现金或 App 里线上付款（11-12 老板「线上开通了」）、不收小费、24 小时。
@@ -53,8 +54,7 @@ export default function Stats({ fromPrice }) {
           </div>
           <h2 className="eg-band-title font-serif text-4xl text-white md:text-5xl lg:text-6xl mb-6">
             {nums(t('title1'))}
-            <br className="eg-br" />
-            <span className="eg-t2 text-[#C9D4B4]"> {nums(t('title2'))}</span>
+            <TitleTail t1={t('title1')} t2={t('title2')} className="text-[#C9D4B4]" />
           </h2>
           <p className="eg-band-lead font-sans text-xl text-gray-100 max-w-3xl mx-auto leading-relaxed">{t('lead')}</p>
         </motion.div>

@@ -72,7 +72,7 @@ h1.font-serif, h2.font-serif, h3.font-serif, h4.font-serif, .font-serif.font-bol
    只在 768 以下生效，电脑版一个像素不动。标题靠左小一号粗体 + 右边「全部 ›」；首屏下一张白卡；白卡片、一行一行的列表；
    横幅卡；横着滑的小卡；底部浮起来的一排（TabBar）。用到的标记（eg-…）在各组件里，电脑上没有任何样式。
    ===================================================================== */
-.eg-more, .eg-svc-meta, .eg-svc-go, .eg-svc-link, .eg-tabbar { display: none; }
+.eg-more, .eg-svc-meta, .eg-svc-go, .eg-svc-link, .eg-tabbar, .eg-sep { display: none; }
 
 @media (max-width: 767px) {
   /* 首页整体：米色底，各块透明，上下间距收成 App 的节奏，左右 16 */
@@ -93,6 +93,7 @@ h1.font-serif, h2.font-serif, h3.font-serif, h4.font-serif, .font-serif.font-bol
     font-style: normal !important; line-height: 1.3 !important; letter-spacing: -0.01em !important; text-transform: none !important; text-align: left; color: #0f0f0f !important;
   }
   .eg-title .eg-br, .eg-band-title .eg-br { display: none; }
+  .eg-title .eg-sep, .eg-band-title .eg-sep { display: inline; white-space: pre-wrap; }
   .eg-title .eg-t2 { color: inherit !important; }
   .eg-lead { margin: 4px 0 0 !important; max-width: none !important; font-size: 13px !important; line-height: 1.5 !important; color: #6b7280 !important; text-align: left; }
 

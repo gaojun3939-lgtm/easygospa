@@ -5,6 +5,7 @@ import { Clock, Lock, ShieldCheck, Zap } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useGoApp } from '../AppButton'
 import { nums } from '../nums'
+import TitleTail from '../TitleTail'
 
 // 模版「The NUNYUI Standard」：小字眉题、两行大字、一段话；左右两张圆图，中间四条
 const FEATURES = [
@@ -42,8 +43,7 @@ export default function Standard() {
           <p className="max-md:hidden font-sans text-sm text-gray-500 mb-4 tracking-[0.3em] uppercase">{t('eyebrow')}</p>
           <h2 className="eg-title font-serif text-4xl md:text-5xl lg:text-6xl text-[#0F0F0F] leading-tight mb-6">
             {nums(t('title1'))}
-            <br className="eg-br" />
-            <span className="eg-t2 text-[#64734F]"> {nums(t('title2'))}</span>
+            <TitleTail t1={t('title1')} t2={t('title2')} className="text-[#64734F]" />
           </h2>
           <p className="eg-lead text-lg text-gray-600 max-w-4xl mx-auto leading-relaxed">{t('lead')}</p>
         </motion.div>

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { BadgeCheck, Car, Clock, HandCoins, Home, Navigation, ReceiptText, Wallet } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { nums } from '../nums'
+import TitleTail from '../TitleTail'
 
 // 模版「Purely Potent, Naturally」：标题 + 一段话 + 一排图标自己往左走。
 // 模版写的是有机产品（无硫酸盐、无酒精……），我们没有这套说法，换成每一单都一样的几条实话。
@@ -25,8 +26,7 @@ export default function Included() {
       <div className="eg-head text-center mb-14 relative px-6">
         <h2 className="eg-title font-serif text-4xl md:text-5xl leading-tight">
           <span className="text-[#0F0F0F]">{nums(t('title1'))}</span>
-          <br className="eg-br" />
-          <span className="eg-t2 text-[#64734F]"> {nums(t('title2'))}</span>
+          <TitleTail t1={t('title1')} t2={t('title2')} className="text-[#64734F]" />
         </h2>
         <p className="eg-lead font-sans text-lg text-gray-600 mt-6 max-w-3xl mx-auto leading-relaxed">{t('lead')}</p>
         {/* 11-12 老板「免小费，这个 夜班费跟车费 算是么？」→ 车费、夜间费写明（都全归技师、下单前合计里有），「透明」才说得过去 */}
