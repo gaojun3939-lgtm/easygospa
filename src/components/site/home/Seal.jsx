@@ -7,8 +7,9 @@ import BrandMark from '@/components/BrandMark'
 // 模版首屏底下压着的圆章：中间是我们的莲花标和名字，外圈一圈字慢慢转
 export default function Seal() {
   const t = useTranslations('home.seal')
+  // 11-15 手机上不放（max-md:hidden，照 .ph「像我们 App」：模版的转圈圆章手机上不放，首屏下面换成白卡 QuickCard）
   return (
-    <div className="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-1/2 z-30">
+    <div className="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-1/2 z-30 max-md:hidden">
       <motion.div
         initial={{ opacity: 0, scale: 0.8, y: 50 }}
         whileInView={{ opacity: 1, scale: 1, y: 0 }}

@@ -6,6 +6,7 @@ import { Clock, HandCoins, Tag, Users, Wallet } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { peso } from '../serviceText'
 import { nums } from '../nums'
+import TitleTail from '../TitleTail'
 
 // 模版「Our Impact」：整幅照片压暗，标题 + 一段话 + 四个大字。
 // 模版的四个数（2000+ 客人、4.9 分、15 个奖、5 年）我们拿不出来，换成四样真的：起步价、到场付现金或 App 里线上付款（11-12 老板「线上开通了」）、不收小费、24 小时。
@@ -43,23 +44,22 @@ export default function Stats({ fromPrice }) {
     { key: 'open', icon: Clock },
   ].filter((item) => item.key !== 'from' || item.value)
   return (
-    <section id="stats-section" style={{ backgroundImage: 'url(/global/photos/band-living.webp)' }} className="py-16 md:py-24 bg-center bg-cover bg-no-repeat relative overflow-hidden">
+    <section id="stats-section" style={{ backgroundImage: 'url(/global/photos/band-living.webp)' }} className="eg-sec eg-band py-16 md:py-24 bg-center bg-cover bg-no-repeat relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/70" aria-hidden="true" />
       <div className="max-w-7xl mx-auto px-6 lg:px-8 z-10 relative">
-        <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: 'easeOut' }} viewport={{ once: true }} className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 bg-[#64734F]/85 rounded-full px-4 py-2 mb-6 mx-auto">
+        <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: 'easeOut' }} viewport={{ once: true }} className="eg-band-head text-center mb-16">
+          <div className="eg-pill inline-flex items-center gap-2 bg-[#64734F]/85 rounded-full px-4 py-2 mb-6 mx-auto">
             <Users className="w-4 h-4 text-white" aria-hidden="true" />
             <span className="font-sans text-sm text-white font-medium uppercase tracking-wider">{t('pill')}</span>
           </div>
-          <h2 className="font-serif text-4xl text-white md:text-5xl lg:text-6xl mb-6">
+          <h2 className="eg-band-title font-serif text-4xl text-white md:text-5xl lg:text-6xl mb-6">
             {nums(t('title1'))}
-            <br />
-            <span className="text-[#C9D4B4]">{nums(t('title2'))}</span>
+            <TitleTail t1={t('title1')} t2={t('title2')} className="text-[#C9D4B4]" />
           </h2>
-          <p className="font-sans text-xl text-gray-100 max-w-3xl mx-auto leading-relaxed">{t('lead')}</p>
+          <p className="eg-band-lead font-sans text-xl text-gray-100 max-w-3xl mx-auto leading-relaxed">{t('lead')}</p>
         </motion.div>
 
-        <div className={`grid grid-cols-2 gap-x-6 gap-y-10 ${items.length === 4 ? 'lg:grid-cols-4' : 'lg:grid-cols-3'}`}>
+        <div className={`max-md:hidden grid grid-cols-2 gap-x-6 gap-y-10 ${items.length === 4 ? 'lg:grid-cols-4' : 'lg:grid-cols-3'}`}>
           {items.map((item, i) => (
             <motion.div
               key={item.key}

@@ -5,5 +5,6 @@
   "fromPrice": "{price} 起",
   "tagline": "頂級到府按摩",
   "loading": "正在為您準備尊榮體驗……",
-  "minutesRange": "{min}–{max} 分鐘"
+  "minutesRange": "{min}–{max} 分鐘",
+  "seeAll": "全部"
 }

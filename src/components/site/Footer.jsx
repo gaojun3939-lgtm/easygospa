@@ -33,10 +33,10 @@ export default async function Footer() {
     : <span className="inline-flex items-center justify-center rounded-full border border-gray-700 px-4 py-2 text-sm text-gray-400">{name} · {tb('comingSoon')}</span>
 
   return (
-    <footer className="bg-[#0F0F0F] text-white relative overflow-hidden" role="contentinfo">
+    <footer className="eg-footer bg-[#0F0F0F] text-white relative overflow-hidden" role="contentinfo">
       <div className="absolute inset-0 bg-gradient-to-r from-[#0F0F0F] via-[#1a1a1a] to-[#0F0F0F]" aria-hidden="true" />
-      <div className="relative max-w-7xl mx-auto px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 text-center md:text-left">
+      <div className="eg-footer-in relative max-w-7xl mx-auto px-6 lg:px-8 py-16">
+        <div className="eg-footer-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 text-center md:text-left">
           <div className="flex flex-col items-center md:items-start">
             <div className="flex items-center gap-3 mb-6">
               <BrandMark size={48} tone="light" />
@@ -89,7 +89,7 @@ export default async function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center md:items-end gap-6 text-center md:text-left">
+        <div className="eg-footer-bottom mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center md:items-end gap-6 text-center md:text-left">
           <p className="text-sm text-gray-400 leading-relaxed">
             {t('rights', { company: COMPANY })}<br />
             {t('secReg', { number: SEC_NO })}<br />
