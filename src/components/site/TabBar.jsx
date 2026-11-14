@@ -9,7 +9,7 @@ import { useGoApp } from './AppButton'
 // 手机底部浮起来的一排（11-15 照 easygospa.ph「像我们 App」那套，老板「照这个改」；照我们 App 的底栏）：
 // 服务项目 / 价格 / 门店（官网菜单里的栏目，四样以内），右边绿色「下载 App」——手机上直接去商店，商店没开回首页下载区。
 // 滑到首页下载区、页脚，或者打开菜单时整条收起来，不挡内容。只在手机上出现（样式在 site.css 末尾）。
-// 推荐页 /r/<码> 不放：那一页本身就是下载页。
+// 推荐页 /r/<码> 不放：那一页本身就是下载页；付款跳回页 /pay/ok 也不放：那一页只让客人回 App。
 export default function TabBar() {
   const t = useTranslations('nav')
   const goApp = useGoApp('tabbar')
@@ -26,7 +26,7 @@ export default function TabBar() {
     return () => io.disconnect()
   }, [pathname])
 
-  if (pathname.startsWith('/r/') || pathname === '/r') return null
+  if (pathname.startsWith('/r/') || pathname === '/r' || pathname.startsWith('/pay/')) return null
 
   const items = [
     { href: '/services', label: t('services'), Icon: Sparkles },
