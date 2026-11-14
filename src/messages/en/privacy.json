@@ -2,7 +2,7 @@
   "title": "Privacy Policy",
   "metaDescription": "How {brand} collects, uses, and protects your personal information on our website and in the {brand} app.",
   "lastUpdated": "Last updated: {date}",
-  "updatedDate": "November 13, 2026",
+  "updatedDate": "November 14, 2026",
   "languageNotice": "This page is a translation. If there is any difference between the English version and a translation, the English version applies.",
   "intro": "{company} (“{brand}”, “we”, “us”, “our”) runs the {brand} website, the {brand} app and its home massage services in Metro Manila, Philippines. This policy explains what personal information we collect, why we collect it, who can see it, how long we keep it, and your rights. It applies to both the website and the app. We follow the Philippine Data Privacy Act of 2012 (Republic Act No. 10173).",
   "collect": {
@@ -58,7 +58,7 @@
     "crashlytics": "Firebase Crashlytics — crash reports (device model, app version, error details) so we can fix problems.",
     "appsflyer": "AppsFlyer — measuring which ads and links bring app installs and bookings.",
     "meta": "Meta (Meta Pixel on our website) — measuring which ads bring website bookings.",
-    "xendit": "Xendit — QR Ph payments of platform fees by therapists."
+    "paymongo": "PayMongo — online payments and payouts (customers paying online, therapists paying platform fees by QR, therapists and referrers withdrawing to GCash, Maya or a bank account)."
   },
   "storage": {
     "title": "5. Storage outside the Philippines",

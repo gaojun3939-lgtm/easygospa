@@ -2,7 +2,7 @@
   "title": "隱私權政策",
   "metaDescription": "說明 {brand} 如何在我們的網站與 {brand} App 中蒐集、使用及保護您的個人資料。",
   "lastUpdated": "最後更新：{date}",
-  "updatedDate": "2026年11月13日",
+  "updatedDate": "2026年11月14日",
   "languageNotice": "本頁為翻譯版本。英文版與翻譯版本如有任何差異，以英文版為準。",
   "intro": "{company}（以下稱「{brand}」、「我們」）營運 {brand} 網站、{brand} App，以及在菲律賓 Metro Manila 提供的到府按摩服務。本政策說明我們蒐集哪些個人資料、蒐集的原因、誰可以看到、保存多久，以及您享有的權利。本政策同時適用於網站與 App。我們遵守菲律賓《2012 年資料隱私法》（第 10173 號共和國法）。",
   "collect": {
@@ -58,7 +58,7 @@
     "crashlytics": "Firebase Crashlytics：當機報告（裝置型號、App 版本、錯誤詳情），讓我們能修正問題。",
     "appsflyer": "AppsFlyer：衡量哪些廣告與連結帶來 App 安裝與預約。",
     "meta": "Meta（我們網站上的 Meta Pixel）：衡量哪些廣告帶來網站預約。",
-    "xendit": "Xendit：技師以 QR Ph 支付平台費。"
+    "paymongo": "PayMongo：處理線上付款和提現打款（客戶線上付款、技師掃碼交平臺費、技師和推薦人提現到 GCash / Maya / 銀行卡）。"
   },
   "storage": {
     "title": "5. 在菲律賓境外儲存",

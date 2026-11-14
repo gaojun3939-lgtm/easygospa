@@ -101,7 +101,7 @@ export default async function PrivacyPolicyPage({ params }) {
               <li>{t("providers.crashlytics")}</li>
               <li>{t("providers.appsflyer")}</li>
               <li>{t("providers.meta")}</li>
-              <li>{t("providers.xendit")}</li>
+              <li>{t("providers.paymongo")}</li>
             </ul>
           </Section>
 

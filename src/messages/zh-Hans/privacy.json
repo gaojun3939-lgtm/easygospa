@@ -2,7 +2,7 @@
   "title": "隐私政策",
   "metaDescription": "{brand} 如何在我们的网站和 {brand} App 中收集、使用和保护您的个人信息。",
   "lastUpdated": "最后更新：{date}",
-  "updatedDate": "2026年11月13日",
+  "updatedDate": "2026年11月14日",
   "languageNotice": "本页为译文。英文版本与译文如有任何不一致，以英文版本为准。",
   "intro": "{company}（以下简称“{brand}”或“我们”）运营 {brand} 网站、{brand} App 及其在菲律宾 Metro Manila 的上门按摩服务。本政策说明我们收集哪些个人信息、为何收集、谁能看到、保存多久，以及您享有的权利。本政策同时适用于网站和 App。我们遵守菲律宾《2012 年数据隐私法》（第 10173 号共和国法）。",
   "collect": {
@@ -58,7 +58,7 @@
     "crashlytics": "Firebase Crashlytics：崩溃报告（设备型号、App 版本、错误详情），以便我们修复问题。",
     "appsflyer": "AppsFlyer：衡量哪些广告和链接带来了 App 安装和预约。",
     "meta": "Meta（我们网站上的 Meta Pixel）：衡量哪些广告带来了网站预约。",
-    "xendit": "Xendit：技师通过 QR Ph 支付平台费。"
+    "paymongo": "PayMongo：处理线上付款和提现打款（客户线上付款、技师扫码交平台费、技师和推荐人提现到 GCash / Maya / 银行卡）。"
   },
   "storage": {
     "title": "5. 在菲律宾境外存储",
