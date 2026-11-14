@@ -19,15 +19,15 @@ export default function Ways() {
   const first = STORES[0]
   const storeText = open.length ? t('store.textOpen', { count: open.length }) : t('store.textSoon')
   return (
-    <section id="ways" className="py-16 md:py-20 lg:py-24 relative">
+    <section id="ways" className="eg-sec py-16 md:py-20 lg:py-24 relative">
       <div className="mx-auto px-6 max-w-7xl lg:px-8">
         <SectionHead pill={t('pill')} title1={t('title1')} title2={t('title2')} className="mb-12" />
-        <div className="grid md:grid-cols-2 gap-[clamp(1rem,2vw,2.5rem)]">
-          <motion.div initial={{ opacity: 0, y: 60 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: 'easeOut' }} viewport={{ once: true }} className="group bg-white rounded-3xl overflow-hidden shadow-lg flex flex-col">
-            <div className="relative aspect-[16/10] overflow-hidden">
+        <div className="eg-ways grid md:grid-cols-2 gap-[clamp(1rem,2vw,2.5rem)]">
+          <motion.div initial={{ opacity: 0, y: 60 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: 'easeOut' }} viewport={{ once: true }} className="eg-way group bg-white rounded-3xl overflow-hidden shadow-lg flex flex-col">
+            <div className="eg-way-img relative aspect-[16/10] overflow-hidden">
               <img src="/global/photos/gal-step-arrive.webp" alt={t('home.alt')} className="w-full h-full object-cover object-[50%_20%] group-hover:scale-105 transition-transform duration-700" loading="lazy" />
             </div>
-            <div className="p-8 flex flex-col flex-1">
+            <div className="eg-way-body p-8 flex flex-col flex-1">
               <div className="flex items-center gap-3 mb-3">
                 <span className="w-11 h-11 rounded-2xl bg-[#64734F]/10 flex items-center justify-center"><Home className="w-5 h-5 text-[#64734F]" aria-hidden="true" /></span>
                 <h3 className="font-serif text-2xl text-[#0F0F0F]">{t('home.title')}</h3>
@@ -39,8 +39,8 @@ export default function Ways() {
               </button>
             </div>
           </motion.div>
-          <motion.div initial={{ opacity: 0, y: 60 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.15, ease: 'easeOut' }} viewport={{ once: true }} className="group bg-white rounded-3xl overflow-hidden shadow-lg flex flex-col">
-            <div className="relative aspect-[16/10] overflow-hidden">
+          <motion.div initial={{ opacity: 0, y: 60 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.15, ease: 'easeOut' }} viewport={{ once: true }} className="eg-way group bg-white rounded-3xl overflow-hidden shadow-lg flex flex-col">
+            <div className="eg-way-img relative aspect-[16/10] overflow-hidden">
               {first ? (
                 <StorePhoto store={first} alt={t('store.alt', { store: first.name })} className="group-hover:scale-105 transition-transform duration-700" />
               ) : (
@@ -50,7 +50,7 @@ export default function Ways() {
                 </div>
               )}
             </div>
-            <div className="p-8 flex flex-col flex-1">
+            <div className="eg-way-body p-8 flex flex-col flex-1">
               <div className="flex items-center gap-3 mb-3">
                 <span className="w-11 h-11 rounded-2xl bg-[#64734F]/10 flex items-center justify-center"><Store className="w-5 h-5 text-[#64734F]" aria-hidden="true" /></span>
                 <h3 className="font-serif text-2xl text-[#0F0F0F]">{t('store.title')}</h3>

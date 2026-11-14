@@ -12,6 +12,7 @@ import CustomerOrders from "@/components/CustomerOrders";
 import LoadingScreen from "@/components/LoadingScreen";
 import MetaPixel from "@/components/MetaPixel";
 import Footer from "@/components/site/Footer";
+import TabBar from "@/components/site/TabBar";
 import { routing, languageOf, SITE } from "@/i18n/routing";
 import { CLIENT_NAMESPACES } from "@/i18n/namespaces";
 import "../globals.css";
@@ -127,6 +128,8 @@ export default async function LocaleLayout({
           </Suspense>
           {children}
           <Footer />
+          {/* 11-15 手机底部浮起来的一排（照我们 App 的底栏），电脑上不出现 */}
+          <TabBar />
           {/* ChatBot 暂时下架:LLM 接口未接通,且菜单数据为模板假数据;AI 阶段接真模型后再恢复 */}
           <BookingModal />
           <CustomerOrders />

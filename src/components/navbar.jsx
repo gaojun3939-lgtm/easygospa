@@ -45,6 +45,10 @@ export default function Navbar() {
   const [overDark, setOverDark] = React.useState(false);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [isLangOpen, setIsLangOpen] = React.useState(false);
+  // 11-15 菜单打开时让手机底部那一排（TabBar）收起来，不跟整屏菜单叠在一起
+  React.useEffect(() => {
+    document.documentElement.dataset.menu = isMenuOpen ? "1" : "0";
+  }, [isMenuOpen]);
 
   // usePathname 来自多语言那一层：给的是不带语言前缀的网址（/ja/services 给 /services）
   const pathname = usePathname();

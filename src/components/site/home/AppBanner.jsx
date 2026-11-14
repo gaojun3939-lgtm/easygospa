@@ -21,7 +21,7 @@ function StoreBadge({ live, href, kind, tb }) {
       </span>
     </>
   )
-  const cls = 'inline-flex items-center gap-3 rounded-2xl px-5 h-14 border border-white/20 shadow-xl transition-all duration-300'
+  const cls = 'eg-badge inline-flex items-center gap-3 rounded-2xl px-5 h-14 border border-white/20 shadow-xl transition-all duration-300'
   return live
     ? <a href={href} target="_blank" rel="noopener" className={`${cls} bg-black/85 text-white hover:bg-black hover:scale-105`}>{inner}</a>
     : <span aria-disabled="true" className={`${cls} bg-black/35 text-white/70 cursor-default`}>{inner}</span>
@@ -33,8 +33,8 @@ export default function AppBanner({ onPlay, onApple, playHref, appleHref, qrSvg 
   const storeLine = onPlay && onApple ? t('storeBoth') : onPlay ? t('storePlay') : onApple ? t('storeApple') : t('storeNone')
   const scan = onPlay && onApple ? t('scanAny') : onPlay ? t('scanAndroid') : onApple ? t('scanIphone') : ''
   return (
-    <section id="app" className="relative py-16 md:py-20 overflow-hidden bg-gradient-to-br from-[#7B8A63] via-[#64734F] to-[#3E4A2E] scroll-mt-20">
-      <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+    <section id="app" className="eg-getapp relative py-16 md:py-20 overflow-hidden bg-gradient-to-br from-[#7B8A63] via-[#64734F] to-[#3E4A2E] scroll-mt-20">
+      <div className="max-md:hidden absolute inset-0 pointer-events-none" aria-hidden="true">
         {[...Array(8)].map((_, i) => (
           <motion.div
             key={i}
@@ -51,14 +51,14 @@ export default function AppBanner({ onPlay, onApple, playHref, appleHref, qrSvg 
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 text-center">
-        <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: 'easeOut' }} viewport={{ once: true }} className="space-y-6">
-          <h2 className="font-serif text-5xl md:text-7xl lg:text-8xl text-white mb-4" style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.35)' }}>{nums(t('big'))}</h2>
+        <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: 'easeOut' }} viewport={{ once: true }} className="eg-getapp-in space-y-6">
+          <h2 className="eg-getapp-title font-serif text-5xl md:text-7xl lg:text-8xl text-white mb-4" style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.35)' }}>{nums(t('big'))}</h2>
           <div className="space-y-2">
             <p className="font-sans text-xl md:text-2xl font-light text-white/90 tracking-wide">{t('lead')}</p>
             <p className="font-sans text-lg md:text-xl font-semibold text-white">{storeLine}</p>
           </div>
 
-          <ul className="flex flex-wrap justify-center gap-x-6 gap-y-2 max-w-4xl mx-auto pt-2">
+          <ul className="eg-getapp-points flex flex-wrap justify-center gap-x-6 gap-y-2 max-w-4xl mx-auto pt-2">
             {['pick', 'later', 'eta', 'chat'].map((key) => (
               <li key={key} className="flex items-center gap-2 text-sm md:text-base text-white/90">
                 <Check className="w-4 h-4 text-[#E3EAD3] flex-shrink-0" aria-hidden="true" />
@@ -67,7 +67,7 @@ export default function AppBanner({ onPlay, onApple, playHref, appleHref, qrSvg 
             ))}
           </ul>
 
-          <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4 pt-6">
+          <div className="eg-badges flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4 pt-6">
             <StoreBadge kind="play" live={onPlay} href={playHref} tb={tb} />
             <StoreBadge kind="apple" live={onApple} href={appleHref} tb={tb} />
           </div>
@@ -79,7 +79,7 @@ export default function AppBanner({ onPlay, onApple, playHref, appleHref, qrSvg 
             </div>
           ) : null}
 
-          <div className="flex justify-center items-center gap-4 pt-4" aria-hidden="true">
+          <div className="max-md:hidden flex justify-center items-center gap-4 pt-4" aria-hidden="true">
             <div className="w-16 h-0.5 bg-white/30" />
             <BrandMark size={34} tone="light" className="opacity-60" />
             <div className="w-16 h-0.5 bg-white/30" />

@@ -5,5 +5,6 @@
   "fromPrice": "เริ่มต้น {price}",
   "tagline": "นวดถึงบ้านระดับพรีเมียม",
   "loading": "กำลังเตรียมประสบการณ์สุดพิเศษให้คุณ...",
-  "minutesRange": "{min}–{max} นาที"
+  "minutesRange": "{min}–{max} นาที",
+  "seeAll": "ทั้งหมด"
 }

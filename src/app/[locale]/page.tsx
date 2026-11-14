@@ -16,6 +16,7 @@ import AppBanner from "@/components/site/home/AppBanner";
 import Areas from "@/components/site/home/Areas";
 import GoodToKnow from "@/components/site/home/GoodToKnow";
 import Ways from "@/components/site/home/Ways";
+import QuickCard from "@/components/site/home/QuickCard";
 
 // 首页（2026-11-10 老板：用建站模版 serinity 当骨架，模版首页每一块都留着，按原顺序，只换成我们的内容）。
 // 模版顺序：首屏+圆章 → 为什么选我们 → 项目 → 大图数字 → 横走卡片 → 横走图标 → 标准 → 横幅 → 品牌条 → 评价。
@@ -46,11 +47,14 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
 
   return (
     <ClientText namespaces={["home"]}>
-      <div>
+      {/* eg-home：手机版「像我们 App」的样式都挂在它下面（site.css 末尾，只在 768 以下生效） */}
+      <div className="eg-home">
         <div className="relative">
           <Hero onPlay={onPlay} onApple={onApple} playHref={playStoreUrl("utm_source=website&utm_medium=hero")} appleHref={APP_STORE_URL} qrSvg={qrSvg} />
           <Seal />
         </div>
+        {/* 11-15 手机上首屏下面一张白卡（三个数 + 身体需要什么），电脑上不出现 */}
+        <QuickCard fromPrice={fromPrice} />
         <div className="bg-[#FDFCF9] relative">
           <WhyChoose />
           {/* 11-12 老板「官网里面 没有看到 门店下单啊？」→ 上门 / 到店两种方式，到店进门店页 */}
