@@ -102,6 +102,8 @@ export default async function PrivacyPolicyPage({ params }) {
               <li>{t("providers.appsflyer")}</li>
               <li>{t("providers.meta")}</li>
               <li>{t("providers.paymongo")}</li>
+              {/* 11-15 App 上「自动翻译」（聊天、技师评价和自我介绍）：经我们服务器送 Google Cloud Translation，跟 App 隐私政策 help.privacy.third.b2.9 同一句 */}
+              <li>{t("providers.googleTranslate")}</li>
             </ul>
           </Section>
 
